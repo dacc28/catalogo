@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-10-27T20:55:17.609Z",
+ "actualizado": "2026-10-27T22:01:17.573Z",
  "categorias": [
   {
    "p": "ANI",
@@ -168,7 +168,7 @@
    "precio": 40,
    "etiqueta": "En Tendencia",
    "notas": "",
-   "foto": "fotos/ff4fd4051e282be4a48546c4ca8eef89.jpg",
+   "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
    "creado": "2026-10-27T00:43:11.368Z",
    "disponible": true
   },
@@ -180,7 +180,7 @@
    "precio": 40,
    "etiqueta": "En Tendencia",
    "notas": "",
-   "foto": "fotos/d06e642a5129b556699eb4053a09b08c.jpg",
+   "foto": "fotos/4e73772b0f9a89ff699895fb2dcd0fcd.jpg",
    "creado": "2026-10-27T00:44:06.875Z",
    "disponible": true
   },
@@ -204,7 +204,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/3cde0585633c444604b02f39cf8b2eef.jpg",
+   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
    "creado": "2026-10-27T00:46:37.184Z",
    "disponible": true
   },
@@ -228,7 +228,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/3d64aaa3de879e355d7488e73745d92d.jpg",
+   "foto": "fotos/e155ed91cfdc3fa89f95019859abf53e.jpg",
    "creado": "2026-10-27T00:49:13.907Z",
    "disponible": true
   },
@@ -252,7 +252,7 @@
    "precio": 33,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/11a24c4bcd3de4f48ddad144c3a4ef1b.jpg",
+   "foto": "fotos/217c111b5684d27d294608257c003243.jpg",
    "creado": "2026-10-27T00:51:49.839Z",
    "disponible": true
   },
@@ -276,7 +276,7 @@
    "precio": 33,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/9f5bb0b8e79777b89f208a8ab0964794.jpg",
+   "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
    "disponible": true
   },
@@ -300,7 +300,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/fb6404f9816b8584d1c116d5ff2b59fc.jpg",
+   "foto": "fotos/c6f964a310519362d4bbd0ef49814291.jpg",
    "creado": "2026-10-27T00:56:39.983Z",
    "disponible": true
   },
@@ -336,7 +336,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/334fae77796a4eb70282595dec4091bc.jpg",
+   "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
    "disponible": true
   },
