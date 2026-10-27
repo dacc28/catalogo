@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-10-27T22:01:17.573Z",
+ "actualizado": "2026-10-27T22:08:47.524Z",
  "categorias": [
   {
    "p": "ANI",
@@ -264,7 +264,7 @@
    "precio": 33,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/b843890b7dfc8de18d6aa37ef0176c2f.jpg",
+   "foto": "fotos/3da1504929d304cf142ea81658206f50.jpg",
    "creado": "2026-10-27T00:53:07.627Z",
    "disponible": true
   },
@@ -288,7 +288,7 @@
    "precio": 33,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/85934a6d3afcb6be796839bb997b394a.jpg",
+   "foto": "fotos/341b2818fc232ef46355dc55f69b9db4.jpg",
    "creado": "2026-10-27T00:55:17.888Z",
    "disponible": true
   },
@@ -312,7 +312,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/9eae4c2e3d185109076e63f89d279df1.jpg",
+   "foto": "fotos/820477d64c799213e99cf70d2cb985f5.jpg",
    "creado": "2026-10-27T00:57:41.433Z",
    "disponible": true
   },
@@ -324,7 +324,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/4c6da7be7f7a4c62e0a2a00c5b16e6e6.jpg",
+   "foto": "fotos/eb93848b4f40fbc55faea2bf728dfd3a.jpg",
    "creado": "2026-10-27T00:58:35.688Z",
    "disponible": true
   },
@@ -348,7 +348,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/b9af011d3d7619017d3ab17c75424c01.jpg",
+   "foto": "fotos/487fc0643b3d31c364fa4ca0b8886fc6.jpg",
    "creado": "2026-10-27T01:01:34.661Z",
    "disponible": true
   },
@@ -360,7 +360,7 @@
    "precio": 30,
    "etiqueta": "Últimas piezas",
    "notas": "",
-   "foto": "fotos/d3b81b54b0eeb38060891933a08c1110.jpg",
+   "foto": "fotos/889e725064b8444aefd9a953134f3e45.jpg",
    "creado": "2026-10-27T01:02:28.963Z",
    "disponible": true
   },
