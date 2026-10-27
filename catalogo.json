@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-10-27T22:11:15.756Z",
+ "actualizado": "2026-10-27T22:18:46.619Z",
  "categorias": [
   {
    "p": "ANI",
@@ -192,7 +192,7 @@
    "precio": 40,
    "etiqueta": "Más Vendido",
    "notas": "",
-   "foto": "fotos/0ef069412f538f41233caf91f0072716.jpg",
+   "foto": "fotos/c6375e20a575c7ba573c317abfd69703.jpg",
    "creado": "2026-10-27T00:45:10.854Z",
    "disponible": true
   },
@@ -216,7 +216,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/1e947708d7ca17d47b897cb787984c9e.jpg",
+   "foto": "fotos/2be1ce12fd1f1d0be58fe1c701107b3a.jpg",
    "creado": "2026-10-27T00:48:15.080Z",
    "disponible": true
   },
