@@ -198,6 +198,7 @@
 
   /* ---------- arranque ---------- */
   async function init() {
+    if (window.self !== window.top) document.body.classList.add("embebido"); // dentro de Wix: sin título duplicado
     cargar();
     try { await cargarCatalogo(); }
     catch (e) {

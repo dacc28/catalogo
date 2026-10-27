@@ -182,3 +182,8 @@ body.panel-abierto .flot{transform:translate(-50%,120px);opacity:0;pointer-event
 .monograma{font-family:var(--display);font-weight:900;color:var(--ciruela);font-size:22px;line-height:1}
 .pie-marca{text-align:center;color:var(--tinta-2);font-size:12px;margin-top:28px}
 .pie-marca .monograma{display:block;margin-bottom:4px}
+
+/* incrustado en Wix: la página ya trae el título */
+body.embebido .hdr .titulo,body.embebido .hdr .sub{display:none}
+body.embebido .hdr{margin:0 0 6px;justify-content:flex-end}
+body.embebido .app{padding-top:8px}
