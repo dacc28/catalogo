@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo mayorista · Marvea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,600..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="catalogo">
+<div class="app">
+  <div class="hdr">
+    <div>
+      <h1 class="titulo"><span class="script">Mira. Elige. Emprende.</span>Catálogo mayorista</h1>
+      <p class="sub">Todos los precios son de mayoreo. Arma tu pedido desde 12 piezas surtidas a tu gusto y envíalo por WhatsApp.</p>
+    </div>
+    <div class="meta">Actualizado el <b id="fecha">—</b> · <span id="conteo">—</span></div>
+  </div>
+
+  <div class="barra">
+    <label class="buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="buscar" type="search" placeholder="Busca por nombre, código o material…" autocomplete="off"></label>
+    <div class="filtros">
+      <div class="chips" id="chips"></div>
+      <label class="orden">Ordenar <select id="orden"><option value="cat">por categoría</option><option value="nuevo">novedades</option><option value="precio-asc">precio ↑</option><option value="precio-desc">precio ↓</option></select></label>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"><div class="estado"><b>Cargando catálogo…</b></div></div>
+
+  <div class="pie-marca"><span class="monograma">M</span>Marvea · Donde emprendes tu negocio · Monterrey, N.L.</div>
+</div>
+
+<div class="flot vacio" id="flot"><div><div class="n">0 piezas</div><div class="t">$0</div></div><button class="btn" id="abrirPanel">Ver mi pedido →</button></div>
+<div class="velo" id="velo"></div>
+<aside class="panel" id="panel" aria-label="Mi pedido">
+  <div class="cab"><h2>Mi pedido</h2><button class="cerrar" id="cerrarPanel" aria-label="cerrar">×</button></div>
+  <div class="cuerpo">
+    <div id="items"></div>
+    <div class="gan" id="ganPanel"></div>
+  </div>
+  <div class="pie">
+    <div class="minimo" id="minimo"></div>
+    <div class="tot"><span>Piezas</span><b class="js-piezas">0</b></div>
+    <div class="tot"><span>Envío nacional</span><b id="envio">—</b></div>
+    <div class="tot grande"><span>Total pedido</span><span class="js-inv">$0</span></div>
+    <div class="fila-btn"><button class="btn coral" id="btnWA">Enviar pedido por WhatsApp</button></div>
+    <div class="fila-btn"><button class="btn ghost sm" id="btnCopiar">Copiar pedido</button><button class="btn ghost sm" id="btnVaciar">Vaciar</button></div>
+  </div>
+</aside>
+<script src="app.js"></script>
+</body>
+</html>
