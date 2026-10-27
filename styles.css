@@ -123,7 +123,7 @@ body.panel-abierto .flot{transform:translate(-50%,120px);opacity:0;pointer-event
 
 /* ganancia */
 .gan{background:var(--ciruela);color:#fff;border-radius:var(--r);padding:16px 18px;margin:12px 0}
-.gan h3{margin:0 0 2px;font-family:var(--display);font-weight:800;font-size:20px;display:flex;align-items:baseline;gap:8px}
+.gan h3{color:#fff;margin:0 0 2px;font-family:var(--display);font-weight:800;font-size:20px;display:flex;align-items:baseline;gap:8px}
 .gan h3 .script{font-family:var(--script);font-weight:400;font-size:15px;color:var(--amarillo)}
 .gan p{margin:0 0 10px;font-size:12.5px;opacity:.85}
 .gan .cajas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -187,3 +187,61 @@ body.panel-abierto .flot{transform:translate(-50%,120px);opacity:0;pointer-event
 body.embebido .hdr .titulo,body.embebido .hdr .sub{display:none}
 body.embebido .hdr{margin:0 0 6px;justify-content:flex-end}
 body.embebido .app{padding-top:8px}
+
+/* disponibilidad */
+.disp{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tinta-2);margin-top:4px}
+.disp i{width:8px;height:8px;border-radius:999px;background:#5BB47A;box-shadow:0 0 0 3px rgba(91,180,122,.18)}
+.card .foto{cursor:pointer}
+/* calculadora manual */
+.app-calc .calc-hero{grid-template-columns:1fr}
+@media(min-width:900px){.app-calc .calc-hero{grid-template-columns:1.25fr .85fr}}
+.fila{border:1.5px solid var(--linea);border-radius:14px;padding:12px;margin:10px 0;background:var(--crema)}
+.fila-pieza{display:flex;gap:10px;align-items:center}
+.fila-pieza img,.fila-ph{width:54px;height:54px;border-radius:10px;object-fit:cover;background:#fff;flex:none}
+.fila-ph{display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;color:var(--ciruela);border:1.5px dashed var(--linea)}
+.sel{width:100%;border:1.5px solid var(--linea);border-radius:10px;padding:9px 10px;background:#fff;color:var(--tinta);font-weight:600;font-size:14px}
+.fila-det{font-size:12px;color:var(--tinta-2);margin-top:4px}
+.fila-campos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;align-items:end}
+@media(max-width:640px){.fila-campos{grid-template-columns:1fr 1fr}}
+.fila-campos label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;font-weight:600;color:var(--tinta-2)}
+.inp{display:flex;align-items:center;gap:2px;border:1.5px solid var(--linea);border-radius:10px;background:#fff;padding:0 10px;height:40px;font-weight:700;color:var(--ciruela)}
+.inp input{width:100%;border:0;outline:0;font-weight:700;font-size:15px;color:var(--tinta);background:transparent;-moz-appearance:textfield}
+.inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none}
+.inp input[readonly]{color:var(--tinta-2)}
+.fila-gan{display:flex;flex-direction:column;justify-content:center;background:var(--amarillo-2);border-radius:10px;padding:6px 10px;min-height:40px}
+.fila-gan span{font-size:11px;color:var(--ciruela);font-weight:600}
+.fila-gan b{font-family:var(--display);font-size:19px;color:var(--ciruela);line-height:1.1}
+.fila-gan small{font-size:10.5px;color:var(--tinta-2)}
+.neg{color:var(--coral)!important}
+.gan-extra{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;opacity:.9}
+.gan-extra b{font-family:var(--display);font-size:16px;color:var(--amarillo)}
+.app-calc .gan{position:sticky;top:12px}
+
+a.btn{text-decoration:none}
+/* móvil: dos columnas y menos relleno */
+@media(max-width:560px){
+  .app{padding:12px 12px 60px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card .info{padding:8px 10px 10px}
+  .card .nombre{font-size:13px}
+  .card .detalle{font-size:11px}
+  .card .precio b{font-size:17px}
+  .disp{font-size:10.5px}
+  .badge{font-size:10px;padding:3px 7px;top:8px;left:8px}
+  .seccion-cat{font-size:19px;margin:16px 0 8px}
+  .hdr .meta{font-size:12px}
+  .modal .caja-m{max-height:94vh}
+  .modal .info-m{padding:16px}
+  .modal .info-m h2{font-size:22px}
+  .fila-campos{grid-template-columns:1fr 1fr}
+}
+body.embebido .app{padding-left:12px;padding-right:12px}
+
+/* páginas interiores dentro del sitio nuevo */
+body.embebido .solo-sitio{display:none}
+.app{max-width:1180px;padding:28px 24px 100px}
+.pagina-hero .meta b{color:var(--ciruela)}
+.app-calc .calc-hero{margin-top:10px}
+
+body:not(.embebido) .calc-hero .gan,body:not(.embebido) .app-calc .gan{top:86px}
+body:not(.embebido) .barra{top:72px}
