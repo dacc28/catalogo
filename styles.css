@@ -240,7 +240,7 @@ body.embebido .app{padding-left:12px;padding-right:12px}
 /* páginas interiores dentro del sitio nuevo */
 body.embebido .solo-sitio{display:none}
 .app{max-width:1180px;padding:28px 24px 100px}
-.pagina-hero .meta b{color:var(--ciruela)}
+.pagina-hero .meta b{color:var(--amarillo)}
 .app-calc .calc-hero{margin-top:10px}
 
 body:not(.embebido) .calc-hero .gan,body:not(.embebido) .app-calc .gan{top:86px}
