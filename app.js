@@ -55,7 +55,7 @@
   function pintarCatalogo() {
     const cont = $("#grid"); if (!cont) return;
     const l = productosFiltrados();
-    $("#conteo") && ($("#conteo").textContent = l.length + (l.length === 1 ? " pieza disponible" : " piezas disponibles"));
+    $("#conteo") && ($("#conteo").textContent = l.length + (l.length === 1 ? " modelo disponible" : " modelos disponibles"));
     if (!l.length) { cont.innerHTML = `<div class="estado" style="grid-column:1/-1"><b>No encontramos piezas con esa búsqueda</b>Prueba con otra palabra o cambia de categoría.</div>`; return; }
     let html = "", lastCat = null;
     if (orden === "cat" && !filtroCat) l.forEach(p => { if (p.categoria !== lastCat) { lastCat = p.categoria; html += `<h2 class="seccion-cat" style="grid-column:1/-1">${esc(catNombre(p))}</h2>`; } html += cardHTML(p); });

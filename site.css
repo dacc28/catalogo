@@ -377,3 +377,17 @@ body[data-mode] .app{padding-top:26px}
   .aviso .pista{animation:none}
   .flota{animation:none}
 }
+
+/* rastreo DHL */
+.rastreo-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+.rastreo-datos{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.rastreo-datos li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:#5C4B2A;background:rgba(255,255,255,.55);border-radius:12px;padding:10px 14px}
+.rastreo-datos i{font-style:normal;color:var(--coral);flex:none}
+.rastreo-form{background:#fff;border-radius:var(--r);padding:26px;box-shadow:var(--sombra-2);display:flex;flex-direction:column;gap:12px}
+.rastreo-form label{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ciruela)}
+.rastreo-form input{font-family:inherit;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--ciruela);border:2px solid var(--linea);border-radius:14px;padding:14px 16px;outline:0;transition:border-color .2s}
+.rastreo-form input:focus{border-color:var(--coral)}
+.rastreo-form .btn.full{width:100%}
+.rastreo-form .nota{font-size:13px;color:var(--tinta-2);margin:0}
+.rastreo-form .nota a{color:var(--coral);font-weight:700}
+@media (max-width:820px){.rastreo-grid{grid-template-columns:1fr;gap:22px}}

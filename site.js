@@ -56,6 +56,10 @@
     if (!abierto) { it.classList.add("abierto"); cuerpo.style.maxHeight = cuerpo.scrollHeight + "px"; }
   }));
 
+  /* rastreo DHL: abre la página oficial con la guía */
+  const rf = $("#rastreoForm");
+  if (rf) rf.addEventListener("submit", e => { e.preventDefault(); const g = ($("#guia").value || "").replace(/[^0-9A-Za-z]/g, ""); if (!g) return; window.open("https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1", "_blank", "noopener"); });
+
   /* simulador rápido de ganancia */
   const sim = $("#sim");
   if (sim) {
