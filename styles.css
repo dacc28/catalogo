@@ -28,11 +28,11 @@ img{display:block}
 .meta b{color:var(--ciruela)}
 
 /* barra de filtros */
-.barra{position:sticky;top:0;z-index:5;background:linear-gradient(var(--crema) 85%,rgba(251,246,236,0));padding:8px 0 10px;margin-bottom:6px}
+.barra{position:sticky;top:0;z-index:5;background:var(--crema);padding:8px 0 10px;margin-bottom:6px;box-shadow:0 10px 16px -12px rgba(90,39,72,.18)}
 .buscar{display:flex;align-items:center;gap:8px;background:var(--blanco);border:1.5px solid var(--linea);border-radius:999px;padding:8px 14px;box-shadow:0 2px 0 rgba(90,39,72,.04)}
 .buscar input{flex:1;border:0;outline:0;background:transparent;font-size:15px;color:var(--tinta)}
 .buscar svg{width:18px;height:18px;color:var(--ciruela);flex:none}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 4px;scrollbar-width:none}
+.chips{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;overflow-x:auto;padding:10px 2px 4px;margin:0;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;border:1.5px solid var(--ciruela);background:transparent;color:var(--ciruela);border-radius:999px;padding:7px 14px;font-weight:600;font-size:13.5px;transition:.15s;white-space:nowrap}
 .chip:hover{background:var(--rosa-2)}
@@ -244,4 +244,4 @@ body.embebido .solo-sitio{display:none}
 .app-calc .calc-hero{margin-top:10px}
 
 body:not(.embebido) .calc-hero .gan,body:not(.embebido) .app-calc .gan{top:86px}
-body:not(.embebido) .barra{top:72px}
+body:not(.embebido) .barra{top:72px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
