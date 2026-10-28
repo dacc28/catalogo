@@ -29,6 +29,10 @@
   addEventListener("load", () => setTimeout(irAlHash, 150));
   addEventListener("hashchange", irAlHash);
 
+  /* botón ir al inicio: aparece al bajar más de una pantalla */
+  const arriba = $("#irArriba");
+  if (arriba) { const ver = () => arriba.classList.toggle("visible", scrollY > innerHeight * .9); ver(); addEventListener("scroll", ver, { passive: true }); arriba.addEventListener("click", () => { window.scrollTo({ top: 0, behavior: "smooth" }); history.replaceState(null, "", location.pathname); }); }
+
   /* nav */
   const nav = $(".nav");
   if (nav) {
