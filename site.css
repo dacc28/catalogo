@@ -313,7 +313,6 @@ footer .redes a:hover{background:var(--coral);border-color:var(--coral)}
 .pagina-hero .meta b{color:var(--amarillo)}
 .pagina-hero .eyebrow{background:var(--amarillo);color:var(--ciruela)}
 body[data-mode] .app{padding-top:26px}
-body[data-mode] .solo-sitio{display:contents}
 
 /* animaciones de revelado */
 .rev{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
