@@ -23,6 +23,12 @@
     $$("video[data-h]").forEach(v => vo.observe(v));
   }
 
+  /* ir a una sección (compensa el menú fijo) */
+  function irA(el) { const y = el.getBoundingClientRect().top + window.pageYOffset - 80; window.scrollTo({ top: y, behavior: "smooth" }); }
+  function irAlHash() { const id = decodeURIComponent((location.hash || "").slice(1)); if (!id) return; const el = document.getElementById(id); if (el) { irA(el); setTimeout(() => irA(el), 700); } }
+  addEventListener("load", () => setTimeout(irAlHash, 150));
+  addEventListener("hashchange", irAlHash);
+
   /* nav */
   const nav = $(".nav");
   if (nav) {
@@ -31,6 +37,13 @@
     const h = $(".hamb", nav); h && h.addEventListener("click", () => nav.classList.toggle("abierto"));
     $$("li a", nav).forEach(a => a.addEventListener("click", () => nav.classList.remove("abierto")));
     const path = location.pathname.split("/").pop() || "index.html";
+    // enlaces a secciones de esta misma página: desplazamiento suave sin recargar
+    $$('a[href*="#"]').forEach(a => a.addEventListener("click", e => {
+      const href = a.getAttribute("href") || ""; const [file, hash] = href.split("#"); if (!hash) return;
+      if (file && file !== path && !(file === "index.html" && path === "")) return;
+      const el = document.getElementById(hash); if (!el) return;
+      e.preventDefault(); nav.classList.remove("abierto"); irA(el); history.replaceState(null, "", "#" + hash);
+    }));
     $$("li a", nav).forEach(a => { const href = (a.getAttribute("href") || "").split("#")[0]; if (href && href === path && path !== "index.html") a.classList.add("activo"); });
   }
 
@@ -88,6 +101,7 @@
       if (g1) g1.innerHTML = dest.length ? dest.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas destacadas.</div>';
       if (g2) g2.innerHTML = nuevo.length ? nuevo.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas nuevas.</div>';
       const total = $("#totalPiezas"); if (total) { total.dataset.contar = String(prods.length); if (total.textContent !== "0") contador(total); }
+      if (location.hash) setTimeout(irAlHash, 100);
       const fecha = $("#fechaCat"); if (fecha && d.actualizado) fecha.textContent = new Date(d.actualizado).toLocaleDateString("es-MX", { day: "numeric", month: "long" });
     } catch (e) {}
   }

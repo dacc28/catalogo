@@ -14,7 +14,8 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden}
 html,body{margin:0;padding:0}
-body{background:var(--blanco);color:var(--tinta);font-family:var(--cuerpo);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{background:var(--blanco);color:var(--tinta);font-family:var(--cuerpo);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+section,header.hero,[id]{scroll-margin-top:84px}
 img{display:block;max-width:100%}
 a{color:inherit}
 button{font-family:inherit;cursor:pointer}
