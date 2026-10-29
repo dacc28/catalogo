@@ -373,6 +373,7 @@ body[data-mode] .app{padding-top:26px}
   .encabezado{margin-bottom:24px}
   .whatsapp-flot{right:14px;bottom:14px;width:52px;height:52px}
   .pagina-hero{padding:40px 0 34px}
+  footer{padding-bottom:84px}
 }
 @media (prefers-reduced-motion:reduce){
   .rev,[data-stagger]>*{opacity:1;transform:none;transition:none}
