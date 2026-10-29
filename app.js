@@ -10,7 +10,7 @@
 
   let DATA = null, PROD = [];
   const CATS = {}, byCode = {};
-  const DEF = { multiplicador: 2, whatsapp: { pedidos: "5218132660673", informes: "5218132380573" } };
+  const DEF = { multiplicador: 2, whatsapp: { pedidos: "528132660673", informes: "528132380573" } };
   const mult = () => (DATA && DATA.multiplicador) || DEF.multiplicador;
   const waNum = () => (DATA && DATA.whatsapp && DATA.whatsapp.informes) || DEF.whatsapp.informes;
 
