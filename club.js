@@ -62,13 +62,12 @@
   }
 
   /* ---------- pestañas ---------- */
-  const ir = p => { $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const ir = p => { if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
   $$("#tabs button").forEach(b => b.addEventListener("click", () => ir(b.dataset.p)));
   $$("[data-ir]").forEach(b => b.addEventListener("click", () => ir(b.dataset.ir)));
 
   function pintarTodo() { pintarCabecera(); pintarInicio(); pintarPedidos(); pintarNegocio(); pintarCatalogo(); pintarPerfil(); }
 
-  function linkCatalogo() { const s = (S.yo.catalogo || {}).slug || ""; return s ? BASE + "c.html?s=" + encodeURIComponent(s) : ""; }
   function pintarCabecera() { const n = S.yo.nombre || "clienta"; $("#avatar").textContent = n.trim().charAt(0).toUpperCase() || "M"; $("#hola").textContent = "Hola, " + n.split(" ")[0]; $("#subtitulo").textContent = (S.yo.catalogo.nombre || S.yo.negocio || "Marvea Business Club") + (S.yo.ciudad ? " · " + S.yo.ciudad : ""); }
 
   function estadoChip(p) { const e = p.estado || "preparando"; return e === "entregado" ? '<span class="chip ent"><i class="fa-solid fa-check"></i> Entregado</span>' : e === "enviado" ? '<span class="chip env"><i class="fa-solid fa-truck-fast"></i> En camino</span>' : '<span class="chip prep"><i class="fa-solid fa-box"></i> Preparando</span>'; }
@@ -84,11 +83,8 @@
     const u = S.pedidos[0];
     if (u) { $("#uDesc").textContent = (u.titulo || "Pedido") + " · " + fecha(u.fecha) + " · " + (u.piezas || 0) + " piezas · " + mxn(u.total) + " MXN"; $("#uEstado").innerHTML = estadoChip(u); $("#uPiezas").innerHTML = (u.items || []).slice(0, 4).map(piezaHTML).join(""); }
     else { $("#uDesc").textContent = "Todavía no tienes pedidos finalizados. Cuando cerremos tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
-    const l = linkCatalogo(); $("#iLink").textContent = l ? l.replace("https://www.", "") : "Tu link se activa en tu primera sincronización"; $("#iAbrir").href = l || "#";
+    pintarMiniCat();
   }
-  $("#iCopiar").addEventListener("click", () => copiar(linkCatalogo()));
-  async function copiar(t) { if (!t) return toast("Aún no tienes link", true); try { await navigator.clipboard.writeText(t); toast("Link copiado"); medir("club_copiar_link"); } catch (e) { prompt("Copia tu link:", t); } }
-
   function pintarPedidos() {
     const box = $("#listaPedidos"); box.innerHTML = "";
     if (!S.pedidos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto finalicemos tu primera compra en un live o por WhatsApp, la verás aquí con sus fotos.</div>'; return; }
@@ -131,20 +127,95 @@
     }
   }
 
+  /* ---------- Mi catálogo: PDF con su nombre, logo y precios (sin links ni datos del proveedor) ---------- */
+  const COLORES = ["#2B2B2B", "#5A2748", "#B76E79", "#1F4E5A", "#8C6A3F", "#C2185B", "#3C5A40", "#1D3557"];
+  let colorSel = null;
+  const piezasCat = () => S.inv.filter(r => r.disponibles > 0 && r.visible);
+  function pintarMiniCat() { const c = S.yo.catalogo || {}; const n = piezasCat().length;
+    $("#iCat").innerHTML = '<div class="lg">' + (c.logo ? '<img src="' + c.logo + '" alt="">' : '<i class="fa-regular fa-image"></i>') + '</div><div><b>' + esc(c.nombre || S.yo.negocio || "Tu negocio") + '</b><span>' + n + (n === 1 ? " pieza disponible" : " piezas disponibles") + '</span></div>'; }
+  function pintarLogo() { const c = S.yo.catalogo || {}; $("#logoPrev").innerHTML = c.logo ? '<img src="' + c.logo + '" alt="Logo">' : '<span><i class="fa-regular fa-image"></i>Sin logo</span>'; $("#logoQuitar").hidden = !c.logo; }
   function pintarCatalogo() {
     const c = S.yo.catalogo || {};
-    $("#cActivo").checked = c.activo !== false; $("#cNombre").value = c.nombre || S.yo.negocio || ""; $("#cWhats").value = c.whatsapp || S.yo.whatsapp || ""; $("#cFrase").value = c.frase || ""; $("#cSlug").value = c.slug || slugify(c.nombre || S.yo.nombre);
-    const l = linkCatalogo(); $("#cLink").textContent = l ? l.replace("https://www.", "") : "Se activa al guardar"; $("#cAbrir").href = l || "#"; $("#cPdf").href = l ? l + "&print=1" : "#";
+    $("#cNombre").value = c.nombre || S.yo.negocio || ""; $("#cWhats").value = c.whatsapp || S.yo.whatsapp || ""; $("#cFrase").value = c.frase || ""; $("#cRedes").value = c.redes || "";
+    colorSel = c.color || COLORES[0];
+    $("#cColores").innerHTML = COLORES.map(x => '<button type="button" style="background:' + x + '" data-c="' + x + '" class="' + (x === colorSel ? "on" : "") + '" aria-label="Color ' + x + '"></button>').join("");
+    $$("#cColores button").forEach(b => b.onclick = () => { colorSel = b.dataset.c; $$("#cColores button").forEach(x => x.classList.toggle("on", x === b)); });
+    pintarLogo(); pintarMiniCat();
+    const p = piezasCat(), sinPrecio = p.filter(r => r.precioVenta == null).length;
+    $("#cResumen").innerHTML = '<span class="chip vidrio"><i class="fa-solid fa-gem"></i> ' + p.length + ' piezas entrarán al PDF</span>' + (sinPrecio ? '<span class="chip prep"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio: saldrán como "Pregunta por precio" (ponlo en Mi negocio)</span>' : "");
   }
-  $("#cSlug").addEventListener("input", () => { $("#cSlug").value = slugify($("#cSlug").value).replace(/-$/, "") || ""; });
-  $("#cGuardar").addEventListener("click", async () => {
-    const slug = slugify($("#cSlug").value); if (!slug) return toast("Escribe una dirección para tu catálogo", true);
-    const cat = Object.assign({}, S.yo.catalogo, { nombre: $("#cNombre").value.trim(), whatsapp: digitos($("#cWhats").value), frase: $("#cFrase").value.trim(), slug, activo: $("#cActivo").checked });
+  async function guardarCat(extra, silencioso) {
+    const cat = Object.assign({}, S.yo.catalogo, { nombre: $("#cNombre").value.trim(), whatsapp: digitos($("#cWhats").value), frase: $("#cFrase").value.trim(), redes: $("#cRedes").value.trim(), color: colorSel }, extra || {});
     const { error } = await sb.from("clientas").update({ catalogo: cat, negocio: cat.nombre, actualizado: new Date().toISOString() }).eq("id", S.yo.id);
-    if (error) return toast(/duplicate|unique/i.test(error.message) ? "Esa dirección ya la usa otra clienta; prueba otra" : "No se guardó: " + error.message, true);
-    S.yo.catalogo = cat; S.yo.negocio = cat.nombre; pintarCatalogo(); pintarInicio(); pintarCabecera(); $("#cOk").classList.add("on"); setTimeout(() => $("#cOk").classList.remove("on"), 3000); toast("Catálogo actualizado"); medir("club_catalogo_guardar");
+    if (error) { toast("No se guardó: " + error.message, true); return false; }
+    S.yo.catalogo = cat; S.yo.negocio = cat.nombre; pintarCatalogo(); pintarCabecera();
+    if (!silencioso) { $("#cOk").classList.add("on"); setTimeout(() => $("#cOk").classList.remove("on"), 3000); toast("Datos guardados"); }
+    return true;
+  }
+  $("#cGuardar").addEventListener("click", () => guardarCat());
+  // logo: se reduce en el navegador (máx. 500 px) y se guarda con su perfil
+  $("#logoFile").addEventListener("change", async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
+    if (!/^image\//.test(f.type)) return toast("Sube una imagen PNG o JPG", true);
+    try {
+      const img = await cargarImg(URL.createObjectURL(f)); const max = 500, k = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas"); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k); cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      let url = f.type === "image/jpeg" ? cv.toDataURL("image/jpeg", .9) : cv.toDataURL("image/png");
+      if (url.length > 700000) url = cv.toDataURL("image/jpeg", .85);
+      if (await guardarCat({ logo: url }, true)) { toast("Logo guardado"); medir("club_logo"); }
+    } catch (x) { toast("No se pudo leer la imagen", true); }
   });
-  $("#cCopiar").addEventListener("click", () => copiar(linkCatalogo()));
+  $("#logoQuitar").addEventListener("click", async () => { if (await guardarCat({ logo: "" }, true)) toast("Logo quitado"); });
+  const cargarImg = src => new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = src; });
+  async function fotoCuadrada(src, lado) { // recorta al centro en cuadrado con fondo blanco → JPEG
+    try { const i = await cargarImg(src); const cv = document.createElement("canvas"); cv.width = cv.height = lado; const g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, lado, lado);
+      const s2 = Math.min(i.width, i.height); g.drawImage(i, (i.width - s2) / 2, (i.height - s2) / 2, s2, s2, 0, 0, lado, lado); return cv.toDataURL("image/jpeg", .82); } catch (e) { return null; }
+  }
+  const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const telFmt = d => d && d.length === 10 ? d.slice(0, 2) + " " + d.slice(2, 6) + " " + d.slice(6) : d;
+  async function descargarPDF(btn) {
+    if (!window.jspdf) return toast("No se pudo cargar el generador de PDF. Recarga la página.", true);
+    if (document.querySelector("#p-catalogo.on")) { if (!(await guardarCat(null, true))) return; }
+    const piezas = piezasCat(); if (!piezas.length) return toast("No tienes piezas disponibles para el catálogo", true);
+    const c = S.yo.catalogo || {}, conPrecio = (document.querySelector('input[name=pm]:checked') || {}).value !== "sin";
+    const txt = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Armando tu PDF…';
+    try {
+      const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" }); const W = 210, H = 297, M = 12;
+      const col = hexRgb(c.color || COLORES[0]); const neg = c.nombre || S.yo.negocio || S.yo.nombre || "Mi catálogo";
+      const wa = telFmt(digitos(c.whatsapp || S.yo.whatsapp || "")); const pie = [wa ? "Pedidos por WhatsApp: " + wa : "", c.redes || ""].filter(Boolean).join("   ·   ");
+      const fotos = await Promise.all(piezas.map(p => p.foto ? fotoCuadrada(p.foto, 520) : Promise.resolve(null)));
+      let logo = null, lw = 0, lh = 0; if (c.logo) { try { const pr = doc.getImageProperties(c.logo); const k = Math.min(30 / pr.width, 30 / pr.height); lw = pr.width * k; lh = pr.height * k; logo = c.logo; } catch (e) {} }
+      const cols = 3, gap = 6, cw = (W - 2 * M - gap * (cols - 1)) / cols, ch = cw + 24, top0 = 56, topN = 18, piso = H - 18;
+      const encabezado = primera => {
+        if (primera) {
+          doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 46, "F");
+          let x = M; if (logo) { doc.setFillColor(255, 255, 255); doc.roundedRect(M, 8, 30, 30, 3, 3, "F"); doc.addImage(logo, M + (30 - lw) / 2, 8 + (30 - lh) / 2, lw, lh); x = M + 36; }
+          doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(neg.length > 22 ? 20 : 26); doc.text(neg, x, c.frase ? 22 : 26);
+          if (c.frase) { doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.text(doc.splitTextToSize(c.frase, W - x - M - 40), x, 30); }
+          doc.setFont("helvetica", "bold"); doc.setFontSize(9); const mes = new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" });
+          doc.text("CATÁLOGO", W - M, 18, { align: "right" }); doc.setFont("helvetica", "normal"); doc.text(mes.charAt(0).toUpperCase() + mes.slice(1), W - M, 23, { align: "right" });
+        } else { doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 10, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(neg, M, 6.6); }
+      };
+      encabezado(true); let x0 = 0, y = top0, n = 0;
+      piezas.forEach((p, idx) => {
+        if (y + ch > piso) { doc.addPage(); encabezado(false); y = topN; x0 = 0; }
+        const x = M + x0 * (cw + gap);
+        doc.setDrawColor(230, 225, 222); doc.setLineWidth(.2); doc.roundedRect(x, y, cw, ch, 3, 3, "S");
+        if (fotos[idx]) doc.addImage(fotos[idx], "JPEG", x + .6, y + .6, cw - 1.2, cw - 1.2); else { doc.setFillColor(245, 242, 240); doc.rect(x + .6, y + .6, cw - 1.2, cw - 1.2, "F"); }
+        doc.setTextColor(40, 40, 40); doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.text(doc.splitTextToSize(p.nombre || p.codigo, cw - 6)[0], x + 3, y + cw + 6);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(120, 120, 120); doc.text(doc.splitTextToSize([p.categoria, p.material].filter(Boolean).join(" · "), cw - 6)[0] || "", x + 3, y + cw + 11);
+        if (conPrecio) { doc.setTextColor(col[0], col[1], col[2]); doc.setFont("helvetica", "bold"); if (p.precioVenta != null) { doc.setFontSize(13); doc.text("$" + Math.round(p.precioVenta).toLocaleString("es-MX"), x + 3, y + cw + 19); } else { doc.setFontSize(9); doc.text("Pregunta por precio", x + 3, y + cw + 19); } }
+        if (p.disponibles <= 1) { doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255); doc.setFillColor(col[0], col[1], col[2]); doc.roundedRect(x + 3, y + 3, 22, 5.5, 2.7, 2.7, "F"); doc.text("ÚLTIMA PIEZA", x + 14, y + 6.8, { align: "center" }); }
+        n++; x0++; if (x0 === cols) { x0 = 0; y += ch + gap; }
+      });
+      const tot = doc.getNumberOfPages();
+      for (let pg = 1; pg <= tot; pg++) { doc.setPage(pg); doc.setDrawColor(col[0], col[1], col[2]); doc.setLineWidth(.4); doc.line(M, H - 13, W - M, H - 13); doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(col[0], col[1], col[2]); if (pie) doc.text(pie, M, H - 8); doc.setFont("helvetica", "normal"); doc.setTextColor(140, 140, 140); doc.text(pg + " / " + tot, W - M, H - 8, { align: "right" }); }
+      const nombreArch = "Catalogo-" + (slugify(neg) || "mi-negocio") + ".pdf"; doc.save(nombreArch); toast("Listo: " + nombreArch); medir("club_catalogo_pdf", { piezas: n });
+    } catch (e) { toast("No se pudo armar el PDF: " + (e.message || e), true); }
+    finally { btn.disabled = false; btn.innerHTML = txt; }
+  }
+  $("#cPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
+  $("#iPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
 
   function pintarPerfil() { $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; }
   $("#pGuardar").addEventListener("click", async () => { const { error } = await sb.from("clientas").update({ nombre: $("#pNombre").value.trim(), ciudad: $("#pCiudad").value.trim(), actualizado: new Date().toISOString() }).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); S.yo.nombre = $("#pNombre").value.trim(); S.yo.ciudad = $("#pCiudad").value.trim(); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); });

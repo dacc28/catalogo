@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Marvea Business Club · Tu espacio privado</title>
-<meta name="description" content="Marvea Business Club: el espacio privado de nuestras clientas. Consulta tus pedidos y guías DHL, registra tus ventas, mide tu ganancia y comparte tu propio catálogo con el nombre de tu negocio.">
+<meta name="description" content="Marvea Business Club: el espacio privado de nuestras clientas. Consulta tus pedidos y guías DHL, registra tus ventas, mide tu ganancia y descarga su catálogo en PDF con el nombre de tu negocio.">
 <meta name="robots" content="noindex">
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B7H8FPWDP7"></script>
@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="site.css?v=14">
-<link rel="stylesheet" href="club.css?v=1">
+<link rel="stylesheet" href="club.css?v=2">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -46,11 +46,11 @@
       <div class="marca">
         <span class="sello"><i></i>Solo para clientas Marvea</span><span class="beta">BETA</span>
         <h1><b>MARVEA</b><b>BUSINESS CLUB</b><i>tu negocio, en un solo lugar</i></h1>
-        <p class="lead">Un espacio privado para cada clienta: aquí ves lo que nos has comprado, sigues tus envíos, registras lo que vendes y compartes tu propio catálogo con el nombre de tu negocio.</p>
+        <p class="lead">Un espacio privado para cada clienta: aquí ves lo que nos has comprado, sigues tus envíos, registras lo que vendes y descargas tu propio catálogo en PDF con el nombre y logo de tu negocio.</p>
         <ul>
           <li><span><i class="fa-solid fa-box-open"></i></span>Tus pedidos con fotos, piezas y guía DHL para rastrear</li>
           <li><span><i class="fa-solid fa-chart-line"></i></span>Registra tus ventas y mira tu ganancia real</li>
-          <li><span><i class="fa-solid fa-store"></i></span>Tu catálogo con tus precios, listo para mandar por WhatsApp</li>
+          <li><span><i class="fa-solid fa-store"></i></span>Tu catálogo en PDF con tu logo y tus precios</li>
         </ul>
       </div>
       <form class="glass caja-login" id="formLogin" autocomplete="on">
@@ -90,9 +90,9 @@
             <div class="acciones"><button class="btn vidrio sm" data-ir="pedidos">Ver todos mis pedidos</button></div>
           </div>
           <div class="glass g-sec">
-            <div class="cab"><div><h3>Tu catálogo</h3><p>Compártelo con tus clientas: solo muestra tus precios, nunca los de mayoreo.</p></div></div>
-            <div class="link-cat"><i class="fa-solid fa-link"></i><code id="iLink">…</code></div>
-            <div class="acciones"><button class="btn claro sm" id="iCopiar"><i class="fa-regular fa-copy"></i> Copiar link</button><a class="btn vidrio sm" id="iAbrir" href="#" target="_blank" rel="noopener">Ver catálogo</a><button class="btn vidrio sm" data-ir="catalogo">Personalizar</button></div>
+            <div class="cab"><div><h3>Tu catálogo en PDF</h3><p>Con tu nombre, tu logo y tus precios. Solo las piezas que te quedan, sin datos de tu proveedor.</p></div></div>
+            <div class="mini-cat" id="iCat"></div>
+            <div class="acciones"><button class="btn claro sm" id="iPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar PDF</button><button class="btn vidrio sm" data-ir="catalogo">Personalizar</button></div>
           </div>
         </div>
         <div class="glass g-sec">
@@ -118,16 +118,34 @@
 
       <div class="panel" id="p-catalogo">
         <div class="glass g-sec">
-          <div class="cab"><div><h2>Mi <i>catálogo</i></h2><p>Tus clientas verán tus piezas disponibles con tus precios y un botón para pedirte por WhatsApp. Marvea no aparece con precios de mayoreo.</p></div><label class="toggle"><input type="checkbox" id="cActivo"> Catálogo activo</label></div>
-          <div class="form">
-            <div class="campo"><label for="cNombre">Nombre de tu negocio</label><div class="in"><i class="fa-solid fa-store"></i><input id="cNombre" class="clara" placeholder="Ej. Joyería Luna" maxlength="40"></div></div>
-            <div class="campo"><label for="cWhats">WhatsApp para que te pidan</label><div class="in"><i class="fa-brands fa-whatsapp"></i><input id="cWhats" class="clara" inputmode="numeric" placeholder="10 dígitos" maxlength="16"></div></div>
-            <div class="campo ancho"><label for="cFrase">Frase de tu negocio (opcional)</label><div class="in"><i class="fa-solid fa-sparkles"></i><input id="cFrase" class="clara" placeholder="Ej. Acero inoxidable que no se despinta · Envíos en Saltillo" maxlength="90"></div></div>
-            <div class="campo ancho"><label for="cSlug">Dirección de tu catálogo</label><div class="in"><i class="fa-solid fa-link"></i><span style="color:rgba(255,255,255,.7);font-weight:600">marveamayoreo.com/c.html?s=</span><input id="cSlug" class="clara" placeholder="tu-negocio" maxlength="40" style="padding-left:4px"></div></div>
+          <div class="cab"><div><h2>Mi <i>catálogo</i></h2><p>Arma tu catálogo en PDF con tu nombre, tu logo y tus precios, listo para mandar por WhatsApp o imprimir. Solo aparecen las piezas que te quedan y que tienes visibles en Mi negocio; no lleva links ni datos de tu proveedor.</p></div></div>
+          <div class="cat-grid">
+            <div>
+              <div class="form">
+                <div class="campo ancho"><label for="cNombre">Nombre de tu negocio</label><div class="in"><i class="fa-solid fa-store"></i><input id="cNombre" class="clara" placeholder="Ej. Joyería Luna" maxlength="40"></div></div>
+                <div class="campo"><label for="cWhats">WhatsApp para pedidos</label><div class="in"><i class="fa-brands fa-whatsapp"></i><input id="cWhats" class="clara" inputmode="numeric" placeholder="10 dígitos" maxlength="16"></div></div>
+                <div class="campo"><label for="cRedes">Instagram / Facebook (opcional)</label><div class="in"><i class="fa-solid fa-at"></i><input id="cRedes" class="clara" placeholder="@joyerialuna" maxlength="40"></div></div>
+                <div class="campo ancho"><label for="cFrase">Frase de tu negocio (opcional)</label><div class="in"><i class="fa-solid fa-pen-nib"></i><input id="cFrase" class="clara" placeholder="Ej. Acero inoxidable que no se despinta · Envíos en Saltillo" maxlength="90"></div></div>
+                <div class="campo ancho"><label>Color de tu catálogo</label><div class="colores" id="cColores"></div></div>
+              </div>
+            </div>
+            <div class="logo-box">
+              <label>Tu logo (opcional)</label>
+              <div class="logo-prev" id="logoPrev"><span><i class="fa-regular fa-image"></i>Sin logo</span></div>
+              <div class="acciones" style="margin-top:12px"><label class="btn claro sm" for="logoFile"><i class="fa-solid fa-upload"></i> Subir logo</label><button class="btn vidrio sm" id="logoQuitar" hidden>Quitar</button></div>
+              <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden>
+              <p class="suave" style="font-size:12.5px;margin-top:8px">PNG o JPG. Si tiene fondo transparente, mejor.</p>
+            </div>
           </div>
-          <div class="link-cat"><i class="fa-solid fa-link"></i><code id="cLink">…</code></div>
-          <div class="acciones"><button class="btn claro" id="cGuardar">Guardar cambios</button><button class="btn vidrio" id="cCopiar"><i class="fa-regular fa-copy"></i> Copiar link</button><a class="btn vidrio" id="cAbrir" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Ver mi catálogo</a><a class="btn vidrio" id="cPdf" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> Versión para imprimir / PDF</a></div>
-          <div class="ok" id="cOk">Listo, tu catálogo ya está actualizado.</div>
+          <div class="campo ancho" style="margin-top:16px"><label>¿Qué precio poner?</label>
+            <div class="opciones" id="cPrecioModo">
+              <label><input type="radio" name="pm" value="mios" checked> Mis precios de Mi negocio</label>
+              <label><input type="radio" name="pm" value="sin"> Sin precios</label>
+            </div>
+          </div>
+          <div class="resumen" id="cResumen" style="margin-top:14px"></div>
+          <div class="acciones"><button class="btn claro lg" id="cPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar mi catálogo en PDF</button><button class="btn vidrio" id="cGuardar">Guardar datos</button></div>
+          <div class="ok" id="cOk">Listo, tus datos quedaron guardados.</div>
         </div>
       </div>
 
@@ -169,6 +187,7 @@
   </div>
 </footer>
 <div class="club-toast" id="toast"></div>
-<script src="club.js?v=1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="club.js?v=2"></script>
 </body>
 </html>
