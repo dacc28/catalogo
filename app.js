@@ -49,7 +49,7 @@
       <div class="info">
         <div class="nombre">${esc(p.nombre)}</div>
         <div class="detalle">${esc(p.codigo)}${p.material ? " · " + esc(p.material) : ""}</div>
-        <div class="precio"><b>${money(p.precio)}</b><span>mayoreo</span></div>
+        <div class="precio"><b>${money(p.precio)}</b><span>MXN · mayoreo</span></div>
         <div class="disp"><i></i>Disponible · en exhibición</div>
       </div></article>`;
   }
@@ -75,14 +75,14 @@
     medir("ver_pieza_detalle", { codigo: c });
     const p = byCode[c]; if (!p) return;
     let m = $("#modal"); if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; document.body.append(m); m.addEventListener("click", e => { if (e.target === m) m.classList.remove("abierto"); }); }
-    const msg = encodeURIComponent(`¡Hola Marvea! Vi en la página la pieza ${p.codigo} · ${p.nombre} (${money(p.precio)} mayoreo) y quiero más información.`);
+    const msg = encodeURIComponent(`¡Hola Marvea! Vi en la página la pieza ${p.codigo} · ${p.nombre} (${money(p.precio)} MXN mayoreo) y quiero más información.`);
     m.innerHTML = `<div class="caja-m"><button class="cerrar" aria-label="cerrar">×</button>
       <div class="foto-m"><img src="${esc(fotoUrl(p))}" alt="${esc(p.nombre)}"></div>
       <div class="info-m">
         <div class="tag-m"><span>${esc(catNombre(p))}</span>${p.material ? `<span>${esc(p.material)}</span>` : ""}<span>${esc(p.codigo)}</span></div>
         <h2>${esc(p.nombre)}</h2>
         ${badge(p).replace('class="badge', 'style="position:static;display:inline-block" class="badge')}
-        <div class="precio-m">${money(p.precio)}<small>precio mayoreo</small></div>
+        <div class="precio-m">${money(p.precio)}<small>MXN · precio mayoreo</small></div>
         <div class="disp"><i></i>Disponible · en exhibición</div>
         ${p.notas ? `<div class="notas">${esc(p.notas)}</div>` : ""}
         <div class="gana-m">Si la vendes en <b>${money(p.precio * mult())}</b> ganas <b>${money(p.precio * mult() - p.precio)}</b> por pieza.</div>
@@ -146,7 +146,7 @@
   }
   function mensajeWA() {
     const act = filas.filter(f => f.cant > 0 && f.costo > 0);
-    const lines = act.map(f => { const p = byCode[f.codigo]; return `• ${f.cant} × ${p ? p.codigo + " " + p.nombre : "pieza"} (${money(f.costo)} c/u)`; });
+    const lines = act.map(f => { const p = byCode[f.codigo]; return `• ${f.cant} × ${p ? p.codigo + " " + p.nombre : "pieza"} (${money(f.costo)} MXN c/u)`; });
     return `¡Hola Marvea! Hice mi cálculo en la página y me interesan estas piezas:\n\n${lines.join("\n")}\n\n¿Me confirman disponibilidad?`;
   }
 

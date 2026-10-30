@@ -121,7 +121,7 @@
     const e = (p.etiqueta || "").toLowerCase();
     const cls = e.includes("tendencia") ? "coral" : e.includes("ltimas") ? "rosa" : e.includes("dupe") ? "cielo" : e.includes("new") ? "lima" : e.includes("vendido") ? "amarillo" : "";
     const etq = p.etiqueta && e !== "ninguna" ? `<span class="etq ${cls}">${esc(p.etiqueta)}</span>` : "";
-    return `<a class="prod" href="catalogo.html#${esc(p.codigo)}">${etq}<div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span>mayoreo</span></div><div class="ver"><span>Ver pieza</span></div></div></a>`;
+    return `<a class="prod" href="catalogo.html#${esc(p.codigo)}">${etq}<div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span>MXN · mayoreo</span></div><div class="ver"><span>Ver pieza</span></div></div></a>`;
   }
   async function catalogo() {
     try {
