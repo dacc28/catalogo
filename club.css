@@ -186,3 +186,14 @@
 .mini-cat b{display:block;font-family:var(--display);font-size:18px;color:#fff}
 .mini-cat span{font-size:13px;color:rgba(255,255,255,.75)}
 @media (max-width:900px){.cat-grid{grid-template-columns:1fr}.logo-prev{max-width:220px}}
+
+/* Cerrar sesión arriba */
+.top-der{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn-salir{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 18px;font:inherit;font-weight:700;font-size:14px;color:#fff;cursor:pointer;transition:background .2s}
+.btn-salir:hover{background:rgba(255,255,255,.3)}
+@media (max-width:900px){
+  .top-der{width:100%;flex-wrap:nowrap}
+  .top-der .club-tabs{flex:1;min-width:0}
+  .btn-salir{padding:12px 14px;flex:none}
+  .btn-salir span{display:none}
+}

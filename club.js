@@ -34,7 +34,8 @@
     if (error) { err.textContent = /invalid/i.test(error.message) ? "Usuario o contraseña incorrectos. Si no tienes acceso todavía, pídelo por WhatsApp." : "No pudimos entrar: " + error.message; err.classList.add("on"); medir("club_login_error"); return; }
     medir("club_login"); abrir();
   });
-  $("#salir").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+  const salir = async () => { try { await sb.auth.signOut(); } catch (e) {} medir("club_logout"); location.replace("club.html"); };
+  $("#salir").addEventListener("click", salir); $("#salirTop").addEventListener("click", salir);
 
   async function abrir() {
     $("#login").style.display = "none"; $("#cargando").style.display = "block";
