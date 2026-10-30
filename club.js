@@ -86,9 +86,11 @@
     else { $("#uDesc").textContent = "Todavía no tienes pedidos finalizados. Cuando cerremos tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
     pintarMiniCat();
   }
+  const abrirDHL = g => { g = String(g || "").replace(/\s+/g, ""); if (!g) return toast("Escribe tu número de guía", true); window.open("https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1", "_blank", "noopener"); medir("club_rastrear"); };
+  $("#rastreoClub").addEventListener("submit", e => { e.preventDefault(); abrirDHL($("#guiaRapida").value); });
   function pintarPedidos() {
     const box = $("#listaPedidos"); box.innerHTML = "";
-    if (!S.pedidos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto finalicemos tu primera compra en un live o por WhatsApp, la verás aquí con sus fotos.</div>'; return; }
+    if (!S.pedidos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto finalicemos tu primera compra en un live o por WhatsApp, la verás aquí con sus fotos y su propio campo de guía DHL. Mientras, puedes rastrear cualquier envío arriba.</div>'; return; }
     for (const p of S.pedidos) {
       const el = document.createElement("div"); el.className = "glass ped";
       const guia = (p.guia || "").trim(); const track = guia ? "https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(guia) + "&submit=1" : "";

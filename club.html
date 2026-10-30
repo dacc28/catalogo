@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="site.css?v=14">
-<link rel="stylesheet" href="club.css?v=3">
+<link rel="stylesheet" href="site.css?v=16">
+<link rel="stylesheet" href="club.css?v=5">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -106,6 +106,11 @@
       <div class="panel" id="p-pedidos">
         <div class="glass g-sec">
           <div class="cab"><div><h2>Mis <i>pedidos</i></h2><p>Todo lo que has comprado en Marvea, con fotos y guía DHL. Cuando recibas tu paquete, márcalo como entregado.</p></div></div>
+          <form class="guia rastreo-club" id="rastreoClub" autocomplete="off">
+            <label for="guiaRapida"><i class="fa-solid fa-truck-fast"></i> Rastrea tu envío DHL</label>
+            <input id="guiaRapida" inputmode="numeric" placeholder="Pega tu número de guía (10 dígitos)" maxlength="30">
+            <button class="btn claro sm" type="submit">Rastrear en DHL</button>
+          </form>
           <div id="listaPedidos"></div>
         </div>
       </div>
@@ -191,6 +196,6 @@
 </footer>
 <div class="club-toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="club.js?v=3"></script>
+<script src="club.js?v=4"></script>
 </body>
 </html>

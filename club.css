@@ -197,3 +197,21 @@
   .btn-salir{padding:12px 14px;flex:none}
   .btn-salir span{display:none}
 }
+
+/* Ajustes celular: que nada se salga de la pantalla */
+.dos>*,.form>*,.cat-grid>*,.kpis>*{min-width:0}
+.campo .in{min-width:0}
+@media (max-width:900px){
+  .pzs{grid-template-columns:1fr}
+  .acciones .btn{white-space:normal;text-align:center}
+  .acciones .btn.lg{width:100%;padding:16px 20px;font-size:16px}
+  .logo-prev{margin:0 auto}
+  .logo-box{text-align:left}
+}
+.btn[hidden]{display:none!important}
+.opciones input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.8);background:transparent;display:inline-grid;place-items:center;flex:none}
+.opciones input:checked{border-color:#fff;background:radial-gradient(circle,#fff 0 4px,var(--coral) 5px)}
+.opciones label:has(input:checked){background:rgba(255,255,255,.26);border-color:#fff}
+/* rastreo rápido siempre visible en Mis pedidos */
+.rastreo-club{margin:0 0 16px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.3)}
+.rastreo-club label{text-transform:none;letter-spacing:0;font-size:15px}

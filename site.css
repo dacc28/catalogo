@@ -404,6 +404,8 @@ body[data-mode] .app{padding-top:26px}
 .rastreo-form .btn.full{width:100%}
 .rastreo-form .nota{font-size:13px;color:var(--tinta-2);margin:0}
 .rastreo-form .nota a{color:var(--coral);font-weight:700}
+.rastreo-grid>*{min-width:0}
+.rastreo-form input{width:100%;min-width:0;box-sizing:border-box}
 @media (max-width:820px){.rastreo-grid{grid-template-columns:1fr;gap:22px}}
 
 /* botón ir al inicio */
