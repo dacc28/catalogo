@@ -1,0 +1,167 @@
+/* Marvea Business Club · perfil privado de clientas (beta) */
+.club-fondo{position:relative;min-height:calc(100vh - 72px);background:var(--ciruela-3);overflow:hidden}
+.club-fondo .poster{position:absolute;inset:0;background:url(poster.jpg) center/cover no-repeat;opacity:.55;transform:scale(1.04)}
+.club-fondo .velo{position:absolute;inset:0;background:linear-gradient(160deg,rgba(62,26,50,.86) 0%,rgba(90,39,72,.72) 45%,rgba(242,101,63,.45) 100%)}
+.club-fondo .luz{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);opacity:.55;pointer-events:none}
+.club-fondo .luz.a{background:var(--coral);top:-160px;right:-120px}
+.club-fondo .luz.b{background:var(--amarillo);bottom:-220px;left:-160px;opacity:.35}
+.club-fondo>.wrap{position:relative;z-index:2}
+
+/* vidrio líquido */
+.glass{position:relative;overflow:hidden;color:#fff;border-radius:var(--r-lg);
+  background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,.42);
+  box-shadow:0 24px 60px rgba(40,12,30,.35),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(255,255,255,.1)}
+.glass::before{content:"";position:absolute;inset:-45% -20% auto -20%;height:75%;background:radial-gradient(ellipse at 28% 0,rgba(255,255,255,.42),rgba(255,255,255,0) 62%);pointer-events:none}
+.glass>*{position:relative}
+.glass h2,.glass h3,.glass h4{color:#fff}
+.glass h2 i,.glass h3 i{color:var(--amarillo)}
+.glass .suave{color:rgba(255,255,255,.78)}
+
+/* acceso */
+.club-login{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:70px 0 90px}
+.club-login .marca .sello{display:inline-flex;align-items:center;gap:10px;color:var(--amarillo);font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12.5px}
+.club-login .marca .sello i{width:28px;height:1px;background:var(--amarillo);display:inline-block}
+.club-login .marca h1{color:#fff;font-size:clamp(38px,4.9vw,64px);margin-top:14px}
+.club-login .marca h1 b{display:block;font-weight:800;font-variation-settings:"SOFT" 100,"opsz" 144;letter-spacing:.02em}
+.club-login .marca h1 i{color:var(--amarillo);font-weight:500}
+.club-login .marca .lead{color:rgba(255,255,255,.82);margin-top:16px;font-size:18px}
+.club-login .marca ul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:10px}
+.club-login .marca li{display:flex;gap:12px;align-items:flex-start;color:rgba(255,255,255,.9);font-weight:600}
+.club-login .marca li span{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);font-size:14px}
+.club-login .beta{display:inline-block;margin-left:12px;vertical-align:middle;background:var(--coral);color:#fff;border-radius:999px;padding:4px 11px;font-size:11.5px;letter-spacing:.14em;font-weight:800}
+.caja-login{padding:34px 32px 28px}
+.caja-login .cab{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.caja-login .cab img{width:44px;height:44px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.caja-login .cab b{display:block;font-family:var(--display);font-size:22px;line-height:1.05}
+.caja-login .cab span{font-size:12.5px;color:rgba(255,255,255,.72);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.campo label{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.campo .in{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:0 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:background .2s,border-color .2s}
+.campo .in:focus-within{background:rgba(255,255,255,.22);border-color:#fff}
+.campo .in i{color:var(--amarillo);width:18px;text-align:center}
+.campo input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:17px;font-weight:600;padding:14px 0;letter-spacing:.02em}
+.campo input::placeholder{color:rgba(255,255,255,.5);font-weight:500}
+.campo .ojo{background:transparent;border:0;color:rgba(255,255,255,.75);padding:6px;border-radius:8px}
+.campo .ojo:hover{color:#fff}
+.caja-login .btn{width:100%;margin-top:4px}
+.caja-login .ayuda{margin-top:16px;font-size:13.5px;color:rgba(255,255,255,.75);text-align:center;line-height:1.5}
+.caja-login .ayuda a{color:var(--amarillo);font-weight:700}
+.error{display:none;background:rgba(181,51,63,.35);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;margin-bottom:12px}
+.error.on{display:block}
+.btn.claro{background:#fff;border-color:#fff;color:var(--ciruela)}
+.btn.claro:hover{background:var(--amarillo);border-color:var(--amarillo)}
+.btn.vidrio{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.55);color:#fff;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.btn.vidrio:hover{background:rgba(255,255,255,.28)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+
+/* panel de la clienta */
+.club-app{display:none;padding:28px 0 70px}
+.club-app.on{display:block}
+.club-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.club-top .quien{display:flex;align-items:center;gap:14px;color:#fff}
+.club-top .av{width:52px;height:52px;border-radius:50%;background:var(--amarillo);color:var(--ciruela);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.club-top .quien b{display:block;font-family:var(--display);font-size:24px;line-height:1.05}
+.club-top .quien span{font-size:13px;color:rgba(255,255,255,.75)}
+.club-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:6px;border-radius:999px}
+.club-tabs button{border:0;background:transparent;color:rgba(255,255,255,.85);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.club-tabs button:hover{background:rgba(255,255,255,.14)}
+.club-tabs button.on{background:#fff;color:var(--ciruela);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.club-tabs button i{font-size:13px}
+.panel{display:none;animation:aparece .45s cubic-bezier(.2,.8,.2,1)}
+.panel.on{display:block}
+@keyframes aparece{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.g-sec{padding:26px 26px 24px;margin-top:16px}
+.g-sec .cab{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.g-sec .cab p{color:rgba(255,255,255,.75);font-size:14px;margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{padding:18px 18px 16px;border-radius:22px}
+.kpi small{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:rgba(255,255,255,.75)}
+.kpi b{display:block;font-family:var(--display);font-size:34px;line-height:1.05;margin-top:6px;color:#fff}
+.kpi b em{font-style:normal;font-size:16px;color:rgba(255,255,255,.7);font-weight:500}
+.kpi.acento b{color:var(--amarillo)}
+.kpi span{display:block;font-size:12.5px;color:rgba(255,255,255,.7);margin-top:6px}
+.dos{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:800;letter-spacing:.02em}
+.chip.prep{background:var(--amarillo);color:var(--ciruela)}
+.chip.env{background:var(--cielo);color:#2E5A7A}
+.chip.ent{background:#DDF3E4;color:#1F6B3A}
+.chip.live{background:var(--coral);color:#fff}
+.chip.wa{background:#DDF3E4;color:#1F6B3A}
+.chip.vidrio{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff}
+.vacio{padding:36px 20px;text-align:center;color:rgba(255,255,255,.8)}
+.vacio b{display:block;font-family:var(--display);font-size:22px;color:#fff;margin-bottom:6px}
+
+/* pedidos */
+.ped{padding:20px 22px;margin-top:14px;border-radius:24px}
+.ped .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ped .top b{font-family:var(--display);font-size:20px;color:#fff}
+.ped .top small{display:block;color:rgba(255,255,255,.72);font-size:13px;margin-top:2px}
+.ped .top .der{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pzs{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.pz{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:8px}
+.pz img{width:54px;height:54px;border-radius:11px;object-fit:cover;background:rgba(255,255,255,.2)}
+.pz .t b{display:block;font-size:13.5px;color:#fff;line-height:1.2}
+.pz .t span{font-size:12px;color:rgba(255,255,255,.72)}
+.guia{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(255,255,255,.2)}
+.guia label{font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.8);margin-right:4px}
+.guia input{flex:1;min-width:170px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;font-weight:700;color:#fff;letter-spacing:.06em;outline:0}
+.guia input::placeholder{color:rgba(255,255,255,.45);font-weight:500;letter-spacing:0}
+.guia .btn{padding:10px 16px;font-size:13.5px}
+
+/* mi negocio (inventario) */
+.tabla{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px}
+.tabla th{text-align:left;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8);padding:12px 10px;background:rgba(255,255,255,.12);font-weight:800}
+.tabla td{padding:10px;white-space:nowrap;border-top:1px solid rgba(255,255,255,.14);font-size:14px;vertical-align:middle;color:#fff}
+.tabla tr.agotado td{opacity:.55}
+.pcell{display:flex;align-items:center;gap:10px}
+.pcell img{width:46px;height:46px;border-radius:11px;object-fit:cover;background:rgba(255,255,255,.2)}
+.pcell b{display:block;font-size:13.5px;line-height:1.15;white-space:normal;max-width:180px}
+.pcell span{font-size:11.5px;color:rgba(255,255,255,.7)}
+.inp{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:4px 8px;font-weight:700;color:#fff}
+.inp input{width:62px;background:transparent;border:0;font:inherit;font-weight:800;color:#fff;outline:0;text-align:right}
+.inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.inp input[type=number]{-moz-appearance:textfield}
+.ico{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;display:inline-grid;place-items:center;font-size:14px}
+.ico:hover{background:#fff;color:var(--ciruela)}
+.ico.off{opacity:.45}
+.tabla-wrap{overflow:auto;-webkit-overflow-scrolling:touch}
+.resumen{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.resumen .chip{font-size:13px;padding:8px 14px}
+.toggle{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;color:#fff}
+.toggle input{appearance:none;width:44px;height:26px;border-radius:999px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.45);position:relative;cursor:pointer;transition:.2s;margin:0}
+.toggle input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.toggle input:checked{background:var(--coral)}
+.toggle input:checked::after{left:21px}
+
+/* mi catálogo / perfil */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form .campo{margin:0}
+.form .campo.ancho{grid-column:1/-1}
+.campo .in input.clara{font-size:16px}
+.link-cat{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.14);border:1px dashed rgba(255,255,255,.55);border-radius:16px;padding:12px 14px;margin-top:14px;color:#fff}
+.link-cat code{font-family:inherit;font-weight:800;font-size:15px;letter-spacing:.01em;word-break:break-all;flex:1}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ok{display:none;background:rgba(31,107,58,.45);border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;margin-top:12px}
+.ok.on{display:block}
+.nota-beta{margin-top:24px;text-align:center;color:rgba(255,255,255,.6);font-size:12.5px}
+.club-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);z-index:90;background:var(--ciruela);color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:0 14px 40px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.3s}
+.club-toast.on{opacity:1;transform:translateX(-50%)}
+.club-toast.mal{background:var(--rojo)}
+.cargando{text-align:center;color:#fff;padding:60px 0;font-weight:700}
+
+@media (max-width:900px){
+  .club-login{grid-template-columns:1fr;gap:28px;padding:44px 0 60px}
+  .club-login .marca ul{display:none}
+  .kpis{grid-template-columns:1fr 1fr}
+  .dos{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .club-tabs{width:100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:22px;scrollbar-width:none}
+  .club-tabs::-webkit-scrollbar{display:none}
+  .club-tabs button{padding:10px 13px;font-size:13px;white-space:nowrap;flex:none}
+  .pzs{grid-template-columns:1fr 1fr}
+  .pz img{width:46px;height:46px}
+  .g-sec{padding:20px 16px}
+  .ped{padding:16px}
+}

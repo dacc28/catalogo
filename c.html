@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ciruela:#5A2748;--ciruela-3:#3E1A32;--coral:#F2653F;--amarillo:#F8EE9A;--rosa-2:#FBE4EC;--crema:#FBF6EC;--tinta:#2B1A26;--tinta-2:#6B5664;--linea:#EBE2D6;--display:"Fraunces",Georgia,serif;--cuerpo:"Urbanist","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--crema);color:var(--tinta);font-family:var(--cuerpo);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header{background:var(--ciruela-3);color:#fff;padding:54px 0 46px;position:relative;overflow:hidden}
+header .luz{position:absolute;width:480px;height:480px;border-radius:50%;filter:blur(90px);opacity:.5;background:var(--coral);top:-200px;right:-120px;pointer-events:none}
+header .wrap{position:relative}
+header small{display:inline-block;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--amarillo)}
+header h1{font-family:var(--display);font-weight:700;font-variation-settings:"SOFT" 100,"opsz" 144;font-size:clamp(36px,6vw,64px);margin:8px 0 0;line-height:1.05;letter-spacing:-.01em}
+header p{margin:12px 0 0;font-size:18px;color:rgba(255,255,255,.82);max-width:620px}
+header .wa{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:#25D366;color:#fff;text-decoration:none;font-weight:800;border-radius:999px;padding:12px 20px}
+.barra{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 6px}
+.barra button{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;font-size:13.5px;color:var(--ciruela);cursor:pointer}
+.barra button.on{background:var(--ciruela);border-color:var(--ciruela);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;padding:14px 0 50px}
+.card{background:#fff;border-radius:20px;overflow:hidden;border:1px solid var(--linea);display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(90,39,72,.06)}
+.card .img{aspect-ratio:1;background:var(--rosa-2);position:relative}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card .n{position:absolute;top:10px;left:10px;background:#fff;color:var(--ciruela);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800}
+.card .t{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card b{font-family:var(--display);font-weight:600;font-size:17px;color:var(--ciruela);line-height:1.15}
+.card span{font-size:12.5px;color:var(--tinta-2)}
+.card .p{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px}
+.card .p strong{font-size:20px;color:var(--coral);font-family:var(--display);font-weight:700}
+.card .p a{text-decoration:none;background:var(--ciruela);color:#fff;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:800;white-space:nowrap}
+.vacio,.cargando{text-align:center;padding:70px 20px;color:var(--tinta-2)}
+.vacio b{display:block;font-family:var(--display);color:var(--ciruela);font-size:24px;margin-bottom:6px}
+footer{text-align:center;padding:26px 20px 40px;font-size:13px;color:var(--tinta-2)}
+footer a{color:var(--ciruela);font-weight:700;text-decoration:none}
+.print-btn{position:fixed;right:18px;bottom:18px;background:#fff;color:var(--ciruela);border:1.5px solid var(--linea);border-radius:999px;padding:10px 16px;font:inherit;font-weight:800;font-size:13.5px;box-shadow:0 10px 30px rgba(90,39,72,.14);cursor:pointer}
+@media print{header{padding:26px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.barra,.print-btn,header .wa,.card .p a{display:none!important}.grid{grid-template-columns:repeat(4,1fr);gap:10px}.card{break-inside:avoid;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<header><div class="luz"></div><div class="wrap"><small id="eti">Catálogo</small><h1 id="negocio">Cargando…</h1><p id="frase"></p><a class="wa" id="waTop" href="#" target="_blank" rel="noopener" hidden>Pedir por WhatsApp</a></div></header>
+<div class="wrap">
+  <div class="barra" id="barra"></div>
+  <div class="cargando" id="cargando">Cargando catálogo…</div>
+  <div class="grid" id="grid"></div>
+</div>
+<footer>Catálogo hecho con <a href="https://www.marveamayoreo.com/" target="_blank" rel="noopener">Marvea Business Club</a></footer>
+<button class="print-btn" id="imprimir" hidden>Imprimir / guardar PDF</button>
+<script>
+(() => {
+  const SB_URL = "https://kuuewntjxtjjktxbgxfk.supabase.co", SB_KEY = "sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8";
+  const $ = s => document.querySelector(s); const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const mxn = n => "$" + Math.round(Number(n) || 0).toLocaleString("es-MX");
+  const q = new URLSearchParams(location.search); const slug = (q.get("s") || "").trim();
+  const vacio = (t, d) => { $("#cargando").style.display = "none"; $("#grid").innerHTML = '<div class="vacio" style="grid-column:1/-1"><b>' + t + '</b>' + d + '</div>'; };
+  if (!slug) { $("#negocio").textContent = "Catálogo"; vacio("Falta la dirección del catálogo", "Pide a tu vendedora su link completo."); return; }
+  if (!window.supabase) { vacio("No se pudo cargar", "Revisa tu conexión e intenta de nuevo."); return; }
+  const sb = window.supabase.createClient(SB_URL, SB_KEY);
+  sb.rpc("catalogo_publico", { p_slug: slug }).then(({ data, error }) => {
+    if (error || !data) { $("#negocio").textContent = "Catálogo"; vacio("Este catálogo no está disponible", "Puede que el link esté incompleto o que esté pausado por el momento."); return; }
+    const neg = data.negocio || "Catálogo"; document.title = neg + " · Catálogo"; $("#negocio").textContent = neg; $("#frase").textContent = data.frase || "";
+    const wa = String(data.whatsapp || "").replace(/\D/g, ""); const waLink = t => wa ? "https://wa.me/" + (wa.length === 10 ? "52" + wa : wa) + "?text=" + encodeURIComponent(t) : "";
+    if (wa) { $("#waTop").hidden = false; $("#waTop").href = waLink("Hola " + neg + ", vi tu catálogo y quiero hacer un pedido"); }
+    const piezas = data.piezas || []; $("#cargando").style.display = "none"; $("#imprimir").hidden = false;
+    if (!piezas.length) { vacio("Pronto habrá piezas nuevas", "Por el momento no hay piezas disponibles. Vuelve pronto."); return; }
+    const cats = [...new Set(piezas.map(p => p.categoria || "Otros"))].sort(); let cat = "";
+    const pintar = () => {
+      $("#barra").innerHTML = '<button class="' + (cat ? "" : "on") + '" data-c="">Todo</button>' + cats.map(c => '<button class="' + (cat === c ? "on" : "") + '" data-c="' + esc(c) + '">' + esc(c) + '</button>').join("");
+      document.querySelectorAll("#barra button").forEach(b => b.onclick = () => { cat = b.dataset.c; pintar(); });
+      $("#grid").innerHTML = piezas.filter(p => !cat || (p.categoria || "Otros") === cat).map(p => '<div class="card"><div class="img">' + (p.foto ? '<img src="' + esc(p.foto) + '" alt="' + esc(p.nombre) + '" loading="lazy">' : "") + (Number(p.disponibles) > 1 ? '<span class="n">' + p.disponibles + ' disponibles</span>' : '<span class="n">Última pieza</span>') + '</div><div class="t"><b>' + esc(p.nombre || p.codigo) + '</b><span>' + esc([p.categoria, p.material].filter(Boolean).join(" · ")) + '</span><div class="p"><strong>' + (Number(p.precio) > 0 ? mxn(p.precio) : "Pregúntame") + '</strong>' + (wa ? '<a href="' + waLink("Hola " + neg + ", me interesa: " + (p.nombre || p.codigo)) + '" target="_blank" rel="noopener">Lo quiero</a>' : "") + '</div></div></div>').join("");
+    };
+    pintar();
+    $("#imprimir").onclick = () => window.print();
+    if (q.get("print") === "1") setTimeout(() => window.print(), 900);
+  });
+})();
+</script>
+</body>
+</html>

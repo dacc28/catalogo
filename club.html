@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marvea Business Club · Tu espacio privado</title>
+<meta name="description" content="Marvea Business Club: el espacio privado de nuestras clientas. Consulta tus pedidos y guías DHL, registra tus ventas, mide tu ganancia y comparte tu propio catálogo con el nombre de tu negocio.">
+<meta name="robots" content="noindex">
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B7H8FPWDP7"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B7H8FPWDP7');</script>
+<link rel="icon" href="logo-m.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="site.css?v=14">
+<link rel="stylesheet" href="club.css?v=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<nav class="nav solida">
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a>
+    <ul>
+      <li><a href="catalogo.html">Catálogo</a></li>
+      <li><a href="calculadora.html">Calculadora</a></li>
+      <li><a href="index.html#como-comprar">Cómo comprar</a></li>
+      <li><a href="index.html#rastreo">Rastrea tu pedido</a></li>
+      <li><a href="club.html" class="activo">Business Club</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn coral sm" href="https://wa.me/528132660673" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="hamb" aria-label="menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<main class="club-fondo">
+  <div class="poster"></div><div class="velo"></div><div class="luz a"></div><div class="luz b"></div>
+  <div class="wrap">
+
+    <!-- ===== ACCESO ===== -->
+    <section class="club-login" id="login">
+      <div class="marca">
+        <span class="sello"><i></i>Solo para clientas Marvea</span><span class="beta">BETA</span>
+        <h1><b>MARVEA</b><b>BUSINESS CLUB</b><i>tu negocio, en un solo lugar</i></h1>
+        <p class="lead">Un espacio privado para cada clienta: aquí ves lo que nos has comprado, sigues tus envíos, registras lo que vendes y compartes tu propio catálogo con el nombre de tu negocio.</p>
+        <ul>
+          <li><span><i class="fa-solid fa-box-open"></i></span>Tus pedidos con fotos, piezas y guía DHL para rastrear</li>
+          <li><span><i class="fa-solid fa-chart-line"></i></span>Registra tus ventas y mira tu ganancia real</li>
+          <li><span><i class="fa-solid fa-store"></i></span>Tu catálogo con tus precios, listo para mandar por WhatsApp</li>
+        </ul>
+      </div>
+      <form class="glass caja-login" id="formLogin" autocomplete="on">
+        <div class="cab"><img src="logo-m.png" alt=""><div><b>Entrar al Club</b><span>Acceso privado</span></div></div>
+        <div class="error" id="loginError"></div>
+        <div class="campo"><label for="usuario">Tu WhatsApp (10 dígitos)</label><div class="in"><i class="fa-brands fa-whatsapp"></i><input id="usuario" inputmode="numeric" autocomplete="username" placeholder="81 1234 5678" maxlength="16" required></div></div>
+        <div class="campo"><label for="pass">Contraseña</label><div class="in"><i class="fa-solid fa-key"></i><input id="pass" type="password" autocomplete="current-password" placeholder="marvea-···-····" required><button type="button" class="ojo" id="verPass" aria-label="Mostrar contraseña"><i class="fa-regular fa-eye"></i></button></div></div>
+        <button class="btn claro lg" id="btnEntrar" type="submit">Entrar <span class="fl">→</span></button>
+        <p class="ayuda">¿Aún no tienes acceso o la olvidaste? Escríbenos por <a href="https://wa.me/528132380573?text=Hola%20Marvea%2C%20quiero%20mi%20acceso%20al%20Business%20Club" target="_blank" rel="noopener">WhatsApp Atención al Cliente</a> y te lo mandamos.</p>
+      </form>
+    </section>
+
+    <!-- ===== PANEL DE LA CLIENTA ===== -->
+    <section class="club-app" id="app">
+      <div class="club-top">
+        <div class="quien"><div class="av" id="avatar">M</div><div><b id="hola">Hola</b><span id="subtitulo">Marvea Business Club</span></div></div>
+        <nav class="glass club-tabs" id="tabs">
+          <button data-p="inicio" class="on"><i class="fa-solid fa-house"></i><span>Inicio</span></button>
+          <button data-p="pedidos"><i class="fa-solid fa-box-open"></i><span>Mis pedidos</span></button>
+          <button data-p="negocio"><i class="fa-solid fa-chart-line"></i><span>Mi negocio</span></button>
+          <button data-p="catalogo"><i class="fa-solid fa-store"></i><span>Mi catálogo</span></button>
+          <button data-p="perfil"><i class="fa-solid fa-user"></i><span>Mi perfil</span></button>
+        </nav>
+      </div>
+
+      <div class="panel on" id="p-inicio">
+        <div class="kpis">
+          <div class="glass kpi"><small>Piezas compradas</small><b id="kPiezas">0</b><span id="kPedidos">0 pedidos</span></div>
+          <div class="glass kpi"><small>Invertido en Marvea</small><b id="kInvertido">$0</b><span>a precio de mayoreo</span></div>
+          <div class="glass kpi"><small>Piezas vendidas</small><b id="kVendidas">0</b><span id="kDisponibles">0 disponibles</span></div>
+          <div class="glass kpi acento"><small>Tu ganancia</small><b id="kGanancia">$0</b><span id="kIngresos">$0 en ventas registradas</span></div>
+        </div>
+        <div class="dos">
+          <div class="glass g-sec">
+            <div class="cab"><div><h3>Tu último pedido</h3><p id="uDesc">Aquí aparecerá tu pedido más reciente.</p></div><span id="uEstado"></span></div>
+            <div id="uPiezas" class="pzs"></div>
+            <div class="acciones"><button class="btn vidrio sm" data-ir="pedidos">Ver todos mis pedidos</button></div>
+          </div>
+          <div class="glass g-sec">
+            <div class="cab"><div><h3>Tu catálogo</h3><p>Compártelo con tus clientas: solo muestra tus precios, nunca los de mayoreo.</p></div></div>
+            <div class="link-cat"><i class="fa-solid fa-link"></i><code id="iLink">…</code></div>
+            <div class="acciones"><button class="btn claro sm" id="iCopiar"><i class="fa-regular fa-copy"></i> Copiar link</button><a class="btn vidrio sm" id="iAbrir" href="#" target="_blank" rel="noopener">Ver catálogo</a><button class="btn vidrio sm" data-ir="catalogo">Personalizar</button></div>
+          </div>
+        </div>
+        <div class="glass g-sec">
+          <div class="cab"><div><h3>¿Qué te gustaría ver aquí?</h3><p>El Club está en beta. Cuéntanos qué te serviría y lo vamos construyendo contigo.</p></div><a class="btn vidrio sm" href="https://wa.me/528132380573?text=Hola%20Marvea%2C%20tengo%20una%20idea%20para%20el%20Business%20Club%3A%20" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Mandar idea</a></div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-pedidos">
+        <div class="glass g-sec">
+          <div class="cab"><div><h2>Mis <i>pedidos</i></h2><p>Todo lo que has comprado en Marvea, con fotos y guía DHL. Cuando recibas tu paquete, márcalo como entregado.</p></div></div>
+          <div id="listaPedidos"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-negocio">
+        <div class="glass g-sec">
+          <div class="cab"><div><h2>Mi <i>negocio</i></h2><p>Pon tu precio de venta, registra cada pieza que vendas y mira cuánto has ganado. Lo que marques como no visible no sale en tu catálogo.</p></div></div>
+          <div class="resumen" id="resumenNegocio"></div>
+          <div class="tabla-wrap"><table class="tabla" id="tablaInv"><thead><tr><th>Pieza</th><th>Compraste</th><th>Vendiste</th><th>Te quedan</th><th>Tu costo</th><th>Tu precio</th><th>Ganancia</th><th>Vender</th><th>Catálogo</th></tr></thead><tbody></tbody></table></div>
+          <div class="vacio" id="invVacio" style="display:none"><b>Todavía no hay piezas</b>Cuando finalicemos tu primer pedido, aquí aparecerán tus piezas para que registres tus ventas.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-catalogo">
+        <div class="glass g-sec">
+          <div class="cab"><div><h2>Mi <i>catálogo</i></h2><p>Tus clientas verán tus piezas disponibles con tus precios y un botón para pedirte por WhatsApp. Marvea no aparece con precios de mayoreo.</p></div><label class="toggle"><input type="checkbox" id="cActivo"> Catálogo activo</label></div>
+          <div class="form">
+            <div class="campo"><label for="cNombre">Nombre de tu negocio</label><div class="in"><i class="fa-solid fa-store"></i><input id="cNombre" class="clara" placeholder="Ej. Joyería Luna" maxlength="40"></div></div>
+            <div class="campo"><label for="cWhats">WhatsApp para que te pidan</label><div class="in"><i class="fa-brands fa-whatsapp"></i><input id="cWhats" class="clara" inputmode="numeric" placeholder="10 dígitos" maxlength="16"></div></div>
+            <div class="campo ancho"><label for="cFrase">Frase de tu negocio (opcional)</label><div class="in"><i class="fa-solid fa-sparkles"></i><input id="cFrase" class="clara" placeholder="Ej. Acero inoxidable que no se despinta · Envíos en Saltillo" maxlength="90"></div></div>
+            <div class="campo ancho"><label for="cSlug">Dirección de tu catálogo</label><div class="in"><i class="fa-solid fa-link"></i><span style="color:rgba(255,255,255,.7);font-weight:600">marveamayoreo.com/c.html?s=</span><input id="cSlug" class="clara" placeholder="tu-negocio" maxlength="40" style="padding-left:4px"></div></div>
+          </div>
+          <div class="link-cat"><i class="fa-solid fa-link"></i><code id="cLink">…</code></div>
+          <div class="acciones"><button class="btn claro" id="cGuardar">Guardar cambios</button><button class="btn vidrio" id="cCopiar"><i class="fa-regular fa-copy"></i> Copiar link</button><a class="btn vidrio" id="cAbrir" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Ver mi catálogo</a><a class="btn vidrio" id="cPdf" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> Versión para imprimir / PDF</a></div>
+          <div class="ok" id="cOk">Listo, tu catálogo ya está actualizado.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="p-perfil">
+        <div class="dos">
+          <div class="glass g-sec">
+            <div class="cab"><div><h2>Mi <i>perfil</i></h2><p>Tus datos de contacto con Marvea.</p></div></div>
+            <div class="form">
+              <div class="campo"><label for="pNombre">Tu nombre</label><div class="in"><i class="fa-solid fa-user"></i><input id="pNombre" class="clara" maxlength="60"></div></div>
+              <div class="campo"><label for="pCiudad">Ciudad</label><div class="in"><i class="fa-solid fa-location-dot"></i><input id="pCiudad" class="clara" maxlength="60"></div></div>
+              <div class="campo ancho"><label>Usuario (tu WhatsApp)</label><div class="in"><i class="fa-brands fa-whatsapp"></i><input id="pUsuario" class="clara" disabled></div></div>
+            </div>
+            <div class="acciones"><button class="btn claro" id="pGuardar">Guardar</button><button class="btn vidrio" id="salir"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</button></div>
+            <div class="ok" id="pOk">Datos guardados.</div>
+          </div>
+          <div class="glass g-sec">
+            <div class="cab"><div><h3>Cambiar contraseña</h3><p>Elige una que solo tú conozcas (mínimo 8 caracteres).</p></div></div>
+            <div class="campo"><label for="n1">Nueva contraseña</label><div class="in"><i class="fa-solid fa-key"></i><input id="n1" type="password" class="clara" autocomplete="new-password"></div></div>
+            <div class="campo"><label for="n2">Repítela</label><div class="in"><i class="fa-solid fa-key"></i><input id="n2" type="password" class="clara" autocomplete="new-password"></div></div>
+            <div class="acciones"><button class="btn claro" id="nGuardar">Cambiar contraseña</button></div>
+            <div class="ok" id="nOk">Contraseña cambiada. Úsala la próxima vez que entres.</div>
+          </div>
+        </div>
+        <p class="nota-beta">Marvea Business Club · versión beta · Tus datos solo los ves tú y Marvea. ¿Dudas? <a href="https://wa.me/528132380573" target="_blank" rel="noopener" style="color:var(--amarillo)">WhatsApp Atención al Cliente</a></p>
+      </div>
+    </section>
+
+    <div class="cargando" id="cargando" style="display:none"><i class="fa-solid fa-circle-notch fa-spin"></i> Abriendo tu espacio…</div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a><p style="margin:12px 0 0;max-width:320px">Mayoreo de joyería para quienes emprenden. Acero inoxidable y chapa de oro en tendencia, a precios pensados para que tú ganes. Donde emprendes tu negocio.</p></div>
+    <div><h4>Compra</h4><a href="catalogo.html">Catálogo</a><a href="index.html#como-comprar">Cómo comprar</a><a href="index.html#rastreo">Rastrea tu pedido</a><a href="club.html">Business Club</a></div>
+    <div><h4>Para tu negocio</h4><a href="calculadora.html">Calculadora de ganancias</a><a href="index.html#lives">Lives lunes y jueves</a><a href="index.html#preguntas">Preguntas frecuentes</a></div>
+    <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Atención al Cliente · 81 3238 0573</a><a href="mailto:contacto@marvea.com"><i class="fa-regular fa-envelope"></i> contacto@marvea.com</a></div>
+    <div class="copy"><span>© 2026 Marvea · Empresa hermana de VJ Joyería</span><span>Mira. Elige. Emprende.</span></div>
+  </div>
+</footer>
+<div class="club-toast" id="toast"></div>
+<script src="club.js?v=1"></script>
+</body>
+</html>
