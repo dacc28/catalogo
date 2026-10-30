@@ -1,6 +1,7 @@
 /* Marvea · catálogo web (solo visualización) y calculadora de ganancias (manual)
    Lee catalogo.json publicado por el sistema Marvea. Modo según data-mode en <body>. */
 (function () {
+  const medir = (n, d) => { try { if (typeof gtag === "function") gtag("event", n, d || {}); } catch (e) {} };
   "use strict";
   const MODE = document.body.dataset.mode || "catalogo";
   const $ = (s, r) => (r || document).querySelector(s);
@@ -71,6 +72,7 @@
     $$(".chip", el).forEach(b => b.addEventListener("click", () => { filtroCat = b.dataset.cat; pintarChips(); pintarCatalogo(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
   }
   function abrirModal(c) {
+    medir("ver_pieza_detalle", { codigo: c });
     const p = byCode[c]; if (!p) return;
     let m = $("#modal"); if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; document.body.append(m); m.addEventListener("click", e => { if (e.target === m) m.classList.remove("abierto"); }); }
     const msg = encodeURIComponent(`¡Hola Marvea! Vi en la página la pieza ${p.codigo} · ${p.nombre} (${money(p.precio)} mayoreo) y quiero más información.`);
@@ -163,7 +165,7 @@
       filas = [nuevaFila(pre && byCode[pre] ? pre : "")];
       $("#addFila") && $("#addFila").addEventListener("click", () => { filas.push(nuevaFila("")); pintarFilas(); const last = $$(".fila").pop(); last && last.scrollIntoView({ behavior: "smooth", block: "center" }); });
       $("#btnLimpiar") && $("#btnLimpiar").addEventListener("click", () => { filas = [nuevaFila("")]; pintarFilas(); });
-      $("#btnWA") && $("#btnWA").addEventListener("click", () => window.open("https://wa.me/" + waNum() + "?text=" + encodeURIComponent(mensajeWA()), "_blank"));
+      $("#btnWA") && $("#btnWA").addEventListener("click", () => { medir("calculadora_whatsapp", { piezas: (filas || []).length }); window.open("https://wa.me/" + waNum() + "?text=" + encodeURIComponent(mensajeWA()), "_blank"); });
       pintarFilas();
     }
   }

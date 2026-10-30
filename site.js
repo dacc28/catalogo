@@ -23,6 +23,24 @@
     $$("video[data-h]").forEach(v => vo.observe(v));
   }
 
+  /* eventos para Google Analytics (si está cargado) */
+  const medir = (nombre, datos) => { try { if (typeof gtag === "function") gtag("event", nombre, datos || {}); } catch (e) {} };
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a,button"); if (!a) return;
+    const href = a.getAttribute("href") || "";
+    if (href.includes("wa.me/528132660673")) medir("whatsapp_ventas", { ubicacion: a.className || a.textContent.trim().slice(0, 40) });
+    else if (href.includes("wa.me/528132380573")) medir("whatsapp_atencion", { ubicacion: a.className || a.textContent.trim().slice(0, 40) });
+    else if (href.startsWith("mailto:")) medir("correo_click");
+    else if (href.includes("instagram.com")) medir("red_social", { red: "instagram" });
+    else if (href.includes("tiktok.com")) medir("red_social", { red: "tiktok" });
+    else if (href.includes("facebook.com")) medir("red_social", { red: "facebook" });
+    else if (a.classList.contains("prod")) medir("ver_pieza", { codigo: (href.split("#")[1] || ""), nombre: (a.querySelector(".nm") || {}).textContent || "" });
+    else if (href.includes("calculadora.html")) medir("ir_calculadora");
+    else if (href.includes("catalogo.html")) medir("ir_catalogo");
+  }, true);
+  const rfm = $("#rastreoForm"); if (rfm) rfm.addEventListener("submit", () => medir("rastreo_dhl"));
+  $$(".item button").forEach(b => b.addEventListener("click", () => medir("faq_abrir", { pregunta: b.textContent.trim().slice(0, 60) })));
+
   /* ir a una sección (compensa el menú fijo) */
   function irA(el) { const y = el.getBoundingClientRect().top + window.pageYOffset - 80; window.scrollTo({ top: y, behavior: "smooth" }); }
   function irAlHash() { const id = decodeURIComponent((location.hash || "").slice(1)); if (!id) return; const el = document.getElementById(id); if (el) { irA(el); setTimeout(() => irA(el), 700); } }
