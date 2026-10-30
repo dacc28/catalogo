@@ -29,6 +29,19 @@
   addEventListener("load", () => setTimeout(irAlHash, 150));
   addEventListener("hashchange", irAlHash);
 
+  /* aviso de live: se muestra solo los días de live (hora de Monterrey) */
+  const LIVE = { dias: [], desde: 0, hasta: 24 }; // pendiente de confirmar días y hora con Diego; vacío = no se muestra // 1 = lunes, 4 = jueves; horas en que se muestra
+  const liveBox = $("#liveAviso");
+  if (liveBox) {
+    const ahora = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Monterrey" }));
+    const hoy = ahora.getFullYear() + "-" + (ahora.getMonth() + 1) + "-" + ahora.getDate();
+    const esDia = LIVE.dias.includes(ahora.getDay()) && ahora.getHours() >= LIVE.desde && ahora.getHours() < LIVE.hasta;
+    let cerrado = false; try { cerrado = localStorage.getItem("liveCerrado") === hoy; } catch (e) {}
+    const forzar = /[?&]live=1/.test(location.search);
+    if ((esDia && !cerrado) || forzar) setTimeout(() => { liveBox.hidden = false; }, 1200);
+    $("#liveCerrar").addEventListener("click", () => { liveBox.hidden = true; try { localStorage.setItem("liveCerrado", hoy); } catch (e) {} });
+  }
+
   /* botón ir al inicio: aparece al bajar más de una pantalla */
   const arriba = $("#irArriba");
   if (arriba) { const ver = () => arriba.classList.toggle("visible", scrollY > 320); ver(); addEventListener("scroll", ver, { passive: true }); arriba.addEventListener("click", () => { window.scrollTo({ top: 0, behavior: "smooth" }); history.replaceState(null, "", location.pathname); }); }
