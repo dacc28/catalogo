@@ -419,6 +419,21 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     b.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-right:5px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Cerrar sesión';
     b.addEventListener("click", () => { if (confirm("¿Cerrar sesión" + (perfil && perfil.usuario ? " de " + perfil.usuario : "") + " en este dispositivo?")) N.salir(); });
     host.append(b);
+    // si se abrió desde Marvea Vende (iPhone/iPad), botón para regresar a vender
+    let desdeVende = false;
+    try { if (new URLSearchParams(location.search).get("desde") === "vende") sessionStorage.setItem("marvea.desdeVende", "1"); desdeVende = sessionStorage.getItem("marvea.desdeVende") === "1"; } catch (e) {}
+    if (desdeVende && !document.getElementById("btnVende")) {
+      const v = document.createElement("a"); v.id = "btnVende"; v.href = "vende.html"; v.className = "btn sm"; v.textContent = "‹ Volver a Vender";
+      v.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
+      host.prepend(v);
+      const fl = document.createElement("a"); fl.id = "btnVendeFlota"; fl.href = "vende.html"; fl.textContent = "‹ Vender"; fl.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
+      document.body.append(fl);
+      const st2 = document.createElement("style");
+      st2.textContent = "#btnVende{text-decoration:none;font-weight:700;color:#1D1D1F!important;background:#fff!important}" +
+        "#btnVendeFlota{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9500;text-decoration:none;font:700 15px -apple-system,BlinkMacSystemFont,sans-serif;color:#fff;background:rgba(29,29,31,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);padding:12px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25)}" +
+        "@media (min-width:900px){#btnVendeFlota{display:none}}";
+      document.head.append(st2);
+    }
     const st = document.createElement("style");
     st.textContent = "#btnSalir{color:#b3261e!important;font-weight:700}#btnSalir:hover{background:#fbe4e1!important}@media (prefers-color-scheme:dark){#btnSalir{color:#ff8a80!important}#btnSalir:hover{background:rgba(255,138,128,.12)!important}}";
     document.head.append(st);
