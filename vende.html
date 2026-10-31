@@ -3423,7 +3423,7 @@ input:focus,select:focus,textarea:focus{border-color:#1D1D1F!important;box-shado
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(script):not(style):not(.ctxmenu){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(script):not(style):not(.ctxmenu){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
@@ -3623,6 +3623,24 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
 @media (min-width:800px){.vx-kpis{grid-template-columns:repeat(4,1fr)}}
 #vx .vx-search{background:#EFEFF4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 13px 50%/18px!important;border-color:transparent!important;padding-left:40px!important}
 #vx .vx-search:focus{background-color:#fff!important;border-color:#1D1D1F!important}
+/* ===== ajustes finales iPhone / iPad ===== */
+#vx button,#vx a,#vx .vx-tile,#vx .vx-fila{touch-action:manipulation}
+#vx .vx-card:focus-within,#vx .vx-cardcli{position:relative;z-index:20}
+#vx .vx-card:focus-within{z-index:30}
+#vx .vx-sug{z-index:60;max-height:min(46vh,320px);overflow:auto;-webkit-overflow-scrolling:touch}
+#vx .vx-sug button{min-height:48px}
+#vx .vx-input{font-size:17px!important;background:#F2F2F7!important;border:1px solid transparent!important;color:#1D1D1F!important}
+#vx .vx-input:focus{background:#fff!important;border-color:#1D1D1F!important;box-shadow:0 0 0 4px rgba(0,0,0,.06)!important}
+#vx input[type=number]{-moz-appearance:textfield}
+#vx input[type=number]::-webkit-inner-spin-button,#vx input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#vx .vx-step button{color:#1D1D1F}
+body.vx-on #vxCamWrap{display:block!important}
+#vx .vx-main{scroll-margin-top:80px}
+#vx .vx-input{scroll-margin-top:90px;scroll-margin-bottom:140px}
+#vx .vx-quieto,#vx .vx-quieto .vx-sheet{animation:none!important}
+#vx .vx-sheet{position:relative}
+#vx .vx-x{position:absolute;top:12px;right:14px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(118,118,128,.14);color:#3A3A3C;font-size:14px;font-weight:700;display:grid;place-items:center;z-index:2}
+#vx .vx-sug{background:rgba(255,255,255,.985)!important;box-shadow:0 18px 44px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06)!important}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -3639,7 +3657,9 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
 
   // raíz
   const root = el("div", { id: "vx" }); document.body.append(root); document.body.classList.add("vx-on");
-  let pend = false; function render() { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; try { pintar(); } catch (e) { console.error(e); } }); }
+  let pend = false, diferido = false;
+  document.addEventListener("focusout", e => { if (diferido && e.target && e.target.id === "vxCli") { diferido = false; setTimeout(render, 260); } }, true);
+  function render() { const a = document.activeElement; if (a && a.id === "vxCli" && root.contains(a)) { diferido = true; return; } if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; try { pintar(); } catch (e) { console.error(e); } }); }
   window.__vxRender = render;
   // se vuelve a pintar cuando cambia cualquier dato (ventas, inventario, clientas)
   for (const fn of ["renderVenta", "renderAll"]) { const o = window[fn]; if (typeof o === "function") window[fn] = function () { const r = o.apply(this, arguments); render(); return r; }; }
@@ -3648,7 +3668,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     try { await window.claude.use("db"); } catch (e) {}
     try { if (typeof setView === "function") setView("venta"); } catch (e) {}
     const t0 = Date.now(); while (!state.lives && Date.now() - t0 < 8000) await new Promise(r => setTimeout(r, 100));
-    const hoy = ventaLiveHoy(); if (hoy) ventaSubscribe(hoy.id);
+    alDia();
     if (ventaActual() && ventaActual().estado === "abierto") V.pantalla = "venta";
     render();
   }
@@ -3660,7 +3680,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
       el("div", { class: "vx-menubox" }, el("div", { class: "vx-menuuser" }, el("b", null, perfil.usuario || ""), el("span", null, perfil.rol === "vendedor" ? "Vendedor" : "Administrador")),
         el("a", { href: "sistema.html", class: "vx-menuitem" }, "Abrir sistema completo"),
         el("button", { type: "button", class: "vx-menuitem rojo", onclick: () => { if (confirm("¿Cerrar sesión en este dispositivo?")) window.MarveaNube.salir(); } }, "Cerrar sesión")));
-    return el("header", { class: "vx-top" },
+    return el("header", { class: "vx-top", "data-k": "top" },
       V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
       el("div", { class: "vx-topr" }, menu));
   }
@@ -3668,7 +3688,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   /* ---------- inicio ---------- */
   function inicio() {
     const R = ventaResumenDia(); const lista = hoyCarts(); const abierta = ventaActual() && ventaActual().estado === "abierto" ? ventaActual() : null;
-    return el("main", { class: "vx-main" },
+    return el("main", { class: "vx-main", "data-k": "inicio" },
       el("div", { class: "vx-hola" }, el("div", { class: "vx-fecha" }, new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })), el("h1", null, "Ventas de hoy")),
       el("section", { class: "vx-kpis" },
         el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido"), el("b", null, precio(R.total)), el("small", null, R.ventas + " venta" + (R.ventas === 1 ? "" : "s") + " · " + R.piezas + " pzas")),
@@ -3681,7 +3701,9 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
         : el("div", { class: "vx-vacio" }, "Aún no hay ventas hoy."));
   }
   const estadoChip = c => c.estado === "final" ? (c.pago ? el("span", { class: "vx-chip ok" }, "Pagada") : el("span", { class: "vx-chip warn" }, "Por cobrar")) : c.estado === "cancelado" ? el("span", { class: "vx-chip bad" }, "Cancelada") : el("span", { class: "vx-chip" }, "Abierta");
+  function alDia() { const hoy = ventaLiveHoy(); const id = hoy ? hoy.id : null; if (state.ventaLiveId !== id || (id && !state.ventaUnsub)) ventaSubscribe(id); }
   async function nueva() {
+    alDia();
     const c = ventaActual();
     if (!c || c.estado !== "abierto") { state.ventaCartId = null; V.cli = ""; }
     V.pantalla = "venta"; V.q = ""; render(); setTimeout(() => { const i = $$(V.cli || (ventaActual() && ventaActual().cliente) ? "#vxScan" : "#vxCli"); if (i) i.focus(); }, 60);
@@ -3693,23 +3715,26 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     // clienta
     const nombre = c ? c.cliente : V.cli;
     const cli = el("input", { id: "vxCli", class: "vx-input", placeholder: "Nombre de la clienta", value: V.cliEdit != null ? V.cliEdit : (nombre || ""), autocomplete: "off", autocapitalize: "words", spellcheck: "false" });
-    const sug = el("div", { class: "vx-sug", hidden: true });
-    const pintaSug = () => { const q = cli.value.trim(); const r = q ? buscarClientas(q).slice(0, 5) : []; sug.hidden = !r.length || (c && normaliza(q) === normaliza(c.cliente)); sug.replaceChildren(...r.map(k => el("button", { type: "button", onmousedown: e => { e.preventDefault(); usarClienta(k); } }, el("b", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · "))))); };
+    const sug = el("div", { class: "vx-sug", hidden: true, "data-k": "sug" });
+    let elegida = null; const elegirSug = k => { if (elegida === k.id) return; elegida = k.id; sug.hidden = true; cli.value = k.nombre; V.cliEdit = null; usarClienta(k); };
+    const pintaSug = () => { const q = cli.value.trim(); const r = q ? buscarClientas(q).slice(0, 5) : []; sug.hidden = !r.length || (c && normaliza(q) === normaliza(c.cliente)); sug.replaceChildren(...r.map(k => el("button", { type: "button", onpointerdown: e => { e.preventDefault(); elegirSug(k); }, onmousedown: e => { e.preventDefault(); }, onclick: e => { e.preventDefault(); elegirSug(k); } }, el("b", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · ") || "Clienta guardada")))); };
+    if (V.cliEdit && document.activeElement && document.activeElement.id === "vxCli") pintaSug();
     cli.addEventListener("input", () => { V.cliEdit = cli.value; pintaSug(); });
     cli.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); confirmarCli(cli.value); } });
-    cli.addEventListener("blur", () => setTimeout(() => { sug.hidden = true; if (cli.value.trim() && (!c || cli.value.trim() !== c.cliente)) confirmarCli(cli.value); }, 160));
+    cli.addEventListener("focus", () => { if (cli.value.trim()) pintaSug(); });
+    cli.addEventListener("blur", () => setTimeout(() => { const s2 = cli.parentNode && cli.parentNode.querySelector(".vx-sug"); if (s2) s2.hidden = true; const v = cli.value.trim(); const cc = ventaActual(); if (v && (!cc || v !== cc.cliente)) confirmarCli(v); }, 220));
     const k = c ? clienteDe(c) : null;
-    const cliBox = el("section", { class: "vx-card" }, el("label", { class: "vx-lbl", for: "vxCli" }, "Clienta"), el("div", { class: "vx-rel" }, cli, sug),
+    const cliBox = el("section", { class: "vx-card vx-cardcli", "data-k": "cli" }, el("label", { class: "vx-lbl", for: "vxCli" }, "Clienta"), el("div", { class: "vx-rel", "data-k": "clirel" }, cli, sug),
       c && c.cliente ? el("div", { class: "vx-cliok" }, k ? el("span", { class: "vx-chip ok" }, "✓ Guardada") : el("span", { class: "vx-chip" }, "Nueva"), k && k.whatsapp ? el("span", null, k.whatsapp) : null) : null);
 
     // escanear / buscar
     const scan = el("input", { id: "vxScan", class: "vx-input vx-scan", placeholder: "Escanea o escribe palabra / código", value: V.q, autocomplete: "off", autocapitalize: "characters", spellcheck: "false", enterkeyhint: "done" });
-    scan.addEventListener("input", () => { V.q = scan.value; render(); setTimeout(() => { const i = $$("#vxScan"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 0); });
+    scan.addEventListener("input", () => { V.q = scan.value; render(); });
     scan.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); const raw = scan.value.trim(); if (!raw) return; const p = porCodigo(raw) || porPalabra(raw) || searchProducts(raw)[0]; V.q = ""; scan.value = ""; if (p) agregar(p); else { toast("No encontré «" + raw + "»", true); render(); } } });
     const camBtn = el("button", { class: "vx-cam", type: "button", "aria-label": "Escanear con la cámara", onclick: abrirCamara }, el("span", { class: "vx-camico" }), "Cámara");
     const res = V.q.trim() ? searchProducts(V.q.trim()).slice(0, 12) : [];
     const resultados = V.q.trim() ? el("div", { class: "vx-grid" }, ...(res.length ? res.map(p => { const av = Number(p.existencia) || 0; return el("button", { type: "button", class: "vx-tile" + (av <= 0 ? " agotado" : ""), onclick: () => { V.q = ""; agregar(p); } }, foto(p, "vx-tfoto"), el("div", { class: "vx-tinfo" }, el("b", null, p.palabra || p.codigo), el("span", { class: "vx-tn" }, p.nombre), el("div", { class: "vx-tp" }, el("span", null, precio(p.precio)), el("small", null, av <= 0 ? "Agotado" : "Quedan " + av)))); }) : [el("div", { class: "vx-vacio" }, "Sin resultados")])) : null;
-    const scanBox = el("section", { class: "vx-card" }, el("label", { class: "vx-lbl", for: "vxScan" }, "Agregar piezas"), el("div", { class: "vx-scanrow" }, scan, camBtn), resultados);
+    const scanBox = el("section", { class: "vx-card", "data-k": "scan" }, el("label", { class: "vx-lbl", for: "vxScan" }, "Agregar piezas"), el("div", { class: "vx-scanrow", "data-k": "scanrow" }, scan, camBtn), resultados);
 
     // carrito
     const items = c && c.items.length ? el("section", { class: "vx-card vx-items" }, el("div", { class: "vx-lblrow" }, el("span", { class: "vx-lbl" }, "En la venta"), el("span", { class: "vx-cnt" }, cartPieces(c) + " pzas")),
@@ -3720,7 +3745,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     const total = c ? cartGrand(c) : 0; const pz = c ? cartPieces(c) : 0;
     const bar = el("div", { class: "vx-bar" }, el("div", { class: "vx-bartot" }, el("span", null, pz + " pieza" + (pz === 1 ? "" : "s")), el("b", null, precio(total))),
       el("button", { class: "vx-cobrar", type: "button", ...(abierta && c.items.length ? {} : { disabled: true }), onclick: () => { if (!c.cliente.trim()) { toast("Escribe el nombre de la clienta", true); const i = $$("#vxCli"); if (i) i.focus(); return; } V.cobro = true; V.pagado = true; V.medio = "Transferencia"; V.monto = String(Math.round(cartGrand(c) * 100) / 100); render(); } }, "Cobrar"));
-    return el("main", { class: "vx-main vx-conbarra" }, el("div", { class: "vx-hola" }, el("h1", null, c ? "Venta #" + cartNumber(c) : "Nueva venta")), cliBox, scanBox, items, bar, V.cobro && c ? cobroSheet(c) : null);
+    return el("main", { class: "vx-main vx-conbarra", "data-k": "venta" }, el("div", { class: "vx-hola" }, el("h1", null, c ? "Venta #" + cartNumber(c) : "Nueva venta")), cliBox, scanBox, items, bar, V.cobro && c ? cobroSheet(c) : null);
   }
   function usarClienta(k) { V.cliEdit = null; V.cli = k.nombre; setVentaCliente(k).then(() => { const i = $$("#vxScan"); if (i) i.focus(); }); }
   function confirmarCli(v) {
@@ -3741,7 +3766,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     const monto = el("input", { class: "vx-input vx-monto", type: "number", inputmode: "decimal", value: V.monto, "aria-label": "Monto" }); monto.addEventListener("input", () => { V.monto = monto.value; });
     const medios = el("div", { class: "vx-medios" }, ...MEDIOS.map(m => el("button", { type: "button", class: V.medio === m ? "on" : "", onclick: () => { V.medio = m; render(); } }, m)));
     const cerrar = async () => { const id = c.id; await cerrarVenta(c, V.pagado, V.medio, V.pagado ? V.monto : 0, "", false); const x = state.ventaCarts && state.ventaCarts.get(id); if (x && x.estado === "final") { vibra(40); V.cobro = false; V.hecho = id; V.pantalla = "hecho"; V.cli = ""; render(); } };
-    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.cobro = false; render(); } } },
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.cobro = false; render(); } }, "data-k": "cobro" },
       el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }),
         el("div", { class: "vx-sheethead" }, el("span", null, "Total a cobrar"), el("b", null, precio(cartGrand(c))), el("small", null, (c.cliente || "") + " · " + cartPieces(c) + " pzas")),
         el("div", { class: "vx-seg" }, el("button", { type: "button", class: V.pagado ? "on" : "", onclick: () => { V.pagado = true; render(); } }, "Ya pagó"), el("button", { type: "button", class: !V.pagado ? "on" : "", onclick: () => { V.pagado = false; render(); } }, "Pendiente")),
@@ -3752,27 +3777,34 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
 
   /* ---------- listo ---------- */
   function hecho() {
-    const c = state.ventaCarts && state.ventaCarts.get(V.hecho);
-    return el("main", { class: "vx-main vx-hecho" }, el("div", { class: "vx-check" }, "✓"), el("h1", null, "Venta cerrada"),
+    const c = state.ventaCarts && state.ventaCarts.get(V.hecho); if (c) prepararTicket(c);
+    return el("main", { class: "vx-main vx-hecho", "data-k": "hecho" }, el("div", { class: "vx-check" }, "✓"), el("h1", null, "Venta cerrada"),
       c ? el("p", null, (c.cliente || "") + " · " + precio(cartGrand(c)) + " · " + (c.pago ? "Pagada con " + c.pago.medio : "Por cobrar")) : null,
       c ? el("button", { class: "vx-btn2", type: "button", onclick: () => compartirTicket(c) }, "Compartir ticket") : null,
       el("button", { class: "vx-cta", type: "button", onclick: () => { V.hecho = null; state.ventaCartId = null; nueva(); } }, "Nueva venta"),
       el("button", { class: "vx-link", type: "button", onclick: () => { V.hecho = null; V.pantalla = "inicio"; render(); } }, "Ir al inicio"));
   }
+  const tickets = new Map(); // id → File (se prepara antes para que "Compartir" abra al instante)
+  function prepararTicket(c) {
+    if (!c || c.estado === "cancelado") return; const key = c.id + "|" + (c.actualizado || "");
+    if (tickets.has(key)) return tickets.get(key);
+    const p = ticketPdf(c, { nombre: "Venta directa" }).then(blob => { const nombre = "ticket-" + ((c.cliente || "venta").replace(/[^\wáéíóúñÁÉÍÓÚÑ -]+/g, "").trim() || "venta") + ".pdf"; const f = new File([blob], nombre, { type: "application/pdf" }); tickets.set(key, f); return f; }).catch(e => { tickets.delete(key); throw e; });
+    tickets.set(key, p); return p;
+  }
   async function compartirTicket(c) {
     try {
-      const blob = await ticketPdf(c, { nombre: "Venta directa" }); const nombre = "ticket-" + ((c.cliente || "venta").replace(/[^\wáéíóúñÁÉÍÓÚÑ -]+/g, "").trim() || "venta") + ".pdf";
-      const file = new File([blob], nombre, { type: "application/pdf" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: "Ticket Marvea" });
-      else await state.downloads.save({ filename: nombre, data: blob });
-    } catch (e) { if (!(e && e.name === "AbortError")) toast("No se pudo compartir el ticket", true); }
+      const key = c.id + "|" + (c.actualizado || ""); let f = tickets.get(key);
+      if (!(f instanceof File)) { toast("Preparando ticket…"); f = await prepararTicket(c); }
+      if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: "Ticket Marvea" }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+      await state.downloads.save({ filename: f.name, data: f });
+    } catch (e) { if (!(e && e.name === "AbortError")) toast("No se pudo preparar el ticket", true); }
   }
 
   /* ---------- detalle de una venta del día ---------- */
   function abrirDetalle(c) { if (c.estado === "abierto") { state.ventaCartId = c.id; V.pantalla = "venta"; render(); return; } V.detalle = c.id; render(); }
   function detalleSheet() {
-    const c = state.ventaCarts && state.ventaCarts.get(V.detalle); if (!c) { V.detalle = null; return null; }
-    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.detalle = null; render(); } } },
+    const c = state.ventaCarts && state.ventaCarts.get(V.detalle); if (!c) { V.detalle = null; return null; } prepararTicket(c);
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.detalle = null; render(); } }, "data-k": "det" },
       el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }),
         el("div", { class: "vx-sheethead" }, el("span", null, (c.cliente || "Sin nombre") + " · #" + cartNumber(c)), el("b", null, precio(cartGrand(c))), estadoChip(c)),
         el("div", { class: "vx-mini" }, ...c.items.map(it => el("div", null, el("span", null, it.cant + " × " + it.nombre), el("b", null, precio(it.precio * it.cant))))),
@@ -3786,7 +3818,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   let lector = null, cargando = null;
   function cargarZXing() { if (window.ZXing) return Promise.resolve(); if (cargando) return cargando; cargando = new Promise((ok, err) => { const s = document.createElement("script"); s.src = "zxing-0.21.3.min.js"; s.onload = ok; s.onerror = () => { cargando = null; err(new Error("zxing")); }; document.head.append(s); }); return cargando; }
   async function abrirCamara() {
-    V.scan = { msg: "Apunta a la etiqueta" }; render();
+    V.scan = { msg: "Apunta a la etiqueta" }; camaraCapa();
     try {
       await cargarZXing();
       const hints = new Map(); hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE]); hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
@@ -3801,14 +3833,18 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
       });
     } catch (e) { console.warn(e); V.scan = { msg: "No se pudo abrir la cámara. Revisa el permiso de cámara en Safari.", ok: false }; const m = $$("#vxScanMsg"); if (m) m.textContent = V.scan.msg; }
   }
-  function cerrarCamara() { try { lector && lector.reset(); } catch (e) {} lector = null; V.scan = null; render(); setTimeout(() => { const i = $$("#vxScan"); if (i) i.focus(); }, 50); }
-  let videoEl = null;
-  function camaraSheet() {
-    if (!videoEl) { videoEl = el("video", { id: "vxVideo", playsinline: true, muted: true, autoplay: true }); videoEl.setAttribute("playsinline", ""); }
-    const c = ventaActual();
-    return el("div", { class: "vx-camara" }, videoEl, el("div", { class: "vx-mira" }),
-      el("div", { class: "vx-camtop" }, el("span", null, c ? cartPieces(c) + " pzas · " + precio(cartGrand(c)) : ""), el("button", { type: "button", onclick: cerrarCamara }, "Listo")),
-      el("div", { id: "vxScanMsg", class: "vx-scanmsg " + (V.scan.ok === true ? "ok" : V.scan.ok === false ? "bad" : "") }, V.scan.msg));
+  function cerrarCamara() { try { lector && lector.reset(); } catch (e) {} lector = null; V.scan = null; if (camWrap) { camWrap.remove(); camWrap = null; } render(); }
+  let camWrap = null, videoEl = null;
+  function camaraCapa() { // va fuera de la pantalla que se repinta
+    if (!camWrap) {
+      videoEl = el("video", { id: "vxVideo", muted: true, autoplay: true }); videoEl.setAttribute("playsinline", ""); videoEl.setAttribute("muted", ""); videoEl.muted = true;
+      camWrap = el("div", { id: "vxCamWrap", class: "vx-camara" }, videoEl, el("div", { class: "vx-mira" }),
+        el("div", { class: "vx-camtop" }, el("span", { id: "vxCamTot" }, ""), el("button", { type: "button", onclick: cerrarCamara }, "Listo")),
+        el("div", { id: "vxScanMsg", class: "vx-scanmsg" }, ""));
+      document.body.append(camWrap);
+    }
+    const c = ventaActual(); const t = camWrap.querySelector("#vxCamTot"); if (t) t.textContent = c ? cartPieces(c) + " pzas · " + precio(cartGrand(c)) : "";
+    const m = camWrap.querySelector("#vxScanMsg"); if (m && V.scan) { m.textContent = V.scan.msg; m.className = "vx-scanmsg " + (V.scan.ok === true ? "ok" : V.scan.ok === false ? "bad" : ""); }
   }
 
   /* ===================== Administrador: Inventario · Clientas · Resumen (31-oct-2026) ===================== */
@@ -3822,7 +3858,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   };
   function tabbar() {
     const t = (id, txt) => { const b = el("button", { type: "button", class: "vx-tab" + (V.tab === id ? " on" : ""), onclick: () => { V.tab = id; V.prod = null; V.clienta = null; V.cliForm = null; if (id === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); } }); b.innerHTML = '<span class="vx-tabico">' + IC[id] + '</span><span>' + txt + '</span>'; return b; };
-    return el("nav", { class: "vx-tabbar" }, t("vender", "Vender"), t("inv", "Inventario"), t("cli", "Clientas"), t("res", "Resumen"));
+    return el("nav", { class: "vx-tabbar", "data-k": "tabs" }, t("vender", "Vender"), t("inv", "Inventario"), t("cli", "Clientas"), t("res", "Resumen"));
   }
   const grande = (txt, extra) => el("div", { class: "vx-hola vx-large" }, el("h1", null, txt), extra || null);
   const buscador = (id, val, ph, on) => { const i = el("input", { id, class: "vx-input vx-search", type: "search", placeholder: ph, value: val, autocomplete: "off", spellcheck: "false" }); i.addEventListener("input", () => { on(i.value); render(); }); return i; };
@@ -3838,7 +3874,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     const agot = todos.filter(p => (Number(p.existencia) || 0) <= 0).length;
     const chips = el("div", { class: "vx-chips" }, el("button", { type: "button", class: !V.invCat ? "on" : "", onclick: () => { V.invCat = ""; render(); } }, "Todas"),
       ...cats.filter(c => todos.some(p => p.categoria === c.p)).map(c => el("button", { type: "button", class: V.invCat === c.p ? "on" : "", onclick: () => { V.invCat = c.p; render(); } }, c.n)));
-    return el("main", { class: "vx-main vx-contabs" }, grande("Inventario"),
+    return el("main", { class: "vx-main vx-contabs", "data-k": "inv" }, grande("Inventario"),
       el("section", { class: "vx-stats" }, el("div", null, el("b", null, todos.length), el("span", null, "modelos")), el("div", null, el("b", null, piezas.toLocaleString("es-MX")), el("span", null, "piezas")),
         el("div", null, el("b", null, precio(valor)), el("span", null, "a precio")), el("div", null, el("b", null, precio(costo)), el("span", null, "costo")), agot ? el("div", { class: "rojo" }, el("b", null, agot), el("span", null, "agotados")) : null),
       buscador("vxInvQ", V.invQ, "Buscar por nombre, palabra o código", v => V.invQ = v), chips,
@@ -3850,7 +3886,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     const p = state.products.get(V.prod); if (!p) { V.prod = null; return null; }
     const av = Number(p.existencia) || 0; const gan = (Number(p.precio) || 0) - (Number(p.costo) || 0);
     const fila = (k, v) => v === "" || v == null ? null : el("div", { class: "vx-kv" }, el("span", null, k), el("b", null, v));
-    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.prod = null; render(); } } },
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.prod = null; render(); } }, "data-k": "prod" },
       el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }), foto(p, "vx-bigfoto"),
         el("div", { class: "vx-sheethead izq" }, el("span", null, p.codigo + " · " + catName(p.categoria)), el("h2", null, p.nombre), el("div", { class: "vx-palabra" }, p.palabra || "")),
         el("div", { class: "vx-kvs" }, fila("Precio de mayoreo", precio(p.precio)), fila("Costo", precio(p.costo)), fila("Ganancia por pieza", precio(gan) + (p.precio ? " · " + Math.round(gan / p.precio * 100) + "%" : "")),
@@ -3868,7 +3904,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   function clientas() {
     cargarAccesos(false);
     const q = normaliza(V.cliQ); const lista = buscarClientas(V.cliQ).slice(0, 300);
-    return el("main", { class: "vx-main vx-contabs" }, grande("Clientas", el("button", { class: "vx-plus", type: "button", "aria-label": "Nueva clienta", onclick: () => { V.cliForm = { nombre: V.cliQ.trim(), facebook: "", whatsapp: "", ciudad: "", direccion: "", notas: "" }; render(); } }, "+")),
+    return el("main", { class: "vx-main vx-contabs", "data-k": "cli" }, grande("Clientas", el("button", { class: "vx-plus", type: "button", "aria-label": "Nueva clienta", onclick: () => { V.cliForm = { nombre: V.cliQ.trim(), facebook: "", whatsapp: "", ciudad: "", direccion: "", notas: "" }; render(); } }, "+")),
       buscador("vxCliQ", V.cliQ, "Buscar por nombre, WhatsApp o ciudad", v => V.cliQ = v),
       el("div", { class: "vx-lista" }, ...(lista.length ? lista.map(k => { const a = V.accesos && V.accesos.get(k.id); return el("button", { type: "button", class: "vx-fila", onclick: () => { V.clienta = k.id; render(); } },
         el("div", { class: "vx-filai" }, el("b", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · ") || "Sin datos de contacto")),
@@ -3878,7 +3914,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   function cliFormSheet() {
     const f = V.cliForm; const inp = (k, ph, type) => { const i = el("input", { class: "vx-input", placeholder: ph, value: f[k] || "", type: type || "text", ...(type === "tel" ? { inputmode: "tel" } : {}) }); i.addEventListener("input", () => { f[k] = i.value; }); return el("label", { class: "vx-field" }, el("span", null, ph), i); };
     const guardar = async () => { if (!String(f.nombre || "").trim()) { toast("Escribe el nombre de la clienta", true); return; } const id = await saveClienta(f, f.id || null); if (id) { toast(f.id ? "Clienta actualizada" : "Clienta registrada"); V.cliForm = null; V.clienta = id; render(); } };
-    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.cliForm = null; render(); } } },
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.cliForm = null; render(); } }, "data-k": "cliform" },
       el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }), el("div", { class: "vx-sheethead izq" }, el("h2", null, f.id ? "Editar clienta" : "Nueva clienta")),
         inp("nombre", "Nombre"), inp("whatsapp", "WhatsApp (10 dígitos)", "tel"), inp("facebook", "Facebook"), inp("ciudad", "Ciudad"), inp("direccion", "Dirección de envío"), inp("notas", "Notas"),
         el("button", { class: "vx-cta", type: "button", onclick: guardar }, f.id ? "Guardar cambios" : "Registrar clienta"),
@@ -3911,7 +3947,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
         dig.length >= 10 ? el("button", { class: "vx-cta", type: "button", onclick: async () => { await darAcceso(k, false); render(); } }, "Dar acceso al Business Club")
           : el("button", { class: "vx-btn2", type: "button", onclick: () => { V.cliForm = Object.assign({}, k); V.clienta = null; render(); } }, "Agregar WhatsApp"));
     }
-    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.clienta = null; render(); } } },
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.clienta = null; render(); } }, "data-k": "clienta" },
       el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }),
         el("div", { class: "vx-sheethead izq" }, el("h2", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · "))),
         el("div", { class: "vx-kvs" }, k.facebook ? el("div", { class: "vx-kv" }, el("span", null, "Facebook"), el("b", null, k.facebook)) : null, k.direccion ? el("div", { class: "vx-kv" }, el("span", null, "Dirección"), el("b", null, k.direccion)) : null,
@@ -3938,7 +3974,7 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     const top = {}; for (const c of cMes) for (const it of c.items) top[it.codigo] = (top[it.codigo] || 0) + (Number(it.cant) || 0);
     const topL = Object.entries(top).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const reponer = todos.filter(p => (Number(p.existencia) || 0) <= (Number(p.minimo) || 0)).sort((a, b) => (a.existencia || 0) - (b.existencia || 0)).slice(0, 6);
-    return el("main", { class: "vx-main vx-contabs" }, grande("Resumen", el("button", { class: "vx-link", type: "button", onclick: () => cargarResumen(true) }, "Actualizar")),
+    return el("main", { class: "vx-main vx-contabs", "data-k": "res" }, grande("Resumen", el("button", { class: "vx-link", type: "button", onclick: () => cargarResumen(true) }, "Actualizar")),
       !V.res ? el("div", { class: "vx-cargando chico" }, el("div", { class: "vx-spin" })) : null,
       el("section", { class: "vx-kpis" },
         el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido este mes"), el("b", null, precio(suma(cMes))), el("small", null, cMes.length + " venta" + (cMes.length === 1 ? "" : "s") + " · ganancia " + precio(gan(cMes)))),
@@ -3954,7 +3990,41 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
   }
 
   /* ---------- pintar ---------- */
+  // Cambia todo lo que rodea al campo donde se está escribiendo, pero deja ese campo intacto (en iPhone/iPad así no se cierra el teclado ni brinca la pantalla)
+  const llave = n => n && n.nodeType === 1 ? (n.id ? "#" + n.id : n.getAttribute("data-k") ? "k:" + n.getAttribute("data-k") : null) : null;
+  function copiarAtributos(viejo, nuevo) {
+    for (const a of [...viejo.attributes]) if (!nuevo.hasAttribute(a.name)) viejo.removeAttribute(a.name);
+    for (const a of [...nuevo.attributes]) if (viejo.getAttribute(a.name) !== a.value) viejo.setAttribute(a.name, a.value);
+  }
+  function conservar(viejo, nuevo, foc, raiz) {
+    if (viejo === foc) { for (const a of ["placeholder", "class"]) { const v = nuevo.getAttribute(a); if (v != null && foc.getAttribute(a) !== v) foc.setAttribute(a, v); } foc.disabled = nuevo.disabled; return true; }
+    const hijosV = [...viejo.childNodes]; const A = hijosV.find(n => n.contains && n.contains(foc)); if (!A) return false;
+    const hijosN = [...nuevo.childNodes]; let i = -1; const k = llave(A);
+    if (k) i = hijosN.findIndex(n => llave(n) === k);
+    if (i < 0) { const elsV = hijosV.filter(n => n.nodeType === 1), elsN = hijosN.filter(n => n.nodeType === 1); const B0 = elsN[elsV.indexOf(A)]; if (B0 && !llave(B0)) i = hijosN.indexOf(B0); }
+    if (i < 0 || hijosN[i].nodeType !== 1 || hijosN[i].tagName !== A.tagName) return false;
+    const B = hijosN[i];
+    if (!raiz) copiarAtributos(viejo, nuevo);
+    for (const n of hijosV) if (n !== A) n.remove();
+    for (let j = 0; j < i; j++) viejo.insertBefore(hijosN[j], A);
+    let ref = A; for (let j = i + 1; j < hijosN.length; j++) { ref.after(hijosN[j]); ref = hijosN[j]; }
+    if (!conservar(A, B, foc, false)) { A.replaceWith(B); return false; }
+    return true;
+  }
+  // solo se repinta si cambió algo que se ve (así no parpadean las hojas ni las fotos cada vez que llega un dato)
+  let firmaAnt = "";
+  function firma() {
+    let h = 5381; const add = t => { t = String(t); for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; };
+    add(JSON.stringify(V, (k, v) => v instanceof Map ? "M" + v.size + ":" + [...v.values()].map(x => x && (x.pass || "") + (x.enviado || "")).join() : k === "res" ? (v ? v.length + ":" + v.map(c => c.actualizado).join() : -1) : k === "hist" ? (v ? v.length : -1) : v));
+    for (const c of (state.ventaCarts || new Map()).values()) add(c.id + c.actualizado + c.estado + c.items.length);
+    add(state.ventaCartId); add(state.ventaLiveId);
+    let fotosListas = 0; for (const p of state.products.values()) { add(p.codigo + "|" + p.existencia + "|" + p.precio + "|" + p.nombre + "|" + p.fotoId); if (p.fotoId && blobUrl(p.fotoId)) fotosListas++; }
+    add(fotosListas); for (const k of state.clientas.values()) add(k.id + k.nombre + k.whatsapp + k.ciudad + k.facebook + k.direccion + k.notas);
+    add((state.cats || []).length); add(!!state.db); add(localStorage.getItem("marvea.perfil") || "");
+    return String(h);
+  }
   function pintar() {
+    if (state.db) { const f = firma(); if (f === firmaAnt && root.firstChild) return; firmaAnt = f; }
     if (!state.db) { root.replaceChildren(el("div", { class: "vx-cargando" }, el("div", { class: "vx-spin" }), "Conectando…")); return; }
     if (V.pantalla === "venta" && V.hecho) V.hecho = null;
     const act = document.activeElement && document.activeElement.id; const selStart = act && $$("#" + act) && $$("#" + act).selectionStart;
@@ -3966,9 +4036,17 @@ button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
     if (V.clienta) { const d = clientaSheet(); if (d) kids.push(d); }
     if (V.cliForm) kids.push(cliFormSheet());
     if (V.detalle) { const d = detalleSheet(); if (d) kids.push(d); }
-    if (V.scan) { kids.push(camaraSheet()); }
-    root.replaceChildren(...kids);
-    if (act && act !== "vxVideo") { const i = $$("#" + act); if (i) { i.focus(); try { if (selStart != null) i.setSelectionRange(selStart, selStart); } catch (e) {} } }
+    if (V.scan) camaraCapa();
+    for (const k of kids) if (k && k.querySelectorAll) for (const sh of [k, ...k.querySelectorAll(".vx-sheetbg")]) if (sh.classList && sh.classList.contains("vx-sheetbg")) { const hoja = sh.querySelector(".vx-sheet"); if (hoja && !hoja.querySelector(".vx-x")) { const x = el("button", { type: "button", class: "vx-x", "aria-label": "Cerrar", onclick: () => sh.click() }, "✕"); hoja.prepend(x); } }
+    const yaAbiertas = new Set([...root.querySelectorAll(".vx-sheetbg[data-k]")].map(n => n.getAttribute("data-k")));
+    for (const k of kids) if (k && k.querySelectorAll) for (const sh of [k, ...k.querySelectorAll(".vx-sheetbg[data-k]")]) if (sh.classList && sh.classList.contains("vx-sheetbg") && yaAbiertas.has(sh.getAttribute("data-k"))) sh.classList.add("vx-quieto");
+    const foc = document.activeElement;
+    if (foc && root.contains(foc) && /^(INPUT|TEXTAREA|SELECT)$/.test(foc.tagName)) {
+      const nuevo = el("div", null, ...kids.filter(Boolean));
+      if (conservar(root, nuevo, foc, true)) return;
+    }
+    root.replaceChildren(...kids.filter(Boolean));
+    if (act && act !== "vxVideo") { const i = $$("#" + act); if (i && i !== document.activeElement) { i.focus({ preventScroll: true }); try { if (selStart != null) i.setSelectionRange(selStart, selStart); } catch (e) {} } }
   }
   render(); arrancar();
 })();
