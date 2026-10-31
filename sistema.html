@@ -270,6 +270,8 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   window.addEventListener("online", () => { if (perfil) { recargar().catch(() => {}); escuchar(); } });
   window.addEventListener("offline", () => { enLinea = false; pintarEstado(); });
   setInterval(() => { if (perfil) cargarFotos().catch(() => {}); }, 1000 * 60 * 60 * 24);
+  // si hay modelos cuya foto todavía no está (p. ej. la Mac la sigue subiendo), se vuelve a buscar cada 45 s
+  setInterval(() => { if (!perfil || document.hidden) return; const faltan = Object.values(store.productos || {}).some(p => p && p.fotoId && !fotos.has(p.fotoId)); if (faltan) cargarFotos().catch(() => {}); }, 45000);
 
   async function refrescarDoc(c, i) {
     try { const { data, error } = await sb.from(TABLE).select("data").eq("col", c).eq("id", i).maybeSingle(); if (error) return;
@@ -370,7 +372,9 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     const r = await N.entrar({ subtitulo: "Sistema de inventario y lives" });
     perfil = r.perfil; N.aplicarRol(perfil);
     for (let i = 0; ; i++) { try { await recargar(); break; } catch (e) { if (i > 20) throw e; say("Conectando con la nube…", true); await new Promise(res => setTimeout(res, 2000 + i * 1000)); } }
-    escuchar(); cargarFotos().catch(e => console.warn("fotos", e));
+    escuchar();
+    // las fotos se preparan antes de mostrar el inventario (máximo 8 s; si tardan, aparecen solas después)
+    await Promise.race([cargarFotos().catch(e => console.warn("fotos", e)), new Promise(r => setTimeout(r, 8000))]);
     return perfil;
   })();
   window.claude = { use: async (name) => { try { await ready; } catch (e) { console.error(e); return null; } return name === "db" ? db : name === "assets" ? assets : name === "downloads" ? downloads : null; } };
