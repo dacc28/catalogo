@@ -410,7 +410,20 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     }
     pintarEstado();
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarAjustes); else pintarAjustes();
+  // botón "Cerrar sesión" arriba a la derecha, junto a Buscar y Papelera (siempre visible, también en el celular)
+  async function ponerCerrarSesion() {
+    try { await ready; } catch (e) { return; }
+    if (document.getElementById("btnSalir")) return;
+    const ref = document.getElementById("btnTrash"); const host = ref ? ref.parentElement : document.querySelector("nav.tabs"); if (!host) return;
+    const b = document.createElement("button"); b.type = "button"; b.id = "btnSalir"; b.className = "btn sm"; b.title = "Cerrar sesión en este dispositivo";
+    b.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-right:5px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Cerrar sesión';
+    b.addEventListener("click", () => { if (confirm("¿Cerrar sesión" + (perfil && perfil.usuario ? " de " + perfil.usuario : "") + " en este dispositivo?")) N.salir(); });
+    host.append(b);
+    const st = document.createElement("style");
+    st.textContent = "#btnSalir{color:#b3261e!important;font-weight:700}#btnSalir:hover{background:#fbe4e1!important}@media (prefers-color-scheme:dark){#btnSalir{color:#ff8a80!important}#btnSalir:hover{background:rgba(255,138,128,.12)!important}}";
+    document.head.append(st);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => { pintarAjustes(); ponerCerrarSesion(); }); else { pintarAjustes(); ponerCerrarSesion(); }
 })();
 
 </script></head><body><title>Marvea Inventario</title>
