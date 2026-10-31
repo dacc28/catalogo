@@ -1096,6 +1096,54 @@ nav.tabs button[aria-selected="true"]{background:var(--grad);border-color:transp
 .vd-pagobox #ventaCuenta{flex:1 1 200px}
 .venta.vd .vd-it .qc{display:flex;align-items:center;gap:8px!important}
 .venta.vd .vd-it .qc .q{display:inline-block;min-width:22px;padding:0 2px;text-align:center}
+/* ===== Live rápido · diseño simple (31-oct-2026) ===== */
+.lr{display:flex;flex-direction:column;gap:16px}
+.lr-muted{color:var(--muted);font-size:13px;font-weight:500}
+.lr-inicio p{margin:0 0 10px}
+.lr-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.lr-cab h2{margin:0 0 6px;font-family:var(--display);font-weight:600;font-size:24px}
+.lr-stats{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.lr-stats b{color:var(--fg);font-size:15px}
+.lr-cmdbox{background:var(--surface);border-radius:18px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px}
+.lr-cmdtit{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.lr-cmdtit b{font-size:15px}
+.lr-cmdrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.lr-cmd{font-size:18px!important;font-weight:600;padding:14px 16px!important}
+.lr-cmdrow .btn{padding:12px 22px;font-size:16px}
+.lr-o{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.lr-o::before,.lr-o::after{content:"";flex:1;height:1px;background:var(--line)}
+.lr-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.lr-grid{grid-template-columns:1fr}}
+.lr-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.lr .vd-paso{background:var(--surface);box-shadow:var(--shadow-sm)}
+.lr-plist{max-height:58vh;gap:6px}
+.lr .lr-prow{grid-template-columns:44px minmax(0,1fr) auto;border:0;background:var(--surface-2);border-radius:12px;padding:8px 10px}
+.lr .lr-prow.sel{background:var(--grad-soft,var(--surface-2));box-shadow:0 0 0 2px var(--accent) inset}
+.lr .lr-prow .pn{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis;display:block}
+.lr .lr-prow .av{min-width:44px}
+.lr .lr-prow .av b{font-size:20px}
+.lr-sel{display:flex;gap:12px;align-items:center;background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.lr-sel .th{width:52px;height:52px;border-radius:10px;overflow:hidden;flex:0 0 auto;display:grid;place-items:center;background:var(--surface)}
+.lr-sel .th img{width:100%;height:100%;object-fit:cover}
+.lr-sel .pw{font-weight:800;color:var(--accent);font-size:17px}
+.lr .lr-qtybox{margin:0;justify-content:space-between}
+.lr-clientas{display:flex;flex-direction:column;gap:12px}
+.lr-glabel{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.lr .chips{max-height:30vh;gap:8px}
+.lr .cchip{padding:9px 14px;font-size:14px;background:var(--surface-2);border:0}
+.lr .cchip.incart{background:var(--grad-soft,var(--surface-2));box-shadow:0 0 0 1px var(--accent-2,var(--line)) inset}
+.lr .cchip.off{opacity:.55}
+.lr .cchip.add{background:transparent;box-shadow:0 0 0 1.5px var(--accent) inset;color:var(--accent)}
+.lr-log{background:var(--surface);border-radius:16px;padding:16px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px}
+.lr-log h4{margin:0;font-size:15px;flex:1}
+.lr-dlist{display:flex;flex-direction:column;gap:6px}
+.lr-d{display:flex;gap:10px;align-items:center;background:var(--surface-2);border-radius:10px;padding:8px 10px;font-size:14px}
+.lr-dq{font-weight:800;color:var(--accent);min-width:32px}
+@media (max-width:640px){
+  .lr-cmdrow{grid-template-columns:1fr}
+  .lr-cmd{font-size:17px!important}
+  .lr-plist{max-height:46vh}
+}
 /* Foto: cámara y ver en grande */
 .lightbox{position:fixed;inset:0;background:rgba(24,12,16,.9);z-index:60;display:flex;flex-direction:column;padding:16px;gap:10px}
 .lightbox .lbhead{display:flex;justify-content:space-between;align-items:center;color:#fff;gap:10px}
@@ -2069,43 +2117,67 @@ function renderRapido(){
   if(!state.db){ host.replaceChildren(h("div",{class:"notice bad"},"Sin conexión con el almacén de datos.")); return; }
   const l=activeLive();
   const focused=document.activeElement&&document.activeElement.id; const cmdVal=focused==="cmdInput"?$("#cmdInput").value:"";
-  if(!l){ host.replaceChildren(h("div",{class:"startlive"},h("h3",null,"Live rápido"),h("p",{style:"margin:0 0 10px;color:var(--muted)"},"Despacha piezas a cada clienta sin abrir su carrito: escribe «2 mariposa Ana» o elige la pieza y toca a la clienta. Los carritos se llenan solos y ves cuántas piezas quedan."),h("p",{style:"margin:0;color:var(--muted)"},"Primero inicia un live en la pestaña «Live y carritos»."),h("div",{class:"row2"},h("button",{class:"btn primary",onclick:()=>setView("live")},"Ir a Live y carritos")))); return; }
+  if(!l){ host.replaceChildren(h("div",{class:"startlive lr-inicio"},h("h3",null,"Live rápido"),h("p",{class:"lr-muted"},"Despacha piezas a cada clienta sin abrir su carrito. Los carritos se llenan solos y ves cuántas piezas quedan."),h("p",{class:"lr-muted"},"Primero inicia un live en la pestaña «Live y carritos»."),h("div",{class:"row2"},h("button",{class:"btn primary",onclick:()=>setView("live")},"Ir a Live y carritos")))); return; }
   if(state.liveId!==l.id) selectLive(l.id);
   const sel=state.rapidoSel?state.products.get(state.rapidoSel):null; if(state.rapidoSel&&!sel) state.rapidoSel=null;
-  const cmd=h("input",{id:"cmdInput",placeholder:"Ej. 2 mariposa Ana López  ·  o escanea y escribe el nombre",autocomplete:"off",spellcheck:"false",value:cmdVal});
+  const paso=(n,titulo,extra,...kids)=>h("section",{class:"vd-paso"},h("div",{class:"vd-pasohead"},h("span",{class:"vd-num"},String(n)),h("h4",null,titulo),extra||null),...kids);
+  const abiertos=[...state.carts.values()].filter(c=>c.estado==="abierto");
+  const despachadas=[...state.carts.values()].filter(c=>c.estado!=="cancelado").reduce((s,c)=>s+cartPieces(c),0);
+
+  /* ---- comando rápido: "2 mariposa Ana" ---- */
+  const cmd=h("input",{id:"cmdInput",class:"vd-input lr-cmd",placeholder:"Ej. 2 mariposa Ana",autocomplete:"off",spellcheck:"false",value:cmdVal});
   cmd.addEventListener("keydown",async e=>{ if(e.key==="Enter"){ e.preventDefault(); const t=cmd.value.trim(); if(!t) return; cmd.value=""; await ejecutarComando(t); setTimeout(()=>{ const i=$("#cmdInput"); const a=document.activeElement; if(i&&!(a&&a.id==="rapidoCQ")) i.focus(); },30); } });
+  const rapidoBox=h("section",{class:"lr-cmdbox"},h("div",{class:"lr-cmdtit"},h("b",null,"Despacho rápido"),h("span",{class:"lr-muted"},"cantidad · palabra clave · clienta → Enter")),
+    h("div",{class:"lr-cmdrow"},cmd,h("button",{class:"btn primary",type:"button",onclick:async()=>{ const t=cmd.value.trim(); if(!t) return; cmd.value=""; await ejecutarComando(t); }},"Despachar")));
+
+  /* ---- 1) pieza ---- */
   const prods=[...state.products.values()].filter(p=>{ const q=normaliza(state.rapidoQ); return !q||normaliza(p.palabra).includes(q)||normaliza(p.nombre).includes(q)||p.codigo.toLowerCase().includes(q); }).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nombre.localeCompare(b.nombre));
-  const pq=h("input",{type:"search",id:"rapidoQ",placeholder:"Filtrar piezas…",value:state.rapidoQ,style:"width:100%;margin-bottom:8px"});
+  const pq=h("input",{type:"search",id:"rapidoQ",class:"vd-input",placeholder:"Buscar pieza por palabra, nombre o código",value:state.rapidoQ});
   pq.addEventListener("input",()=>{ state.rapidoQ=pq.value; renderRapido(); const i=$("#rapidoQ"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
   pq.addEventListener("keydown",e=>{ if(e.key!=="Enter") return; e.preventDefault(); if(!prods.length){ toast("Ninguna pieza coincide",true); return; } state.rapidoSel=prods[0].codigo; renderRapido(); const q=$("#rapidoQty"); if(q){ q.focus(); q.select(); } });
-  const plist=h("div",{class:"plist"},...prods.map(p=>{ const av=Number(p.existencia)||0; const ini=inicialDe(p); return h("button",{type:"button",class:"prow"+(p.codigo===state.rapidoSel?" sel":"")+(av<=0?" zero":av<=(Number(p.minimo)||0)?" low":""),onclick:()=>{ state.rapidoSel=p.codigo===state.rapidoSel?null:p.codigo; renderRapido(); }},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"pw"},p.palabra||p.codigo),h("div",{class:"pn"},p.nombre+" · $"+fmtMoney(p.precio))),h("div",{class:"av"},h("b",null,av),h("small",null,"de "+ini+" · vendidas "+vendidasEnLive(p.codigo)))); }));
-  // clientas: carritos del live + clientas registradas
+  const plist=h("div",{class:"plist lr-plist"},...(prods.length?prods.map(p=>{ const av=Number(p.existencia)||0; const ini=inicialDe(p); return h("button",{type:"button",class:"prow lr-prow"+(p.codigo===state.rapidoSel?" sel":"")+(av<=0?" zero":av<=(Number(p.minimo)||0)?" low":""),onclick:()=>{ state.rapidoSel=p.codigo===state.rapidoSel?null:p.codigo; renderRapido(); if(state.rapidoSel){ const i=$("#rapidoCQ"); if(i) i.focus(); } }},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"pw"},p.palabra||p.codigo),h("div",{class:"pn"},p.nombre)),h("div",{class:"av"},h("b",null,av),h("small",null,"de "+ini))); }):[h("div",{class:"vd-vacio"},"Ninguna pieza coincide.")]));
+  const paso1=paso(1,"Pieza",h("span",{class:"lr-muted"},prods.length+" piezas"),pq,plist);
+
+  /* ---- 2) cantidad (con la pieza elegida) ---- */
+  const qin=h("input",{type:"number",id:"rapidoQty",min:"1",max:"999",value:String(state.rapidoQty),"aria-label":"Cantidad",inputmode:"numeric"});
+  const setQ=v=>{ state.rapidoQty=Math.max(1,Math.min(999,parseInt(v,10)||1)); qin.value=String(state.rapidoQty); };
+  qin.addEventListener("input",()=>{ state.rapidoQty=Math.max(1,parseInt(qin.value,10)||1); });
+  qin.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); setQ(qin.value); const i=$("#rapidoCQ"); if(i){ i.focus(); i.select(); } } });
+  const qtys=h("div",{class:"qtys"},h("button",{class:"btn",type:"button","aria-label":"Una menos",onclick:()=>setQ(state.rapidoQty-1)},"−"),qin,h("button",{class:"btn",type:"button","aria-label":"Una más",onclick:()=>setQ(state.rapidoQty+1)},"+"));
+  const elegida=sel?h("div",{class:"lr-sel"},thumb(sel),h("div",{style:"min-width:0;flex:1"},h("div",{class:"pw"},sel.palabra||sel.codigo),h("div",{class:"lr-muted"},sel.nombre+" · $"+fmtMoney(sel.precio)),h("div",{class:"lr-muted"},"Quedan "+(Number(sel.existencia)||0))),h("button",{class:"vd-x",type:"button",title:"Quitar selección","aria-label":"Quitar selección",onclick:()=>{ state.rapidoSel=null; renderRapido(); }},"×"))
+    :h("div",{class:"vd-vacio",style:"padding:12px"},"Toca una pieza de la lista.");
+  const paso2=paso(2,"Cantidad",null,elegida,h("div",{class:"selbox lr-qtybox"},h("span",{class:"lr-muted"},"Piezas a despachar"),qtys));
+
+  /* ---- 3) clienta ---- */
   const cq=normaliza(state.rapidoCQ);
-  const carts=[...state.carts.values()].filter(c=>c.estado==="abierto").sort((a,b)=>a.cliente.localeCompare(b.cliente));
+  const carts=abiertos.slice().sort((a,b)=>a.cliente.localeCompare(b.cliente));
   const inCartIds=new Set(carts.map(c=>c.clienteId).filter(Boolean)); const inCartNames=new Set(carts.map(c=>normaliza(c.cliente)));
   const regs=[...state.clientas.values()].filter(k=>!inCartIds.has(k.id)&&!inCartNames.has(normaliza(k.nombre))).sort((a,b)=>a.nombre.localeCompare(b.nombre));
   const match=x=>!cq||normaliza(x.cliente||x.nombre).includes(cq)||normaliza(x.facebook||"").includes(cq);
-  const cqIn=h("input",{type:"search",id:"rapidoCQ",placeholder:"Buscar clienta…",value:state.rapidoCQ,style:"width:100%;margin-bottom:8px"});
+  const cqIn=h("input",{type:"search",id:"rapidoCQ",class:"vd-input",placeholder:"Buscar o escribir clienta",value:state.rapidoCQ});
   cqIn.addEventListener("input",()=>{ state.rapidoCQ=cqIn.value; renderRapido(); const i=$("#rapidoCQ"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
-  const send=async(nombre,clienteId)=>{ if(!sel){ toast("Primero elige la pieza (o escribe el comando arriba)",true); return; } const ok=await despachar(sel,state.rapidoQty,nombre,clienteId); if(ok) toast(`${state.rapidoQty} × ${sel.palabra||sel.codigo} → ${nombre}`); };
+  const send=async(nombre,clienteId)=>{ if(!sel){ toast("Primero elige la pieza (paso 1) o usa el despacho rápido",true); return; } const ok=await despachar(sel,state.rapidoQty,nombre,clienteId); if(ok) toast(`${state.rapidoQty} × ${sel.palabra||sel.codigo} → ${nombre}`); };
   cqIn.addEventListener("keydown",e=>{ if(e.key!=="Enter") return; e.preventDefault(); const nm=cqIn.value.trim(); if(!nm){ toast("Escribe el nombre de la clienta",true); return; } const c0=carts.find(c=>normaliza(c.cliente)===cq)||carts.filter(match)[0]; const k0=c0?null:(regs.find(k=>normaliza(k.nombre)===cq)||regs.filter(match)[0]); state.rapidoCQ=""; if(c0) send(c0.cliente,c0.clienteId); else if(k0) send(k0.nombre,k0.id); else send(nm,""); setTimeout(()=>{ const i=$("#rapidoCQ"); if(i) i.focus(); },50); });
-  const chips=h("div",{class:"chips"},
-    ...carts.filter(match).map(c=>h("button",{type:"button",class:"cchip incart",onclick:()=>send(c.cliente,c.clienteId)},c.cliente,h("small",null,cartPieces(c)+" pzas"))),
-    ...regs.filter(match).map(k=>h("button",{type:"button",class:"cchip",onclick:()=>send(k.nombre,k.id)},k.nombre,k.facebook?h("small",null,"FB "+k.facebook):null)),
-    state.rapidoCQ.trim()&&!carts.some(c=>normaliza(c.cliente)===cq)&&!regs.some(k=>normaliza(k.nombre)===cq)?h("button",{type:"button",class:"cchip add",onclick:()=>{ const nm=state.rapidoCQ.trim(); state.rapidoCQ=""; send(nm,""); }},"+ Nueva: "+state.rapidoCQ.trim()):null);
+  // sin buscar: solo las clientas que ya tienen carrito en este live; al escribir aparecen también las registradas
+  const enLive=carts.filter(match); const otras=cq?regs.filter(match).slice(0,12):[];
+  const nueva=state.rapidoCQ.trim()&&!carts.some(c=>normaliza(c.cliente)===cq)&&!regs.some(k=>normaliza(k.nombre)===cq);
+  const chips=h("div",{class:"lr-clientas"},
+    enLive.length?h("div",{class:"lr-grupo"},h("div",{class:"lr-glabel"},cq?"Con carrito en este live":"Clientas en este live"),h("div",{class:"chips"},...enLive.map(c=>h("button",{type:"button",class:"cchip incart"+(sel?"":" off"),onclick:()=>send(c.cliente,c.clienteId)},c.cliente,h("small",null,cartPieces(c)+" pzas"))))):(!cq?h("div",{class:"vd-vacio",style:"padding:12px"},"Aún no hay carritos. Escribe el nombre de la primera clienta."):null),
+    otras.length?h("div",{class:"lr-grupo"},h("div",{class:"lr-glabel"},"Clientas registradas"),h("div",{class:"chips"},...otras.map(k=>h("button",{type:"button",class:"cchip"+(sel?"":" off"),onclick:()=>send(k.nombre,k.id)},k.nombre,k.facebook?h("small",null,"FB "+k.facebook):null)))):null,
+    nueva?h("div",{class:"chips"},h("button",{type:"button",class:"cchip add",onclick:()=>{ const nm=state.rapidoCQ.trim(); state.rapidoCQ=""; send(nm,""); }},"+ Nueva clienta: "+state.rapidoCQ.trim())):null);
+  const paso3=paso(3,"Clienta",h("span",{class:"lr-muted"},sel?"toca a la clienta para despachar":"primero elige la pieza"),cqIn,chips);
+
+  /* ---- despachos (últimos 5; el resto se despliega) ---- */
   const despachos=(state.lives.find(x=>x.id===l.id)||{}).despachos||[];
-  const log=h("div",{class:"dlog"},...(despachos.length?despachos.map((d,i)=>h("div",{class:"d"},h("span",null,h("b",null,d.qty+" × "+(d.palabra||d.codigo))," → "+d.cliente,h("span",{class:"u"}," · "+new Date(d.t).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}))),h("button",{class:"btn sm ghost",onclick:async()=>{ const c=state.carts.get(d.cartId); if(!c){ toast("Ese carrito ya no existe",true); await quitarDespacho(l,i); renderRapido(); return; } await changeItem(c,d.codigo,-d.qty); await quitarDespacho(l,i); renderRapido(); toast("Deshecho"); }},"Deshacer"))):[h("span",{style:"color:var(--muted);font-size:13px"},"Aquí verás lo que vayas despachando en este live, con opción de deshacer.")]));
-  host.replaceChildren(
-    h("div",{class:"livehead",style:"margin-bottom:10px"},h("div",null,h("h2",null,l.nombre),h("div",{class:"sub"},h("span",{class:"pill on"},"En vivo")," · ",carts.length," carritos abiertos · ",[...state.carts.values()].filter(c=>c.estado!=="cancelado").reduce((s,c)=>s+cartPieces(c),0)," piezas despachadas")),
-      h("div",{style:"display:flex;gap:8px;flex-wrap:wrap"},h("button",{class:"btn",onclick:()=>{ if(NATIVE()&&NATIVE().openBoard) NATIVE().openBoard(); else { document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; renderConteo(); } }},NATIVE()?"Abrir conteo en otra ventana":"Pantalla de conteo"),h("button",{class:"btn ghost",onclick:()=>setView("live")},"Ver carritos"))),
-    h("div",{class:"cmdbar"},cmd,h("button",{class:"btn primary",onclick:async()=>{ const t=cmd.value.trim(); if(!t) return; cmd.value=""; await ejecutarComando(t); }},"Despachar")),
-    h("p",{style:"margin:-4px 0 12px;font-size:13px;color:var(--muted)"},"Cantidad · palabra clave · clienta → Enter. O elige la pieza, la cantidad y toca a la clienta."),
-    h("div",{class:"rapido"},
-      h("div",{class:"panel"},h("h3",null,"Piezas"),pq,plist),
-      h("div",{class:"panel"},
-        h("div",{class:"selbox"},sel?[thumb(sel),h("div",{style:"min-width:0;flex:1"},h("div",{class:"pw",style:"font-weight:800;color:var(--accent)"},sel.palabra||sel.codigo),h("div",{style:"font-size:12px;color:var(--muted)"},sel.nombre+" · quedan "+(Number(sel.existencia)||0)))]:h("span",{style:"color:var(--muted);font-size:13px;flex:1"},"Elige una pieza"),(()=>{ const qin=h("input",{type:"number",id:"rapidoQty",min:"1",max:"999",value:String(state.rapidoQty),"aria-label":"Cantidad",title:"Cantidad a despachar"}); const setQ=v=>{ state.rapidoQty=Math.max(1,Math.min(999,parseInt(v,10)||1)); qin.value=String(state.rapidoQty); }; qin.addEventListener("input",()=>{ state.rapidoQty=Math.max(1,parseInt(qin.value,10)||1); }); qin.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); setQ(qin.value); const i=$("#rapidoCQ"); if(i){ i.focus(); i.select(); } } }); return h("div",{class:"qtys"},h("button",{class:"btn","aria-label":"Una menos",onclick:()=>setQ(state.rapidoQty-1)},"−"),qin,h("button",{class:"btn","aria-label":"Una más",onclick:()=>setQ(state.rapidoQty+1)},"+")); })()),
-        h("h3",null,"Clienta"),cqIn,chips,
-        h("h3",{style:"margin-top:14px"},"Despachos"),log)));
+  const fila=(d,i)=>h("div",{class:"lr-d"},h("span",{class:"lr-dq"},d.qty+" ×"),h("div",{style:"min-width:0;flex:1"},h("b",null,d.palabra||d.codigo)," → "+d.cliente,h("div",{class:"lr-muted"},new Date(d.t).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}))),h("button",{class:"btn sm ghost",type:"button",onclick:async()=>{ const c=state.carts.get(d.cartId); if(!c){ toast("Ese carrito ya no existe",true); await quitarDespacho(l,i); renderRapido(); return; } await changeItem(c,d.codigo,-d.qty); await quitarDespacho(l,i); renderRapido(); toast("Deshecho"); }},"Deshacer"));
+  const log=h("section",{class:"lr-log"},h("div",{class:"vd-pasohead"},h("h4",null,"Últimos despachos"),despachos.length?h("span",{class:"lr-muted"},despachos.length+" en total"):null),
+    despachos.length?h("div",{class:"lr-dlist"},...despachos.slice(0,5).map(fila)):h("div",{class:"lr-muted"},"Aquí verás cada despacho, con opción de deshacer."),
+    despachos.length>5?h("details",{class:"vd-mas"},h("summary",null,despachos.length-5===1?"Ver 1 anterior":"Ver los "+(despachos.length-5)+" anteriores"),h("div",{class:"lr-dlist",style:"margin-top:8px"},...despachos.slice(5).map((d,j)=>fila(d,j+5)))):null);
+
+  const cab=h("div",{class:"lr-cab"},h("div",null,h("h2",null,l.nombre),h("div",{class:"lr-stats"},h("span",{class:"pill on"},"En vivo"),h("span",null,h("b",null,abiertos.length)," carritos abiertos"),h("span",null,h("b",null,despachadas)," piezas despachadas"))),
+    h("div",{class:"vd-sec"},h("button",{class:"btn",type:"button",onclick:()=>{ if(NATIVE()&&NATIVE().openBoard) NATIVE().openBoard(); else { document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; renderConteo(); } }},NATIVE()?"Conteo en otra ventana":"Pantalla de conteo"),h("button",{class:"btn ghost",type:"button",onclick:()=>setView("live")},"Ver carritos")));
+  host.replaceChildren(h("div",{class:"lr"},cab,rapidoBox,h("div",{class:"lr-o"},h("span",null,"o paso a paso")),
+    h("div",{class:"lr-grid"},h("div",{class:"lr-col"},paso1),h("div",{class:"lr-col"},paso2,paso3,log))));
   if(focused==="cmdInput"||focused==="rapidoCQ"||focused==="rapidoQ"||focused==="rapidoQty"){ const i=$("#"+focused); if(i){ i.focus(); if(focused==="rapidoQty") i.select(); } }
 }
 
