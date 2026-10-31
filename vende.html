@@ -3566,6 +3566,63 @@ body.vx-on #toastHost .toast{position:static!important;transform:none!important;
 @keyframes vxup{from{transform:translateY(40px);opacity:.4}}
 @keyframes vxpop{from{transform:scale(.6);opacity:0}}
 @media (min-width:900px){.vx-main{max-width:820px}.vx-hola h1{font-size:38px}}
+/* ===== Administrador: pestañas, inventario, clientas, resumen ===== */
+.vx-tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:70;display:flex;gap:2px;padding:6px;border-radius:30px;
+  background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(30px) saturate(200%);backdrop-filter:blur(30px) saturate(200%);border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 18px 50px rgba(0,0,0,.14),0 1px 2px rgba(0,0,0,.06),inset 0 1px 0 #fff;width:min(520px,calc(100% - 24px))}
+.vx-tab{flex:1;border:0;background:transparent;border-radius:24px;padding:7px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#8E8E93;transition:background .2s,color .2s}
+.vx-tabico{width:24px;height:24px;display:grid;place-items:center}.vx-tabico svg{width:24px;height:24px}
+.vx-tab.on{color:#1D1D1F;background:rgba(0,0,0,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+body.vx-contab .vx-main{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.vx-large{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.vx-large h1{font-size:34px}
+.vx-plus{width:40px;height:40px;border-radius:50%;border:0;background:#1D1D1F;color:#fff;font-size:26px;line-height:1;display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,0,0,.18)}
+.vx-search{padding-left:40px!important;background:#EFEFF4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 13px 50%/18px!important}
+.vx-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.vx-chips::-webkit-scrollbar{display:none}
+.vx-chips button{flex:0 0 auto;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.8);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:600;color:#3A3A3C}
+.vx-chips button.on{background:#1D1D1F;color:#fff;border-color:transparent}
+.vx-stats{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px}
+.vx-stats::-webkit-scrollbar{display:none}
+.vx-stats div{flex:0 0 auto;display:flex;flex-direction:column;padding:12px 16px;border-radius:18px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.06);box-shadow:0 4px 18px rgba(0,0,0,.04)}
+.vx-stats b{font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.vx-stats span{font-size:12px;color:#8E8E93}
+.vx-stats .rojo b{color:#D70015}
+.vx-invgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+@media (min-width:800px){.vx-invgrid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
+.rojo{color:#D70015!important}.naranja{color:#B25000!important}
+.vx-bigfoto{width:100%;aspect-ratio:1;max-height:42vh;border-radius:20px;background:#F5F5F7;display:grid;place-items:center;overflow:hidden;color:#C7C7CC;font-size:60px;font-weight:600}
+.vx-bigfoto img{width:100%;height:100%;object-fit:contain;background:#fff}
+.vx-sheethead.izq{align-items:flex-start;text-align:left}
+.vx-sheethead h2{margin:0;font-size:24px;letter-spacing:-.02em}
+.vx-palabra{color:#5A2748;font-weight:700;font-size:16px}
+.vx-kvs{display:flex;flex-direction:column;background:#F5F5F7;border-radius:16px;padding:4px 14px}
+.vx-kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-top:1px solid rgba(0,0,0,.06);font-size:15px}
+.vx-kv:first-child{border-top:0}
+.vx-kv span{color:#6E6E73}.vx-kv b{text-align:right;font-weight:600;overflow-wrap:anywhere}
+.vx-mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.02em}
+.vx-chev{color:#C7C7CC;font-size:24px;line-height:1}
+.vx-field{display:flex;flex-direction:column;gap:6px}
+.vx-field span{font-size:13px;font-weight:600;color:#6E6E73}
+.vx-club{display:flex;flex-direction:column;gap:10px;border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(90,39,72,.06),rgba(242,101,63,.05));border:1px solid rgba(90,39,72,.12)}
+.vx-club .vx-kv{border-top-color:rgba(90,39,72,.1)}
+.vx-clubhead{display:flex;justify-content:space-between;align-items:center}
+.vx-wa{display:block;text-align:center;text-decoration:none;background:#1D1D1F!important}
+.vx-nota.izq{text-align:left}
+.vx-barras{display:grid;grid-template-columns:repeat(14,1fr);gap:6px;align-items:end;height:140px}
+.vx-barra{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+.vx-barra i{display:block;width:100%;max-width:26px;border-radius:7px 7px 3px 3px;background:#D1D1D6}
+.vx-barra.hoy i{background:#1D1D1F}
+.vx-barra span{font-size:10px;color:#8E8E93}
+.vx-rank{display:flex;flex-direction:column}
+.vx-rankf{display:grid;grid-template-columns:auto 44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border:0;border-top:1px solid rgba(0,0,0,.05);background:transparent;text-align:left;width:100%}
+button.vx-rankf{grid-template-columns:44px minmax(0,1fr) auto}
+.vx-rankf:first-child{border-top:0}
+.vx-rankf .vx-foto{width:44px;height:44px}
+.vx-rankn{font-weight:800;color:#8E8E93;width:18px;text-align:center}
+.vx-cargando.chico{min-height:60px}
+@media (min-width:800px){.vx-kpis{grid-template-columns:repeat(4,1fr)}}
+#vx .vx-search{background:#EFEFF4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 13px 50%/18px!important;border-color:transparent!important;padding-left:40px!important}
+#vx .vx-search:focus{background-color:#fff!important;border-color:#1D1D1F!important}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -3604,7 +3661,7 @@ body.vx-on #toastHost .toast{position:static!important;transform:none!important;
         el("a", { href: "sistema.html", class: "vx-menuitem" }, "Abrir sistema completo"),
         el("button", { type: "button", class: "vx-menuitem rojo", onclick: () => { if (confirm("¿Cerrar sesión en este dispositivo?")) window.MarveaNube.salir(); } }, "Cerrar sesión")));
     return el("header", { class: "vx-top" },
-      V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
+      V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
       el("div", { class: "vx-topr" }, menu));
   }
 
@@ -3754,13 +3811,160 @@ body.vx-on #toastHost .toast{position:static!important;transform:none!important;
       el("div", { id: "vxScanMsg", class: "vx-scanmsg " + (V.scan.ok === true ? "ok" : V.scan.ok === false ? "bad" : "") }, V.scan.msg));
   }
 
+  /* ===================== Administrador: Inventario · Clientas · Resumen (31-oct-2026) ===================== */
+  const esAdmin = () => { try { return (JSON.parse(localStorage.getItem("marvea.perfil") || "null") || {}).rol === "administrador"; } catch (e) { return false; } };
+  Object.assign(V, { tab: "vender", invQ: "", invCat: "", prod: null, cliQ: "", clienta: null, cliForm: null, accesos: null, accesosT: 0, res: null, resT: 0 });
+  const IC = {
+    vender: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+    inv: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>',
+    cli: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 5.5 5"/></svg>',
+    res: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>'
+  };
+  function tabbar() {
+    const t = (id, txt) => { const b = el("button", { type: "button", class: "vx-tab" + (V.tab === id ? " on" : ""), onclick: () => { V.tab = id; V.prod = null; V.clienta = null; V.cliForm = null; if (id === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); } }); b.innerHTML = '<span class="vx-tabico">' + IC[id] + '</span><span>' + txt + '</span>'; return b; };
+    return el("nav", { class: "vx-tabbar" }, t("vender", "Vender"), t("inv", "Inventario"), t("cli", "Clientas"), t("res", "Resumen"));
+  }
+  const grande = (txt, extra) => el("div", { class: "vx-hola vx-large" }, el("h1", null, txt), extra || null);
+  const buscador = (id, val, ph, on) => { const i = el("input", { id, class: "vx-input vx-search", type: "search", placeholder: ph, value: val, autocomplete: "off", spellcheck: "false" }); i.addEventListener("input", () => { on(i.value); render(); }); return i; };
+
+  /* ---------- Inventario (ver todo) ---------- */
+  function inventario() {
+    const cats = state.cats || [];
+    const q = normaliza(V.invQ);
+    const lista = [...state.products.values()].filter(p => (!V.invCat || p.categoria === V.invCat) && (!q || normaliza(p.nombre).includes(q) || normaliza(p.palabra).includes(q) || normaliza(p.codigo).includes(q)))
+      .sort((a, b) => String(b.creado || "").localeCompare(String(a.creado || "")) || a.codigo.localeCompare(b.codigo));
+    const todos = [...state.products.values()]; const piezas = todos.reduce((s, p) => s + (Number(p.existencia) || 0), 0);
+    const valor = todos.reduce((s, p) => s + (Number(p.existencia) || 0) * (Number(p.precio) || 0), 0); const costo = todos.reduce((s, p) => s + (Number(p.existencia) || 0) * (Number(p.costo) || 0), 0);
+    const agot = todos.filter(p => (Number(p.existencia) || 0) <= 0).length;
+    const chips = el("div", { class: "vx-chips" }, el("button", { type: "button", class: !V.invCat ? "on" : "", onclick: () => { V.invCat = ""; render(); } }, "Todas"),
+      ...cats.filter(c => todos.some(p => p.categoria === c.p)).map(c => el("button", { type: "button", class: V.invCat === c.p ? "on" : "", onclick: () => { V.invCat = c.p; render(); } }, c.n)));
+    return el("main", { class: "vx-main vx-contabs" }, grande("Inventario"),
+      el("section", { class: "vx-stats" }, el("div", null, el("b", null, todos.length), el("span", null, "modelos")), el("div", null, el("b", null, piezas.toLocaleString("es-MX")), el("span", null, "piezas")),
+        el("div", null, el("b", null, precio(valor)), el("span", null, "a precio")), el("div", null, el("b", null, precio(costo)), el("span", null, "costo")), agot ? el("div", { class: "rojo" }, el("b", null, agot), el("span", null, "agotados")) : null),
+      buscador("vxInvQ", V.invQ, "Buscar por nombre, palabra o código", v => V.invQ = v), chips,
+      el("div", { class: "vx-grid vx-invgrid" }, ...(lista.length ? lista.map(p => { const av = Number(p.existencia) || 0; return el("button", { type: "button", class: "vx-tile" + (av <= 0 ? " agotado" : ""), onclick: () => { V.prod = p.codigo; render(); } }, foto(p, "vx-tfoto"),
+        el("div", { class: "vx-tinfo" }, el("b", null, p.palabra || p.codigo), el("span", { class: "vx-tn" }, p.nombre), el("div", { class: "vx-tp" }, el("span", null, precio(p.precio)), el("small", { class: av <= 0 ? "rojo" : av <= (Number(p.minimo) || 0) ? "naranja" : "" }, av <= 0 ? "Agotado" : av + " pzas")))); })
+        : [el("div", { class: "vx-vacio" }, "Ningún modelo coincide.")])));
+  }
+  function prodSheet() {
+    const p = state.products.get(V.prod); if (!p) { V.prod = null; return null; }
+    const av = Number(p.existencia) || 0; const gan = (Number(p.precio) || 0) - (Number(p.costo) || 0);
+    const fila = (k, v) => v === "" || v == null ? null : el("div", { class: "vx-kv" }, el("span", null, k), el("b", null, v));
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.prod = null; render(); } } },
+      el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }), foto(p, "vx-bigfoto"),
+        el("div", { class: "vx-sheethead izq" }, el("span", null, p.codigo + " · " + catName(p.categoria)), el("h2", null, p.nombre), el("div", { class: "vx-palabra" }, p.palabra || "")),
+        el("div", { class: "vx-kvs" }, fila("Precio de mayoreo", precio(p.precio)), fila("Costo", precio(p.costo)), fila("Ganancia por pieza", precio(gan) + (p.precio ? " · " + Math.round(gan / p.precio * 100) + "%" : "")),
+          fila("Existencia", av + " pzas" + (av <= 0 ? " · agotado" : av <= (Number(p.minimo) || 0) ? " · por reponer" : "")), fila("Alerta de existencia baja", (Number(p.minimo) || 0) + " pzas"),
+          fila("Material", p.material), fila("Etiqueta del catálogo", p.etiquetaCat), fila("Notas", p.notas), fila("Registrado", p.creado ? new Date(p.creado).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "")),
+        el("p", { class: "vx-nota" }, "Para editar el modelo usa el sistema completo o la app de la Mac."),
+        el("button", { class: "vx-btn2", type: "button", onclick: () => { V.prod = null; render(); } }, "Cerrar")));
+  }
+
+  /* ---------- Clientas (registrar y dar acceso al Business Club) ---------- */
+  async function cargarAccesos(force) {
+    if (!force && V.accesos && Date.now() - V.accesosT < 30000) return; V.accesosT = Date.now();
+    try { const { data, error } = await window.MarveaNube.sb.from("marvea_club_accesos").select("clienta_id,usuario,pass,enviado"); if (!error) { V.accesos = new Map((data || []).map(a => [a.clienta_id, a])); render(); } } catch (e) {}
+  }
+  function clientas() {
+    cargarAccesos(false);
+    const q = normaliza(V.cliQ); const lista = buscarClientas(V.cliQ).slice(0, 300);
+    return el("main", { class: "vx-main vx-contabs" }, grande("Clientas", el("button", { class: "vx-plus", type: "button", "aria-label": "Nueva clienta", onclick: () => { V.cliForm = { nombre: V.cliQ.trim(), facebook: "", whatsapp: "", ciudad: "", direccion: "", notas: "" }; render(); } }, "+")),
+      buscador("vxCliQ", V.cliQ, "Buscar por nombre, WhatsApp o ciudad", v => V.cliQ = v),
+      el("div", { class: "vx-lista" }, ...(lista.length ? lista.map(k => { const a = V.accesos && V.accesos.get(k.id); return el("button", { type: "button", class: "vx-fila", onclick: () => { V.clienta = k.id; render(); } },
+        el("div", { class: "vx-filai" }, el("b", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · ") || "Sin datos de contacto")),
+        el("div", { class: "vx-filad" }, a ? el("span", { class: "vx-chip ok" }, "Club ✓") : null, el("span", { class: "vx-chev" }, "›"))); })
+        : [el("div", { class: "vx-vacio" }, q ? "No hay clientas con «" + V.cliQ + "»." : "Aún no hay clientas.")])));
+  }
+  function cliFormSheet() {
+    const f = V.cliForm; const inp = (k, ph, type) => { const i = el("input", { class: "vx-input", placeholder: ph, value: f[k] || "", type: type || "text", ...(type === "tel" ? { inputmode: "tel" } : {}) }); i.addEventListener("input", () => { f[k] = i.value; }); return el("label", { class: "vx-field" }, el("span", null, ph), i); };
+    const guardar = async () => { if (!String(f.nombre || "").trim()) { toast("Escribe el nombre de la clienta", true); return; } const id = await saveClienta(f, f.id || null); if (id) { toast(f.id ? "Clienta actualizada" : "Clienta registrada"); V.cliForm = null; V.clienta = id; render(); } };
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.cliForm = null; render(); } } },
+      el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }), el("div", { class: "vx-sheethead izq" }, el("h2", null, f.id ? "Editar clienta" : "Nueva clienta")),
+        inp("nombre", "Nombre"), inp("whatsapp", "WhatsApp (10 dígitos)", "tel"), inp("facebook", "Facebook"), inp("ciudad", "Ciudad"), inp("direccion", "Dirección de envío"), inp("notas", "Notas"),
+        el("button", { class: "vx-cta", type: "button", onclick: guardar }, f.id ? "Guardar cambios" : "Registrar clienta"),
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.cliForm = null; render(); } }, "Cancelar"))));
+  }
+  const mensajeClub = (k, a) => "¡Hola " + String(k.nombre || "").split(" ")[0] + "! Ya tienes tu acceso al Marvea Business Club 💛\n\nEntra en https://www.marveamayoreo.com/club.html\nUsuario: " + a.usuario + "\nContraseña: " + a.pass + "\n\nAhí ves tus pedidos, registras tus ventas, ves tu ganancia y descargas tu catálogo en PDF. Puedes cambiar la contraseña desde tu perfil.";
+  async function darAcceso(k, nueva) {
+    try {
+      const { data, error } = await window.MarveaNube.sb.rpc("marvea_club_dar_acceso", { p_clienta_id: k.id, p_nombre: k.nombre || "", p_whatsapp: k.whatsapp || "", p_ciudad: k.ciudad || "", p_nueva: !!nueva });
+      if (error) throw error; vibra(30); toast(nueva ? "Contraseña nueva lista" : "Acceso al Business Club listo"); await cargarAccesos(true);
+      return data;
+    } catch (e) { toast(e.message || "No se pudo dar el acceso", true); }
+  }
+  function clientaSheet() {
+    const k = state.clientas.get(V.clienta); if (!k) { V.clienta = null; return null; }
+    const a = V.accesos && V.accesos.get(k.id); const dig = String(k.whatsapp || "").replace(/\D/g, "");
+    if (V.histId !== k.id) { V.histId = k.id; V.hist = null; historialClienta(k.id).then(h => { if (V.histId === k.id) { V.hist = h || []; render(); } }).catch(() => {}); }
+    const compras = (V.hist || []).filter(x => x.estado === "final"); const totalCompras = compras.reduce((s, x) => s + (Number(x.total) || 0), 0);
+    let club;
+    if (a) {
+      const msg = mensajeClub(k, a);
+      club = el("div", { class: "vx-club" }, el("div", { class: "vx-clubhead" }, el("b", null, "Marvea Business Club"), a.enviado ? el("span", { class: "vx-chip ok" }, "Enviado") : el("span", { class: "vx-chip warn" }, "Sin enviar")),
+        el("div", { class: "vx-kv" }, el("span", null, "Usuario"), el("b", null, a.usuario)), el("div", { class: "vx-kv" }, el("span", null, "Contraseña"), el("b", { class: "vx-mono" }, a.pass)),
+        el("a", { class: "vx-cta vx-wa", href: "https://wa.me/52" + a.usuario + "?text=" + encodeURIComponent(msg), target: "_blank", rel: "noopener", onclick: () => { window.MarveaNube.sb.rpc("marvea_club_enviado", { p_clienta_id: k.id, p_enviado: true }).then(() => cargarAccesos(true)); } }, "Enviar acceso por WhatsApp"),
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: async () => { try { await navigator.clipboard.writeText(msg); toast("Mensaje copiado"); } catch (e) { toast("No se pudo copiar", true); } } }, "Copiar mensaje"),
+          el("button", { type: "button", onclick: async () => { if (confirm("¿Generar otra contraseña para " + k.nombre + "? La anterior deja de funcionar.")) { await darAcceso(k, true); render(); } } }, "Nueva contraseña")));
+    } else {
+      club = el("div", { class: "vx-club" }, el("div", { class: "vx-clubhead" }, el("b", null, "Marvea Business Club")),
+        el("p", { class: "vx-nota izq" }, dig.length >= 10 ? "Dale su perfil privado: verá sus pedidos, registrará sus ventas y descargará su catálogo." : "Para darle acceso, primero agrega su WhatsApp de 10 dígitos."),
+        dig.length >= 10 ? el("button", { class: "vx-cta", type: "button", onclick: async () => { await darAcceso(k, false); render(); } }, "Dar acceso al Business Club")
+          : el("button", { class: "vx-btn2", type: "button", onclick: () => { V.cliForm = Object.assign({}, k); V.clienta = null; render(); } }, "Agregar WhatsApp"));
+    }
+    return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { V.clienta = null; render(); } } },
+      el("div", { class: "vx-sheet" }, el("div", { class: "vx-grip" }),
+        el("div", { class: "vx-sheethead izq" }, el("h2", null, k.nombre), el("span", null, [k.whatsapp, k.ciudad].filter(Boolean).join(" · "))),
+        el("div", { class: "vx-kvs" }, k.facebook ? el("div", { class: "vx-kv" }, el("span", null, "Facebook"), el("b", null, k.facebook)) : null, k.direccion ? el("div", { class: "vx-kv" }, el("span", null, "Dirección"), el("b", null, k.direccion)) : null,
+          el("div", { class: "vx-kv" }, el("span", null, "Compras"), el("b", null, V.hist ? compras.length + " · " + precio(totalCompras) : "…")), k.notas ? el("div", { class: "vx-kv" }, el("span", null, "Notas"), el("b", null, k.notas)) : null),
+        club,
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.cliForm = Object.assign({}, k); V.clienta = null; render(); } }, "Editar datos"), el("button", { type: "button", onclick: () => { V.clienta = null; render(); } }, "Cerrar"))));
+  }
+
+  /* ---------- Resumen ---------- */
+  async function cargarResumen(force) {
+    if (!force && V.res && Date.now() - V.resT < 20000) return; V.resT = Date.now();
+    try { const s = await state.db.collection("carritos").get(); V.res = s.docs.map(d => cartFromDoc(d.id, d.data() || {})); render(); } catch (e) {}
+  }
+  function resumen() {
+    cargarResumen(false);
+    const carts = (V.res || []).filter(c => c.estado === "final"); const hoy = hoyKey(); const mes = hoy.slice(0, 7);
+    const dia = c => hoyKey(new Date(c.finalizado || c.creado));
+    const suma = arr => arr.reduce((s, c) => s + cartGrand(c), 0);
+    const gan = arr => arr.reduce((s, c) => s + c.items.reduce((t, it) => t + ((Number(it.precio) || 0) - (Number(it.costo) || 0)) * (Number(it.cant) || 0), 0), 0);
+    const cHoy = carts.filter(c => dia(c) === hoy), cMes = carts.filter(c => dia(c).slice(0, 7) === mes);
+    const porCobrar = carts.filter(c => !c.pago); const todos = [...state.products.values()];
+    const dias = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const kd = hoyKey(d); dias.push({ k: kd, d, v: suma(carts.filter(c => dia(c) === kd)) }); }
+    const max = Math.max(1, ...dias.map(x => x.v));
+    const top = {}; for (const c of cMes) for (const it of c.items) top[it.codigo] = (top[it.codigo] || 0) + (Number(it.cant) || 0);
+    const topL = Object.entries(top).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const reponer = todos.filter(p => (Number(p.existencia) || 0) <= (Number(p.minimo) || 0)).sort((a, b) => (a.existencia || 0) - (b.existencia || 0)).slice(0, 6);
+    return el("main", { class: "vx-main vx-contabs" }, grande("Resumen", el("button", { class: "vx-link", type: "button", onclick: () => cargarResumen(true) }, "Actualizar")),
+      !V.res ? el("div", { class: "vx-cargando chico" }, el("div", { class: "vx-spin" })) : null,
+      el("section", { class: "vx-kpis" },
+        el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido este mes"), el("b", null, precio(suma(cMes))), el("small", null, cMes.length + " venta" + (cMes.length === 1 ? "" : "s") + " · ganancia " + precio(gan(cMes)))),
+        el("div", { class: "vx-kpi" }, el("span", null, "Hoy"), el("b", null, precio(suma(cHoy))), el("small", null, cHoy.length + " venta" + (cHoy.length === 1 ? "" : "s"))),
+        el("div", { class: "vx-kpi" }, el("span", null, "Por cobrar"), el("b", null, precio(suma(porCobrar))), el("small", null, porCobrar.length + " pendiente" + (porCobrar.length === 1 ? "" : "s"))),
+        el("div", { class: "vx-kpi" }, el("span", null, "Inventario"), el("b", null, todos.reduce((s, p) => s + (Number(p.existencia) || 0), 0).toLocaleString("es-MX") + " pzas"), el("small", null, precio(todos.reduce((s, p) => s + (Number(p.existencia) || 0) * (Number(p.precio) || 0), 0)) + " a precio"))),
+      el("section", { class: "vx-card" }, el("div", { class: "vx-lblrow" }, el("span", { class: "vx-lbl" }, "Últimos 14 días"), el("span", { class: "vx-cnt" }, precio(dias.reduce((s, x) => s + x.v, 0)))),
+        el("div", { class: "vx-barras" }, ...dias.map(x => el("div", { class: "vx-barra" + (x.k === hoy ? " hoy" : ""), title: x.d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + ": " + precio(x.v) }, el("i", { style: "height:" + Math.max(3, Math.round(x.v / max * 100)) + "%" }), el("span", null, x.d.getDate()))))),
+      el("section", { class: "vx-card" }, el("span", { class: "vx-lbl" }, "Lo más vendido del mes"),
+        topL.length ? el("div", { class: "vx-rank" }, ...topL.map(([cod, n], i) => { const p = state.products.get(cod) || { nombre: cod }; return el("div", { class: "vx-rankf" }, el("span", { class: "vx-rankn" }, i + 1), foto(p), el("div", { class: "vx-iti" }, el("b", null, p.nombre), el("span", null, (p.palabra || cod))), el("b", null, n + " pzas")); })) : el("div", { class: "vx-vacio" }, "Aún no hay ventas este mes.")),
+      el("section", { class: "vx-card" }, el("span", { class: "vx-lbl" }, "Por reponer"),
+        reponer.length ? el("div", { class: "vx-rank" }, ...reponer.map(p => el("button", { type: "button", class: "vx-rankf", onclick: () => { V.tab = "inv"; V.prod = p.codigo; render(); } }, foto(p), el("div", { class: "vx-iti" }, el("b", null, p.nombre), el("span", null, p.palabra || p.codigo)), el("b", { class: (Number(p.existencia) || 0) <= 0 ? "rojo" : "naranja" }, (Number(p.existencia) || 0) + " pzas")))) : el("div", { class: "vx-vacio" }, "Todo tiene existencia suficiente.")));
+  }
+
   /* ---------- pintar ---------- */
   function pintar() {
     if (!state.db) { root.replaceChildren(el("div", { class: "vx-cargando" }, el("div", { class: "vx-spin" }), "Conectando…")); return; }
     if (V.pantalla === "venta" && V.hecho) V.hecho = null;
     const act = document.activeElement && document.activeElement.id; const selStart = act && $$("#" + act) && $$("#" + act).selectionStart;
-    const vista = V.pantalla === "venta" ? venta() : V.pantalla === "hecho" ? hecho() : inicio();
+    const admin = esAdmin(); if (!admin) V.tab = "vender";
+    const vista = V.tab === "inv" ? inventario() : V.tab === "cli" ? clientas() : V.tab === "res" ? resumen() : V.pantalla === "venta" ? venta() : V.pantalla === "hecho" ? hecho() : inicio();
     const kids = [barra(), vista];
+    if (admin && !(V.tab === "vender" && (V.pantalla === "venta" || V.pantalla === "hecho"))) { kids.push(tabbar()); document.body.classList.add("vx-contab"); } else document.body.classList.remove("vx-contab");
+    if (V.prod) { const d = prodSheet(); if (d) kids.push(d); }
+    if (V.clienta) { const d = clientaSheet(); if (d) kids.push(d); }
+    if (V.cliForm) kids.push(cliFormSheet());
     if (V.detalle) { const d = detalleSheet(); if (d) kids.push(d); }
     if (V.scan) { kids.push(camaraSheet()); }
     root.replaceChildren(...kids);
