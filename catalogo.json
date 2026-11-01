@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:05:11.084Z",
+ "actualizado": "2026-11-01T21:10:47.719Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2270,6 +2270,42 @@
    "notas": "",
    "foto": "fotos/d15b7e7822d6630c193c62b1caaf744b.jpg",
    "creado": "2026-11-01T21:03:09.591Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00032",
+   "nombre": "Brazalete 3 Hilos",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 70,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/61325da6724b72cd70ee3c65d62c8267.jpg",
+   "creado": "2026-11-01T21:06:01.761Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00033",
+   "nombre": "Brazalete Espirales",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/7eba20815528f5cdc00fbb7541b0a269.jpg",
+   "creado": "2026-11-01T21:07:28.853Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00034",
+   "nombre": "Brazalete Media Luna",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/016c985ffb8b0a067389e2abd9101c5a.jpg",
+   "creado": "2026-11-01T21:08:45.418Z",
    "disponible": true
   }
  ],
