@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:10:47.719Z",
+ "actualizado": "2026-11-01T21:20:40.212Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2306,6 +2306,66 @@
    "notas": "",
    "foto": "fotos/016c985ffb8b0a067389e2abd9101c5a.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00035",
+   "nombre": "Pulsera Colores Ajustable",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/fe0a2bfd78d32fc128d14c22b2150810.jpg",
+   "creado": "2026-11-01T21:13:04.105Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00036",
+   "nombre": "Pulsera Colores Ajustable Pasteles",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/32d105e14117d8541c95522f87184d0e.jpg",
+   "creado": "2026-11-01T21:13:59.616Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00037",
+   "nombre": "Pulsera Ajustable Colorida",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/d33bffa0e4489a911db7b9b3223fd3b0.jpg",
+   "creado": "2026-11-01T21:15:44.503Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00038",
+   "nombre": "Pulsera Ajustable Celeste",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/c7fd78a6f777cd3d903b45f4a67d1d8f.jpg",
+   "creado": "2026-11-01T21:17:39.133Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00039",
+   "nombre": "Pulsera Ajustable Tonos Rosas",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/7859dfd83ff44aca479f53247d2febca.jpg",
+   "creado": "2026-11-01T21:18:39.152Z",
    "disponible": true
   }
  ],
