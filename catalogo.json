@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T20:15:26.642Z",
+ "actualizado": "2026-11-01T20:37:52.785Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1733,6 +1733,30 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00055",
+   "nombre": "Collar Vanc",
+   "categoria": "COL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/3346464bc716ef15503f3128a4954544.jpg",
+   "creado": "2026-11-01T20:21:28.845Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00056",
+   "nombre": "Collar Vanc Lila",
+   "categoria": "COL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/5171481dedad27408d3e24f6ad1464e7.jpg",
+   "creado": "2026-11-01T20:23:14.478Z",
+   "disponible": true
+  },
+  {
    "codigo": "DIJ-00001",
    "nombre": "Dije de Oval Turquesa",
    "categoria": "DIJ",
@@ -2126,6 +2150,78 @@
    "notas": "",
    "foto": "fotos/c06a445e868d72b7e693987ae8255f19.jpg",
    "creado": "2026-10-20T23:42:22.950Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00023",
+   "nombre": "Pulsera Vanc Verde Oscuro",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/e92ab993360b08502fcd7587685aaee4.jpg",
+   "creado": "2026-11-01T20:26:58.096Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00024",
+   "nombre": "Pulsera Vanc Lila",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/6e55a11eb064ce54e9966ce464f92ca9.jpg",
+   "creado": "2026-11-01T20:27:54.737Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00025",
+   "nombre": "Pulsera Vanc Turqueza",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/eea33eaa772e4eb6b25654f066b89119.jpg",
+   "creado": "2026-11-01T20:29:22.921Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00026",
+   "nombre": "Pulsera Vanc Blanca",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/273100bfc3a7298313c47c1e21682dd9.jpg",
+   "creado": "2026-11-01T20:31:42.070Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00027",
+   "nombre": "Pulsera Vanc Roja",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/a26f2ff01e9ebd5df5c7afe6e302b1c0.jpg",
+   "creado": "2026-11-01T20:33:23.399Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00028",
+   "nombre": "Pulsera Vanc Negra",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/07f1735d7083d312115ed4a361f9039c.jpg",
+   "creado": "2026-11-01T20:34:34.548Z",
    "disponible": true
   }
  ],
