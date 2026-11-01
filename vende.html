@@ -32,6 +32,15 @@
 .mvform{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mvform input,.mvform select{font:14px inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#ddd);background:var(--bg,#fff);color:var(--fg,#222);min-width:0}
 .mvbadge{position:fixed;right:12px;bottom:12px;z-index:9000;font:600 12px Urbanist,system-ui;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.92);color:#5A2748;box-shadow:0 4px 14px rgba(0,0,0,.12);display:flex;align-items:center;gap:6px;pointer-events:none}
 @media (prefers-color-scheme:dark){.mvbadge{background:rgba(40,24,34,.92);color:#F5C9D8}}
+.mvdlg-fondo{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.mvdlg{width:100%;max-width:380px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:1px solid rgba(0,0,0,.06);border-radius:22px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.25);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;color:#1D1D1F}
+.mvdlg h3{margin:0 0 6px;font-size:19px;letter-spacing:-.01em}.mvdlg p{margin:0 0 14px;color:#6E6E73;font-size:14px}
+.mvdlg-campo{display:flex;gap:8px}.mvdlg-campo input{flex:1;min-width:0;font-size:16px;padding:12px 14px;border-radius:12px;border:1px solid #E5E5EA;background:#F5F5F7;color:#1D1D1F;outline:none}
+.mvdlg-campo input:focus{background:#fff;border-color:#1D1D1F}
+.mvdlg-ver{border:0;background:#F2F2F7;border-radius:12px;padding:0 14px;font-weight:600;color:#3A3A3C;cursor:pointer}
+.mvdlg-err{color:#D70015;font-size:13px;min-height:18px;margin-top:8px}
+.mvdlg-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}.mvdlg-btns button{border:0;border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;cursor:pointer}
+.mvdlg-no{background:#F2F2F7;color:#1D1D1F}.mvdlg-si{background:#1D1D1F;color:#fff}
 body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-new,body.rol-vendedor #tab-scan{display:none!important}`;
   (document.head || document.documentElement).append(css);
 
@@ -107,6 +116,24 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     if (document.body) poner(); else document.addEventListener("DOMContentLoaded", poner);
   }
 
+  /* ---------- ventana para escribir una contraseña (la app de la Mac no permite prompt()) ---------- */
+  function pedirPassword(titulo, detalle) {
+    return new Promise(resolve => {
+      const fondo = document.createElement("div"); fondo.className = "mvdlg-fondo";
+      fondo.innerHTML = '<form class="mvdlg" autocomplete="off"><h3></h3><p></p><div class="mvdlg-campo"><input type="password" autocomplete="new-password" placeholder="Contraseña nueva (mínimo 6)"><button type="button" class="mvdlg-ver">Ver</button></div><div class="mvdlg-err"></div><div class="mvdlg-btns"><button type="button" class="mvdlg-no">Cancelar</button><button type="submit" class="mvdlg-si">Guardar</button></div></form>';
+      fondo.querySelector("h3").textContent = titulo; fondo.querySelector("p").textContent = detalle || "";
+      const f = fondo.querySelector("form"), inp = f.querySelector("input"), err = f.querySelector(".mvdlg-err");
+      const fin = v => { fondo.remove(); document.removeEventListener("keydown", esc, true); resolve(v); };
+      const esc = e => { if (e.key === "Escape") { e.preventDefault(); fin(null); } };
+      document.addEventListener("keydown", esc, true);
+      f.querySelector(".mvdlg-ver").onclick = () => { inp.type = inp.type === "password" ? "text" : "password"; f.querySelector(".mvdlg-ver").textContent = inp.type === "password" ? "Ver" : "Ocultar"; inp.focus(); };
+      f.querySelector(".mvdlg-no").onclick = () => fin(null);
+      fondo.addEventListener("mousedown", e => { if (e.target === fondo) fin(null); });
+      f.addEventListener("submit", e => { e.preventDefault(); const v = inp.value; if (v.length < 6) { err.textContent = "La contraseña debe tener al menos 6 caracteres."; inp.focus(); return; } fin(v); });
+      document.body.append(fondo); setTimeout(() => inp.focus(), 30);
+    });
+  }
+
   /* ---------- paneles de Ajustes ---------- */
   function panel(titulo, iconoSvg) {
     const el = document.createElement("div"); el.className = "panel ajpanel";
@@ -126,8 +153,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     const p = panel("Mi usuario", IC.yo);
     p.status.innerHTML = 'Entraste como <b>' + esc(perfil.usuario) + '</b> · <span class="mvchip' + (perfil.rol === "vendedor" ? " v" : "") + '">' + (perfil.rol === "vendedor" ? "Vendedor" : "Administrador") + '</span>' + (extra ? "<br>" + extra : "");
     p.row.append(mk("Cambiar mi contraseña", async () => {
-      const a = prompt("Escribe tu contraseña nueva (mínimo 6 caracteres):"); if (a == null) return;
-      if (a.length < 6) { say("La contraseña debe tener al menos 6 caracteres", true); return; }
+      const a = await pedirPassword("Cambiar mi contraseña", "Escribe tu contraseña nueva."); if (a == null) return;
       const { data: u } = await sb.auth.getUser(); const { error } = await sb.rpc("marvea_usuario_password", { p_id: u && u.user && u.user.id, p_password: a });
       say(error ? "No se pudo cambiar: " + error.message : "Contraseña cambiada", !!error);
     }), mk("Cerrar sesión", async () => { if (confirm("¿Cerrar sesión en este dispositivo?")) salir(); }));
@@ -152,7 +178,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
         const guardar = async () => { const { error } = await sb.rpc("marvea_usuario_cambiar", { p_id: u.id, p_rol: sel.value, p_activo: chk.checked, p_nombre: u.nombre || "" }); if (error) { say(error.message, true); } else say("Usuario actualizado"); pintar(); };
         sel.onchange = guardar; chk.onchange = guardar;
         const acciones = document.createElement("td");
-        acciones.append(mk("Contraseña", async () => { const a = prompt("Contraseña nueva para " + u.usuario + " (mínimo 6 caracteres):"); if (!a) return; const { error } = await sb.rpc("marvea_usuario_password", { p_id: u.id, p_password: a }); say(error ? error.message : "Contraseña cambiada", !!error); }));
+        acciones.append(mk("Contraseña", async () => { const a = await pedirPassword("Contraseña de " + u.usuario, "Escribe la contraseña nueva para este usuario. Dísela para que pueda entrar."); if (!a) return; const { error } = await sb.rpc("marvea_usuario_password", { p_id: u.id, p_password: a }); say(error ? error.message : "Contraseña cambiada", !!error); }));
         if (!u.yo) acciones.append(mk("Borrar", async () => { if (!confirm("¿Borrar el usuario " + u.usuario + "? Ya no podrá entrar.")) return; const { error } = await sb.rpc("marvea_usuario_borrar", { p_id: u.id }); say(error ? error.message : "Usuario borrado", !!error); pintar(); }));
         const c1 = document.createElement("td"); c1.innerHTML = "<b>" + esc(u.usuario) + "</b>" + (u.yo ? ' <span class="mvchip">tú</span>' : "") + (u.nombre && u.nombre !== "Administrador" ? "<br><small>" + esc(u.nombre) + "</small>" : "");
         const c2 = document.createElement("td"); c2.append(sel); const c3 = document.createElement("td"); c3.append(chk);
@@ -181,7 +207,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     };
   }
 
-  window.MarveaNube = { sb, entrar, salir, aplicarRol, panel, mk, esc, say, IC, panelCuenta, panelUsuarios, esRed, conTiempo, insignia, rol: () => rolActual };
+  window.MarveaNube = { pedirPassword, sb, entrar, salir, aplicarRol, panel, mk, esc, say, IC, panelCuenta, panelUsuarios, esRed, conTiempo, insignia, rol: () => rolActual };
 })();
 
 </script><script>
