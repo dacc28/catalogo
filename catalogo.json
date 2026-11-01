@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T20:59:31.760Z",
+ "actualizado": "2026-11-01T21:02:52.340Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2246,6 +2246,18 @@
    "notas": "",
    "foto": "fotos/17598d233d697fe6632f34a8a8cff7ed.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00030",
+   "nombre": "Pulsera Ajustable con Pedrería",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 66,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/5508fafc66b33280be1afede81906e71.jpg",
+   "creado": "2026-11-01T21:00:45.810Z",
    "disponible": true
   }
  ],
