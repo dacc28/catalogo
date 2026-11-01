@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:38:30.900Z",
+ "actualizado": "2026-11-01T21:43:50.219Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1118,6 +1118,30 @@
    "notas": "",
    "foto": "fotos/f60e54272bcb991515c3224ce6613329.jpg",
    "creado": "2026-11-01T21:36:28.348Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00062",
+   "nombre": "Aretes Flor de Colores",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/73378cabe1097c4eba9b65db7a417a3d.jpg",
+   "creado": "2026-11-01T21:39:40.125Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00063",
+   "nombre": "Arracadas de Estrella",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/91402a4585b0989e3e7d79a924e3b09f.jpg",
+   "creado": "2026-11-01T21:41:48.587Z",
    "disponible": true
   },
   {
