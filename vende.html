@@ -96,7 +96,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
       mensaje = "";
     }
   }
-  async function salir() { guardarPerfil(null); try { await sb.auth.signOut(); } catch (e) {} location.reload(); }
+  async function salir() { guardarPerfil(null); try { localStorage.removeItem("marvea.fotos.v1"); } catch (e) {} try { await sb.auth.signOut(); } catch (e) {} location.reload(); }
 
   /* ---------- nivel: el vendedor solo vende ---------- */
   const VISTAS_VENDEDOR = ["live", "rapido", "venta", "cli", "ajustes"];
@@ -228,7 +228,28 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
 
   const clone = v => v == null ? v : JSON.parse(JSON.stringify(v));
   const key = (c, i) => c + "\u0000" + i;
-  function notify() { for (const f of [...listeners]) { try { f(); } catch (e) { console.error(e); } } }
+  /* avisos por colección: un cambio en carritos no redibuja el inventario; ráfagas de la nube se juntan */
+  const porCol = new Map(), verCol = new Map(), sucias = new Set(); let verTodo = 0, todas = false, micro = false, tRemoto = null;
+  const verDe = (c) => verTodo + ":" + (verCol.get(c) || 0);
+  function notify(c, remoto) {
+    if (c == null) { todas = true; verTodo++; } else { sucias.add(c); verCol.set(c, (verCol.get(c) || 0) + 1); }
+    if (remoto) { if (!tRemoto && !micro) tRemoto = setTimeout(despachar, 40); }
+    else if (!micro) { micro = true; queueMicrotask(despachar); }
+  }
+  function despachar() {
+    micro = false; clearTimeout(tRemoto); tRemoto = null;
+    const cs = todas ? null : new Set(sucias); todas = false; sucias.clear();
+    const fs = []; for (const [c, set] of porCol) if (!cs || cs.has(c)) for (const f of set) fs.push(f);
+    for (const f of fs) { try { f(); } catch (e) { console.error(e); } }
+  }
+  function avisarA(c, f) { let s = porCol.get(c); if (!s) porCol.set(c, s = new Set()); s.add(f); listeners.add(f); return () => { s.delete(f); listeners.delete(f); }; }
+  const planos = new WeakMap();
+  function datosDe(d) {
+    if (!d) return undefined; const hit = planos.get(d); if (hit) return hit;
+    let plano = true; for (const k in d) { const v = d[k]; if (v !== null && typeof v === "object") { plano = false; break; } }
+    if (!plano) return Object.freeze(clone(d));
+    const v = Object.freeze(Object.assign({}, d)); planos.set(d, v); return v;
+  }
   let rerenderT = null;
   function rerender() { clearTimeout(rerenderT); rerenderT = setTimeout(() => { try { if (typeof window.renderAll === "function") window.renderAll(); } catch (e) {} }, 300); }
   const exige = (r) => { if (r && r.error) throw r.error; return r ? r.data : null; };
@@ -239,40 +260,100 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   const pidiendo = new Set();
   async function pedirFoto(id) {
     if (pidiendo.has(id) || !perfil) return; pidiendo.add(id);
-    try { const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(id, FIRMA_SEG); if (!error && data && data.signedUrl) { fotos.set(id, data.signedUrl); rerender(); } }
+    try { const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(id, FIRMA_SEG); if (!error && data && data.signedUrl) { fotos.set(id, data.signedUrl); const g = leerFirmas(); g[id] = [data.signedUrl, Date.now() + FIRMA_SEG * 1000]; guardarFirmas(g); rerender(); } }
     catch (e) {} finally { setTimeout(() => pidiendo.delete(id), 30000); }
   }
-  async function cargarFotos() {
+  const FIRMAS = "marvea.fotos.v1";
+  function leerFirmas() { try { const o = JSON.parse(localStorage.getItem(FIRMAS) || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
+  function guardarFirmas(o) { try { localStorage.setItem(FIRMAS, JSON.stringify(o)); } catch (e) { try { localStorage.removeItem(FIRMAS); } catch (x) {} } }
+  async function cargarFotos(forzar) {
     const ids = [];
     for (let off = 0; ; off += 1000) {
       const { data, error } = await sb.storage.from(BUCKET).list("", { limit: 1000, offset: off, sortBy: { column: "name", order: "asc" } });
       if (error) throw error; for (const o of data || []) if (o && o.name && o.id) ids.push(o.name);
       if (!data || data.length < 1000) break;
     }
-    for (let i = 0; i < ids.length; i += 500) {
-      const { data, error } = await sb.storage.from(BUCKET).createSignedUrls(ids.slice(i, i + 500), FIRMA_SEG);
-      if (error) throw error; for (const r of data || []) if (r && r.signedUrl && r.path) fotos.set(r.path, r.signedUrl);
+    // los enlaces firmados se guardan en este dispositivo: misma dirección = la foto sale del caché del navegador
+    // (no se vuelve a descargar de la nube cada vez que se abre el sistema)
+    const guardadas = leerFirmas(), ahora = Date.now(), faltan = [];
+    for (const id of ids) { const g = guardadas[id]; if (!forzar && g && g[1] - ahora > 2 * 864e5) fotos.set(id, g[0]); else faltan.push(id); }
+    for (let i = 0; i < faltan.length; i += 500) {
+      const { data, error } = await sb.storage.from(BUCKET).createSignedUrls(faltan.slice(i, i + 500), FIRMA_SEG);
+      if (error) throw error; for (const r of data || []) if (r && r.signedUrl && r.path) { fotos.set(r.path, r.signedUrl); guardadas[r.path] = [r.signedUrl, ahora + FIRMA_SEG * 1000]; }
     }
+    const vivas = new Set(ids); for (const id of Object.keys(guardadas)) if (!vivas.has(id)) delete guardadas[id];
+    if (faltan.length || Object.keys(guardadas).length !== ids.length) guardarFirmas(guardadas);
     rerender(); return ids.length;
   }
 
   /* ---------- datos ---------- */
-  async function traerTodo() {
-    const nuevo = {};
+  // Los carritos viejos (cerrados hace más de DIAS_CARRITOS días) no se descargan al abrir: se piden a la nube
+  // solo cuando una pantalla los necesita (resumen, historial de una clienta, un live anterior).
+  const DIAS_CARRITOS = 45;
+  const parcial = new Map();        // col -> desde qué fecha está completa (solo "carritos")
+  const consultados = new Set();    // consultas ya traídas de la nube ("carritos|*" o "carritos|campo=valor")
+  let desde = null;                 // marca de tiempo del servidor: lo que cambie después se trae en el siguiente repaso
+  async function paginas(armar) {
+    const filas = [];
     for (let off = 0; ; off += 1000) {
-      const { data, error } = await sb.from(TABLE).select("col,id,data").order("col").order("id").range(off, off + 999);
-      if (error) throw error; for (const r of data || []) (nuevo[r.col] || (nuevo[r.col] = {}))[r.id] = r.data || {};
+      const { data, error } = await armar().order("col").order("id").range(off, off + 999);
+      if (error) throw error; for (const r of data || []) filas.push(r);
       if (!data || data.length < 1000) break;
     }
-    return nuevo;
+    return filas;
+  }
+  const sel = () => sb.from(TABLE).select("col,id,data");
+  async function marcaServidor(p) { // {ahora, borrados} · null si la nube todavía no tiene la función
+    const { data, error } = await sb.rpc("marvea_borrados_desde", { p_desde: p });
+    if (error) { if (N.esRed(error)) throw error; return null; } return data;
+  }
+  async function traerTodo() {
+    const corte = new Date(Date.now() - DIAS_CARRITOS * 864e5).toISOString();
+    const marca = await marcaServidor(new Date(Date.now() + 864e5).toISOString());
+    const [otros, recientes, abiertos] = await Promise.all([
+      paginas(() => sel().neq("col", "carritos")),
+      paginas(() => sel().eq("col", "carritos").gte("actualizado", corte)),
+      paginas(() => sel().eq("col", "carritos").eq("data->>estado", "abierto"))]);
+    const nuevo = {};
+    for (const r of otros.concat(recientes, abiertos)) (nuevo[r.col] || (nuevo[r.col] = {}))[r.id] = r.data || {};
+    return { nuevo, corte, ahora: marca && marca.ahora };
   }
   const tocados = new Map();
-  async function recargar() {
-    const t0 = Date.now(); const nuevo = await traerTodo();
+  const pendiente = (c, i) => (pending.get(key(c, i)) || 0) > 0;
+  async function recargar(forzarCompleta) {
+    if (!forzarCompleta && desde && ultimaCarga) { try { if (await ponerseAlDia()) return; } catch (e) { if (N.esRed(e)) throw e; } }
+    const t0 = Date.now(); const { nuevo, corte, ahora } = await traerTodo();
     for (const [k, t] of tocados) { if (t < t0) { if (Date.now() - t > 600000) tocados.delete(k); continue; } const [c, i] = k.split("\u0000"); const loc = store[c] && store[c][i]; if (loc) (nuevo[c] || (nuevo[c] = {}))[i] = loc; else if (nuevo[c]) delete nuevo[c][i]; }
-    for (const [c, docs] of Object.entries(store)) for (const i of Object.keys(docs)) if ((pending.get(key(c, i)) || 0) > 0) (nuevo[c] || (nuevo[c] = {}))[i] = docs[i];
+    for (const [c, docs] of Object.entries(store)) for (const i of Object.keys(docs)) if (pendiente(c, i)) (nuevo[c] || (nuevo[c] = {}))[i] = docs[i];
+    // carritos viejos que ya se habían pedido: se conservan (siguen al día por el tiempo real)
+    for (const [i, d] of Object.entries(store.carritos || {})) if (!(nuevo.carritos && nuevo.carritos[i]) && String(d.actualizado || d.creado || "") < corte && d.estado !== "abierto") (nuevo.carritos || (nuevo.carritos = {}))[i] = d;
     for (const c of Object.keys(store)) delete store[c];
-    Object.assign(store, nuevo); ultimaCarga = Date.now(); notify(); pintarEstado();
+    Object.assign(store, nuevo); parcial.set("carritos", corte);
+    desde = ahora ? new Date(Date.parse(ahora) - 60000).toISOString() : null;
+    ultimaCarga = Date.now(); notify(); pintarEstado();
+  }
+  // repaso ligero: solo lo que cambió desde la última vez (y lo que se borró)
+  async function ponerseAlDia() {
+    const t0 = Date.now(); const marca = await marcaServidor(desde); if (!marca || !marca.ahora) return false;
+    const filas = await paginas(() => sel().gte("actualizado", desde));
+    const tocado = (c, i) => (tocados.get(key(c, i)) || 0) >= t0;
+    const hay = new Set(); const cols = new Set();
+    for (const r of filas) { hay.add(key(r.col, r.id)); if (pendiente(r.col, r.id) || tocado(r.col, r.id)) continue; (store[r.col] || (store[r.col] = {}))[r.id] = r.data || {}; cols.add(r.col); }
+    for (const b of marca.borrados || []) { const k = key(b.col, b.id); if (hay.has(k) || pendiente(b.col, b.id) || tocado(b.col, b.id)) continue; if (store[b.col] && store[b.col][b.id]) { delete store[b.col][b.id]; cols.add(b.col); } }
+    desde = new Date(Date.parse(marca.ahora) - 60000).toISOString(); ultimaCarga = Date.now();
+    for (const c of cols) notify(c); pintarEstado(); return true;
+  }
+  // trae de la nube los carritos que no se descargaron al abrir, cuando una pantalla los pide
+  async function asegurar(colPath, filters) {
+    if (!parcial.has(colPath) || consultados.has(colPath + "|*")) return;
+    const igualA = filters.find(([f, op, v]) => op === "==" && typeof v === "string" && /^[\w.-]+$/.test(f));
+    const k = igualA ? colPath + "|" + igualA[0] + "=" + igualA[2] : colPath + "|*";
+    if (consultados.has(k)) return;
+    const t0 = Date.now();
+    const filas = await paginas(() => { let q = sel().eq("col", colPath); if (igualA) q = q.eq("data->>" + igualA[0], igualA[2]); return q; });
+    const c = store[colPath] || (store[colPath] = {}); let n = 0;
+    for (const r of filas) { if (c[r.id] || pendiente(colPath, r.id) || (tocados.get(key(colPath, r.id)) || 0) >= t0) continue; c[r.id] = r.data || {}; n++; }
+    consultados.add(k); if (n) notify(colPath);
   }
   function aplicarRemoto(p) {
     const fila = p.eventType === "DELETE" ? p.old : p.new; if (!fila || !fila.col || !fila.id) return;
@@ -280,7 +361,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     if ((pending.get(k) || 0) > 0) { saltados.add(k); return; }
     if (p.eventType === "DELETE") { if (store[fila.col]) delete store[fila.col][fila.id]; }
     else (store[fila.col] || (store[fila.col] = {}))[fila.id] = fila.data || {};
-    notify();
+    notify(fila.col, true);
   }
   function escuchar() {
     if (canal) { try { sb.removeChannel(canal); } catch (e) {} }
@@ -302,7 +383,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   async function refrescarDoc(c, i) {
     try { const { data, error } = await sb.from(TABLE).select("data").eq("col", c).eq("id", i).maybeSingle(); if (error) return;
       if ((pending.get(key(c, i)) || 0) > 0) return;
-      if (data) (store[c] || (store[c] = {}))[i] = data.data; else if (store[c]) delete store[c][i]; notify(); } catch (e) {}
+      if (data) (store[c] || (store[c] = {}))[i] = data.data; else if (store[c]) delete store[c][i]; notify(c); } catch (e) {}
   }
   function enCola(c, i, fn) {
     const k = key(c, i); pending.set(k, (pending.get(k) || 0) + 1);
@@ -318,8 +399,8 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   function segs(p) { const s = String(p).split("/").filter(Boolean); if (!s.length) throw new TypeError("ruta vacía"); return s; }
   function snapDoc(colPath, id) {
     const d = store[colPath] && store[colPath][id];
-    const data = d ? Object.freeze(clone(d)) : undefined;
-    return { id, exists: !!d, data: () => data, metadata: { fromCache: false, hasPendingWrites: (pending.get(key(colPath, id)) || 0) > 0 } };
+    let data, hecho = false;
+    return { id, exists: !!d, data: () => { if (!hecho) { data = datosDe(d); hecho = true; } return data; }, metadata: { fromCache: false, hasPendingWrites: (pending.get(key(colPath, id)) || 0) > 0 } };
   }
   function docRef(fullPath) {
     const s = segs(fullPath); if (s.length % 2) throw new TypeError("ruta de documento con " + s.length + " segmentos");
@@ -327,15 +408,15 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     return {
       id, path: s.join("/"),
       get: async () => { await ready; return snapDoc(colPath, id); },
-      set: async (data) => { await ready; const v = clone(data) || {}; (store[colPath] || (store[colPath] = {}))[id] = v; notify();
+      set: async (data) => { await ready; const v = clone(data) || {}; (store[colPath] || (store[colPath] = {}))[id] = v; notify(colPath);
         await enCola(colPath, id, async () => exige(await sb.from(TABLE).upsert({ col: colPath, id, data: v, actualizado: new Date().toISOString() }))); },
       update: async (data) => { await ready; const c = store[colPath]; if (!c || !c[id]) throw { code: "invalid_argument", message: "no existe" };
-        const patch = clone(data) || {}; c[id] = Object.assign({}, c[id], patch); notify();
+        const patch = clone(data) || {}; c[id] = Object.assign({}, c[id], patch); notify(colPath);
         await enCola(colPath, id, async () => exige(await sb.rpc("marvea_update", { p_col: colPath, p_id: id, p_patch: patch }))); },
-      delete: async () => { await ready; if (store[colPath]) delete store[colPath][id]; notify();
+      delete: async () => { await ready; if (store[colPath]) delete store[colPath][id]; notify(colPath);
         await enCola(colPath, id, async () => exige(await sb.from(TABLE).delete().eq("col", colPath).eq("id", id))); },
       acquire: async () => ({ acquired: true }),
-      onSnapshot: (next, error) => { let alive = true; const f = () => { if (alive) next(snapDoc(colPath, id)); }; listeners.add(f); ready.then(() => f(), e => error && error({ code: "unavailable", message: String(e) })); return () => { alive = false; listeners.delete(f); }; },
+      onSnapshot: (next, error) => { let alive = true; const f = () => { if (alive) next(snapDoc(colPath, id)); }; const quitar = avisarA(colPath, f); ready.then(() => f(), e => error && error({ code: "unavailable", message: String(e) })); return () => { alive = false; quitar(); }; },
       collection: (sub) => colRef(s.join("/") + "/" + sub)
     };
   }
@@ -346,7 +427,10 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   function colRef(path, filters = [], order = null, lim = 0) {
     const s = segs(path); if (s.length % 2 === 0) throw new TypeError("ruta de colección con " + s.length + " segmentos");
     const colPath = s.join("/");
-    const run = () => {
+    let memo = null, memoVer = null;
+    const run = () => { const v = verDe(colPath); if (!memo || memoVer !== v) { memoVer = v; memo = run0(); } return Object.assign({}, memo, { docs: memo.docs.slice() }); };
+    const pedir = () => asegurar(colPath, filters).catch(e => console.warn("carritos anteriores", e));
+    const run0 = () => {
       const c = store[colPath] || {};
       let ids = Object.keys(c).filter(id => matches(c[id], filters));
       if (order) { const [f, dir] = order; ids.sort((a, b) => { const x = c[a][f], y = c[b][f]; const r = x === y ? 0 : (x == null ? 1 : y == null ? -1 : (x < y ? -1 : 1)); return dir === "desc" ? -r : r; }); } else ids.sort();
@@ -361,8 +445,8 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
       where: (f, op, v) => colRef(colPath, [...filters, [f, op, v]], order, lim),
       orderBy: (f, dir) => colRef(colPath, filters, [f, dir || "asc"], lim),
       limit: (n) => colRef(colPath, filters, order, n),
-      get: async () => { await ready; return run(); },
-      onSnapshot: (next, error) => { let alive = true; const f = () => { if (alive) next(run()); }; listeners.add(f); ready.then(() => f(), e => error && error({ code: "unavailable", message: String(e) })); return () => { alive = false; listeners.delete(f); }; }
+      get: async () => { await ready; await pedir(); return run(); },
+      onSnapshot: (next, error) => { let alive = true; const f = () => { if (alive) next(run()); }; const quitar = avisarA(colPath, f); ready.then(() => { f(); return pedir(); }, e => error && error({ code: "unavailable", message: String(e) })); return () => { alive = false; quitar(); }; }
     };
   }
   // existencias: suma/resta segura en la nube (dos ventas al mismo tiempo no se pisan)
@@ -371,7 +455,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     const c = store.productos || {}; const cur = Math.max(0, Number(c[codigo] && c[codigo].existencia) || 0);
     if (!delta) return { existencia: cur, aplicado: 0 };
     const r = await enCola("productos", codigo, async () => exige(await sb.rpc("marvea_stock", { p_codigo: codigo, p_delta: delta })));
-    if (c[codigo]) { c[codigo] = Object.assign({}, c[codigo], { existencia: r.existencia }); notify(); }
+    if (c[codigo]) { c[codigo] = Object.assign({}, c[codigo], { existencia: r.existencia }); notify("productos"); }
     return { existencia: Number(r.existencia) || 0, aplicado: Number(r.aplicado) || 0 };
   }
   const db = { doc: docRef, collection: (p) => colRef(p), stock };
@@ -430,7 +514,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     grid.append(N.panelCuenta(perfil));
     if (perfil.rol === "administrador") {
       const pn = N.panel("Datos en la nube", N.IC.nube); estadoEl = pn.status; pintarEstado();
-      pn.row.append(N.mk("Actualizar ahora", async () => { try { await recargar(); await cargarFotos(); say("Datos al día"); } catch (e) { say("No se pudo actualizar", true); } }),
+      pn.row.append(N.mk("Actualizar ahora", async () => { try { consultados.clear(); await recargar(true); await cargarFotos(true); say("Datos al día"); } catch (e) { say("No se pudo actualizar", true); } }),
         N.mk("Descargar respaldo", () => downloads.save({ filename: "marvea-datos-" + new Date().toISOString().slice(0, 10) + ".json", data: respaldoJson(), mimeType: "application/json" })));
       grid.append(pn.el, N.panelUsuarios());
     }
@@ -1713,6 +1797,7 @@ function setView(v){
   for(const b of document.querySelectorAll('nav.tabs [role=tab]')) b.setAttribute("aria-selected",String(b.dataset.view===v));
   for(const s of document.querySelectorAll(".view")) s.hidden=!s.id.endsWith("-"+v);
   if(v==="scan") setTimeout(()=>$("#scanInput").focus(),50);
+  if(v==="inv"&&state.gridSucio){ state.gridSucio=false; renderGrid(); }
   if(v==="new") updateCodePreview();
   if(v==="live") renderLive();
   if(v==="dash") renderDash();
@@ -1756,7 +1841,9 @@ function renderGrid(){
     return;
   }
   if(!list.length){ grid.replaceChildren(h("div",{class:"empty",style:"grid-column:1/-1"},h("p",{style:"margin:0"},"Ningún producto coincide con la búsqueda."))); return; }
-  grid.replaceChildren(...list.map(p=>{
+  const clave=$("#q").value+"|"+$("#fcat").value; if(state.gridClave!==clave){ state.gridClave=clave; state.gridN=96; }
+  const total=list.length; const vis=list.slice(0,state.gridN||96); state.gridSucio=false;
+  grid.replaceChildren(...vis.map(p=>{
     const card=h("button",{class:"card",type:"button","aria-label":p.nombre,oncontextmenu:(e)=>productMenu(e,p),onclick:()=>openDrawer(p.codigo)},
       imgOrPh(p),
       h("div",{class:"body"},
@@ -1767,6 +1854,8 @@ function renderGrid(){
       ));
     return card;
   }));
+  if(total>vis.length){ const mas=h("button",{class:"btn grid-mas",type:"button",style:"grid-column:1/-1;justify-self:center;margin:8px 0 18px",onclick:()=>{ state.gridN=(state.gridN||96)+192; renderGrid(); }},`Ver más · ${total-vis.length} modelos`); grid.append(mas);
+    if("IntersectionObserver" in window){ const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)&&mas.isConnected){ io.disconnect(); state.gridN=(state.gridN||96)+192; renderGrid(); } },{rootMargin:"800px"}); io.observe(mas); } }
 }
 $("#q").addEventListener("input",renderGrid); $("#fcat").addEventListener("change",renderGrid);
 async function saveLabels(items,preset,filename){
@@ -2176,7 +2265,8 @@ function renderRapido(){
   const pq=h("input",{type:"search",id:"rapidoQ",class:"vd-input",placeholder:"Buscar pieza por palabra, nombre o código",value:state.rapidoQ});
   pq.addEventListener("input",()=>{ state.rapidoQ=pq.value; renderRapido(); const i=$("#rapidoQ"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
   pq.addEventListener("keydown",e=>{ if(e.key!=="Enter") return; e.preventDefault(); if(!prods.length){ toast("Ninguna pieza coincide",true); return; } state.rapidoSel=prods[0].codigo; renderRapido(); const q=$("#rapidoQty"); if(q){ q.focus(); q.select(); } });
-  const plist=h("div",{class:"plist lr-plist"},...(prods.length?prods.map(p=>{ const av=Number(p.existencia)||0; const ini=inicialDe(p); return h("button",{type:"button",class:"prow lr-prow"+(p.codigo===state.rapidoSel?" sel":"")+(av<=0?" zero":av<=(Number(p.minimo)||0)?" low":""),onclick:()=>{ state.rapidoSel=p.codigo===state.rapidoSel?null:p.codigo; renderRapido(); if(state.rapidoSel){ const i=$("#rapidoCQ"); if(i) i.focus(); } }},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"pw"},p.palabra||p.codigo),h("div",{class:"pn"},p.nombre)),h("div",{class:"av"},h("b",null,av),h("small",null,"de "+ini))); }):[h("div",{class:"vd-vacio"},"Ninguna pieza coincide.")]));
+  const prodsVer=prods.slice(0,80); if(state.rapidoSel&&!prodsVer.some(p=>p.codigo===state.rapidoSel)){ const s0=prods.find(p=>p.codigo===state.rapidoSel); if(s0) prodsVer.unshift(s0); }
+  const plist=h("div",{class:"plist lr-plist"},...(prods.length?prodsVer.map(p=>{ const av=Number(p.existencia)||0; const ini=inicialDe(p); return h("button",{type:"button",class:"prow lr-prow"+(p.codigo===state.rapidoSel?" sel":"")+(av<=0?" zero":av<=(Number(p.minimo)||0)?" low":""),onclick:()=>{ state.rapidoSel=p.codigo===state.rapidoSel?null:p.codigo; renderRapido(); if(state.rapidoSel){ const i=$("#rapidoCQ"); if(i) i.focus(); } }},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"pw"},p.palabra||p.codigo),h("div",{class:"pn"},p.nombre)),h("div",{class:"av"},h("b",null,av),h("small",null,"de "+ini))); }).concat(prods.length>prodsVer.length?[h("div",{class:"lr-muted",style:"padding:10px 6px"},`Mostrando ${prodsVer.length} de ${prods.length} · escribe para encontrar las demás`)]:[]):[h("div",{class:"vd-vacio"},"Ninguna pieza coincide.")]));
   const paso1=paso(1,"Pieza",h("span",{class:"lr-muted"},prods.length+" piezas"),pq,plist);
 
   /* ---- 2) cantidad (con la pieza elegida) ---- */
@@ -3322,7 +3412,7 @@ document.addEventListener("keydown",e=>{ if((e.metaKey||e.ctrlKey)&&!e.shiftKey&
 $("#btnSearch").addEventListener("click",openGlobalSearch);
 
 /* ============ Datos ============ */
-function renderAll(){ renderStats(); renderGrid(); renderEtiquetasCat(); if(state.view==="new") updateCodePreview(); if(state.view==="live") renderLive(); if(state.view==="venta") renderVenta(); if(state.view==="dash") renderDash(); if(state.view==="cli") renderClientas(); if(state.view==="rapido") renderRapido(); if(document.body.classList.contains("conteo-mode")) renderConteo(); }
+function renderAll(){ renderStats(); if(state.view==="inv") renderGrid(); else state.gridSucio=true; renderEtiquetasCat(); if(state.view==="new") updateCodePreview(); if(state.view==="live") renderLive(); if(state.view==="venta") renderVenta(); if(state.view==="dash") renderDash(); if(state.view==="cli") renderClientas(); if(state.view==="rapido") renderRapido(); if(document.body.classList.contains("conteo-mode")) renderConteo(); }
 async function boot(){
   logoBlack(); renderCats(); renderGrid(); $("#palabra").value=palabraAleatoria(null); try{ const v=localStorage.getItem("marvea.view"); if(v&&["dash","live","rapido","cli","inv","new","scan","ajustes"].includes(v)) setView(v); }catch(e){}
   const use=n=>(window.claude&&typeof window.claude.use==="function")?window.claude.use(n).catch(()=>null):Promise.resolve(null);
@@ -3735,6 +3825,7 @@ body.vx-on #vxCamWrap{display:block!important}
 #vx .vx-sheet{position:relative}
 #vx .vx-x{position:absolute;top:12px;right:14px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(118,118,128,.14);color:#3A3A3C;font-size:14px;font-weight:700;display:grid;place-items:center;z-index:2}
 #vx .vx-sug{background:rgba(255,255,255,.985)!important;box-shadow:0 18px 44px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06)!important}
+.vx-mas{display:block;margin:14px auto 26px;padding:12px 22px;border-radius:999px;border:1px solid #E5E5EA;background:rgba(255,255,255,.8);font:600 15px/1 -apple-system,system-ui,sans-serif;color:#1C1C1E}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -3960,7 +4051,7 @@ body.vx-on #vxCamWrap{display:block!important}
   /* ---------- Inventario (ver todo) ---------- */
   function inventario() {
     const cats = state.cats || [];
-    const q = normaliza(V.invQ);
+    const q = normaliza(V.invQ); const clave = V.invQ + "|" + V.invCat; if (V.invClave !== clave) { V.invClave = clave; V.invN = 60; }
     const lista = [...state.products.values()].filter(p => (!V.invCat || p.categoria === V.invCat) && (!q || normaliza(p.nombre).includes(q) || normaliza(p.palabra).includes(q) || normaliza(p.codigo).includes(q)))
       .sort((a, b) => String(b.creado || "").localeCompare(String(a.creado || "")) || a.codigo.localeCompare(b.codigo));
     const todos = [...state.products.values()]; const piezas = todos.reduce((s, p) => s + (Number(p.existencia) || 0), 0);
@@ -3972,9 +4063,10 @@ body.vx-on #vxCamWrap{display:block!important}
       el("section", { class: "vx-stats" }, el("div", null, el("b", null, todos.length), el("span", null, "modelos")), el("div", null, el("b", null, piezas.toLocaleString("es-MX")), el("span", null, "piezas")),
         el("div", null, el("b", null, precio(valor)), el("span", null, "a precio")), el("div", null, el("b", null, precio(costo)), el("span", null, "costo")), agot ? el("div", { class: "rojo" }, el("b", null, agot), el("span", null, "agotados")) : null),
       buscador("vxInvQ", V.invQ, "Buscar por nombre, palabra o código", v => V.invQ = v), chips,
-      el("div", { class: "vx-grid vx-invgrid" }, ...(lista.length ? lista.map(p => { const av = Number(p.existencia) || 0; return el("button", { type: "button", class: "vx-tile" + (av <= 0 ? " agotado" : ""), onclick: () => { V.prod = p.codigo; render(); } }, foto(p, "vx-tfoto"),
+      el("div", { class: "vx-grid vx-invgrid" }, ...(lista.length ? lista.slice(0, V.invN).map(p => { const av = Number(p.existencia) || 0; return el("button", { type: "button", class: "vx-tile" + (av <= 0 ? " agotado" : ""), onclick: () => { V.prod = p.codigo; render(); } }, foto(p, "vx-tfoto"),
         el("div", { class: "vx-tinfo" }, el("b", null, p.palabra || p.codigo), el("span", { class: "vx-tn" }, p.nombre), el("div", { class: "vx-tp" }, el("span", null, precio(p.precio)), el("small", { class: av <= 0 ? "rojo" : av <= (Number(p.minimo) || 0) ? "naranja" : "" }, av <= 0 ? "Agotado" : av + " pzas")))); })
-        : [el("div", { class: "vx-vacio" }, "Ningún modelo coincide.")])));
+        : [el("div", { class: "vx-vacio" }, "Ningún modelo coincide.")])),
+      lista.length > V.invN ? el("button", { type: "button", class: "vx-mas", "data-k": "invmas", onclick: () => { V.invN += 120; render(); } }, "Ver más · " + (lista.length - V.invN) + " modelos") : null);
   }
   function prodSheet() {
     const p = state.products.get(V.prod); if (!p) { V.prod = null; return null; }
