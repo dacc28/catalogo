@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:28:31.029Z",
+ "actualizado": "2026-11-01T21:32:52.806Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1094,6 +1094,18 @@
    "notas": "",
    "foto": "fotos/c7ad13f4d578bfd9108dc36fa726e6e4.jpg",
    "creado": "2026-11-01T20:13:25.629Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00060",
+   "nombre": "Huggie Eslabón",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 25,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/43d65c34d44b8250c8721fa42d2a4c34.jpg",
+   "creado": "2026-11-01T21:30:47.072Z",
    "disponible": true
   },
   {
