@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:20:40.212Z",
+ "actualizado": "2026-11-01T21:28:31.029Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2366,6 +2366,66 @@
    "notas": "",
    "foto": "fotos/7859dfd83ff44aca479f53247d2febca.jpg",
    "creado": "2026-11-01T21:18:39.152Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00040",
+   "nombre": "Pulsera Ajustable Tonos Neutros",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/343ea4ba3d76630d245b557a1621366d.jpg",
+   "creado": "2026-11-01T21:20:47.493Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00041",
+   "nombre": "Pulsera Ajustable Rosa",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/ed4195add8b49fb4d39e91410aad4a52.jpg",
+   "creado": "2026-11-01T21:21:38.272Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00042",
+   "nombre": "Pulsera Ajustable Coral",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/4fbe149775acc575aa2670c04c7ba68a.jpg",
+   "creado": "2026-11-01T21:23:18.880Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00043",
+   "nombre": "Brazalete con Brillo",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 66,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/bcd9f1c6c81c52e975a538eb5e363c6f.jpg",
+   "creado": "2026-11-01T21:25:08.247Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00044",
+   "nombre": "Brazalete Liso",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/d1e11b47297f25892b0b5183d9ba4082.jpg",
+   "creado": "2026-11-01T21:26:29.927Z",
    "disponible": true
   }
  ],
