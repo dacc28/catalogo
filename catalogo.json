@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T19:42:46.427Z",
+ "actualizado": "2026-11-01T20:15:26.642Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1022,6 +1022,66 @@
    "notas": "",
    "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
    "creado": "2026-10-20T23:37:14.343Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00055",
+   "nombre": "Arete Vanc Dupe Blanco",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/8226525aef749544ab68170e7aa5b650.jpg",
+   "creado": "2026-11-01T20:07:45.241Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00056",
+   "nombre": "Arete Vanc Rosa",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/46d7122ca6a0aa46f24cadfae46ffee3.jpg",
+   "creado": "2026-11-01T20:08:35.163Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00057",
+   "nombre": "Arete Vanc Rojo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/0b573b57d4eeafe2748cd5e67fdc0ba0.jpg",
+   "creado": "2026-11-01T20:09:55.282Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00058",
+   "nombre": "Arete Vanc Azul",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/63a079bf0086fae033497f3f768feb02.jpg",
+   "creado": "2026-11-01T20:11:39.625Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00059",
+   "nombre": "Arete Vanc Negro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/c7ad13f4d578bfd9108dc36fa726e6e4.jpg",
+   "creado": "2026-11-01T20:13:25.629Z",
    "disponible": true
   },
   {
