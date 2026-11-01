@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:47:52.497Z",
+ "actualizado": "2026-11-01T21:59:27.563Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1157,6 +1157,42 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00065",
+   "nombre": "Arete Girasol",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/61f40ee51e4e18d758c3584b5d24c72a.jpg",
+   "creado": "2026-11-01T21:48:24.238Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00066",
+   "nombre": "Arracadas Eslabón Trebol",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/a2307d5a48761c04fff28852156ff4ad.jpg",
+   "creado": "2026-11-01T21:49:51.697Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00067",
+   "nombre": "Arete Ballena",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/0fd03a7f9ebbcc70a432dec9cd769232.jpg",
+   "creado": "2026-11-01T21:51:13.887Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00001",
    "nombre": "Cadena Bibiana",
    "categoria": "CAD",
@@ -1958,6 +1994,42 @@
    "notas": "",
    "foto": "fotos/2816ce06ccfb90d85eaa143061ce501c.jpg",
    "creado": "2026-10-20T23:45:49.520Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00006",
+   "nombre": "Juego Oval Oscuro",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/43192990e7537e77621676abe8eb1822.jpg",
+   "creado": "2026-11-01T21:52:40.145Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00007",
+   "nombre": "Juego Corazón Rojo",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/6d130bbe633f8fc95c017a06753408a0.jpg",
+   "creado": "2026-11-01T21:54:21.362Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00008",
+   "nombre": "Juego Corazón Verde",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/df9eb268a9fa618e5ef32177c57f5c2c.jpg",
+   "creado": "2026-11-01T21:57:26.087Z",
    "disponible": true
   },
   {
