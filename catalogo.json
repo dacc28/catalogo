@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:32:52.806Z",
+ "actualizado": "2026-11-01T21:38:30.900Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1106,6 +1106,18 @@
    "notas": "",
    "foto": "fotos/43d65c34d44b8250c8721fa42d2a4c34.jpg",
    "creado": "2026-11-01T21:30:47.072Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00061",
+   "nombre": "Arracada Diamante de Figuras",
+   "categoria": "ARE",
+   "material": "Oro Laminado",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/f60e54272bcb991515c3224ce6613329.jpg",
+   "creado": "2026-11-01T21:36:28.348Z",
    "disponible": true
   },
   {
