@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="site.css?v=16">
+<link rel="stylesheet" href="site.css?v=17">
 </head>
 <body>
 
@@ -31,7 +31,7 @@
       <li><a href="catalogo.html">Catálogo</a></li>
       <li><a href="calculadora.html">Calculadora</a></li>
       <li><a href="index.html#como-comprar">Cómo comprar</a></li>
-      <li><a href="index.html#lives">Lives</a></li>
+      <li><a href="index.html#registro">Registro live</a></li>
       <li><a href="index.html#rastreo">Rastrea tu pedido</a></li>
       <li><a href="index.html#preguntas">Preguntas</a></li>
       <li><a href="club.html" class="club-link">Business Club</a></li>
@@ -233,11 +233,49 @@
       <span class="en-vivo"><i></i>EN VIVO · LUNES Y JUEVES</span>
       <h3>Así funciona tu primer live</h3>
       <ol>
-        <li>Escríbenos a <a href="https://wa.me/528132380573" target="_blank" rel="noopener" style="color:var(--coral);font-weight:700">WhatsApp Atención al cliente (81 3238 0573)</a> y comparte tu usuario de Facebook o TikTok para identificarte.</li>
+        <li><a href="#registro" style="color:var(--coral);font-weight:700">Regístrate para el live</a> con tu nombre, tu Facebook y tu WhatsApp (o escríbenos a <a href="https://wa.me/528132380573" target="_blank" rel="noopener" style="color:var(--coral);font-weight:700">Atención al cliente</a>) para identificarte.</li>
         <li>Realiza tu anticipo de $200 MXN: es crédito a tu favor, se descuenta de tu pedido.</li>
         <li>Durante el live di la palabra clave de la pieza que quieres y la apartamos para ti.</li>
         <li>Al terminar recibes la foto de tu pedido y el total; pagas por transferencia o depósito.</li>
       </ol>
+    </div>
+  </div>
+</section>
+
+<section class="registro" id="registro">
+  <div class="wrap">
+    <div class="registro-grid">
+      <div class="rev izq">
+        <span class="eyebrow coral">Antes de tu live</span>
+        <h2 style="margin-top:14px">Registro para <i>live</i></h2>
+        <p class="lead" style="margin-top:14px">Déjanos tus datos una sola vez y te ubicamos en cuanto pidas tu primera pieza: tu carrito queda listo con tu nombre y tu Facebook.</p>
+        <ul class="registro-pasos">
+          <li><b>1</b><span>Te registras aquí en menos de un minuto.</span></li>
+          <li><b>2</b><span>Entras al live lunes o jueves y dices la palabra clave de lo que quieres.</span></li>
+          <li><b>3</b><span>Te escribimos por WhatsApp con tu pedido, tu total y tu acceso al <a href="club.html">Business Club</a>.</span></li>
+        </ul>
+      </div>
+      <form class="registro-form rev der" id="registroForm" autocomplete="on" novalidate>
+        <div class="registro-ok" id="registroOk" hidden>
+          <div class="ico">✓</div>
+          <h3 id="registroOkTit">¡Listo, ya quedó tu registro!</h3>
+          <p>Te vemos en el live. Si es tu primera compra, recuerda el anticipo de $200 MXN (se descuenta de tu pedido).</p>
+          <div class="registro-ok-links">
+            <a class="btn coral sm" href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Seguir en Facebook</a>
+            <a class="btn sm ghost" href="https://wa.me/528132380573?text=Hola%20Marvea%2C%20me%20acabo%20de%20registrar%20para%20el%20live" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Avisar por WhatsApp</a>
+          </div>
+        </div>
+        <div id="registroCampos">
+          <label>Nombre completo<input name="nombre" id="rNombre" required maxlength="80" autocomplete="name" placeholder="Ej. Ana Treviño"></label>
+          <label>Tu nombre en Facebook<small>Como apareces en los comentarios del live</small><input name="facebook" id="rFacebook" required maxlength="80" placeholder="Ej. Ana Treviño Luna"></label>
+          <label>WhatsApp (10 dígitos)<input name="whatsapp" id="rWhatsapp" required inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="81 1234 5678"></label>
+          <label><span>Domicilio de envío <span class="opc">(opcional)</span></span><input name="domicilio" id="rDomicilio" maxlength="240" autocomplete="street-address" placeholder="Calle y número, colonia, ciudad, CP"></label>
+          <input type="text" name="empresa" id="rEmpresa" tabindex="-1" autocomplete="off" class="trampa" aria-hidden="true">
+          <label class="aviso-check"><input type="checkbox" id="rAviso" required><span>Acepto que Marvea use mis datos solo para identificarme en los lives, contactarme por WhatsApp sobre mis pedidos y enviarlos. No se comparten con terceros, salvo la paquetería para mi envío. Puedo pedir que se corrijan o eliminen escribiendo a <a href="mailto:contacto@marvea.com">contacto@marvea.com</a>.</span></label>
+          <div class="registro-error" id="registroError" hidden></div>
+          <button class="btn coral full" type="submit" id="registroBtn">Registrarme para el live <span class="fl">→</span></button>
+        </div>
+      </form>
     </div>
   </div>
 </section>
@@ -324,6 +362,6 @@
   </div>
 </div>
 <button class="ir-arriba" id="irArriba" aria-label="Ir al inicio" title="Ir al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg><span>Inicio</span></button>
-<script src="site.js?v=15"></script>
+<script src="site.js?v=16"></script>
 </body>
 </html>

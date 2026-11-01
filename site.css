@@ -443,3 +443,35 @@ footer a i,.banda .redes a i{margin-right:6px;width:16px;text-align:center}
 @keyframes aparece{from{opacity:0;transform:translateY(24px) scale(.96)}}
 @media (max-width:640px){.live-aviso{right:12px;left:12px;width:auto;bottom:78px;padding:16px 16px 14px}.live-aviso h4{font-size:20px}}
 @media (prefers-reduced-motion:reduce){.live-aviso{animation:none}}
+
+/* Registro para live */
+.registro{padding:90px 0;background:linear-gradient(180deg,var(--rosa-3),#fff)}
+.registro-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+.registro-pasos{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:14px}
+.registro-pasos li{display:flex;gap:14px;align-items:flex-start;font-size:16.5px;color:var(--tinta)}
+.registro-pasos b{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ciruela);color:var(--amarillo);display:grid;place-items:center;font-family:var(--display);font-size:17px}
+.registro-pasos a{color:var(--coral);font-weight:700}
+.registro-form{background:#fff;border-radius:var(--r-lg);padding:30px;box-shadow:var(--sombra-2);border:1px solid var(--linea);display:flex;flex-direction:column;gap:14px}
+#registroCampos{display:flex;flex-direction:column;gap:14px}
+.registro-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ciruela)}
+.registro-form label small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--tinta-2);font-size:13px;margin-top:-3px}
+.registro-form label .opc{text-transform:none;letter-spacing:0;font-weight:600;color:var(--tinta-2);font-size:12px;margin-left:4px}
+.registro-form input:not([type=checkbox]){font-family:inherit;font-size:17px;font-weight:600;color:var(--tinta);border:2px solid var(--linea);border-radius:14px;padding:13px 15px;outline:0;transition:border-color .2s;width:100%;min-width:0}
+.registro-form input:focus{border-color:var(--coral)}
+.registro-form input.mal{border-color:var(--rojo);background:#FFF6F6}
+.registro-form .aviso-check{flex-direction:row;align-items:flex-start;gap:10px;text-transform:none;letter-spacing:0;font-weight:500;font-size:13px;color:var(--tinta-2);line-height:1.45}
+.registro-form .aviso-check input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--coral)}
+.registro-form .aviso-check a{color:var(--coral);font-weight:700}
+.registro-form .trampa{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.registro-error{background:#FDECEE;color:var(--rojo);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700}
+.registro-form .btn.full{width:100%}
+.registro-ok{text-align:center;padding:16px 6px}
+.registro-ok .ico{width:68px;height:68px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;background:#DDF3E4;color:#1F6B3A;font-size:34px;font-weight:800}
+.registro-ok h3{font-size:28px}
+.registro-ok p{color:var(--tinta-2);margin-top:10px}
+.registro-ok-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+@media (max-width:860px){.registro{padding:64px 0}.registro-grid{grid-template-columns:1fr;gap:28px}.registro-form{padding:22px}}
+#registroCampos[hidden],.registro-ok[hidden]{display:none!important}
+.nav li a{white-space:nowrap}
+@media (min-width:1001px){.nav ul{gap:0}.nav li a{padding:9px 8px;font-size:14px}.nav .wrap{gap:12px}}
+@media (min-width:1001px) and (max-width:1200px){.nav li a{padding:8px 6px;font-size:13px}.nav .logo{font-size:26px}.nav .logo img{width:30px;height:30px}.nav-cta .btn.sm{padding:9px 13px;font-size:13.5px}}

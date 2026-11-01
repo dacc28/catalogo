@@ -141,4 +141,32 @@
     } catch (e) {}
   }
   catalogo();
+
+  /* ---------- Registro para live (se guarda en la nube del Club; la app lo convierte en clienta) ---------- */
+  (function registro() {
+    const form = $("#registroForm"); if (!form) return;
+    const URL_R = "https://kuuewntjxtjjktxbgxfk.supabase.co/rest/v1/registros", KEY = "sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8";
+    const err = $("#registroError"), btn = $("#registroBtn");
+    const digitos = w => { const d = String(w || "").replace(/\D/g, ""); if (d.length === 12 && d.startsWith("52")) return d.slice(2); if (d.length === 13 && d.startsWith("521")) return d.slice(3); return d; };
+    const mostrarError = (t, campo) => { err.textContent = t; err.hidden = false; if (campo) { campo.classList.add("mal"); campo.focus(); } };
+    form.querySelectorAll("input").forEach(i => i.addEventListener("input", () => { i.classList.remove("mal"); err.hidden = true; }));
+    form.addEventListener("submit", async e => {
+      e.preventDefault(); err.hidden = true;
+      const nombre = $("#rNombre").value.trim().replace(/\s+/g, " "), facebook = $("#rFacebook").value.trim().replace(/\s+/g, " "), wa = digitos($("#rWhatsapp").value), domicilio = $("#rDomicilio").value.trim();
+      if (nombre.length < 2) return mostrarError("Escribe tu nombre.", $("#rNombre"));
+      if (!facebook) return mostrarError("Escribe tu nombre como aparece en Facebook.", $("#rFacebook"));
+      if (wa.length !== 10) return mostrarError("Tu WhatsApp debe tener 10 dígitos (sin +52).", $("#rWhatsapp"));
+      if (!$("#rAviso").checked) return mostrarError("Para registrarte, acepta el uso de tus datos.");
+      const listo = () => { $("#registroCampos").hidden = true; $("#registroOk").hidden = false; $("#registroOkTit").textContent = "¡Listo, " + nombre.split(" ")[0] + "! Ya quedó tu registro"; form.scrollIntoView({ behavior: "smooth", block: "center" }); };
+      if ($("#rEmpresa").value) return listo(); // trampa para robots
+      btn.disabled = true; btn.textContent = "Registrando…";
+      try {
+        const r = await fetch(URL_R, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ nombre, facebook, whatsapp: wa, domicilio, acepta_aviso: true, origen: "web" }) });
+        if (!r.ok) throw new Error("estado " + r.status);
+        medir("registro_live"); listo();
+      } catch (x) {
+        mostrarError("No pudimos registrarte en este momento. Intenta de nuevo o escríbenos por WhatsApp al 81 3238 0573.");
+      } finally { btn.disabled = false; btn.innerHTML = 'Registrarme para el live <span class="fl">→</span>'; }
+    });
+  })();
 })();
