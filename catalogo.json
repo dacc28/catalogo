@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-01T21:59:27.563Z",
+ "actualizado": "2026-11-01T22:08:24.065Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2030,6 +2030,42 @@
    "notas": "",
    "foto": "fotos/df9eb268a9fa618e5ef32177c57f5c2c.jpg",
    "creado": "2026-11-01T21:57:26.087Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00009",
+   "nombre": "Juego Doble Corazón",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/d8ee60f210fd6990802e7dc7058cdbae.jpg",
+   "creado": "2026-11-01T21:59:58.579Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00010",
+   "nombre": "Juegos Dos Corazones Blancos",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/1951799169a0fe2760e839bf6014e4b5.jpg",
+   "creado": "2026-11-01T22:01:35.363Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00011",
+   "nombre": "Juego Dos Corazones Blanco y Negro",
+   "categoria": "JUE",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/ca59436c44708b72f988826819c4c4c7.jpg",
+   "creado": "2026-11-01T22:03:25.682Z",
    "disponible": true
   },
   {
