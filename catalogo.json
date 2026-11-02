@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T18:10:08.351Z",
+ "actualizado": "2026-11-02T18:27:21.449Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1044,7 +1044,7 @@
    "precio": 25,
    "etiqueta": "Dupe Alert",
    "notas": "",
-   "foto": "fotos/8226525aef749544ab68170e7aa5b650.jpg",
+   "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
    "disponible": true
   },
@@ -1056,7 +1056,7 @@
    "precio": 25,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/49585287eaee124f5a757fda1b4b8227.jpg",
+   "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
    "creado": "2026-11-01T20:08:35.163Z",
    "disponible": true
   },
@@ -1176,7 +1176,7 @@
    "precio": 35,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/1d8b224df3f7a1d2ae58c19296c842b6.jpg",
+   "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
    "creado": "2026-11-01T21:49:51.697Z",
    "disponible": true
   },
@@ -1262,18 +1262,6 @@
    "notas": "",
    "foto": "fotos/5d9c078db8e30f32ea9249cc76180c63.jpg",
    "creado": "2026-10-19T01:04:03.209Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00006",
-   "nombre": "Collar de Piedra",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4278c87bd449e31453a6d37faf4425b8.jpg",
-   "creado": "2026-10-19T01:06:10.858Z",
    "disponible": true
   },
   {
@@ -2388,7 +2376,7 @@
    "precio": 45,
    "etiqueta": "Dupe Alert",
    "notas": "",
-   "foto": "fotos/a26f2ff01e9ebd5df5c7afe6e302b1c0.jpg",
+   "foto": "fotos/a236579e1decdfddc8891281786e2114.jpg",
    "creado": "2026-11-01T20:33:23.399Z",
    "disponible": true
   },
