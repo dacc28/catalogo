@@ -3211,6 +3211,9 @@ async function cerrarVenta(c,pagado,medio,monto,cuenta,imprimir){
 // saldo de la clienta: positivo = le falta pagar; negativo = tiene saldo a favor (abonó de más)
 function cartSaldo(c){ return Math.round((cartGrand(c)-cartPagado(c))*100)/100; }
 function saldoTexto(c){ const s=cartSaldo(c); return s<0?"Resta −$"+fmtMoney(-s)+" (a favor)":"Resta $"+fmtMoney(s); }
+// una venta abierta no lleva "pago final": si traía uno (porque se cerró y se volvió a abrir), se vuelve un anticipo visible
+function pagoAAnticipo(c){ if(!c||!c.pago) return false; const m=Number(c.pago.monto)||0; if(m>0) c.anticipos=[...(c.anticipos||[]),{monto:m,medio:c.pago.medio||"Transferencia",fecha:c.pago.fecha||new Date().toISOString(),nota:"Pagado al cerrar la venta",usuario:""}]; c.pago=null; return true; }
+async function revisarPagoAbierta(c){ if(!c||c.estado!=="abierto"||!c.pago||c.__revisando) return; c.__revisando=true; try{ pagoAAnticipo(c); await saveCart(c); }catch(e){} finally{ delete c.__revisando; } }
 // anticipos / abonos: lo que la clienta ya mandó antes de cerrar (o después, si quedó por cobrar)
 function quienSoy(){ try{ const p=JSON.parse(localStorage.getItem("marvea.perfil")||"null"); return p&&p.usuario||""; }catch(e){ return ""; } }
 async function agregarAnticipo(c,monto,medio,nota){
@@ -3239,7 +3242,7 @@ async function reabrirVenta(c){
   if(!state.db||state.busy||!c) return; state.busy=true;
   try{
     if(c.estado==="cancelado"){ for(const it of c.items){ const p=state.products.get(it.codigo); const avail=p?Math.max(0,Number(p.existencia)||0):0; const take=Math.min(it.cant,avail); it.cant=p?Math.max(0,-(await setStock(it.codigo,avail-take))):take; } c.items=c.items.filter(i=>i.cant>0); }
-    c.estado="abierto"; c.finalizado=""; await saveCart(c); renderAll(); state.ventaCartId=c.id; state.ventaCliForm=false; state.ventaPagado=!!c.pago; if(c.pago) state.ventaMedio=c.pago.medio; renderVenta(); toast("Venta abierta para editar · vuelve a cerrarla cuando termines");
+    pagoAAnticipo(c); c.estado="abierto"; c.finalizado=""; await saveCart(c); renderAll(); state.ventaCartId=c.id; state.ventaCliForm=false; state.ventaPagado=!!c.pago; if(c.pago) state.ventaMedio=c.pago.medio; renderVenta(); toast("Venta abierta para editar · vuelve a cerrarla cuando termines");
   }catch(e){ toast("No se pudo reabrir la venta",true); }
   finally{ state.busy=false; }
 }
@@ -3325,6 +3328,7 @@ function renderVenta(keepFocus){
   // todas las ventas directas abiertas, de cualquier día
   if(!state.abiertasUnsub){ state.abiertasUnsub=state.db.collection("carritos").where("estado","==","abierto").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x) m.set(d.id,cartFromDoc(d.id,x)); } state.ventaAbiertas=m; if(state.view==="venta") renderVenta(); },e=>console.warn("abiertas",e)); }
   const focused=document.activeElement&&document.activeElement.id; const focusVal=focused==="ventaInput"?$("#ventaInput").value:null; const cliVal=focused==="ventaCli"?$("#ventaCli").value:null; const qtyVal=$("#ventaQty")?$("#ventaQty").value:"1";
+  { const c0=ventaActual(); if(c0&&c0.estado==="abierto"&&c0.pago){ revisarPagoAbierta(c0); } }
   const esHoy=esHoyVenta(); const c=ventaActual(); if(!c) state.ventaPagoForm=false; const editable=esHoy&&!!c&&c.estado==="abierto"; const k=c?clienteDe(c):null;
   // la lista del día no muestra ventas abiertas vacías (se crean al escribir la clienta y no tienen nada todavía)
   const carts=[...(state.ventaCarts||new Map()).values()].filter(x=>x.id===state.ventaCartId||x.estado!=="abierto"||x.items.length).sort((a,b)=>String(b.creado).localeCompare(String(a.creado)));
@@ -3389,7 +3393,7 @@ function renderVenta(keepFocus){
     const totalBox=h("div",{class:"vd-total"},
       h("div",{class:"vd-desg"},h("span",null,"Piezas ("+cartPieces(c)+")"),h("span",null,"$"+fmtMoney(cartTotal(c))),c.envio?h("span",null,c.envio.nombre):null,c.envio?h("span",null,"$"+fmtMoney(c.envio.precio)):null,c.factura?h("span",null,"IVA "+Math.round(IVA_TASA*100)+"%"):null,c.factura?h("span",null,"$"+fmtMoney(cartIva(c))):null),
       h("div",{class:"vd-grand"},h("span",null,"Total"),h("b",null,"$"+fmtMoney(cartGrand(c)))),
-      (cartAnticipos(c)||cartDeposito(c))?h("div",{class:"vd-acuenta"},h("span",null,"A cuenta (anticipos"+(cartDeposito(c)?" y depósito":"")+")"),h("span",null,"−$"+fmtMoney(cartAnticipos(c)+cartDeposito(c))),h("b",null,cartSaldo(c)<0?"Resta (saldo a favor)":"Resta"),h("b",{class:cartSaldo(c)<0?"vd-afavor":(cartSaldo(c)>0?"vd-debe":"")},(cartSaldo(c)<0?"−$":"$")+fmtMoney(Math.abs(cartSaldo(c))))):null);
+      (cartAnticipos(c)||cartDeposito(c))?h("div",{class:"vd-acuenta"},h("span",null,"A cuenta (anticipos"+(cartDeposito(c)?" y depósito":"")+(c.pago?" y pago":"")+")"),h("span",null,"−$"+fmtMoney(cartPagado(c))),h("b",null,cartSaldo(c)<0?"Resta (saldo a favor)":"Resta"),h("b",{class:cartSaldo(c)<0?"vd-afavor":(cartSaldo(c)>0?"vd-debe":"")},(cartSaldo(c)<0?"−$":"$")+fmtMoney(Math.abs(cartSaldo(c))))):null);
     // anticipos / abonos
     const antBox=(puede)=>{ const lista=(c.anticipos||[]).map((a,i)=>h("div",{class:"vd-ant"},h("span",null,"$"+fmtMoney(a.monto)),h("span",{class:"vd-muted"},[a.medio,a.fecha?new Date(a.fecha).toLocaleString("es-MX",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"",a.nota].filter(Boolean).join(" · ")),puede?h("button",{class:"vd-x",type:"button",title:"Quitar anticipo","aria-label":"Quitar anticipo",onclick:async()=>{ if(!confirm("¿Quitar el anticipo de $"+fmtMoney(a.monto)+"?")) return; await quitarAnticipo(c,i); renderVenta(); }},"×"):h("span")));
       if(!puede&&!lista.length) return null;
@@ -4129,13 +4133,14 @@ body.vx-on #vxCamWrap{display:block!important}
     if (c.envio && !opts.some(o => o.id === c.envio.id)) env.append(el("option", { value: c.envio.id }, c.envio.nombre + " · " + precio(c.envio.precio)));
     env.value = c.envio ? c.envio.id : ""; env.addEventListener("change", async () => { await setShipping(c, env.value); render(); });
     const res = el("button", { type: "button", class: "vx-toggle" + (c.resguardo ? " on" : ""), "aria-pressed": c.resguardo ? "true" : "false", onclick: async () => { vibra(); await setResguardo(c, !c.resguardo); render(); } }, el("span", { class: "vx-tgl" }), "Pedido en resguardo");
-    const ants = (c.anticipos || []).map((a, i) => el("div", { class: "vx-ant" }, el("b", null, precio(a.monto)), el("span", null, [a.medio, a.fecha ? new Date(a.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : ""].filter(Boolean).join(" · ")),
+    const ants = (c.anticipos || []).map((a, i) => el("div", { class: "vx-ant" }, el("b", null, precio(a.monto)), el("span", null, [a.medio, a.fecha ? new Date(a.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : "", a.nota].filter(Boolean).join(" · ")),
       editable ? el("button", { type: "button", class: "vx-antx", "aria-label": "Quitar anticipo", onclick: async () => { if (!confirm("¿Quitar el anticipo de " + precio(a.monto) + "?")) return; await quitarAnticipo(c, i); render(); } }, "✕") : el("span")));
     const monto = el("input", { class: "vx-input", id: "vxAnt", type: "number", inputmode: "decimal", placeholder: "Monto del anticipo", value: V.antMonto || "" }); monto.addEventListener("input", () => { V.antMonto = monto.value; });
     V.antMedio = V.antMedio || "Transferencia";
     const medios = el("div", { class: "vx-medios vx-medios-s", "data-k": "antmed" }, ...MEDIOS.map(m => el("button", { type: "button", class: V.antMedio === m ? "on" : "", onclick: () => { V.antMedio = m; render(); } }, m)));
     const registrar = el("button", { type: "button", class: "vx-btn2", onclick: async () => { if (await agregarAnticipo(c, V.antMonto, V.antMedio, "")) { vibra(30); V.antMonto = ""; V.antAbierto = false; render(); } } }, "Registrar anticipo");
-    const saldo = cartSaldo(c), aCuenta = cartAnticipos(c) + cartDeposito(c);
+    if (c.estado === "abierto" && c.pago) revisarPagoAbierta(c);
+    const saldo = cartSaldo(c), aCuenta = cartPagado(c);
     return el("section", { class: "vx-card vx-pedido", "data-k": "pedido" },
       conEnvio ? el("label", { class: "vx-lbl", for: "vxEnvio" }, "Envío") : null, conEnvio ? env : (c.envio ? el("p", { class: "vx-nota" }, "Envío: " + c.envio.nombre + " · " + precio(c.envio.precio)) : null), c.estado !== "cancelado" ? res : null,
       el("div", { class: "vx-lblrow" }, el("span", { class: "vx-lbl" }, "Anticipos"), aCuenta ? el("span", { class: "vx-cnt" + (saldo < 0 ? " vx-afavor" : "") }, "A cuenta " + precio(aCuenta) + " · resta " + (saldo < 0 ? "−" + precio(-saldo) + " a favor" : precio(saldo))) : null),
