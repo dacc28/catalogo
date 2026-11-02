@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T19:55:43.191Z",
+ "actualizado": "2026-11-02T20:17:13.707Z",
  "categorias": [
   {
    "p": "ANI",
@@ -293,18 +293,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00001",
-   "nombre": "Trio de Arracadas",
-   "categoria": "ARE",
-   "material": "Chapa de Oro",
-   "precio": 90,
-   "etiqueta": "Más Vendido",
-   "notas": "3 pares por paquete, cada par queda en 30 pesos",
-   "foto": "fotos/1a0187862f1128952b510480c3f64d27.jpg",
-   "creado": "2026-10-19T01:42:08.141Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00002",
    "nombre": "Aretes Tiffany&Co",
    "categoria": "ARE",
@@ -458,18 +446,6 @@
    "notas": "Dupe Valentino",
    "foto": "fotos/c67c73f87731f421e2bb5aafdd74a45a.jpg",
    "creado": "2026-10-19T02:51:22.507Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00016",
-   "nombre": "Aretes Dúo Bicolor",
-   "categoria": "ARE",
-   "material": "Chapa",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "Aretes en Dúo",
-   "foto": "fotos/f86d5bd33a0d6922c14a6bc389631af6.jpg",
-   "creado": "2026-10-19T02:55:56.270Z",
    "disponible": true
   },
   {
