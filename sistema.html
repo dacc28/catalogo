@@ -1221,6 +1221,11 @@ nav.tabs button[aria-selected="true"]{background:var(--grad);border-color:transp
 .vd-pagobox #ventaCuenta{flex:1 1 200px}
 .venta.vd .vd-it .qc{display:flex;align-items:center;gap:8px!important}
 .venta.vd .vd-it .qc .q{display:inline-block;min-width:22px;padding:0 2px;text-align:center}
+.vd-ladocol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.vd-ladocol .vd-lado{margin:0}
+.vd-cuenta{min-width:24px;height:24px;padding:0 8px;border-radius:999px;background:#1D1D1F;color:#fff;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.vd-lado .vd-sub{display:block;text-align:left!important;margin:2px 0 4px;font-size:13px}
+.vd-abiertas .cartlist,.vd-hist .cartlist{margin-top:8px}
 /* ===== Live rápido · diseño simple (31-oct-2026) ===== */
 .lr{display:flex;flex-direction:column;gap:16px}
 .lr-muted{color:var(--muted);font-size:13px;font-weight:500}
@@ -3364,15 +3369,24 @@ function renderVenta(keepFocus){
   const daySel=h("select",{"aria-label":"Día",class:"vd-day"},...(ventaLiveHoy()?[]:[h("option",{value:""},"Hoy")]),...ventaLives().map(l=>h("option",{value:l.id},l.dia===hoyKey()?"Hoy":l.nombre.replace("Ventas directas · ",""))));
   daySel.value=state.ventaLiveId||""; daySel.addEventListener("change",()=>{ ventaSubscribe(daySel.value||null); renderVenta(); });
   const medTxt=Object.entries(R.medios).map(([m,v])=>m+" $"+fmtMoney(v)).join(" · ");
-  const listaDia=h("div",{class:"cartlist"},...(carts.length?carts.map(x=>{ const del=state.ventaDel===x.id;
+  const fila=x=>{ const del=state.ventaDel===x.id;
     return h("div",{class:"vrowc"+(x.id===state.ventaCartId?" active":""),oncontextmenu:e=>ventaMenu(e,x)},
-      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>{ state.ventaCartId=x.id; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); }},h("span",{class:"cn"},"#"+cartNumber(x)+" · "+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})," · ",cartPieces(x)," pzas",ventaEstadoChip(x))),
-      del?h("div",{class:"confirm",style:"margin:4px 0 0;font-size:12px"},"¿Eliminar?"+(x.items.length&&x.estado!=="cancelado"?" Regresan "+cartPieces(x)+" pzas.":""),h("button",{class:"btn sm danger",type:"button",onclick:()=>{ state.ventaDel=null; eliminarVenta(x); }},"Sí"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>{ state.ventaDel=null; renderVenta(); }},"No")):h("button",{type:"button",class:"vdel",title:"Eliminar esta venta",onclick:()=>{ state.ventaDel=x.id; renderVenta(); }},"×")); }):[h("div",{class:"vd-vacio"},"Aún no hay ventas este día.")]));
-  const lado=h("div",{class:"panel vd-lado"},h("div",{class:"vd-ladohead"},h("h3",null,"Ventas del día"),daySel),
+      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>{ state.ventaCartId=x.id; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); }},h("span",{class:"cn"},"#"+cartNumber(x)+" · "+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})," · ",cartPieces(x)," pzas",x.estado==="abierto"?null:ventaEstadoChip(x))),
+      del?h("div",{class:"confirm",style:"margin:4px 0 0;font-size:12px"},"¿Eliminar?"+(x.items.length&&x.estado!=="cancelado"?" Regresan "+cartPieces(x)+" pzas.":""),h("button",{class:"btn sm danger",type:"button",onclick:()=>{ state.ventaDel=null; eliminarVenta(x); }},"Sí"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>{ state.ventaDel=null; renderVenta(); }},"No")):h("button",{type:"button",class:"vdel",title:"Eliminar esta venta",onclick:()=>{ state.ventaDel=x.id; renderVenta(); }},"×")); };
+  const abiertas=carts.filter(x=>x.estado==="abierto"), historial=carts.filter(x=>x.estado!=="abierto");
+  const totAb=abiertas.reduce((s,x)=>s+cartGrand(x),0), pzAb=abiertas.reduce((s,x)=>s+cartPieces(x),0);
+  // panel 1: carritos abiertos (lo que se está atendiendo)
+  const panelAb=h("div",{class:"panel vd-lado vd-abiertas"},
+    h("div",{class:"vd-ladohead"},h("h3",null,"Carritos abiertos"),abiertas.length?h("span",{class:"vd-cuenta"},String(abiertas.length)):null),
+    abiertas.length?h("div",{class:"vd-muted vd-sub"},"$"+fmtMoney(totAb)+" · "+pzAb+(pzAb===1?" pieza apartada":" piezas apartadas")+(esHoy?"":" · "+((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""))):null,
+    h("div",{class:"cartlist"},...(abiertas.length?abiertas.map(fila):[h("div",{class:"vd-vacio"},esHoy?"No hay carritos abiertos.":"Ese día no quedaron carritos abiertos.")])));
+  // panel 2: historial del día (ventas cerradas y canceladas)
+  const panelHist=h("div",{class:"panel vd-lado vd-hist"},h("div",{class:"vd-ladohead"},h("h3",null,"Historial"),daySel),
     h("div",{class:"vd-resumen"},h("b",null,"$"+fmtMoney(R.total)),h("span",null,R.ventas+" venta"+(R.ventas===1?"":"s")+" · "+R.piezas+" pzas")),
-    (medTxt||R.porCobrar||R.abiertas)?h("div",{class:"vd-chips"},medTxt?h("span",{class:"vd-muted"},medTxt):null,R.porCobrar?h("span",{class:"chip unpaid"},"Por cobrar $"+fmtMoney(R.porCobrar)+" ("+R.pendientes+")"):null,R.abiertas?h("span",{class:"chip"},R.abiertas+" abierta"+(R.abiertas===1?"":"s")):null):null,
-    listaDia,
+    (medTxt||R.porCobrar)?h("div",{class:"vd-chips"},medTxt?h("span",{class:"vd-muted"},medTxt):null,R.porCobrar?h("span",{class:"chip unpaid"},"Por cobrar $"+fmtMoney(R.porCobrar)+" ("+R.pendientes+")"):null):null,
+    h("div",{class:"cartlist"},...(historial.length?historial.map(fila):[h("div",{class:"vd-vacio"},"Aún no hay ventas cerradas este día.")])),
     ventaLiveActual()?h("div",{class:"vd-sec",style:"margin-top:12px"},h("button",{class:"btn sm",type:"button",onclick:()=>liveExcel(ventaLiveActual(),state.ventaCarts)},"Excel del día"),h("button",{class:"btn sm",type:"button",onclick:()=>livePdf(ventaLiveActual(),state.ventaCarts)},"PDF del día")):null);
+  const lado=h("div",{class:"vd-ladocol"},panelAb,panelHist);
 
   const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,"Venta directa"),h("div",{class:"vd-muted"},esHoy?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):"Consultando: "+(ventaLiveActual()||{}).nombre,c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
     (c&&esHoy)?h("button",{class:"btn",type:"button",onclick:()=>{ state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"):null);
