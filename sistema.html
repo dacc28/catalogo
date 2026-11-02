@@ -3112,7 +3112,7 @@ function hoyKey(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMont
 function ventaLives(){ return state.lives.filter(l=>l.tipo==="mostrador").sort((a,b)=>String(b.dia||b.creado).localeCompare(String(a.dia||a.creado))); }
 function ventaLiveHoy(){ return state.lives.find(l=>l.tipo==="mostrador"&&l.dia===hoyKey())||null; }
 function ventaLiveActual(){ return state.lives.find(l=>l.id===state.ventaLiveId)||null; }
-function esHoyVenta(){ const l=ventaLiveActual(); return !l||l.dia===hoyKey(); }
+function esHoyVenta(){ const l=ventaLiveActual(); if(!l||l.dia===hoyKey()) return true; const c=ventaActual(); return !!(c&&c.estado==="abierto"); }
 async function ensureVentaLive(){ if(state.ventaLiveCreando) return state.ventaLiveCreando; state.ventaLiveCreando=ensureVentaLive0(); try{ return await state.ventaLiveCreando; } finally{ state.ventaLiveCreando=null; } }
 async function ensureVentaLive0(){
   let l=ventaLiveHoy(); if(l) return l;
@@ -3261,6 +3261,8 @@ function renderVenta(keepFocus){
   const host=$("#ventaHost"); if(!host) return;
   if(!state.db){ host.replaceChildren(h("div",{class:"notice"+(state.booted?" bad":"")},state.booted?"Sin conexión con el almacén de datos.":"Conectando con el almacén de datos…")); return; }
   if(!state.ventaLiveId){ const hoy=ventaLiveHoy(); if(hoy) ventaSubscribe(hoy.id); }
+  // todas las ventas directas abiertas, de cualquier día
+  if(!state.abiertasUnsub){ state.abiertasUnsub=state.db.collection("carritos").where("estado","==","abierto").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x) m.set(d.id,cartFromDoc(d.id,x)); } state.ventaAbiertas=m; if(state.view==="venta") renderVenta(); },e=>console.warn("abiertas",e)); }
   const focused=document.activeElement&&document.activeElement.id; const focusVal=focused==="ventaInput"?$("#ventaInput").value:null; const cliVal=focused==="ventaCli"?$("#ventaCli").value:null; const qtyVal=$("#ventaQty")?$("#ventaQty").value:"1";
   const esHoy=esHoyVenta(); const c=ventaActual(); if(!c) state.ventaPagoForm=false; const editable=esHoy&&!!c&&c.estado==="abierto"; const k=c?clienteDe(c):null;
   // la lista del día no muestra ventas abiertas vacías (se crean al escribir la clienta y no tienen nada todavía)
@@ -3371,15 +3373,21 @@ function renderVenta(keepFocus){
   const medTxt=Object.entries(R.medios).map(([m,v])=>m+" $"+fmtMoney(v)).join(" · ");
   const fila=x=>{ const del=state.ventaDel===x.id;
     return h("div",{class:"vrowc"+(x.id===state.ventaCartId?" active":""),oncontextmenu:e=>ventaMenu(e,x)},
-      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>{ state.ventaCartId=x.id; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); }},h("span",{class:"cn"},"#"+cartNumber(x)+" · "+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})," · ",cartPieces(x)," pzas",x.estado==="abierto"?null:ventaEstadoChip(x))),
+      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>abrir(x)},h("span",{class:"cn"},(x.estado==="abierto"?"":"#"+cartNumber(x)+" · ")+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},x.estado==="abierto"?fechaCorta(x):"",new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})," · ",cartPieces(x)," pzas",x.estado==="abierto"?null:ventaEstadoChip(x))),
       del?h("div",{class:"confirm",style:"margin:4px 0 0;font-size:12px"},"¿Eliminar?"+(x.items.length&&x.estado!=="cancelado"?" Regresan "+cartPieces(x)+" pzas.":""),h("button",{class:"btn sm danger",type:"button",onclick:()=>{ state.ventaDel=null; eliminarVenta(x); }},"Sí"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>{ state.ventaDel=null; renderVenta(); }},"No")):h("button",{type:"button",class:"vdel",title:"Eliminar esta venta",onclick:()=>{ state.ventaDel=x.id; renderVenta(); }},"×")); };
-  const abiertas=carts.filter(x=>x.estado==="abierto"), historial=carts.filter(x=>x.estado!=="abierto");
+  const idsVenta=new Set(ventaLives().map(l=>l.id)), diaDe=new Map(ventaLives().map(l=>[l.id,l.dia]));
+  const abMap=new Map(); for(const x of (state.ventaAbiertas||new Map()).values()) if(idsVenta.has(x.liveId)) abMap.set(x.id,x);
+  for(const x of carts) if(x.estado==="abierto") abMap.set(x.id,x); else abMap.delete(x.id); // lo del día abierto en pantalla es lo más fresco
+  const abiertas=[...abMap.values()].filter(x=>x.estado==="abierto"&&(x.id===state.ventaCartId||x.items.length)).sort((a,b)=>String(b.creado).localeCompare(String(a.creado)));
+  const historial=carts.filter(x=>x.estado!=="abierto");
+  const abrir=x=>{ if(x.liveId!==state.ventaLiveId) ventaSubscribe(x.liveId); state.ventaCartId=x.id; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); };
+  const fechaCorta=x=>{ const d=diaDe.get(x.liveId); if(!d||d===hoyKey()) return ""; const f=new Date(d+"T12:00:00"); return f.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+" · "; };
   const totAb=abiertas.reduce((s,x)=>s+cartGrand(x),0), pzAb=abiertas.reduce((s,x)=>s+cartPieces(x),0);
   // panel 1: carritos abiertos (lo que se está atendiendo)
   const panelAb=h("div",{class:"panel vd-lado vd-abiertas"},
     h("div",{class:"vd-ladohead"},h("h3",null,"Carritos abiertos"),abiertas.length?h("span",{class:"vd-cuenta"},String(abiertas.length)):null),
-    abiertas.length?h("div",{class:"vd-muted vd-sub"},"$"+fmtMoney(totAb)+" · "+pzAb+(pzAb===1?" pieza apartada":" piezas apartadas")+(esHoy?"":" · "+((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""))):null,
-    h("div",{class:"cartlist"},...(abiertas.length?abiertas.map(fila):[h("div",{class:"vd-vacio"},esHoy?"No hay carritos abiertos.":"Ese día no quedaron carritos abiertos.")])));
+    abiertas.length?h("div",{class:"vd-muted vd-sub"},"$"+fmtMoney(totAb)+" · "+pzAb+(pzAb===1?" pieza apartada":" piezas apartadas")+" · todos los días"):null,
+    h("div",{class:"cartlist"},...(abiertas.length?abiertas.map(fila):[h("div",{class:"vd-vacio"},"No hay carritos abiertos.")])));
   // panel 2: historial del día (ventas cerradas y canceladas)
   const panelHist=h("div",{class:"panel vd-lado vd-hist"},h("div",{class:"vd-ladohead"},h("h3",null,"Historial"),daySel),
     h("div",{class:"vd-resumen"},h("b",null,"$"+fmtMoney(R.total)),h("span",null,R.ventas+" venta"+(R.ventas===1?"":"s")+" · "+R.piezas+" pzas")),
@@ -3388,8 +3396,8 @@ function renderVenta(keepFocus){
     ventaLiveActual()?h("div",{class:"vd-sec",style:"margin-top:12px"},h("button",{class:"btn sm",type:"button",onclick:()=>liveExcel(ventaLiveActual(),state.ventaCarts)},"Excel del día"),h("button",{class:"btn sm",type:"button",onclick:()=>livePdf(ventaLiveActual(),state.ventaCarts)},"PDF del día")):null);
   const lado=h("div",{class:"vd-ladocol"},panelAb,panelHist);
 
-  const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,"Venta directa"),h("div",{class:"vd-muted"},esHoy?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):"Consultando: "+(ventaLiveActual()||{}).nombre,c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
-    (c&&esHoy)?h("button",{class:"btn",type:"button",onclick:()=>{ state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"):null);
+  const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,"Venta directa"),h("div",{class:"vd-muted"},(!ventaLiveActual()||ventaLiveActual().dia===hoyKey())?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):(esHoy?"Venta abierta de ":"Consultando: ")+String((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""),c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
+    (c&&esHoy)?h("button",{class:"btn",type:"button",onclick:()=>{ if(ventaLiveActual()&&ventaLiveActual().dia!==hoyKey()){ const lh=ventaLiveHoy(); ventaSubscribe(lh?lh.id:null); } state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"):null);
   const main=h("div",{class:"cartpanel vd-main"},cab,paso1,paso2,paso3);
   host.replaceChildren(h("div",{class:"venta vd"},main,lado));
   if(keepFocus||focused==="ventaInput"){ const i=$("#ventaInput"); if(i&&!i.disabled){ i.focus(); if(focusVal) i.dispatchEvent(new Event("input")); } }
