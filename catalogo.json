@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T19:45:54.076Z",
+ "actualizado": "2026-11-02T19:55:43.191Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1190,18 +1190,6 @@
    "notas": "",
    "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
    "creado": "2026-10-19T01:33:02.110Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00014",
-   "nombre": "Collar Colgante de Cuero con Dije",
-   "categoria": "COL",
-   "material": "Cuero con Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
-   "creado": "2026-10-19T01:36:03.511Z",
    "disponible": true
   },
   {
