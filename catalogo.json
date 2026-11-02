@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T19:39:45.144Z",
+ "actualizado": "2026-11-02T19:45:54.076Z",
  "categorias": [
   {
    "p": "ANI",
@@ -89,18 +89,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00005",
-   "nombre": "Anillo Corte Princesa Talla 7",
-   "categoria": "ANI",
-   "material": "Chapa de Oro",
-   "precio": 30,
-   "etiqueta": "",
-   "notas": "Talla 7",
-   "foto": "fotos/534a76b7f4bc95f111179766e8d784d0.jpg",
-   "creado": "2026-10-19T02:42:52.587Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00007",
    "nombre": "Anillo Ajustable de Acero",
    "categoria": "ANI",
@@ -110,18 +98,6 @@
    "notas": "",
    "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
    "creado": "2026-10-19T02:47:25.972Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00008",
-   "nombre": "Anillo Triple Dupe Talla 8",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/701ddae51aea00707ae22fae9814a8a4.jpg",
-   "creado": "2026-10-20T17:15:43.616Z",
    "disponible": true
   },
   {
