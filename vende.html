@@ -2190,7 +2190,7 @@ function renderDash(fromLoad){
       tile("Ganarías",money(ganPos),valor?`Margen ${Math.round(ganPos/valor*100)}%`:"","accent"),
       tile("Por reponer",String(agotados.length+bajos.length),`${agotados.length} agotado${agotados.length===1?"":"s"} · ${bajos.length} con poca existencia`,agotados.length+bajos.length?"warn":"")),
     h("div",{class:"dashgrid"},
-      h("div",{class:"panel"},h("h3",null,"Últimos lives"),lives.length?h("div",{class:"dtable"},h("div",{class:"dr dh"},h("span",null,"Live"),h("span",null,"Carritos"),h("span",null,"Piezas"),h("span",null,"Vendido"),h("span",null,"Ganancia")),...lives.map(l=>{ const r=porLive.get(l.id)||{carritos:0,piezas:0,vendido:0,ganancia:0}; return h("button",{type:"button",class:"dr",onclick:()=>{ selectLive(l.id); setView("live"); }},h("span",{class:"ln"},h("b",null,l.nombre),h("small",null,fmtDate(l.creado)+(l.estado==="abierto"?" · en vivo":""))),h("span",null,r.carritos),h("span",null,r.piezas),h("span",null,money(r.vendido)),h("span",{class:"g"},money(r.ganancia))); }),rVD.carritos?h("button",{type:"button",class:"dr dr-vd",onclick:()=>setView("venta")},h("span",{class:"ln"},h("b",null,"Ventas directas"),h("small",null,"Todas, fuera de los lives")),h("span",null,rVD.carritos),h("span",null,rVD.piezas),h("span",null,money(rVD.vendido)),h("span",{class:"g"},money(rVD.ganancia))):null):h("div",{class:"dempty"},"Aquí verás cada live con lo que vendiste y ganaste.")),
+      h("div",{class:"panel"},h("h3",null,"Últimos lives"),(lives.length||rVD.carritos)?h("div",{class:"dtable"},h("div",{class:"dr dh"},h("span",null,"Live"),h("span",null,"Carritos"),h("span",null,"Piezas"),h("span",null,"Vendido"),h("span",null,"Ganancia")),...lives.map(l=>{ const r=porLive.get(l.id)||{carritos:0,piezas:0,vendido:0,ganancia:0}; return h("button",{type:"button",class:"dr",onclick:()=>{ selectLive(l.id); setView("live"); }},h("span",{class:"ln"},h("b",null,l.nombre),h("small",null,fmtDate(l.creado)+(l.estado==="abierto"?" · en vivo":""))),h("span",null,r.carritos),h("span",null,r.piezas),h("span",null,money(r.vendido)),h("span",{class:"g"},money(r.ganancia))); }),rVD.carritos?h("button",{type:"button",class:"dr dr-vd",onclick:()=>setView("venta")},h("span",{class:"ln"},h("b",null,"Ventas directas"),h("small",null,"Todas, fuera de los lives")),h("span",null,rVD.carritos),h("span",null,rVD.piezas),h("span",null,money(rVD.vendido)),h("span",{class:"g"},money(rVD.ganancia))):null):h("div",{class:"dempty"},"Aquí verás cada live con lo que vendiste y ganaste.")),
       h("div",{class:"panel"},h("h3",null,"Lo que más se vende"),masVendidas.length?h("div",{class:"bars"},...masVendidas.map(r=>{ const p=state.products.get(r.codigo); return h("div",{class:"barrow"},h("div",{class:"bl"},h("b",{style:"color:var(--accent)"},r.palabra||r.codigo)," ",p?p.nombre:r.nombre,h("small",null,money(r.importe)+" vendidos")),h("div",{class:"bt"},h("i",{style:`width:${Math.round(r.cant/maxC*100)}%`})),h("div",{class:"bv"},r.cant+" pzas")); })):h("div",{class:"dempty"},"Cuando vendas en un live, aquí aparecen las piezas más pedidas.")),
       h("div",{class:"panel"},h("h3",null,"Inventario por categoría"),h("div",{class:"bars"},...catRows.map(c=>h("div",{class:"barrow"},h("div",{class:"bl"},c.n,h("small",null,`${c.productos} producto${c.productos===1?"":"s"} · ${c.piezas} piezas`)),h("div",{class:"bt"},h("i",{style:`width:${Math.round(c.valor/maxV*100)}%`})),h("div",{class:"bv"},money(c.valor)))))),
       h("div",{class:"panel"},h("h3",null,"Por reponer"),(agotados.length||bajos.length)?h("div",{class:"toplist"},...[...agotados,...bajos].slice(0,10).map(p=>h("button",{class:"tr",type:"button",style:"text-align:left;cursor:pointer",onclick:()=>openDrawer(p.codigo)},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"tn"},p.nombre),h("div",{class:"ts"},h("b",{style:"color:var(--accent)"},p.palabra||p.codigo)," · "+money(p.precio))),h("div",{class:"tv",style:(Number(p.existencia)||0)<=0?"color:var(--bad)":"color:var(--warn)"},(Number(p.existencia)||0)<=0?"Agotado":p.existencia+" pzas")))):h("div",{class:"dempty"},"Todo tiene existencia suficiente."))),
@@ -2975,7 +2975,15 @@ function confirmDeleteCart(c,box){
 async function deleteLive(l,devolver=true){
   if(!state.db||!l||state.busy) return; state.busy=true;
   try{
-    const carts=[...state.carts.values()];
+    const todos=[...state.carts.values()]; const deVD=new Map();
+    for(const c of todos){ try{ const s=await state.db.doc("carritos/"+c.id).get(); const raw=s&&s.exists?(s.data()||{}):{}; if(raw.deVentaDirecta) deVD.set(c.id,raw); }catch(e){} }
+    let regresan=0;
+    for(const [id,raw] of deVD){ try{
+      let dest=state.lives.find(x=>x.id===raw.deVentaDirecta&&x.tipo==="mostrador"); if(!dest) dest=await ensureVentaLive();
+      const nota=String(raw.nota||"").split(" · ").filter(t=>!/^Viene de venta directa/.test(t)).join(" · ");
+      await state.db.doc("carritos/"+id).update({liveId:dest.id,deVentaDirecta:"",nota,actualizado:new Date().toISOString()}); regresan++;
+    }catch(e){ console.warn("regresar a venta directa",e); deVD.delete(id); } }
+    const carts=todos.filter(c=>!deVD.has(c.id));
     await trashAdd({tipo:"live",nombre:l.nombre,data:{...l},carritos:carts.map(c=>({...c})),devuelto:!!devolver});
     for(const c of carts){
       if(devolver&&c.items.length&&c.estado!=="cancelado"){ for(const it of c.items){ const p=state.products.get(it.codigo); if(p) await setStock(it.codigo,(Number(p.existencia)||0)+it.cant); } }
@@ -2983,7 +2991,7 @@ async function deleteLive(l,devolver=true){
     }
     await state.db.doc("lives/"+l.id).delete();
     state.lives=state.lives.filter(x=>x.id!==l.id); state.liveId=null; subscribeCarts(null); renderAll(); renderLive();
-    toast(`Live enviado a la papelera con ${carts.length} carritos`+(devolver?"":" · piezas no devueltas"));
+    toast(`Live enviado a la papelera con ${carts.length} carritos`+(devolver?"":" · piezas no devueltas")+(regresan?` · ${regresan} carrito${regresan===1?"":"s"} regresa${regresan===1?"":"n"} a Venta directa`:""));
   }catch(e){ console.error(e); toast("No se pudo eliminar el live",true); }
   finally{ state.busy=false; }
 }
