@@ -1243,6 +1243,9 @@ nav.tabs button[aria-selected="true"]{background:var(--grad);border-color:transp
 .vd-antform{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px}
 .vd-antform select{min-width:0}
 .chip.vd-chipres{background:#1D1D1F;color:#fff}
+.vd-afavor{color:#1E8E3E!important}
+.vd-debe{color:#1D1D1F}
+.chip.vd-chipfavor{background:#E8F5EC;color:#1E7A36}
 /* ===== Live rápido · diseño simple (31-oct-2026) ===== */
 .lr{display:flex;flex-direction:column;gap:16px}
 .lr-muted{color:var(--muted);font-size:13px;font-weight:500}
@@ -3205,13 +3208,16 @@ async function cerrarVenta(c,pagado,medio,monto,cuenta,imprimir){
   }catch(e){ console.error(e); toast("No se pudo cerrar la venta",true); }
   finally{ state.busy=false; setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },60); }
 }
+// saldo de la clienta: positivo = le falta pagar; negativo = tiene saldo a favor (abonó de más)
+function cartSaldo(c){ return Math.round((cartGrand(c)-cartPagado(c))*100)/100; }
+function saldoTexto(c){ const s=cartSaldo(c); return s<0?"Resta −$"+fmtMoney(-s)+" (a favor)":"Resta $"+fmtMoney(s); }
 // anticipos / abonos: lo que la clienta ya mandó antes de cerrar (o después, si quedó por cobrar)
 function quienSoy(){ try{ const p=JSON.parse(localStorage.getItem("marvea.perfil")||"null"); return p&&p.usuario||""; }catch(e){ return ""; } }
 async function agregarAnticipo(c,monto,medio,nota){
   monto=Math.round((Number(monto)||0)*100)/100; if(!(monto>0)){ toast("Escribe el monto del anticipo",true); return false; }
   if(!state.db||!c) return false;
   c.anticipos=[...(c.anticipos||[]),{monto,medio:medio||"Transferencia",fecha:new Date().toISOString(),nota:String(nota||"").trim(),usuario:quienSoy()}];
-  try{ await saveCart(c); toast(`Anticipo registrado · $${fmtMoney(monto)} ${medio||""} · resta $${fmtMoney(cartPorPagar(c))}`); return true; }
+  try{ await saveCart(c); toast(`Anticipo registrado · $${fmtMoney(monto)} ${medio||""} · ${saldoTexto(c).toLowerCase()}`); return true; }
   catch(e){ toast("No se pudo guardar el anticipo",true); return false; }
 }
 async function quitarAnticipo(c,i){
@@ -3383,7 +3389,7 @@ function renderVenta(keepFocus){
     const totalBox=h("div",{class:"vd-total"},
       h("div",{class:"vd-desg"},h("span",null,"Piezas ("+cartPieces(c)+")"),h("span",null,"$"+fmtMoney(cartTotal(c))),c.envio?h("span",null,c.envio.nombre):null,c.envio?h("span",null,"$"+fmtMoney(c.envio.precio)):null,c.factura?h("span",null,"IVA "+Math.round(IVA_TASA*100)+"%"):null,c.factura?h("span",null,"$"+fmtMoney(cartIva(c))):null),
       h("div",{class:"vd-grand"},h("span",null,"Total"),h("b",null,"$"+fmtMoney(cartGrand(c)))),
-      (cartAnticipos(c)||cartDeposito(c))?h("div",{class:"vd-acuenta"},h("span",null,"A cuenta (anticipos"+(cartDeposito(c)?" y depósito":"")+")"),h("span",null,"−$"+fmtMoney(cartAnticipos(c)+cartDeposito(c))),h("b",null,c.pago?"Pagado":"Resta"),h("b",null,"$"+fmtMoney(c.pago?cartPagado(c):cartPorPagar(c)))):null);
+      (cartAnticipos(c)||cartDeposito(c))?h("div",{class:"vd-acuenta"},h("span",null,"A cuenta (anticipos"+(cartDeposito(c)?" y depósito":"")+")"),h("span",null,"−$"+fmtMoney(cartAnticipos(c)+cartDeposito(c))),h("b",null,cartSaldo(c)<0?"Resta (saldo a favor)":"Resta"),h("b",{class:cartSaldo(c)<0?"vd-afavor":(cartSaldo(c)>0?"vd-debe":"")},(cartSaldo(c)<0?"−$":"$")+fmtMoney(Math.abs(cartSaldo(c))))):null);
     // anticipos / abonos
     const antBox=(puede)=>{ const lista=(c.anticipos||[]).map((a,i)=>h("div",{class:"vd-ant"},h("span",null,"$"+fmtMoney(a.monto)),h("span",{class:"vd-muted"},[a.medio,a.fecha?new Date(a.fecha).toLocaleString("es-MX",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"",a.nota].filter(Boolean).join(" · ")),puede?h("button",{class:"vd-x",type:"button",title:"Quitar anticipo","aria-label":"Quitar anticipo",onclick:async()=>{ if(!confirm("¿Quitar el anticipo de $"+fmtMoney(a.monto)+"?")) return; await quitarAnticipo(c,i); renderVenta(); }},"×"):h("span")));
       if(!puede&&!lista.length) return null;
@@ -3442,7 +3448,7 @@ function renderVenta(keepFocus){
   const medTxt=Object.entries(R.medios).map(([m,v])=>m+" $"+fmtMoney(v)).join(" · ");
   const fila=x=>{ const del=state.ventaDel===x.id;
     return h("div",{class:"vrowc"+(x.id===state.ventaCartId?" active":""),oncontextmenu:e=>ventaMenu(e,x)},
-      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>abrir(x)},h("span",{class:"cn"},(x.estado==="abierto"?"":"#"+cartNumber(x)+" · ")+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},h("span",{class:"cmt"},(x.estado==="abierto"?fechaCorta(x):"")+new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})+" · "+cartPieces(x)+" pzas"),x.resguardo?h("span",{class:"chip vd-chipres"},"Resguardo"):null,x.estado==="abierto"?null:ventaEstadoChip(x))),
+      h("button",{type:"button",class:"cartrow"+(x.id===state.ventaCartId?" active":""),title:"Clic: ver · Clic derecho: opciones",onclick:()=>abrir(x)},h("span",{class:"cn"},(x.estado==="abierto"?"":"#"+cartNumber(x)+" · ")+nombreDe(x)),h("span",{class:"ct"},"$"+fmtMoney(cartGrand(x))),h("span",{class:"cm"},h("span",{class:"cmt"},(x.estado==="abierto"?fechaCorta(x):"")+new Date(x.finalizado||x.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})+" · "+cartPieces(x)+" pzas"),x.resguardo?h("span",{class:"chip vd-chipres"},"Resguardo"):null,(cartAnticipos(x)&&!(x.estado==="final"&&x.pago))?h("span",{class:"chip "+(cartSaldo(x)<0?"vd-chipfavor":"unpaid")},cartSaldo(x)<0?"A favor $"+fmtMoney(-cartSaldo(x)):"Resta $"+fmtMoney(cartSaldo(x))):null,x.estado==="abierto"?null:ventaEstadoChip(x))),
       del?h("div",{class:"confirm",style:"margin:4px 0 0;font-size:12px"},"¿Eliminar?"+(x.items.length&&x.estado!=="cancelado"?" Regresan "+cartPieces(x)+" pzas.":""),h("button",{class:"btn sm danger",type:"button",onclick:()=>{ state.ventaDel=null; eliminarVenta(x); }},"Sí"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>{ state.ventaDel=null; renderVenta(); }},"No")):h("button",{type:"button",class:"vdel",title:"Eliminar esta venta",onclick:()=>{ state.ventaDel=x.id; renderVenta(); }},"×")); };
   const idsVenta=new Set(ventaLives().map(l=>l.id)), diaDe=new Map(ventaLives().map(l=>[l.id,l.dia]));
   const abMap=new Map(); for(const x of (state.ventaAbiertas||new Map()).values()) if(idsVenta.has(x.liveId)) abMap.set(x.id,x);
