@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T18:27:21.449Z",
+ "actualizado": "2026-11-02T18:41:16.367Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1586,30 +1586,6 @@
    "notas": "",
    "foto": "fotos/9bca811e9aa1c2ff0d6cd90a10406e28.jpg",
    "creado": "2026-10-19T02:55:03.192Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00035",
-   "nombre": "Collar Omega con Piedra Dorado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/b9e0be65694defd3ac5afe7bf1915b2d.jpg",
-   "creado": "2026-10-20T16:01:35.239Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00036",
-   "nombre": "Collar Omega con Piedra Plateada",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/7387cebd88240733a07d30cacd5d63a1.jpg",
-   "creado": "2026-10-20T16:03:36.822Z",
    "disponible": true
   },
   {
