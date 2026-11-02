@@ -3915,6 +3915,8 @@ body.vx-on #vxCamWrap{display:block!important}
 @media (max-width:390px){.vx-dejar{padding:14px 12px;font-size:15px}.vx-cobrar{padding:15px 24px}}
 .vx-h2n{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:#1D1D1F;color:#fff;font-size:12px;font-weight:700;vertical-align:middle;margin-left:4px}
 .vx-filaab{border-color:#1D1D1F22}
+.vx-cta2{display:block;width:100%;margin-top:-6px;border:1px solid #E5E5EA;border-radius:18px;background:rgba(255,255,255,.9);color:#1C1C1E;font-size:18px;font-weight:600;padding:16px 20px}
+.vx-cta2:active{background:#F2F2F7}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -3969,6 +3971,7 @@ body.vx-on #vxCamWrap{display:block!important}
         el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido"), el("b", null, precio(R.total)), el("small", null, R.ventas + " venta" + (R.ventas === 1 ? "" : "s") + " · " + R.piezas + " pzas")),
         el("div", { class: "vx-kpi" }, el("span", null, "Por cobrar"), el("b", null, precio(R.porCobrar)), el("small", null, R.pendientes + " pendiente" + (R.pendientes === 1 ? "" : "s")))),
       el("button", { class: "vx-cta", type: "button", onclick: nueva }, abierta ? "Continuar venta abierta" : "Nueva venta"),
+      abierta ? el("button", { class: "vx-cta2", type: "button", onclick: ventaNueva }, "Venta nueva") : null,
       ...(() => { const ab = abiertasTodas(); if (!ab.length) return []; const hoyK = hoyKey(); const dia = x => { const l = state.lives.find(y => y.id === x.liveId); return l && l.dia && l.dia !== hoyK ? new Date(l.dia + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " · " : ""; };
         return [el("h2", { class: "vx-h2" }, "Abiertas ", el("span", { class: "vx-h2n" }, String(ab.length))),
           el("div", { class: "vx-lista", "data-k": "abiertas" }, ...ab.map(x => el("button", { type: "button", class: "vx-fila vx-filaab", onclick: () => abrirAbierta(x) },
@@ -3995,6 +3998,10 @@ body.vx-on #vxCamWrap{display:block!important}
     state.ventaCartId = null; V.cli = ""; V.cliEdit = null; V.q = ""; V.cobro = false; V.pantalla = "inicio"; alDia(); render();
   }
   function alDia() { const hoy = ventaLiveHoy(); const id = hoy ? hoy.id : null; if (state.ventaLiveId !== id || (id && !state.ventaUnsub)) ventaSubscribe(id); }
+  function ventaNueva() { // deja la venta abierta como está (sus piezas siguen apartadas) y empieza otra
+    const c = ventaActual(); if (c && c.estado === "abierto" && c.items.length) toast("Venta de " + (c.cliente || "la clienta") + " sigue abierta");
+    state.ventaCartId = null; V.cli = ""; V.cliEdit = null; V.q = ""; V.cobro = false; alDia(); nueva();
+  }
   async function nueva() {
     const c0 = ventaActual(); if (!(c0 && c0.estado === "abierto")) alDia();
     const c = ventaActual();
