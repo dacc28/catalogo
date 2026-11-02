@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T22:07:20.648Z",
+ "actualizado": "2026-11-02T22:30:41.695Z",
  "categorias": [
   {
    "p": "ANI",
@@ -62,18 +62,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00004",
-   "nombre": "Anillo Ajustable Marquesa",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/cd167ccd99ef9e3bc825e5886bfc703e.jpg",
-   "creado": "2026-10-19T02:16:56.043Z",
    "disponible": true
   },
   {
