@@ -3908,6 +3908,13 @@ body.vx-on #vxCamWrap{display:block!important}
 #vx .vx-x{position:absolute;top:12px;right:14px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(118,118,128,.14);color:#3A3A3C;font-size:14px;font-weight:700;display:grid;place-items:center;z-index:2}
 #vx .vx-sug{background:rgba(255,255,255,.985)!important;box-shadow:0 18px 44px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06)!important}
 .vx-mas{display:block;margin:14px auto 26px;padding:12px 22px;border-radius:999px;border:1px solid #E5E5EA;background:rgba(255,255,255,.8);font:600 15px/1 -apple-system,system-ui,sans-serif;color:#1C1C1E}
+/* Dejar abierta */
+.vx-barbtns{display:flex;gap:8px;align-items:center}
+.vx-dejar{border:1px solid #E5E5EA;border-radius:16px;background:rgba(255,255,255,.9);color:#1C1C1E;font-size:16px;font-weight:600;padding:14px 16px;white-space:nowrap}
+.vx-dejar:active{background:#F2F2F7}
+@media (max-width:390px){.vx-dejar{padding:14px 12px;font-size:15px}.vx-cobrar{padding:15px 24px}}
+.vx-h2n{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:#1D1D1F;color:#fff;font-size:12px;font-weight:700;vertical-align:middle;margin-left:4px}
+.vx-filaab{border-color:#1D1D1F22}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -3919,7 +3926,7 @@ body.vx-on #vxCamWrap{display:block!important}
   const $$ = s => document.querySelector(s);
   const vibra = (ms) => { try { navigator.vibrate && navigator.vibrate(ms || 15); } catch (e) {} };
   const precio = n => "$" + fmtMoney(n);
-  const hoyCarts = () => [...(state.ventaCarts || new Map()).values()].filter(c => c.estado !== "abierto" || c.items.length).sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
+  const hoyCarts = () => [...(state.ventaCarts || new Map()).values()].filter(c => c.estado !== "abierto").sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
   const foto = (p, cls) => { const d = el("div", { class: cls || "vx-foto" }); if (p && p.fotoId) { const u = blobUrl(p.fotoId); if (u) { const i = el("img", { src: u, alt: "", loading: "lazy" }); i.onerror = () => { d.textContent = (p.nombre || "?").charAt(0); i.remove(); }; d.append(i); return d; } } d.textContent = ((p && p.nombre) || "?").charAt(0).toUpperCase(); return d; };
 
   // raíz
@@ -3933,6 +3940,7 @@ body.vx-on #vxCamWrap{display:block!important}
 
   async function arrancar() {
     try { await window.claude.use("db"); } catch (e) {}
+    vigilarAbiertas();
     try { if (typeof setView === "function") setView("venta"); } catch (e) {}
     const t0 = Date.now(); while (!state.lives && Date.now() - t0 < 8000) await new Promise(r => setTimeout(r, 100));
     alDia();
@@ -3948,7 +3956,7 @@ body.vx-on #vxCamWrap{display:block!important}
         el("a", { href: "sistema.html?desde=vende", class: "vx-menuitem" }, "Abrir sistema completo"),
         el("button", { type: "button", class: "vx-menuitem rojo", onclick: () => { if (confirm("¿Cerrar sesión en este dispositivo?")) window.MarveaNube.salir(); } }, "Cerrar sesión")));
     return el("header", { class: "vx-top", "data-k": "top" },
-      V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
+      V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; const c = ventaActual(); if (c && state.ventaLiveId && (state.lives.find(l => l.id === state.ventaLiveId) || {}).dia !== hoyKey()) { state.ventaCartId = null; alDia(); } render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
       el("div", { class: "vx-topr" }, menu));
   }
 
@@ -3961,6 +3969,11 @@ body.vx-on #vxCamWrap{display:block!important}
         el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido"), el("b", null, precio(R.total)), el("small", null, R.ventas + " venta" + (R.ventas === 1 ? "" : "s") + " · " + R.piezas + " pzas")),
         el("div", { class: "vx-kpi" }, el("span", null, "Por cobrar"), el("b", null, precio(R.porCobrar)), el("small", null, R.pendientes + " pendiente" + (R.pendientes === 1 ? "" : "s")))),
       el("button", { class: "vx-cta", type: "button", onclick: nueva }, abierta ? "Continuar venta abierta" : "Nueva venta"),
+      ...(() => { const ab = abiertasTodas(); if (!ab.length) return []; const hoyK = hoyKey(); const dia = x => { const l = state.lives.find(y => y.id === x.liveId); return l && l.dia && l.dia !== hoyK ? new Date(l.dia + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " · " : ""; };
+        return [el("h2", { class: "vx-h2" }, "Abiertas ", el("span", { class: "vx-h2n" }, String(ab.length))),
+          el("div", { class: "vx-lista", "data-k": "abiertas" }, ...ab.map(x => el("button", { type: "button", class: "vx-fila vx-filaab", onclick: () => abrirAbierta(x) },
+            el("div", { class: "vx-filai" }, el("b", null, x.cliente || "Sin nombre"), el("span", null, dia(x) + new Date(x.creado).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }) + " · " + cartPieces(x) + (cartPieces(x) === 1 ? " pieza apartada" : " piezas apartadas"))),
+            el("div", { class: "vx-filad" }, el("b", null, precio(cartGrand(x))), el("span", { class: "vx-chip" }, "Seguir")))))]; })(),
       el("h2", { class: "vx-h2" }, "Ventas"),
       lista.length ? el("div", { class: "vx-lista" }, ...lista.map(c => el("button", { type: "button", class: "vx-fila", onclick: () => abrirDetalle(c) },
         el("div", { class: "vx-filai" }, el("b", null, (c.cliente || "Sin nombre")), el("span", null, new Date(c.finalizado || c.creado).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }) + " · " + cartPieces(c) + " pzas")),
@@ -3968,9 +3981,22 @@ body.vx-on #vxCamWrap{display:block!important}
         : el("div", { class: "vx-vacio" }, "Aún no hay ventas hoy."));
   }
   const estadoChip = c => c.estado === "final" ? (c.pago ? el("span", { class: "vx-chip ok" }, "Pagada") : el("span", { class: "vx-chip warn" }, "Por cobrar")) : c.estado === "cancelado" ? el("span", { class: "vx-chip bad" }, "Cancelada") : el("span", { class: "vx-chip" }, "Abierta");
+  function vigilarAbiertas() { if (state.abiertasUnsub || !state.db) return; state.abiertasUnsub = state.db.collection("carritos").where("estado", "==", "abierto").onSnapshot(s => { const m = new Map(); for (const d of s.docs) { const x = d.data(); if (x) m.set(d.id, cartFromDoc(d.id, x)); } state.ventaAbiertas = m; render(); }, e => console.warn("abiertas", e)); }
+  function abiertasTodas() {
+    const ids = new Set(ventaLives().map(l => l.id)); const m = new Map();
+    for (const x of (state.ventaAbiertas || new Map()).values()) if (ids.has(x.liveId)) m.set(x.id, x);
+    for (const x of (state.ventaCarts || new Map()).values()) { if (x.estado === "abierto") m.set(x.id, x); else m.delete(x.id); }
+    return [...m.values()].filter(x => x.estado === "abierto" && x.items.length).sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
+  }
+  function abrirAbierta(x) { if (x.liveId !== state.ventaLiveId) ventaSubscribe(x.liveId); state.ventaCartId = x.id; V.cli = ""; V.cliEdit = null; V.q = ""; V.pantalla = "venta"; render(); }
+  function dejarAbierta() {
+    const c = ventaActual(); if (!c) return; vibra();
+    toast("Venta de " + (c.cliente || "la clienta") + " quedó abierta · sus piezas siguen apartadas");
+    state.ventaCartId = null; V.cli = ""; V.cliEdit = null; V.q = ""; V.cobro = false; V.pantalla = "inicio"; alDia(); render();
+  }
   function alDia() { const hoy = ventaLiveHoy(); const id = hoy ? hoy.id : null; if (state.ventaLiveId !== id || (id && !state.ventaUnsub)) ventaSubscribe(id); }
   async function nueva() {
-    alDia();
+    const c0 = ventaActual(); if (!(c0 && c0.estado === "abierto")) alDia();
     const c = ventaActual();
     if (!c || c.estado !== "abierto") { state.ventaCartId = null; V.cli = ""; }
     V.pantalla = "venta"; V.q = ""; render(); setTimeout(() => { const i = $$(V.cli || (ventaActual() && ventaActual().cliente) ? "#vxScan" : "#vxCli"); if (i) i.focus(); }, 60);
@@ -4011,7 +4037,8 @@ body.vx-on #vxCamWrap{display:block!important}
 
     const total = c ? cartGrand(c) : 0; const pz = c ? cartPieces(c) : 0;
     const bar = el("div", { class: "vx-bar" }, el("div", { class: "vx-bartot" }, el("span", null, pz + " pieza" + (pz === 1 ? "" : "s")), el("b", null, precio(total))),
-      el("button", { class: "vx-cobrar", type: "button", ...(abierta && c.items.length ? {} : { disabled: true }), onclick: () => { if (!c.cliente.trim()) { toast("Escribe el nombre de la clienta", true); const i = $$("#vxCli"); if (i) i.focus(); return; } V.cobro = true; V.pagado = true; V.medio = "Transferencia"; V.monto = String(Math.round(cartGrand(c) * 100) / 100); render(); } }, "Cobrar"));
+      el("div", { class: "vx-barbtns" }, abierta && c.items.length ? el("button", { class: "vx-dejar", type: "button", onclick: dejarAbierta }, "Dejar abierta") : null,
+      el("button", { class: "vx-cobrar", type: "button", ...(abierta && c.items.length ? {} : { disabled: true }), onclick: () => { if (!c.cliente.trim()) { toast("Escribe el nombre de la clienta", true); const i = $$("#vxCli"); if (i) i.focus(); return; } V.cobro = true; V.pagado = true; V.medio = "Transferencia"; V.monto = String(Math.round(cartGrand(c) * 100) / 100); render(); } }, "Cobrar")));
     return el("main", { class: "vx-main vx-conbarra", "data-k": "venta" }, el("div", { class: "vx-hola" }, el("h1", null, c ? "Venta #" + cartNumber(c) : "Nueva venta")), cliBox, scanBox, items, bar, V.cobro && c ? cobroSheet(c) : null);
   }
   function usarClienta(k) { V.cliEdit = null; V.cli = k.nombre; setVentaCliente(k).then(() => { const i = $$("#vxScan"); if (i) i.focus(); }); }
@@ -4039,7 +4066,7 @@ body.vx-on #vxCamWrap{display:block!important}
         el("div", { class: "vx-seg" }, el("button", { type: "button", class: V.pagado ? "on" : "", onclick: () => { V.pagado = true; render(); } }, "Ya pagó"), el("button", { type: "button", class: !V.pagado ? "on" : "", onclick: () => { V.pagado = false; render(); } }, "Pendiente")),
         V.pagado ? el("div", { class: "vx-pago" }, el("span", { class: "vx-lbl" }, "Forma de pago"), medios, el("span", { class: "vx-lbl" }, "Monto recibido"), monto) : el("p", { class: "vx-nota" }, "La venta queda por cobrar. La marcas pagada después desde Ventas."),
         el("button", { class: "vx-cta", type: "button", onclick: cerrar }, V.pagado ? "Cerrar venta" : "Cerrar como pendiente"),
-        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.cobro = false; render(); } }, "Seguir agregando"), el("button", { type: "button", class: "rojo", onclick: async () => { if (!confirm("¿Cancelar esta venta? Las piezas regresan al inventario.")) return; await cancelarVenta(c); V.cobro = false; V.pantalla = "inicio"; render(); } }, "Cancelar venta"))));
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.cobro = false; render(); } }, "Seguir agregando"), el("button", { type: "button", onclick: () => { V.cobro = false; dejarAbierta(); } }, "Dejar abierta"), el("button", { type: "button", class: "rojo", onclick: async () => { if (!confirm("¿Cancelar esta venta? Las piezas regresan al inventario.")) return; await cancelarVenta(c); V.cobro = false; V.pantalla = "inicio"; render(); } }, "Cancelar venta"))));
   }
 
   /* ---------- listo ---------- */
