@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T21:28:15.901Z",
+ "actualizado": "2026-11-02T22:07:20.648Z",
  "categorias": [
   {
    "p": "ANI",
@@ -137,6 +137,18 @@
    "disponible": true
   },
   {
+   "codigo": "ANI-00016",
+   "nombre": "Anillo Ajustable Churumbela Plata",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/e155ed91cfdc3fa89f95019859abf53e.jpg",
+   "creado": "2026-10-27T00:49:13.907Z",
+   "disponible": true
+  },
+  {
    "codigo": "ANI-00017",
    "nombre": "Anillo Ajustable Corte Marquesa Dorado",
    "categoria": "ANI",
@@ -254,6 +266,18 @@
    "notas": "",
    "foto": "fotos/08010c30d8a2c9f3a0f1da1f5b8ab283.jpg",
    "creado": "2026-10-27T01:02:28.963Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00028",
+   "nombre": "Anillo Ajustable Churumbela Dorado",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/88ad23468ff109625a124a376a311557.jpg",
+   "creado": "2026-10-27T01:11:58.964Z",
    "disponible": true
   },
   {
@@ -1574,6 +1598,18 @@
    "notas": "",
    "foto": "fotos/a0e07bdafec644930830b36bf73f4b23.jpg",
    "creado": "2026-10-19T01:08:26.544Z",
+   "disponible": true
+  },
+  {
+   "codigo": "DIJ-00002",
+   "nombre": "Dije de Oval Ambar",
+   "categoria": "DIJ",
+   "material": "Chapa de Oro",
+   "precio": 35,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/56eb31033c715318418ac87958305d19.jpg",
+   "creado": "2026-10-19T01:09:33.126Z",
    "disponible": true
   },
   {
