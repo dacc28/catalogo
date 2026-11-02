@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-02T19:09:10.329Z",
+ "actualizado": "2026-11-02T19:39:45.144Z",
  "categorias": [
   {
    "p": "ANI",
@@ -101,18 +101,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00006",
-   "nombre": "Anillo Ajustable Carey Marrón",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 38,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
-   "creado": "2026-10-19T02:44:23.589Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00007",
    "nombre": "Anillo Ajustable de Acero",
    "categoria": "ANI",
@@ -134,30 +122,6 @@
    "notas": "",
    "foto": "fotos/701ddae51aea00707ae22fae9814a8a4.jpg",
    "creado": "2026-10-20T17:15:43.616Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00009",
-   "nombre": "Anillo Ajustable 3 Hilos",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "Ajustable",
-   "foto": "fotos/4bf9e4da63026bd5700348c94251c706.jpg",
-   "creado": "2026-10-20T17:23:18.485Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00010",
-   "nombre": "Anillo Ajustable con Piedra Cuarzo",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/1d4e69bb2941346589d435568d3c7fc9.jpg",
-   "creado": "2026-10-20T19:02:15.925Z",
    "disponible": true
   },
   {
@@ -221,18 +185,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00016",
-   "nombre": "Anillo Ajustable Churumbela Plata",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/e155ed91cfdc3fa89f95019859abf53e.jpg",
-   "creado": "2026-10-27T00:49:13.907Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00017",
    "nombre": "Anillo Ajustable Corte Marquesa Dorado",
    "categoria": "ANI",
@@ -278,18 +230,6 @@
    "notas": "",
    "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00021",
-   "nombre": "Anillo Ajustable Media Churumbela",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/341b2818fc232ef46355dc55f69b9db4.jpg",
-   "creado": "2026-10-27T00:55:17.888Z",
    "disponible": true
   },
   {
@@ -362,18 +302,6 @@
    "notas": "",
    "foto": "fotos/08010c30d8a2c9f3a0f1da1f5b8ab283.jpg",
    "creado": "2026-10-27T01:02:28.963Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00028",
-   "nombre": "Anillo Ajustable Churumbela Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/88ad23468ff109625a124a376a311557.jpg",
-   "creado": "2026-10-27T01:11:58.964Z",
    "disponible": true
   },
   {
@@ -545,18 +473,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00014",
-   "nombre": "Aretes Ferragamo Dorado",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Dupe Alert",
-   "notas": "Dupe Salvatore Ferragamo",
-   "foto": "fotos/90d493e134ffaec2238aff240ef8f24e.jpg",
-   "creado": "2026-10-19T02:39:17.103Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00015",
    "nombre": "Aretes Valentino",
    "categoria": "ARE",
@@ -614,18 +530,6 @@
    "notas": "",
    "foto": "fotos/171c384dce61cf1b148ebc05d24b587e.jpg",
    "creado": "2026-10-20T17:19:22.890Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00020",
-   "nombre": "Aretes Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cebd5465ddd9f3e65b6c6b6d3bd5c47.jpg",
-   "creado": "2026-10-20T17:20:14.987Z",
    "disponible": true
   },
   {
@@ -1289,42 +1193,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00009",
-   "nombre": "Collar Biselado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/f69e65e72622688460073986615ff2f3.jpg",
-   "creado": "2026-10-19T01:22:35.041Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00010",
-   "nombre": "Collar Pera",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/cd1446ad743962dc5a4493970088eedb.jpg",
-   "creado": "2026-10-19T01:24:32.049Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00011",
-   "nombre": "Collar Yakli Marrón",
-   "categoria": "COL",
-   "material": "Yakli con Chapa de Oro",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/866fb2255a91254f4c59e779f21167a1.jpg",
-   "creado": "2026-10-19T01:30:27.142Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00012",
    "nombre": "Collar de Elefante",
    "categoria": "COL",
@@ -1370,18 +1238,6 @@
    "notas": "",
    "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
    "creado": "2026-10-19T01:37:56.830Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00016",
-   "nombre": "Collar Ojo Serpiente",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/135661a33cc9e2e836e003822a0558e0.jpg",
-   "creado": "2026-10-19T01:52:16.304Z",
    "disponible": true
   },
   {
@@ -1838,18 +1694,6 @@
    "notas": "",
    "foto": "fotos/a0e07bdafec644930830b36bf73f4b23.jpg",
    "creado": "2026-10-19T01:08:26.544Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00002",
-   "nombre": "Dije de Oval Ambar",
-   "categoria": "DIJ",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/56eb31033c715318418ac87958305d19.jpg",
-   "creado": "2026-10-19T01:09:33.126Z",
    "disponible": true
   },
   {
