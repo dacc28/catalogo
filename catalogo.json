@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T00:58:12.850Z",
+ "actualizado": "2026-11-03T01:05:28.908Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1490,18 +1490,6 @@
    "notas": "",
    "foto": "fotos/2804a2c47e46a4b0589c3479ed8efbc3.jpg",
    "creado": "2026-11-01T20:21:28.845Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00056",
-   "nombre": "Collar Vanc Lila",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/fb51e6c7cc5ba4abfb7453b8f1c3678e.jpg",
-   "creado": "2026-11-01T20:23:14.478Z",
    "disponible": true
   },
   {
