@@ -1973,7 +1973,7 @@ function conCheck(c,it,foto){
   const b=h("button",{type:"button",class:"empchk"+(ok?" on":"")+(parcial?" parcial":""),title:ok?"Ya está en el carrito físico · toca para quitar la palomita":"Toca cuando ya la pongas en el carrito físico","aria-label":ok?"Quitar palomita":"Palomear: ya está en el carrito físico",onclick:e=>{ e.stopPropagation(); marcarEmpacado(c,it.codigo,!ok); }},ok?"✓":parcial?(Number(it.emp)||0)+"/"+it.cant:"");
   return h("div",{class:"empwrap"+(ok?" on":"")},foto,b);
 }
-function empResumen(c){ const lv=(c&&c.items||[]).reduce((a,i)=>a+(Number(i.live)||0),0); const base=empResumen0(c); if(!lv) return base; const t=h("div",{class:"liveres"},h("span",{class:"tag-live"},"Venta del Live"),h("span",null,lv+" pieza"+(lv===1?"":"s")+" de este carrito "+(lv===1?"viene":"vienen")+" del live")); return base?h("div",{class:"empwrapres"},t,base):t; }
+function empResumen(c){ const lv=(c&&c.items||[]).reduce((a,i)=>a+(Number(i.live)||0),0); const base=empResumen0(c); if(!lv) return base; const t=h("div",{class:"liveres"},h("span",{class:"tag-live"},"Vendido en Live"),h("span",null,lv+" pieza"+(lv===1?"":"s")+" de este carrito "+(lv===1?"se vendió":"se vendieron")+" en el live")); return base?h("div",{class:"empwrapres"},t,base):t; }
 function empResumen0(c){ const r=empCuenta(c); if(!r.t) return null; const todo=r.o>=r.t; return h("div",{class:"empres"+(todo?" todo":"")},h("span",null,todo?"✓ Todo en el carrito físico":"Puestas en el carrito físico"),h("b",null,r.o+" / "+r.t)); }
 
 /* ---- rastreabilidad: en qué carrito está cada pieza ---- */
@@ -2371,6 +2371,24 @@ async function abiertaDeClienta(nombre,clienteId,excepto){ // el carrito abierto
   lista=lista.filter(c=>c.estado==="abierto"&&c.id!==excepto&&state.lives.some(l=>l.id===c.liveId));
   return (clienteId&&lista.find(c=>c.clienteId===clienteId))||(q&&lista.find(c=>normaliza(c.cliente)===q))||null;
 }
+async function ventaDirectaDe(nombre,clienteId){ // su carrito abierto de venta directa (si tiene)
+  const q=normaliza(nombre||""); if(!q&&!clienteId) return null; let lista=[];
+  try{ const s=await state.db.collection("carritos").where("estado","==","abierto").get(); lista=s.docs.map(d=>cartFromDoc(d.id,d.data()||{})); }catch(e){ lista=[...(state.cartsAbiertos||new Map()).values()]; }
+  lista=lista.filter(c=>c.estado==="abierto"&&esVentaDirectaCart(c));
+  return (clienteId&&lista.find(c=>c.clienteId===clienteId))||(q&&lista.find(c=>normaliza(c.cliente)===q))||null;
+}
+async function regresarFernanda031126(){ // una sola vez: su venta directa ($739) se había pasado al live; regresa a Venta directa
+  if(!state.db||state.migrFer||!window.marveaNative) return; state.migrFer=true;
+  try{
+    const m=await state.db.doc("config/migraciones").get(); const prev=(m.exists&&m.data())||{}; if(prev.regresarFernanda031126) return;
+    const s=await state.db.doc("carritos/abcf17c939061ac02647b0a7").get();
+    if(s.exists){ const x=s.data()||{}; const vd=state.lives.find(l=>l.id==="493e68888cfdb359eb736fbf");
+      if(x.estado==="abierto"&&vd&&x.liveId!==vd.id){ const nota=String(x.nota||"").replace(/ ?·? ?Viene de venta directa del 2 nov/,"").trim(); await state.db.doc("carritos/abcf17c939061ac02647b0a7").update({liveId:vd.id,nota,actualizado:new Date().toISOString()}); toast("El carrito de venta directa de Fernanda Galván regresó a Venta directa"); } }
+    const r=await state.db.doc("carritos/fa3d2882b169b195ada8ee27").get(); if(r.exists){ const x=r.data()||{}; if(/Incluye venta del Live/.test(x.nota||"")) await state.db.doc("carritos/fa3d2882b169b195ada8ee27").update({nota:String(x.nota).replace("Incluye venta del Live","Incluye piezas vendidas en Live"),actualizado:new Date().toISOString()}); }
+    await state.db.doc("config/migraciones").set({...prev,regresarFernanda031126:new Date().toISOString()});
+    renderAll();
+  }catch(e){ console.warn("regresar fernanda",e); state.migrFer=false; }
+}
 function esVentaDirectaCart(c){ const l=c&&state.lives.find(x=>x.id===c.liveId); return !!(l&&l.tipo==="mostrador"); }
 async function traerAlLive(c,l){ // su venta directa abierta pasa a este live (se suma, no se duplica)
   const de=state.lives.find(x=>x.id===c.liveId); const marca="Viene de venta directa"+(de&&de.dia?" del "+new Date(de.dia+"T12:00:00").toLocaleDateString("es-MX",{day:"numeric",month:"short"}):"");
@@ -2381,8 +2399,8 @@ async function traerAlLive(c,l){ // su venta directa abierta pasa a este live (s
 
 // ---- un solo carrito por clienta: lo del live se suma a su carrito de venta directa y se marca "Venta del Live" ----
 function marcaLive(c){ return esVentaDirectaCart(c)||/venta directa/i.test(String(c&&c.nota||"")); }
-function liveTag(it){ const n=Number(it&&it.live)||0; if(!(n>0)) return null; return h("span",{class:"tag-live"},n>=it.cant?"Venta del Live":n+" de Venta del Live"); }
-function notaLive(c){ const marca="Incluye venta del Live"; const n=String(c.nota||""); return n.includes(marca)?n:(n?n+" · ":"")+marca; }
+function liveTag(it){ const n=Number(it&&it.live)||0; if(!(n>0)) return null; return h("span",{class:"tag-live"},n>=it.cant?"Vendido en Live":n+" vendido"+(n===1?"":"s")+" en Live"); }
+function notaLive(c){ const marca="Incluye piezas vendidas en Live"; const n=String(c.nota||"").replace(/ ?·? ?Incluye venta del Live/,"").trim(); return n.includes(marca)?n:(n?n+" · ":"")+marca; }
 async function juntarAlCarrito(L,V,ctx){ // todo el pedido del carrito L pasa al carrito V (sin tocar existencias: ya estaban apartadas)
   const now=new Date().toISOString(); const esLive=!esVentaDirectaCart(L);
   for(const it of L.items){ if(!(it.cant>0)) continue; const v=V.items.find(i=>i.codigo===it.codigo&&Number(i.precio)===Number(it.precio));
@@ -2454,8 +2472,9 @@ async function juntarDuplicados031126(){ // una sola vez, en la Mac: Susi Góngo
 async function despachar(p,qty,nombre,clienteId,unit){
   const l=activeLive(); if(!l){ toast("Primero inicia un live",true); return false; }
   if(state.liveId!==l.id) selectLive(l.id);
-  let c=cartParaNombre(nombre,clienteId);
-  if(!c){ const o=await abiertaDeClienta(nombre,clienteId); if(o&&esVentaDirectaCart(o)){ c=o; toast(`${o.cliente} ya tiene carrito en Venta directa · se suma ahí como "Venta del Live"`); } }
+  let c=null; { const o=await ventaDirectaDe(nombre,clienteId); if(o){ c=o; toast(`${o.cliente} tiene carrito en Venta directa · sus piezas van ahí como "Vendido en Live"`); } }
+  if(!c) c=cartParaNombre(nombre,clienteId);
+  if(!c){ const o=await abiertaDeClienta(nombre,clienteId); if(o&&esVentaDirectaCart(o)){ c=o; toast(`${o.cliente} ya tiene carrito en Venta directa · sus piezas van ahí como "Vendido en Live"`); } }
   if(!c){
     const k=clienteId?state.clientas.get(clienteId):null; const cliente=k?k.nombre:nombre;
     const now=new Date().toISOString(); const referencia=nuevaReferencia();
@@ -3076,7 +3095,8 @@ function subscribeCarts(liveId){
   },e=>{ console.warn("carritos",e); toast("No se pudieron cargar los carritos",true); });
 }
 function selectLive(id){ if(state.liveId===id) return; state.liveId=id; subscribeCarts(id); renderLive(); }
-async function pasarVentasDirectas(liveId){ // las ventas directas abiertas (con piezas) se juntan en el live nuevo: un solo pedido por clienta
+async function pasarVentasDirectas(liveId){ return []; }
+async function pasarVentasDirectas0(liveId){ // las ventas directas abiertas (con piezas) se juntan en el live nuevo: un solo pedido por clienta
   const nombres=[]; try{
     const ids=new Set(state.lives.filter(l=>l.tipo==="mostrador").map(l=>l.id)); if(!ids.size) return nombres;
     const s=await state.db.collection("carritos").where("estado","==","abierto").get(); const now=new Date().toISOString();
@@ -3102,7 +3122,7 @@ async function closeLive(l){
 }
 async function createCart(name,clienteId){
   const l=viewedLive(); if(!state.db||!l||l.estado!=="abierto") return;
-  if((name||"").trim()||clienteId){ const o=await abiertaDeClienta(name,clienteId); if(o){ if(o.liveId===l.id){ state.cartId=o.id; state.cartSearch=""; renderLive(true); toast(`${o.cliente} ya tiene carrito en este live`); return; } if(esVentaDirectaCart(o)){ state.liveTag={id:o.id,hasta:Date.now()+4*3600e3}; irACarrito(o); toast(`${o.cliente} ya tiene carrito en Venta directa · lo que agregues aquí queda como "Venta del Live"`); return; } } }
+  if((name||"").trim()||clienteId){ const o=(await ventaDirectaDe(name,clienteId))||(await abiertaDeClienta(name,clienteId)); if(o){ if(o.liveId===l.id){ state.cartId=o.id; state.cartSearch=""; renderLive(true); toast(`${o.cliente} ya tiene carrito en este live`); return; } if(esVentaDirectaCart(o)){ state.liveTag={id:o.id,hasta:Date.now()+4*3600e3}; irACarrito(o); toast(`${o.cliente} ya tiene carrito en Venta directa · lo que agregues aquí queda como "Vendido en Live"`); return; } } }
   const cliente=(name||"").trim()||"Clienta "+(state.carts.size+1);
   const now=new Date().toISOString();
   const referencia=nuevaReferencia();
@@ -3556,8 +3576,8 @@ async function setVentaCliente(k,nombre){
       if(c&&c.estado==="abierto"&&!c.items.length){ try{ await state.db.doc("carritos/"+c.id).delete(); }catch(e){} if(state.ventaCarts) state.ventaCarts.delete(c.id); }
       state.ventaCliForm=false;
       if(esVentaDirectaCart(o)){ if(o.liveId!==state.ventaLiveId) ventaSubscribe(o.liveId); state.ventaCartId=o.id; renderVenta(); if(window.__vxRender) window.__vxRender(); toast(`${o.cliente} ya tenía una venta abierta · se agrega ahí`); return; }
-      try{ const lug=lugarDe(o); const V=await moverAVenta(o); ventaSubscribe(V.liveId); state.ventaCartId=V.id; renderVenta(); if(window.__vxRender) window.__vxRender(); toast(`${o.cliente} tenía carrito en ${lug} · se pasó aquí (marcado "Venta del Live")`); }catch(e){ toast("No se pudo traer su carrito del live",true); } return; }
-    if(o&&!esVentaDirectaCart(o)&&c&&c.estado==="abierto"){ try{ await juntarAlCarrito(o,c); toast(`${o.cliente}: su pedido del live se sumó a esta venta ("Venta del Live")`); }catch(e){} }
+      try{ const lug=lugarDe(o); const V=await moverAVenta(o); ventaSubscribe(V.liveId); state.ventaCartId=V.id; renderVenta(); if(window.__vxRender) window.__vxRender(); toast(`${o.cliente} tenía carrito en ${lug} · se pasó aquí (marcado "Vendido en Live")`); }catch(e){ toast("No se pudo traer su carrito del live",true); } return; }
+    if(o&&!esVentaDirectaCart(o)&&c&&c.estado==="abierto"){ try{ await juntarAlCarrito(o,c); toast(`${o.cliente}: su pedido del live se sumó a esta venta ("Vendido en Live")`); }catch(e){} }
     else if(o) toast(`Ojo: ${o.cliente} ya tiene otro carrito abierto en ${lugarDe(o)}`,true); }
   if(!c||c.estado!=="abierto"){ try{ c=await nuevaVenta(); }catch(e){ toast("No se pudo abrir la venta",true); return; } if(!c) return; }
   c.cliente=k?k.nombre:String(nombre||"").trim(); c.clienteId=k?k.id:"";
@@ -3776,7 +3796,7 @@ async function boot(){
   db.collection("productos").onSnapshot(s=>{
     const m=new Map();
     for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
-    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); },20000);
+    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); },20000);
   },e=>{ console.warn("productos",e); $("#dbNotice").hidden=false; });
 }
 if(location.hash==="#conteo"){ document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; }
