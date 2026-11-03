@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T20:03:51.766Z",
+ "actualizado": "2026-11-03T20:18:10.495Z",
  "categorias": [
   {
    "p": "ANI",
@@ -502,7 +502,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a422ead30d36f3d6b598b1447a287057.jpg",
    "creado": "2026-10-20T23:14:13.742Z",
@@ -670,7 +670,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eedac4bcec2b2dc74fb397d63721c473.jpg",
    "creado": "2026-10-20T23:30:52.953Z",
@@ -1174,7 +1174,7 @@
    "categoria": "COL",
    "material": "Yakli con Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/56f9ead535a6a0f2cdb9848922fb0297.jpg",
    "creado": "2026-10-19T02:28:24.093Z",
@@ -1358,6 +1358,18 @@
    "notas": "",
    "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
    "creado": "2026-10-20T16:26:54.835Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00042",
+   "nombre": "Collar Tenis Colores",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/656058f413620824a816c5c57cca95a1.jpg",
+   "creado": "2026-10-20T16:27:48.315Z",
    "disponible": true
   },
   {
