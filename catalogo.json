@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T20:23:56.103Z",
+ "actualizado": "2026-11-03T20:31:34.643Z",
  "categorias": [
   {
    "p": "ANI",
@@ -670,7 +670,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/eedac4bcec2b2dc74fb397d63721c473.jpg",
    "creado": "2026-10-20T23:30:52.953Z",
