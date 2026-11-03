@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T00:29:56.341Z",
+ "actualizado": "2026-11-03T00:49:57.461Z",
  "categorias": [
   {
    "p": "ANI",
@@ -314,54 +314,6 @@
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00008",
-   "nombre": "Arracadas de Acero",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
-   "creado": "2026-10-19T02:01:12.007Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00009",
-   "nombre": "Aretes Cushion de Zirconia",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/8f4e3d917bdd135758293e140b702e04.jpg",
-   "creado": "2026-10-19T02:04:48.140Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00010",
-   "nombre": "Aretes Marquesa",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 42,
-   "etiqueta": "En Tendencia",
-   "notas": "Zirconia",
-   "foto": "fotos/3f999ed63f2360e4e6cf7d71815b886f.jpg",
-   "creado": "2026-10-19T02:06:16.269Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00011",
-   "nombre": "Aretes Zirconia Pera",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/e92e4186b544badc808cb44371617697.jpg",
-   "creado": "2026-10-19T02:07:55.947Z",
    "disponible": true
   },
   {
