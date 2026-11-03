@@ -3580,7 +3580,7 @@ function renderVenta(keepFocus){
           cerrada&&!c.pago&&!state.ventaPagoForm?h("button",{class:"btn primary",type:"button",onclick:()=>{ state.ventaPagoForm=true; renderVenta(); }},"Marcar como pagada"):null,
           c.items.length&&c.estado!=="cancelado"&&NATIVE()&&NATIVE().printPdf?h("button",{class:"btn"+(c.pago?" primary":""),type:"button",onclick:()=>printTicket(c,L)},"Imprimir ticket"):null,
           c.items.length&&c.estado!=="cancelado"?h("button",{class:"btn",type:"button",onclick:()=>downloadTicket(c,L)},"Descargar ticket"):null,
-          esHoy?h("button",{class:"btn",type:"button",onclick:()=>reabrirVenta(c)},c.estado==="cancelado"?"Reabrir venta":"Editar venta"):null,
+          (c.estado==="final"||c.estado==="cancelado")?h("button",{class:"btn",type:"button",title:"La venta vuelve a quedar abierta (activa) para agregar o quitar piezas",onclick:()=>reabrirVenta(c)},"↺ Reabrir venta (activa)"):null,
           cerrada&&c.pago?h("button",{class:"btn ghost",type:"button",onclick:()=>setPagoVenta(c,null)},"Marcar pendiente de pago"):null,
           h("button",{class:"btn ghost danger",type:"button",onclick:()=>{ delBox.replaceChildren(h("div",{class:"confirm"},"¿Eliminar esta venta del histórico?"+(c.items.length&&c.estado!=="cancelado"?" Sus "+cartPieces(c)+" piezas regresan al inventario. ":" "),h("button",{class:"btn sm danger",type:"button",onclick:()=>eliminarVenta(c)},"Sí, eliminar"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>delBox.replaceChildren()},"No"))); }},"Eliminar")),
         delBox);
