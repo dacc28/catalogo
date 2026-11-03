@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T00:49:57.461Z",
+ "actualizado": "2026-11-03T00:58:12.850Z",
  "categorias": [
   {
    "p": "ANI",
@@ -338,18 +338,6 @@
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00015",
-   "nombre": "Aretes Valentino",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Dupe Alert",
-   "notas": "Dupe Valentino",
-   "foto": "fotos/c67c73f87731f421e2bb5aafdd74a45a.jpg",
-   "creado": "2026-10-19T02:51:22.507Z",
    "disponible": true
   },
   {
