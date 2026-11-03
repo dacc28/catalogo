@@ -2833,11 +2833,12 @@ async function catalogoPdf(){
     if(slot===0){ pdf.addPage(); pdf.setFillColor(242,241,238); pdf.rect(0,0,W,H,"F"); pdf.addImage("data:image/jpeg;base64,"+A.header,"JPEG",0,0,W,W/A.headerRatio,undefined,"FAST");
       const t=cat.toUpperCase(); pdf.setFont("Urbanist","bold"); pdf.setFontSize(14); pdf.setTextColor(60,40,40); pdf.text(t,21,47.6); const tw0=pdf.getTextWidth(t); pdf.setDrawColor(201,169,110); pdf.setLineWidth(0.5); pdf.line(21+tw0+3,45.8,189,45.8); if(pags>1){ pdf.setFont("Urbanist","normal"); pdf.setFontSize(8); pdf.setTextColor(140); pdf.text(pag+" / "+pags,189,47.3,{align:"right"}); } pdf.setTextColor(0); pdf.setLineWidth(0.2); }
     const col=slot%cols, row=Math.floor(slot/cols); const x=colX[col], y=rowY[row];
-    const agotado=(Number(p.existencia)||0)<=0; const ultimas=!agotado&&(Number(p.existencia)||0)<=(Number(p.minimo)||0);
+    const agotado=(Number(p.existencia)||0)<=0; const ultimas=!agotado&&(Number(p.existencia)||0)<=2;
     // tarjeta de foto
     pdf.setFillColor(255,255,255); pdf.roundedRect(x,y,cw,imgH,2,2,"F");
     const img=imgs[imgIdx]; if(img){ try{ addImgFit(pdf,img,x+3,y+3,cw-6,imgH-6,false); }catch(e){} }
     if(agotado){ pdf.setFillColor(242,241,238); pdf.setGState&&pdf.setGState(new pdf.GState({opacity:0.55})); pdf.roundedRect(x,y,cw,imgH,2,2,"F"); pdf.setGState&&pdf.setGState(new pdf.GState({opacity:1})); sticker(pdf,x-3,y-4,30,9,"AGOTADO",[219,74,102],[255,255,255],-8); }
+    else if(ultimas) sticker(pdf,x-3,y-4,34,9,"ÚLTIMAS PIEZAS",[250,224,86],[60,40,40],-8);
     else if(p.etiquetaCat){ const t=normaliza(p.etiquetaCat); if(t!=="ninguna"&&t!=="sin etiqueta"){ const txt=p.etiquetaCat.toUpperCase(); pdf.setFont("Urbanist","bold"); pdf.setFontSize(8.5); const sw=Math.min(cw+6,Math.max(20,pdf.getTextWidth(txt)+9)); sticker(pdf,x-3,y-4,sw,9,txt,[244,143,184],[255,255,255],-8); } }
     else if(ultimas) sticker(pdf,x-3,y-4,34,9,"ÚLTIMAS PIEZAS",[250,224,86],[60,40,40],-8);
     else if(esNuevo(p)) sticker(pdf,x-3,y-4,24,9,"NEW IN",[244,143,184],[255,255,255],-8);
