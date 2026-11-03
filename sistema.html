@@ -96,7 +96,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
       mensaje = "";
     }
   }
-  async function salir() { guardarPerfil(null); try { localStorage.removeItem("marvea.fotos.v1"); } catch (e) {} try { await sb.auth.signOut(); } catch (e) {} location.reload(); }
+  async function salir() { try { const b = JSON.parse(localStorage.getItem("marvea.pendientes.v1") || "[]"); if (Array.isArray(b) && b.length) { alert("Hay " + b.length + " cambio(s) guardados en este dispositivo que todavía no se suben a la nube. Conéctate a internet y espera a que se suban antes de cerrar sesión."); return; } } catch (e) {} guardarPerfil(null); try { localStorage.removeItem("marvea.fotos.v1"); } catch (e) {} try { await sb.auth.signOut(); } catch (e) {} location.reload(); }
 
   /* ---------- nivel: el vendedor solo vende ---------- */
   const VISTAS_VENDEDOR = ["live", "rapido", "venta", "cli", "ajustes"];
@@ -396,6 +396,53 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     chains.set(k, p); return p;
   }
 
+  /* ---------- bandeja: si se va el internet, los cambios (carritos, ventas, clientas) se guardan en este
+     dispositivo y se suben solos al volver la conexión; nada se pierde aunque se cierre la página ---------- */
+  const BANDEJA = "marvea.pendientes.v1";
+  let bandeja = (() => { try { const a = JSON.parse(localStorage.getItem(BANDEJA) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } })();
+  let subiendoBandeja = false, bandejaT = null;
+  function guardarBandeja() { try { localStorage.setItem(BANDEJA, JSON.stringify(bandeja)); } catch (e) { console.warn("bandeja", e); } }
+  window.__marveaBandeja = () => bandeja.length; window.__subirBandeja = () => subirBandeja();
+  async function ejecutarOp(op) {
+    if (op.t === "set") return exige(await sb.from(TABLE).upsert({ col: op.c, id: op.i, data: op.d, actualizado: new Date().toISOString() }));
+    if (op.t === "upd") { const r = await sb.rpc("marvea_update", { p_col: op.c, p_id: op.i, p_patch: op.d });
+      if (r && r.error && (r.error.code === "P0002" || /no existe/.test(r.error.message || ""))) { const loc = store[op.c] && store[op.c][op.i]; if (loc) return exige(await sb.from(TABLE).upsert({ col: op.c, id: op.i, data: loc, actualizado: new Date().toISOString() })); return null; }
+      return exige(r); }
+    if (op.t === "del") return exige(await sb.from(TABLE).delete().eq("col", op.c).eq("id", op.i));
+  }
+  function aBandeja(op) {
+    bandeja.push(op); guardarBandeja(); const k = key(op.c, op.i); pending.set(k, (pending.get(k) || 0) + 1);
+    say("Sin internet · el cambio quedó guardado en este dispositivo y se sube solo al volver la conexión (" + bandeja.length + " pendiente" + (bandeja.length === 1 ? "" : "s") + ")", true);
+    programarBandeja(4000); pintarEstado();
+  }
+  function programarBandeja(ms) { clearTimeout(bandejaT); bandejaT = setTimeout(subirBandeja, ms || 5000); }
+  async function subirBandeja() {
+    if (subiendoBandeja || !bandeja.length || !perfil) return; subiendoBandeja = true; let subidos = 0;
+    try {
+      while (bandeja.length) {
+        const op = bandeja[0]; const k = key(op.c, op.i);
+        try { await ejecutarOp(op); subidos++; }
+        catch (e) { if (N.esRed(e)) { console.warn("bandeja: sin conexión, se reintenta", String(e && (e.message || e.code) || e)); programarBandeja(5000); break; } console.warn("bandeja: cambio rechazado", op, e); say("Un cambio guardado sin internet no se pudo subir (" + (e.message || e.code || "error") + ")", true); saltados.add(k); }
+        bandeja.shift(); guardarBandeja();
+        const n = (pending.get(k) || 1) - 1; if (n <= 0) { pending.delete(k); if (saltados.delete(k)) refrescarDoc(op.c, op.i); } else pending.set(k, n);
+      }
+      if (subidos && !bandeja.length) say("Conexión de vuelta · " + subidos + " cambio" + (subidos === 1 ? "" : "s") + " guardado" + (subidos === 1 ? "" : "s") + " en la nube");
+    } finally { subiendoBandeja = false; pintarEstado(); }
+  }
+  function aplicarBandejaLocal() { // al abrir la página: lo pendiente se vuelve a mostrar encima de lo que llegó de la nube
+    for (const op of bandeja) { const c = store[op.c] || (store[op.c] = {}); const k = key(op.c, op.i); pending.set(k, (pending.get(k) || 0) + 1);
+      if (op.t === "set") c[op.i] = clone(op.d) || {}; else if (op.t === "upd") { if (c[op.i]) c[op.i] = Object.assign({}, c[op.i], clone(op.d)); } else if (op.t === "del") delete c[op.i]; }
+    if (bandeja.length) { notify(); programarBandeja(1500); }
+  }
+  function guardarOp(c, i, op) {
+    op = Object.assign({ n: Date.now() + Math.random(), c, i, f: new Date().toISOString() }, op);
+    const k = key(c, i);
+    if (bandeja.some(o => key(o.c, o.i) === k) || navigator.onLine === false) { aBandeja(op); return Promise.resolve(); } // respeta el orden de lo que ya espera
+    return enCola(c, i, async () => { try { return await ejecutarOp(op); } catch (e) { if (N.esRed(e)) { aBandeja(op); return null; } throw e; } });
+  }
+  window.addEventListener("online", () => programarBandeja(800));
+  setInterval(() => { if (bandeja.length && navigator.onLine !== false) subirBandeja(); }, 20000);
+
   function segs(p) { const s = String(p).split("/").filter(Boolean); if (!s.length) throw new TypeError("ruta vacía"); return s; }
   function snapDoc(colPath, id) {
     const d = store[colPath] && store[colPath][id];
@@ -409,12 +456,12 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
       id, path: s.join("/"),
       get: async () => { await ready; return snapDoc(colPath, id); },
       set: async (data) => { await ready; const v = clone(data) || {}; (store[colPath] || (store[colPath] = {}))[id] = v; notify(colPath);
-        await enCola(colPath, id, async () => exige(await sb.from(TABLE).upsert({ col: colPath, id, data: v, actualizado: new Date().toISOString() }))); },
+        await guardarOp(colPath, id, { t: "set", d: v }); },
       update: async (data) => { await ready; const c = store[colPath]; if (!c || !c[id]) throw { code: "invalid_argument", message: "no existe" };
         const patch = clone(data) || {}; c[id] = Object.assign({}, c[id], patch); notify(colPath);
-        await enCola(colPath, id, async () => exige(await sb.rpc("marvea_update", { p_col: colPath, p_id: id, p_patch: patch }))); },
+        await guardarOp(colPath, id, { t: "upd", d: patch }); },
       delete: async () => { await ready; if (store[colPath]) delete store[colPath][id]; notify(colPath);
-        await enCola(colPath, id, async () => exige(await sb.from(TABLE).delete().eq("col", colPath).eq("id", id))); },
+        await guardarOp(colPath, id, { t: "del" }); },
       acquire: async () => ({ acquired: true }),
       onSnapshot: (next, error) => { let alive = true; const f = () => { if (alive) next(snapDoc(colPath, id)); }; const quitar = avisarA(colPath, f); ready.then(() => f(), e => error && error({ code: "unavailable", message: String(e) })); return () => { alive = false; quitar(); }; },
       collection: (sub) => colRef(s.join("/") + "/" + sub)
@@ -482,6 +529,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     const r = await N.entrar({ subtitulo: "Sistema de inventario y lives" });
     perfil = r.perfil; N.aplicarRol(perfil);
     for (let i = 0; ; i++) { try { await recargar(); break; } catch (e) { if (i > 20) throw e; say("Conectando con la nube…", true); await new Promise(res => setTimeout(res, 2000 + i * 1000)); } }
+    aplicarBandejaLocal();
     escuchar();
     // las fotos se preparan antes de mostrar el inventario (máximo 8 s; si tardan, aparecen solas después)
     await Promise.race([cargarFotos().catch(e => console.warn("fotos", e)), new Promise(r => setTimeout(r, 8000))]);
@@ -493,7 +541,8 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   let estadoEl = null;
   function pintarEstado() {
     if (!badge && document.body) badge = N.insignia();
-    if (badge) badge.poner(enLinea ? "ok" : "off", navigator.onLine ? "Reconectando con la nube…" : "Sin internet · los cambios no se guardan");
+    const nb = bandeja.length;
+    if (badge) badge.poner(enLinea && !nb ? "ok" : "off", nb ? nb + " cambio" + (nb === 1 ? "" : "s") + " guardado" + (nb === 1 ? "" : "s") + " en este dispositivo · se suben al volver el internet" : navigator.onLine ? "Reconectando con la nube…" : "Sin internet · los cambios se guardan en este dispositivo");
     if (!estadoEl) return;
     let n = 0; for (const c of Object.values(store)) n += Object.keys(c).length;
     estadoEl.innerHTML = (enLinea ? '<span class="mvdot"></span>Conectado · los cambios se ven al instante en la Mac y en tus otros dispositivos.' : '<span class="mvdot off"></span>Reconectando…')
@@ -1679,6 +1728,7 @@ function h(tag,attrs,...kids){ const el=document.createElement(tag); if(attrs) f
 function fmtMoney(n){ return (Number(n)||0).toLocaleString("es-MX",{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function pad5(n){ return String(n).padStart(5,"0"); }
 function toast(msg,bad){ const host=$("#toastHost"); host.replaceChildren(h("div",{class:"toast"+(bad?" bad":""),role:"status"},msg)); clearTimeout(toast.t); toast.t=setTimeout(()=>host.replaceChildren(),3200); }
+function miniUrl(id){ return (typeof window.__fotoMini==="function")?window.__fotoMini(id):blobUrl(id); }
 function blobUrl(id){ return (typeof window.__fotoUrl==="function")?window.__fotoUrl(id):"/_blob/"+id; }
 const NATIVE=()=>window.marveaNative||null;
 async function printLabels(items,preset){ // impresión directa (solo en la app de escritorio); regresa "printed" | "cancelled" | "error" | "none"
@@ -1695,7 +1745,7 @@ async function printLabels(items,preset){ // impresión directa (solo en la app 
 }
 function stockChip(p){ const n=Number(p.existencia)||0; const min=Number(p.minimo)||0; return h("span",{class:"chip stock"+(n<=0?" zero":n<=min?" low":"")},n+" pzas"); }
 function placeholderPh(p){ return h("span",{class:"mono-ph","aria-hidden":"true"},(p.nombre||"?").trim().charAt(0).toUpperCase()||"?"); }
-function imgOrPh(p,cls){ const ph=h("div",{class:cls||"ph"}); if(p.fotoId){ const im=h("img",{src:blobUrl(p.fotoId),alt:p.nombre,loading:"lazy"}); im.addEventListener("error",()=>ph.replaceChildren(placeholderPh(p))); ph.append(im); ph.append(h("span",{class:"zoom",role:"button",tabindex:"0",title:"Ver foto en grande","aria-label":"Ver foto en grande",onclick:e=>{ e.stopPropagation(); e.preventDefault(); openLightbox(p); },onkeydown:e=>{ if(e.key==="Enter"||e.key===" "){ e.stopPropagation(); e.preventDefault(); openLightbox(p); } }},"⤢")); if(cls==="hero"){ ph.classList.add("haz"); ph.addEventListener("click",()=>openLightbox(p)); } } else ph.append(placeholderPh(p)); return ph; }
+function imgOrPh(p,cls){ const ph=h("div",{class:cls||"ph"}); if(p.fotoId){ const grande=cls==="hero"; const im=h("img",{src:grande?blobUrl(p.fotoId):miniUrl(p.fotoId),alt:p.nombre,loading:"lazy",decoding:"async"}); im.addEventListener("error",()=>{ const full=blobUrl(p.fotoId); if(!grande&&im.getAttribute("src")!==full){ im.src=full; return; } ph.replaceChildren(placeholderPh(p)); }); ph.append(im); ph.append(h("span",{class:"zoom",role:"button",tabindex:"0",title:"Ver foto en grande","aria-label":"Ver foto en grande",onclick:e=>{ e.stopPropagation(); e.preventDefault(); openLightbox(p); },onkeydown:e=>{ if(e.key==="Enter"||e.key===" "){ e.stopPropagation(); e.preventDefault(); openLightbox(p); } }},"⤢")); if(cls==="hero"){ ph.classList.add("haz"); ph.addEventListener("click",()=>openLightbox(p)); } } else ph.append(placeholderPh(p)); return ph; }
 async function compressImage(file,max=2200){
   const url=URL.createObjectURL(file);
   try{
@@ -1711,6 +1761,53 @@ async function compressImage(file,max=2200){
 // Palabras retiradas a proposito (jerga de drogas, alcohol, doble sentido, insultos, codigo de violencia o fauna protegida) para no arriesgar los lives en Facebook/Instagram/TikTok: amapola ballena blanco caballo chile chocolate churro coco concha coral corona cristal deseo globo huevo marfil margarita melon mono negro nieve oregano paloma pepino perro pico piedra platano salvia sello tortuga ventana vino zanahoria zorro
 const PALABRAS="casa amarillo mariposa ave luna sol mar rio flor perla oro plata cielo nube estrella lluvia viento fuego arena bosque selva montaña valle lago isla playa ola delfin pez gato leon tigre lobo oso conejo ciervo cebra jirafa elefante koala panda pinguino buho aguila colibri gaviota cisne garza loro tucan abeja hormiga grillo libelula luciernaga caracol rana rosa tulipan girasol jazmin lavanda orquidea violeta lirio dalia azucena clavel magnolia cereza fresa manzana pera uva limon naranja mango piña sandia durazno ciruela kiwi higo cafe miel canela vainilla menta caramelo azucar galleta pan maiz trigo arroz rojo azul verde morado rosa naranja gris dorado plateado turquesa lila beige cobre bronce ambar jade rubi zafiro esmeralda topacio opalo cuarzo diamante espejo vela lampara farol brujula reloj llave puerta balcon jardin fuente puente torre castillo faro barco velero ancla timon remo cometa papalote tambor guitarra violin piano flauta trompeta campana silbato nota canto baile fiesta carnaval circo teatro cine libro cuento poema carta sobre mapa tesoro cofre reina rey princesa hada duende dragon unicornio sirena fenix nube trueno rayo arcoiris aurora eclipse cometa planeta saturno marte venus galaxia universo norte sur este oeste primavera verano otoño invierno enero marzo abril mayo junio agosto domingo lunes viernes sabado cafe te limonada helado pastel dona tamal taco elote paleta bombon nuez almendra avellana cacahuate aceituna tomate calabaza cebolla ajo perejil albahaca romero tomillo eucalipto pino roble cedro sauce palma bambu cactus helecho musgo trebol hoja rama raiz semilla brote fruto nido pluma ala garra huella sombra brisa rocio escarcha niebla bruma alba ocaso crepusculo medianoche mediodia abrazo sonrisa risa suspiro latido susurro secreto suerte destino magia sueño paz calma alegria gracia dulce suave tibio fresco brillante radiante lindo bonito tierno valiente libre feliz".split(" ").filter((w,i,a)=>a.indexOf(w)===i);
 function normaliza(t){ return String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim(); }
+/* ============ Palabras clave tomadas del producto (3-nov) ============
+   Cada pieza recibe una palabra de su propio nombre (ej. "Anillo Ajustable de Líneas" → "lineas"), sin repetirse,
+   y nunca palabras que Facebook/Instagram/TikTok puedan bloquear (marcas, jerga de drogas/armas, ventas, groserías). */
+const PAL_GENERICAS=new Set("anillo anillos arete aretes arracada arracadas collar collares pulsera pulseras cadena cadenas dije dijes juego juegos set broquel broqueles tobillera tobilleras gargantilla gargantillas choker chokers brazalete brazaletes esclava esclavas pendiente pendientes ear cuff piercing ajustable ajustables de del la las el los lo con y e en para sin por al un una talla tallas acero inoxidable chapa chapado chapada oro dorado dorada dorados doradas plata plateado plateada plateados plateadas baño banado tono mm cm pieza piezas modelo nuevo nueva mini maxi grande grandes chico chica chicos chicas mediano mediana largo larga cortos corto corta doble triple fino fina finos finas delgado delgada grueso gruesa estilo tipo par pares color colores natural colgante colgantes chocker gargantilla corte cortes uno dos tres cuatro cinco con figura figuras tonos".split(" "));
+const PAL_COLORES=["dorado","dorada","plata","plateado","rosa","rose","negro","blanco","azul","rojo","verde","morado","lila"];
+const PAL_BLOQUEADAS=new Set(("amapola ballena blanco blanca caballo chile chocolate churro coco concha coral corona cristal cristales deseo globo huevo huevos marfil margarita melon mono negro negra nieve oregano paloma pepino perro pico piedra piedras platano salvia sello tortuga ventana vino zanahoria zorro "+
+ "hielo polvo hierba hoja hojas pasto pastilla pastillas cuerno cuernos bala balas pistola arma armas cuchillo navaja calavera craneo cruz sangre muerte diablo demonio droga drogas coca mota foco gallo pollo cerdo puerco "+
+ "cartier tiffany chanel dior gucci pandora bulgari bvlgari vancleef cleef arpels hermes louis vuitton lv prada versace ysl fendi balenciaga rolex swarovski kors guess cartie cart ferragamo valentino vanc cleef tous michael dupe dupes replica replicas imitacion clon clones original originales "+
+ "oferta ofertas precio precios gratis regalo envio envios pago pagos venta ventas vendo compra compras efectivo whatsapp telefono link liga dinero sexy sexi beso besos").split(" ").filter(Boolean));
+function palTokens(nombre){ return normaliza(nombre).replace(/[^a-zñ\s]/g," ").split(/\s+/).filter(t=>t.length>=3&&!PAL_GENERICAS.has(t)&&!PAL_BLOQUEADAS.has(t)); }
+function palCandidatos(nombre,material){
+  const toks=palTokens(nombre); const out=[]; const add=w=>{ w=normaliza(w).trim(); if(w&&!out.includes(w)&&!w.split(" ").some(x=>PAL_BLOQUEADAS.has(x))) out.push(w); };
+  const colores=normaliza(nombre).split(/\s+/).filter(t=>PAL_COLORES.includes(t)&&!PAL_BLOQUEADAS.has(t));
+  for(const t of toks) add(t);                                   // 1) una palabra del nombre
+  for(let i=0;i<toks.length;i++) for(let j=i+1;j<toks.length;j++) add(toks[i]+" "+toks[j]); // 2) dos palabras del nombre
+  for(const t of toks) for(const c of colores) if(t!==c&&!c.startsWith(t.slice(0,4))) add(t+" "+c);     // 3) palabra + color (lineas dorado)
+  if(!toks.length) for(const c of colores) add(c);
+  // la pieza + su palabra (pulsera rosa, arete lila, anillo talla 6): se entiende al pedirla en el live
+  const n0=normaliza(nombre).split(/\s+/)[0]||""; const noun=({aretes:"arete",arracadas:"arracada",pulseras:"pulsera",collares:"collar",anillos:"anillo",juegos:"juego",cadenas:"cadena",dijes:"dije",brazaletes:"brazalete"})[n0]||n0;
+  if(PAL_GENERICAS.has(n0)||PAL_GENERICAS.has(noun)){ for(const t of toks) add(noun+" "+t); for(const c of colores) add(noun+" "+c); const ta=/talla\s*(\d+)/.exec(normaliza(nombre)); if(ta) add(noun+" talla "+ta[1]); }
+  const base=toks[0]||colores[0]||""; if(base) for(let n=2;n<100;n++) add(base+" "+n); // 4) palabra + número
+  return out;
+}
+function palabraDelProducto(nombre,material,exceptCode,usadasExtra){
+  const usadas=palabrasUsadas(exceptCode); if(usadasExtra) for(const u of usadasExtra) usadas.add(u);
+  for(const w of palCandidatos(nombre,material)) if(!usadas.has(w)) return w;
+  return palabraAleatoria(exceptCode);
+}
+function palabraLibre(nombre,material,usadas){ for(const w of palCandidatos(nombre,material)) if(!usadas.has(w)) return w; return null; }
+
+async function migracionPalabras(){
+  if(!state.db||state.migrPal||!state.products.size) return; state.migrPal=true;
+  try{
+    try{ const ant=await state.db.doc("config/palabrasAnteriores").get(); state.palabrasAntes=(ant.exists&&ant.data()&&ant.data().mapa)||{}; }catch(e){ state.palabrasAntes=state.palabrasAntes||{}; }
+    if(!window.marveaNative) return; // el cambio lo hace una sola vez la app de la Mac
+    const m=await state.db.doc("config/migraciones").get(); const prev=(m.exists&&m.data())||{}; if(prev.palabrasProducto) return;
+    const prods=[...state.products.values()].sort((a,b)=>String(a.creado||"").localeCompare(String(b.creado||""))||a.codigo.localeCompare(b.codigo));
+    const usadas=new Set(), mapa={...(state.palabrasAntes||{})}, cambios=[];
+    for(const p of prods){ const viejo=normaliza(p.palabra); let w=palabraLibre(p.nombre,p.material,usadas); if(!w) w=(viejo&&!usadas.has(viejo))?viejo:(PALABRAS.find(x=>!usadas.has(x))||viejo||p.codigo.toLowerCase()); usadas.add(w); if(w!==viejo){ cambios.push([p,w,viejo]); if(viejo) mapa[viejo]=p.codigo; } }
+    const now=new Date().toISOString();
+    await state.db.doc("config/palabrasAnteriores").set({mapa,fecha:now,cambios:cambios.map(([p,w,v])=>({codigo:p.codigo,nombre:p.nombre,antes:v,ahora:w}))});
+    state.palabrasAntes=mapa;
+    for(const [p,w,v] of cambios){ await state.db.doc("productos/"+p.codigo).update({palabra:w,palabraAnterior:v,actualizado:now}); p.palabra=w; }
+    await state.db.doc("config/migraciones").set({...prev,palabrasProducto:now});
+    renderAll(); toast(`Palabras clave nuevas: ${cambios.length} pieza${cambios.length===1?"":"s"} ahora usan una palabra de su nombre (las anteriores se siguen reconociendo)`);
+  }catch(e){ console.warn("migracion palabras",e); state.migrPal=false; }
+}
 function palabrasUsadas(exceptCode){ const u=new Set(); for(const p of state.products.values()){ if(p.codigo!==exceptCode&&p.palabra) u.add(normaliza(p.palabra)); } return u; }
 function palabraAleatoria(exceptCode){
   const usadas=palabrasUsadas(exceptCode); const libres=PALABRAS.filter(w=>!usadas.has(w));
@@ -1732,7 +1829,8 @@ function porCodigo(texto){
   const m=k.match(/^([A-Z]{2,4})0*(\d{1,6})$/); if(m){ for(const p of state.products.values()){ const pm=key(p.codigo).match(/^([A-Z]{2,4})0*(\d{1,6})$/); if(pm&&pm[1]===m[1]&&pm[2]===m[2]) return p; } }
   return null;
 }
-function porPalabra(texto){ const q=normaliza(texto); if(!q) return null; for(const p of state.products.values()){ if(normaliza(p.palabra)===q) return p; } return null; }
+function palDe(it){ const p=it&&state.products.get(it.codigo); return (p&&p.palabra)||(it&&it.palabra)||""; }
+function porPalabra(texto){ const q=normaliza(texto); if(!q) return null; for(const p of state.products.values()){ if(normaliza(p.palabra)===q) return p; } const ant=state.palabrasAntes&&state.palabrasAntes[q]; if(ant&&state.products.get(ant)) return state.products.get(ant); return null; }
 
 /* ============ Estado ============ */
 const DEFAULT_CATS=[{p:"ANI",n:"Anillos"},{p:"COL",n:"Collares"},{p:"CAD",n:"Cadenas"},{p:"ARE",n:"Aretes"},{p:"PUL",n:"Pulseras"},{p:"DIJ",n:"Dijes"},{p:"TOB",n:"Tobilleras"},{p:"SET",n:"Sets"},{p:"ACC",n:"Accesorios"}];
@@ -1966,7 +2064,7 @@ function openLightbox(p){
 function closeLightbox(){ const b=document.getElementById("lightbox"); if(b) b.remove(); document.removeEventListener("keydown",lbKey,true); }
 function lbKey(e){ if(e.key==="Escape"){ e.stopPropagation(); closeLightbox(); } }
 
-function resetForm(){ form.reset(); $("#existencia").value="0"; $("#minimo").value="5"; state.editing=null; state.removePhoto=false; clearPhotoUI(); $("#newCat").hidden=true; $("#palabra").value=palabraAleatoria(null); $("#btnSave").textContent="Registrar producto"; $("#formMsg").textContent=""; updateGain(); $("#done").hidden=true; form.hidden=false; updateCodePreview(); }
+function resetForm(){ state.palabraAuto=true; form.reset(); $("#existencia").value="0"; $("#minimo").value="5"; state.editing=null; state.removePhoto=false; clearPhotoUI(); $("#newCat").hidden=true; $("#palabra").value=palabraAleatoria(null); $("#btnSave").textContent="Registrar producto"; $("#formMsg").textContent=""; updateGain(); $("#done").hidden=true; form.hidden=false; updateCodePreview(); }
 $("#btnReset").addEventListener("click",resetForm);
 $("#btnCancelNew").addEventListener("click",()=>{ resetForm(); setView("inv"); });
 form.addEventListener("submit",async(ev)=>{
@@ -1991,7 +2089,7 @@ form.addEventListener("submit",async(ev)=>{
     let codigo=state.editing||nextCode(cat);
     if(!state.editing&&state.products.has(codigo)) codigo=nextCode(cat);
     const now=new Date().toISOString();
-    let palabra=normaliza($("#palabra").value)||palabraAleatoria(codigo); if(palabrasUsadas(codigo).has(palabra)){ const otro=porPalabra(palabra); toast(`La palabra "${palabra}" ya la usa ${otro?otro.codigo:"otro producto"}; se asignó otra`,true); palabra=palabraAleatoria(codigo); }
+    let palabra=normaliza($("#palabra").value)||palabraDelProducto(nombre,$("#material").value,codigo); if(palabrasUsadas(codigo).has(palabra)){ const otro=porPalabra(palabra); toast(`La palabra "${palabra}" ya la usa ${otro?otro.codigo:"otro producto"}; se asignó otra`,true); palabra=palabraAleatoria(codigo); }
     const data={codigo,nombre,palabra,categoria:cat,material:materialNormalizado($("#material").value),costo:Math.round((parseFloat($("#costo").value)||0)*100)/100,precio:Math.round(precio*100)/100,existencia:Math.max(0,parseInt($("#existencia").value,10)||0),minimo:Math.max(0,parseInt($("#minimo").value,10)||0),notas:$("#notas").value.trim(),etiquetaCat:$("#etiquetaCat").value.trim().slice(0,24),fotoId,creado:prev?prev.creado||now:now,actualizado:now};
     await state.db.doc("productos/"+codigo).set(data);
     state.products.set(codigo,data); renderAll();
@@ -2012,7 +2110,9 @@ form.addEventListener("submit",async(ev)=>{
 });
 $("#doneAnother").addEventListener("click",()=>{ resetForm(); $("#nombre").focus(); });
 $("#doneInv").addEventListener("click",()=>{ resetForm(); setView("inv"); });
-$("#btnPalabra").addEventListener("click",()=>{ $("#palabra").value=palabraAleatoria(state.editing); });
+$("#btnPalabra").addEventListener("click",()=>{ const usadas=palabrasUsadas(state.editing); const cand=palCandidatos($("#nombre").value,$("#material").value).filter(w=>!usadas.has(w)); const cur=normaliza($("#palabra").value); const i=cand.indexOf(cur); $("#palabra").value=cand.length?cand[(i+1)%cand.length]:palabraAleatoria(state.editing); state.palabraAuto=false; });
+$("#nombre").addEventListener("input",()=>{ if(state.palabraAuto!==false){ const w=palabraDelProducto($("#nombre").value,$("#material").value,state.editing); if(w) $("#palabra").value=w; } });
+$("#palabra").addEventListener("input",()=>{ state.palabraAuto=false; });
 function updateGain(){
   const precio=parseFloat($("#precio").value), costo=parseFloat($("#costo").value), ex=Math.max(0,parseInt($("#existencia").value,10)||0);
   const u=$("#gainUnit"), t=$("#gainTotal"), m=$("#gainMargin"), ts=$("#gainTotalSub");
@@ -2030,7 +2130,7 @@ function materialNormalizado(v){ v=(v||"").trim(); return /^acero$/i.test(v)?"Ac
   el.addEventListener("input",e=>{ if(e.inputType&&e.inputType.startsWith("delete")) return; if(/^acero$/i.test(el.value.trim())&&el.selectionStart===el.value.length){ el.value=FULL; el.setSelectionRange(5,FULL.length); } });
   el.addEventListener("blur",()=>{ el.value=materialNormalizado(el.value); });
 })();
-function startEdit(p){ resetForm(); state.editing=p.codigo; $("#nombre").value=p.nombre; $("#categoria").value=p.categoria; $("#material").value=p.material||""; $("#palabra").value=p.palabra||palabraAleatoria(p.codigo); $("#precio").value=p.precio; $("#costo").value=p.costo||""; $("#existencia").value=p.existencia||0; $("#minimo").value=p.minimo==null?5:p.minimo; $("#notas").value=p.notas||""; $("#etiquetaCat").value=p.etiquetaCat||""; if(p.fotoId){ const im=$("#photoPrev"); im.src=blobUrl(p.fotoId); im.hidden=false; $("#photoBox").classList.add("has"); $("#photoHint").textContent="Cambiar fotografía"; $("#photoClear").hidden=false; } $("#btnSave").textContent="Guardar cambios"; updateGain(); closeDrawer(); setView("new"); updateCodePreview(); $("#nombre").focus(); }
+function startEdit(p){ resetForm(); state.palabraAuto=false; state.editing=p.codigo; $("#nombre").value=p.nombre; $("#categoria").value=p.categoria; $("#material").value=p.material||""; $("#palabra").value=p.palabra||palabraAleatoria(p.codigo); $("#precio").value=p.precio; $("#costo").value=p.costo||""; $("#existencia").value=p.existencia||0; $("#minimo").value=p.minimo==null?5:p.minimo; $("#notas").value=p.notas||""; $("#etiquetaCat").value=p.etiquetaCat||""; if(p.fotoId){ const im=$("#photoPrev"); im.src=blobUrl(p.fotoId); im.hidden=false; $("#photoBox").classList.add("has"); $("#photoHint").textContent="Cambiar fotografía"; $("#photoClear").hidden=false; } $("#btnSave").textContent="Guardar cambios"; updateGain(); closeDrawer(); setView("new"); updateCodePreview(); $("#nombre").focus(); }
 
 /* ============ Cajón de detalle ============ */
 function presetGuardado(){ try{ if(!localStorage.getItem("marvea.preset.50x30")){ localStorage.setItem("marvea.preset","50x30"); localStorage.setItem("marvea.preset.50x30","1"); } const saved=localStorage.getItem("marvea.preset"); if(saved&&PRESETS.some(x=>x.id===saved)) return saved; }catch(e){} return PRESETS[0].id; }
@@ -2208,12 +2308,12 @@ function renderDash(fromLoad){
       tile("Si vendes todo",money(valor),"A precio de mayoreo"),
       tile("Te costó",money(costoTot),sinCosto?`${sinCosto} producto${sinCosto>1?"s":""} sin costo`:"Costo de compra; solo tú lo ves"),
       tile("Ganarías",money(ganPos),valor?`Margen ${Math.round(ganPos/valor*100)}%`:"","accent"),
-      tile("Por reponer",String(agotados.length+bajos.length),`${agotados.length} agotado${agotados.length===1?"":"s"} · ${bajos.length} con poca existencia`,agotados.length+bajos.length?"warn":"")),
+      tile("Por reponer",String(agotados.length),agotados.length?`${agotados.length} pieza${agotados.length===1?"":"s"} agotada${agotados.length===1?"":"s"}`:"No hay piezas agotadas",agotados.length?"warn":"")),
     h("div",{class:"dashgrid"},
       h("div",{class:"panel"},h("h3",null,"Últimos lives"),(lives.length||rVD.carritos)?h("div",{class:"dtable"},h("div",{class:"dr dh"},h("span",null,"Live"),h("span",null,"Carritos"),h("span",null,"Piezas"),h("span",null,"Vendido"),h("span",null,"Ganancia")),...lives.map(l=>{ const r=porLive.get(l.id)||{carritos:0,piezas:0,vendido:0,ganancia:0}; return h("button",{type:"button",class:"dr",onclick:()=>{ selectLive(l.id); setView("live"); }},h("span",{class:"ln"},h("b",null,l.nombre),h("small",null,fmtDate(l.creado)+(l.estado==="abierto"?" · en vivo":""))),h("span",null,r.carritos),h("span",null,r.piezas),h("span",null,money(r.vendido)),h("span",{class:"g"},money(r.ganancia))); }),rVD.carritos?h("button",{type:"button",class:"dr dr-vd",onclick:()=>setView("venta")},h("span",{class:"ln"},h("b",null,"Ventas directas"),h("small",null,"Todas, fuera de los lives")),h("span",null,rVD.carritos),h("span",null,rVD.piezas),h("span",null,money(rVD.vendido)),h("span",{class:"g"},money(rVD.ganancia))):null):h("div",{class:"dempty"},"Aquí verás cada live con lo que vendiste y ganaste.")),
       h("div",{class:"panel"},h("h3",null,"Lo que más se vende"),masVendidas.length?h("div",{class:"bars"},...masVendidas.map(r=>{ const p=state.products.get(r.codigo); return h("div",{class:"barrow"},h("div",{class:"bl"},h("b",{style:"color:var(--accent)"},r.palabra||r.codigo)," ",p?p.nombre:r.nombre,h("small",null,money(r.importe)+" vendidos")),h("div",{class:"bt"},h("i",{style:`width:${Math.round(r.cant/maxC*100)}%`})),h("div",{class:"bv"},r.cant+" pzas")); })):h("div",{class:"dempty"},"Cuando vendas en un live, aquí aparecen las piezas más pedidas.")),
       h("div",{class:"panel"},h("h3",null,"Inventario por categoría"),h("div",{class:"bars"},...catRows.map(c=>h("div",{class:"barrow"},h("div",{class:"bl"},c.n,h("small",null,`${c.productos} producto${c.productos===1?"":"s"} · ${c.piezas} piezas`)),h("div",{class:"bt"},h("i",{style:`width:${Math.round(c.valor/maxV*100)}%`})),h("div",{class:"bv"},money(c.valor)))))),
-      h("div",{class:"panel"},h("h3",null,"Por reponer"),(agotados.length||bajos.length)?h("div",{class:"reponer-sub"},`${agotados.length} agotada${agotados.length===1?"":"s"} · ${bajos.length} con poca existencia`):null,(agotados.length||bajos.length)?h("div",{class:"toplist reponer-lista"},...[...agotados,...bajos].map(p=>h("button",{class:"tr",type:"button",style:"text-align:left;cursor:pointer",onclick:()=>openDrawer(p.codigo)},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"tn"},p.nombre),h("div",{class:"ts"},h("b",{style:"color:var(--accent)"},p.palabra||p.codigo)," · "+money(p.precio))),h("div",{class:"tv",style:(Number(p.existencia)||0)<=0?"color:var(--bad)":"color:var(--warn)"},(Number(p.existencia)||0)<=0?"Agotado":p.existencia+" pzas")))):h("div",{class:"dempty"},"Todo tiene existencia suficiente."))),
+      h("div",{class:"panel"},h("h3",null,"Por reponer"),agotados.length?h("div",{class:"reponer-sub"},`${agotados.length} pieza${agotados.length===1?"":"s"} agotada${agotados.length===1?"":"s"}`):null,agotados.length?h("div",{class:"toplist reponer-lista"},...[...agotados].map(p=>h("button",{class:"tr",type:"button",style:"text-align:left;cursor:pointer",onclick:()=>openDrawer(p.codigo)},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"tn"},p.nombre),h("div",{class:"ts"},h("b",{style:"color:var(--accent)"},p.palabra||p.codigo)," · "+money(p.precio))),h("div",{class:"tv",style:(Number(p.existencia)||0)<=0?"color:var(--bad)":"color:var(--warn)"},(Number(p.existencia)||0)<=0?"Agotado":p.existencia+" pzas")))):h("div",{class:"dempty"},"No hay piezas agotadas."))),
     h("p",{style:"margin:14px 0 0;font-size:13px;color:var(--muted)"},"Importes en pesos mexicanos (MXN). Las ventas incluyen envíos e IVA cuando aplican y no cuentan carritos cancelados. El costo y la ganancia son internos: nunca aparecen en tickets, etiquetas ni en el catálogo."));
 }
 
@@ -2659,7 +2759,7 @@ async function liveExcel(l,cartsIn){
 async function inventarioPdf(){
   if(!state.downloads){ toast("La descarga no está disponible en esta vista",true); return; }
   const J=window.jspdf&&window.jspdf.jsPDF; if(!J){ toast("No se pudo cargar el generador de PDF",true); return; }
-  const fc=$("#fcat").value; const prods=sortedProducts().filter(p=>!fc||p.categoria===fc).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
+  const fc=$("#fcat").value; const prods=sortedProducts().filter(p=>(!fc||p.categoria===fc)&&(Number(p.existencia)||0)>=1).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
   if(!prods.length){ toast("No hay productos que exportar",true); return; }
   toast("Preparando catálogo…");
   const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,360)));
@@ -2709,7 +2809,7 @@ async function catalogoPdf(){
   if(!state.downloads){ toast("La descarga no está disponible en esta vista",true); return; }
   const J=window.jspdf&&window.jspdf.jsPDF; if(!J){ toast("No se pudo cargar el generador de PDF",true); return; }
   const A=catAssets(); if(!A){ toast("Faltan los recursos del catálogo",true); return; }
-  const fc=""; const prods=sortedProducts().sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
+  const fc=""; const prods=sortedProducts().filter(p=>(Number(p.existencia)||0)>=1).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
   if(!prods.length){ toast("No hay productos para el catálogo",true); return; }
   toast("Preparando catálogo (todas las categorías)…");
   const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,1100,0.9)));
@@ -2770,7 +2870,7 @@ function addImgFit(pdf,img,x,y,w,hh,top){
 async function fotosRevenderPdf(){
   if(!state.downloads){ toast("La descarga no está disponible en esta vista",true); return; }
   const J=window.jspdf&&window.jspdf.jsPDF; if(!J){ toast("No se pudo cargar el generador de PDF",true); return; }
-  const todos=sortedProducts().sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
+  const todos=sortedProducts().filter(p=>(Number(p.existencia)||0)>=1).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
   const prods=todos.filter(p=>p.fotoId); const sinFoto=todos.length-prods.length;
   if(!prods.length){ toast("Ningún producto tiene foto todavía",true); return; }
   toast("Preparando "+prods.length+" fotos…");
@@ -2798,7 +2898,7 @@ $("#btnFotos").addEventListener("click",fotosRevenderPdf);
 
 async function inventarioExcel(){
   if(!state.downloads){ toast("La descarga no está disponible en esta vista",true); return; }
-  const fc=$("#fcat").value; const prods=sortedProducts().filter(p=>!fc||p.categoria===fc).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
+  const fc=$("#fcat").value; const prods=sortedProducts().filter(p=>(!fc||p.categoria===fc)&&(Number(p.existencia)||0)>=1).sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.codigo.localeCompare(b.codigo));
   if(!prods.length){ toast("No hay productos que exportar",true); return; }
   const rows=[["Código","Palabra clave","Producto","Categoría","Material","Precio mayoreo (MXN)","Costo (MXN)","Ganancia por pieza (MXN)","Existencia","Mínimo","Valor en existencia (MXN)","Ganancia en existencia (MXN)","Notas","Registrado"],...prods.map(p=>[p.codigo,p.palabra||"",p.nombre,catName(p.categoria),p.material||"",p.precio,p.costo||0,Math.round((p.precio-(p.costo||0))*100)/100,p.existencia,p.minimo,Math.round(p.precio*p.existencia*100)/100,Math.round((p.precio-(p.costo||0))*p.existencia*100)/100,p.notas||"",p.creado?new Date(p.creado).toLocaleDateString("es-MX"):""])];
   try{
@@ -3028,7 +3128,7 @@ function cartSummary(c,l){
 }
 async function copyText(text){ try{ await navigator.clipboard.writeText(text); toast("Resumen copiado"); }catch(e){ const ta=h("textarea",{style:"position:fixed;left:-9999px"},text); document.body.append(ta); ta.select(); try{ document.execCommand("copy"); toast("Resumen copiado"); }catch(e2){ toast("Selecciona y copia el texto manualmente",true);} ta.remove(); } }
 function searchProducts(q){ q=q.trim().toLowerCase(); if(!q) return []; const qn=normaliza(q); const all=[...state.products.values()]; const exact=all.filter(p=>p.codigo.toLowerCase()===q||normaliza(p.palabra)===qn); const rest=all.filter(p=>!exact.includes(p)&&(p.codigo.toLowerCase().includes(q)||p.nombre.toLowerCase().includes(q)||(p.material||"").toLowerCase().includes(q)||normaliza(p.palabra).includes(qn))).sort((a,b)=>(b.existencia>0)-(a.existencia>0)||a.nombre.localeCompare(b.nombre)); return [...exact,...rest].slice(0,8); }
-function thumb(p){ const t=h("div",{class:"th"}); if(p&&p.fotoId){ const im=h("img",{src:blobUrl(p.fotoId),alt:""}); im.addEventListener("error",()=>t.replaceChildren(placeholderPh(p))); t.append(im);} else t.append(placeholderPh(p||{nombre:"?"})); return t; }
+function thumb(p){ const t=h("div",{class:"th"}); if(p&&p.fotoId){ const im=h("img",{src:miniUrl(p.fotoId),alt:"",loading:"lazy",decoding:"async"}); im.addEventListener("error",()=>{ const full=blobUrl(p.fotoId); if(im.getAttribute("src")!==full){ im.src=full; return; } t.replaceChildren(placeholderPh(p)); }); t.append(im);} else t.append(placeholderPh(p||{nombre:"?"})); return t; }
 
 function renderLive(keepFocus){
   const host=$("#liveHost"); if(!host) return;
@@ -3105,7 +3205,7 @@ function renderLive(keepFocus){
       else if(e.key==="Enter"||e.key==="Tab"&&inp.value.length>=6){ e.preventDefault(); const raw=inp.value.trim(); if(!raw) return; const u=parseUnidad(raw); const exact=u?u.p:(porCodigo(raw)||porPalabra(raw)); const p=exact||results[state.acIndex]||searchProducts(raw)[0]; if(p) pick(p,u?u.unit:null); else { toast("No hay ningún producto con «"+raw+"». Revisa que esté registrado en Inventario.",true); inp.select(); } }
     });
     if(focusVal!=null) inp.value=focusVal;
-    const items=h("div",{class:"items"},...(c.items.length?c.items.map(it=>{ const p=state.products.get(it.codigo); return h("div",{class:"it",oncontextmenu:(e)=>itemMenu(e,c,it)},thumb(p||{nombre:it.nombre}),h("div",{style:"min-width:0"},h("div",{class:"tn",title:it.nombre},it.nombre),h("div",{class:"ts"},it.palabra?[h("b",{style:"color:var(--accent)"},it.palabra)," · "]:null,it.codigo," · $"+fmtMoney(it.precio)," c/u",p?` · quedan ${p.existencia}`:" · ya no está en inventario"),p&&p.material?h("div",{class:"it-mat"},p.material):null),h("div",{class:"qc"},editable?h("button",{class:"btn","aria-label":"Quitar una",onclick:()=>changeItem(c,it.codigo,-1)},"−"):null,h("span",{class:"q"},it.cant),editable?h("button",{class:"btn","aria-label":"Agregar una",onclick:()=>changeItem(c,it.codigo,1)},"+"):null,editable?h("button",{class:"btn ghost",title:"Quitar del carrito","aria-label":"Quitar del carrito",onclick:()=>changeItem(c,it.codigo,-it.cant)},"✕"):null),h("div",{class:"sub"},"$"+fmtMoney(it.precio*it.cant))); }):[h("div",{class:"empty",style:"padding:18px"},"Carrito vacío. Escanea una etiqueta o busca la pieza arriba; con la cantidad a la derecha agregas varias de la misma.")]));
+    const items=h("div",{class:"items"},...(c.items.length?c.items.map(it=>{ const p=state.products.get(it.codigo); return h("div",{class:"it",oncontextmenu:(e)=>itemMenu(e,c,it)},thumb(p||{nombre:it.nombre}),h("div",{style:"min-width:0"},h("div",{class:"tn",title:it.nombre},it.nombre),h("div",{class:"ts"},palDe(it)?[h("b",{style:"color:var(--accent)"},palDe(it))," · "]:null,it.codigo," · $"+fmtMoney(it.precio)," c/u",p?` · quedan ${p.existencia}`:" · ya no está en inventario"),p&&p.material?h("div",{class:"it-mat"},p.material):null),h("div",{class:"qc"},editable?h("button",{class:"btn","aria-label":"Quitar una",onclick:()=>changeItem(c,it.codigo,-1)},"−"):null,h("span",{class:"q"},it.cant),editable?h("button",{class:"btn","aria-label":"Agregar una",onclick:()=>changeItem(c,it.codigo,1)},"+"):null,editable?h("button",{class:"btn ghost",title:"Quitar del carrito","aria-label":"Quitar del carrito",onclick:()=>changeItem(c,it.codigo,-it.cant)},"✕"):null),h("div",{class:"sub"},"$"+fmtMoney(it.precio*it.cant))); }):[h("div",{class:"empty",style:"padding:18px"},"Carrito vacío. Escanea una etiqueta o busca la pieza arriba; con la cantidad a la derecha agregas varias de la misma.")]));
     const nota=h("input",{placeholder:"Nota (forma de pago, envío, apartado…)",value:c.nota,style:"flex:1 1 220px;min-width:0;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg)",...(editable?{}:{readonly:true})});
     nota.addEventListener("change",async()=>{ c.nota=nota.value.trim(); try{ await saveCart(c);}catch(e){ toast("No se pudo guardar la nota",true);} });
     const delBox=h("div");
@@ -3379,7 +3479,7 @@ function renderVenta(keepFocus){
     lista=h("div",{class:"vd-vacio"},esHoy?(c?"Escanea o escribe la primera pieza.":"Primero escribe la clienta; luego escanea sus piezas."):"Elige una venta de la lista para verla o reimprimir su ticket.");
   } else {
     lista=h("div",{class:"vd-items"},...c.items.map(it=>{ const p=state.products.get(it.codigo); return h("div",{class:"vd-it",oncontextmenu:e=>ventaItemMenu(e,c,it),title:"Clic derecho: más opciones"},thumb(p||{nombre:it.nombre}),
-      h("div",{class:"vd-itinfo"},h("div",{class:"tn",title:it.nombre},it.nombre),h("div",{class:"ts"},it.palabra?[h("b",{style:"color:var(--accent)"},it.palabra)," · "]:null,"$"+fmtMoney(it.precio)+" c/u"),(state.products.get(it.codigo)||{}).material?h("div",{class:"it-mat"},state.products.get(it.codigo).material):null),
+      h("div",{class:"vd-itinfo"},h("div",{class:"tn",title:it.nombre},it.nombre),h("div",{class:"ts"},palDe(it)?[h("b",{style:"color:var(--accent)"},palDe(it))," · "]:null,"$"+fmtMoney(it.precio)+" c/u"),(state.products.get(it.codigo)||{}).material?h("div",{class:"it-mat"},state.products.get(it.codigo).material):null),
       h("div",{class:"qc"},editable?h("button",{class:"btn",type:"button",onclick:()=>changeItem(c,it.codigo,-1),title:"Quitar una","aria-label":"Quitar una"},"−"):null,h("span",{class:"q"},it.cant),editable?h("button",{class:"btn",type:"button",onclick:()=>changeItem(c,it.codigo,1),title:"Agregar una","aria-label":"Agregar una"},"+"):null),
       h("b",{class:"vd-sub"},"$"+fmtMoney(it.precio*it.cant)),
       editable?h("button",{class:"vd-x",type:"button",onclick:()=>changeItem(c,it.codigo,-it.cant),title:"Quitar del todo","aria-label":"Quitar del todo"},"×"):h("span")); }));
@@ -3533,7 +3633,7 @@ async function boot(){
   db.collection("productos").onSnapshot(s=>{
     const m=new Map();
     for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
-    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas();
+    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras();
   },e=>{ console.warn("productos",e); $("#dbNotice").hidden=false; });
 }
 if(location.hash==="#conteo"){ document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; }
