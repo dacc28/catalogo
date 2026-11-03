@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T18:35:54.405Z",
+ "actualizado": "2026-11-03T18:52:49.276Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1037,6 +1037,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00014",
+   "nombre": "Collar Colgante de Cuero con Dije",
+   "categoria": "COL",
+   "material": "Cuero con Chapa de Oro",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
+   "creado": "2026-10-19T01:36:03.511Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00015",
    "nombre": "Collar de Cuentas",
    "categoria": "COL",
@@ -1046,6 +1058,18 @@
    "notas": "",
    "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
    "creado": "2026-10-19T01:37:56.830Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00016",
+   "nombre": "Collar Ojo Serpiente",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/135661a33cc9e2e836e003822a0558e0.jpg",
+   "creado": "2026-10-19T01:52:16.304Z",
    "disponible": true
   },
   {
@@ -1106,6 +1130,18 @@
    "notas": "",
    "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
    "creado": "2026-10-19T02:22:32.186Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00023",
+   "nombre": "Collar Rainbow",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/d5cfff539d1d0c1ad201d8d78945fd48.jpg",
+   "creado": "2026-10-19T02:24:00.818Z",
    "disponible": true
   },
   {
@@ -1229,6 +1265,30 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00035",
+   "nombre": "Collar Omega con Piedra Dorado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/b9e0be65694defd3ac5afe7bf1915b2d.jpg",
+   "creado": "2026-10-20T16:01:35.239Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00036",
+   "nombre": "Collar Omega con Piedra Plateada",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/7387cebd88240733a07d30cacd5d63a1.jpg",
+   "creado": "2026-10-20T16:03:36.822Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00037",
    "nombre": "Collar abstracto",
    "categoria": "COL",
@@ -1246,7 +1306,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "Dupe Messika",
    "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
    "creado": "2026-10-20T16:09:00.792Z",
