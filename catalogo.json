@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T19:41:54.876Z",
+ "actualizado": "2026-11-03T20:03:51.766Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1358,18 +1358,6 @@
    "notas": "",
    "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
    "creado": "2026-10-20T16:26:54.835Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00042",
-   "nombre": "Collar Tenis Colores",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/656058f413620824a816c5c57cca95a1.jpg",
-   "creado": "2026-10-20T16:27:48.315Z",
    "disponible": true
   },
   {
