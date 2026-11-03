@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T20:18:10.495Z",
+ "actualizado": "2026-11-03T20:23:56.103Z",
  "categorias": [
   {
    "p": "ANI",
@@ -502,7 +502,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a422ead30d36f3d6b598b1447a287057.jpg",
    "creado": "2026-10-20T23:14:13.742Z",
@@ -1730,6 +1730,18 @@
    "notas": "",
    "foto": "fotos/984ea7e638e6ace737cb273c3e73f912.jpg",
    "creado": "2026-11-01T22:03:25.682Z",
+   "disponible": true
+  },
+  {
+   "codigo": "JUE-00012",
+   "nombre": "Juego Perlas",
+   "categoria": "JUE",
+   "material": "Laminado",
+   "precio": 90,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/4134a8db329b146e555e99c23a8a140b.jpg",
+   "creado": "2026-11-03T20:23:09.385Z",
    "disponible": true
   },
   {
