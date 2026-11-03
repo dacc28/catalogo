@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T01:05:28.908Z",
+ "actualizado": "2026-11-03T01:41:07.325Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1781,18 +1781,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00008",
-   "nombre": "Pulsera de Acero 3 Líneas",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/ad00ade3f9bbbf2385198b4a9fd3d255.jpg",
-   "creado": "2026-10-20T15:50:02.918Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00009",
    "nombre": "Pulsera Diamante mini Dorado",
    "categoria": "PUL",
@@ -1826,18 +1814,6 @@
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00012",
-   "nombre": "Pulsera corte Esmerlada",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/a8957e60ab21aadb4a998db89bfddff2.jpg",
-   "creado": "2026-10-20T17:59:41.923Z",
    "disponible": true
   },
   {
@@ -1886,18 +1862,6 @@
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00017",
-   "nombre": "Pulsera Tennis de colores con cartier",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/713ff3a379847b1d694399ea96dedfaf.jpg",
-   "creado": "2026-10-20T18:06:43.453Z",
    "disponible": true
   },
   {
