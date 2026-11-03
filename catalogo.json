@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-03T01:41:07.325Z",
+ "actualizado": "2026-11-03T01:49:59.075Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1070,18 +1070,6 @@
    "notas": "",
    "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
    "creado": "2026-10-19T01:37:56.830Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00017",
-   "nombre": "Collar Cisne",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/64c4c708aecab5b2e96f15893bf07b43.jpg",
-   "creado": "2026-10-19T02:02:41.041Z",
    "disponible": true
   },
   {
