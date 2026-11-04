@@ -973,8 +973,39 @@ function mensajeWA(folio){ const c=S.cliente||S.form,e=envio();
   `\n\nPiezas: ${pzs()}\nSubtotal: ${fmt(sub())}${S.factura?`\nIVA 16%: ${fmt(iva())}`:''}\n${S.recoger?'Recojo gratis en Monterrey':(S.sumar?'Sumar a mi paquete en resguardo · diferencia':S.resguardar?'Resguardar paquete · envío DHL':'Envío DHL')+': '+(e.costo===null?'a cotizar':fmt(e.costo))}\n*Total: ${fmt(total())} MXN*\n\nPago por transferencia · ${c.nombre}${S.recoger?'':`\n${c.dir}, ${c.ciudad}${c.ref?`\nReferencias: ${c.ref}`:''}`}`; }
 function pagar(m){ if(!validar()) return; const folio='MV-'+Math.floor(10000+Math.random()*90000);
   if(m==='transfer'){window.open('https://wa.me/528132660673?text='+encodeURIComponent(mensajeWA(folio)),'_blank');finalizar(m,folio);return;}
-  const b=document.getElementById('btnTarjeta');b.disabled=true;b.innerHTML='<b><span class="cargando"></span>Procesando con Stripe…</b><small>En el sitio real se abre la hoja de pago de Stripe / Apple Pay.</small>';
-  setTimeout(()=>finalizar(m,folio),1600); }
+  const b=document.getElementById('btnTarjeta');b.disabled=true;b.innerHTML='<b><span class="cargando"></span>Conectando con Stripe…</b><small>Te llevamos a la página segura de pago.</small>';
+  pagarStripe(folio).catch(err=>{ b.disabled=false; b.innerHTML='<b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · MC · Amex</span></div>';
+    if(STRIPE.simularSiFalla){ toast('Stripe aún no responde ('+err.message+'). Se simula el pago para la prueba.','alerta'); setTimeout(()=>finalizar(m,folio),900); } else toast('No se pudo iniciar el pago: '+err.message,'alerta'); }); }
+/* ---------- Stripe Checkout (real) */
+const STRIPE={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/crear-pago', anon:'sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8', simularSiFalla:true };
+function snapshotPedido(folio){ return {folio,cart:S.cart,form:S.form,cliente:S.cliente,tarifa:S.tarifa,recoger:S.recoger,sumar:S.sumar,resguardar:S.resguardar,factura:S.factura,crearCuenta:S.crearCuenta,t:Date.now()}; }
+async function pagarStripe(folio){
+  const c=S.cliente||S.form, e=envio();
+  const payload={ folio, items:Object.entries(S.cart).map(([codigo,cant])=>({codigo,cant})), factura:S.factura, resguardar:S.resguardar, sumar:S.sumar,
+    envio:{ tipo:S.recoger?'recoger':(e.t?e.t.id:'2kg'), costo:e.costo===null?0:e.costo, nombre:S.recoger?'Recoger en Monterrey':(e.modo==='sumar'?'Diferencia de envío DHL (paquete en resguardo)':undefined) },
+    cliente:{ nombre:c.nombre, wa:String(c.wa||'').replace(/\D/g,''), mail:c.mail||'', negocio:c.negocio||'', dir:c.dir||'', ciudad:c.ciudad||'', cp:c.cp||'', ref:c.ref||'', crearCuenta:S.crearCuenta } };
+  try{ localStorage.setItem('marvea.pedido',JSON.stringify(snapshotPedido(folio))); }catch(_){}
+  const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),15000);
+  let r; try{ r=await fetch(STRIPE.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':STRIPE.anon,'Authorization':'Bearer '+STRIPE.anon},body:JSON.stringify(payload),signal:ctrl.signal}); }
+  catch(err){ clearTimeout(tm); throw new Error('sin conexión con la función de pago'); }
+  clearTimeout(tm);
+  let d={}; try{ d=await r.json(); }catch(_){}
+  if(!r.ok||!d.url) throw new Error(d.error||('función de pago no disponible ('+r.status+')'));
+  location.href=d.url;
+}
+function regresoStripe(){
+  const q=new URLSearchParams(location.search), pago=q.get('pago'); if(!pago) return;
+  let sn=null; try{ sn=JSON.parse(localStorage.getItem('marvea.pedido')||'null'); }catch(_){}
+  history.replaceState(null,'',location.pathname);
+  if(!sn||(q.get('folio')&&sn.folio!==q.get('folio'))){ toast(pago==='ok'?'Pago recibido ✓ Te enviamos tu ticket por correo.':'El pago se canceló; tu carrito sigue aquí.',pago==='ok'?'ok':'alerta'); return; }
+  const cart={}; Object.entries(sn.cart||{}).forEach(([c,q])=>{ if(prod(c)) cart[c]=q; });
+  Object.assign(S,{cart,form:sn.form||{},tarifa:sn.tarifa,recoger:!!sn.recoger,sumar:!!sn.sumar,resguardar:!!sn.resguardar,factura:!!sn.factura,crearCuenta:sn.crearCuenta!==false});
+  S.timerFin=Date.now()+15*60000;
+  if(sn.cliente){ const c=buscarClienta(sn.cliente.wa)||sn.cliente; CLIENTAS[c.wa]=c; setCliente(c); }
+  Object.keys(cart).forEach(patch); actualizar();
+  if(pago==='ok'){ try{localStorage.removeItem('marvea.pedido');}catch(_){} if(pzs()>=MIN){ abrirCheckout(); finalizar('tarjeta',sn.folio); } else toast('Pago recibido ✓','ok'); }
+  else { toast('El pago se canceló. Tus piezas siguen en tu carrito.','alerta'); if(innerWidth<980) toggleCarritoM(true); }
+}
 function finalizar(metodo,folio){
   let c=S.cliente; const nueva=!c;
   if(!c){const wa=S.form.wa.replace(/\D/g,'');c=CLIENTAS[wa]={wa,nombre:S.form.nombre,negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',cp:S.form.cp||'',ref:S.form.ref||''};}
@@ -989,7 +1020,7 @@ function finalizar(metodo,folio){
   if(nueva&&S.crearCuenta){ c.pass=pwd; c.cuenta=true; }
   document.getElementById('coBody').innerHTML=`
     <div class="exito"><h3>${metodo==='tarjeta'?`¡Listo, ${nom}! <i>${resg?'Tu paquete queda en resguardo.':pv?'Tus piezas quedan apartadas.':'Ya estamos preparando tu pedido.'}</i>`:`Ya casi, ${nom}. <i>Envíanos tu comprobante.</i>`}</h3>
-      <p>Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta':'pendiente de transferencia (apartado 24 h; ya se abrió tu chat de WhatsApp)'}.</p>
+      <p>Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 24 h; ya se abrió tu chat de WhatsApp)'}.</p>
       <div class="chips"><span class="chip">📦 ${n} piezas · ${k.toFixed(2)} kg</span><span class="chip">${S.recoger?'📍 Recoges gratis en Monterrey':resg?'🗃 En resguardo':'✈️ DHL Express'}</span>${pv?'<span class="chip">⏳ Con preventa</span>':''}${fac?'<span class="chip">🧾 Factura</span>':''}</div>
     </div>
     ${(nueva&&!S.crearCuenta)?`<div class="club"><span class="kicker" style="color:var(--ciruela)">Compraste sin cuenta</span>
@@ -1024,6 +1055,7 @@ try{ if(localStorage.getItem('marvea.beta')==='1'||new URLSearchParams(location.
   const top=topList(); CLIENTA_DEMO.ultimo.items=Object.fromEntries(top.slice(0,3).map((x,i)=>[x.c,[6,4,4][i]]));
   document.getElementById('nModelos').textContent=P.length;
   renderPreg(); renderTop(); renderFiltros(); renderGrid(true); renderCalcSel(); renderCalc(); actualizar();
+  regresoStripe();
 })();
 </script>
 </body>
