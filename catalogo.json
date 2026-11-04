@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-04T19:41:18.738Z",
+ "actualizado": "2026-11-04T19:50:43.963Z",
  "categorias": [
   {
    "p": "ANI",
@@ -290,6 +290,18 @@
    "notas": "",
    "foto": "fotos/8f4e3d917bdd135758293e140b702e04.jpg",
    "creado": "2026-10-19T02:04:48.140Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00011",
+   "nombre": "Aretes Zirconia Pera",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e92e4186b544badc808cb44371617697.jpg",
+   "creado": "2026-10-19T02:07:55.947Z",
    "disponible": true
   },
   {
