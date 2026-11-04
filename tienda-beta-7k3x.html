@@ -979,16 +979,18 @@ const NEG={
   bazar:{txt:'Bazares o temporadas',w:{Pulseras:1.3,Aretes:1.2,Anillos:1.2,Collares:.9,Cadenas:.8,Dijes:1.2,Juegos:.7},porque:'En bazar se mueven las piezas de precio bajo que se compran por impulso o para regalo.'},
   empiezo:{txt:'Apenas voy a empezar',w:{Aretes:1.2,Cadenas:1.1,Pulseras:1.1,Collares:1,Anillos:1,Dijes:.6,Juegos:.8},porque:'Para empezar, lo más seguro es lo que ya se vende mucho: menos riesgo y recuperas más rápido.'}
 };
-const A={neg:'empiezo',pres:1500,est:'Mezcla',pref:'top',semilla:0,prop:null};
+const A={neg:'empiezo',pres:1500,est:[],pref:'top',semilla:0,prop:null};
 const PREG=[
   ['neg','¿Cómo vendes?',Object.entries(NEG).map(([k,v])=>[k,v.txt])],
-  ['est','¿Qué estilo buscan tus clientes?',[['Acero','Acero (no se oxida)'],['Oro','Dorado'],['Mezcla','De todo un poco']]],
+  ['est','¿Qué material prefieren? (puedes elegir varios)',[['acero','Acero'],['chapa','Chapa de oro'],['laminado','Oro laminado']]],
   ['pref','¿Qué te importa más?',[['top','🏆 Lo más pedido'],['var','🎨 Más variedad'],['gan','💰 Más ganancia por pieza']]],
 ];
 function renderPreg(){
-  document.getElementById('preg').innerHTML=PREG.map(([k,q,ops],i)=>`<div><div class="q"><span>${i+1}.</span> ${q}</div><div class="ops">${ops.map(([v,l])=>`<button class="${A[k]===v?'on':''}" onclick="A['${k}']='${v}';renderPreg()">${l}</button>`).join('')}</div></div>`).join('');
+  document.getElementById('preg').innerHTML=PREG.map(([k,q,ops],i)=>`<div><div class="q"><span>${i+1}.</span> ${q}</div><div class="ops">${ops.map(([v,l])=>`<button class="${k==='est'?(A.est.includes(v)?'on':''):(A[k]===v?'on':'')}" onclick="${k==='est'?`toggleEst('${v}')`:`A['${k}']='${v}';renderPreg()`}">${l}</button>`).join('')}</div></div>`).join('');
   document.querySelector('.monto .rap').innerHTML=[1000,1500,2500,4000,6000].map(v=>`<button onclick="A.pres=${v};document.getElementById('montoIn').value=${v}">${fmt(v)}</button>`).join('');
 }
+function toggleEst(v){ const i=A.est.indexOf(v); if(i>=0) A.est.splice(i,1); else A.est.push(v); renderPreg(); }
+const matOk=x=>{ if(!A.est.length) return true; const m=norm(x.m); return A.est.some(e=>e==='acero'?(m.includes('acero')&&!m.includes('oro')):e==='chapa'?m.includes('chapa'):m.includes('laminado')); };
 function armarPaquete(otra){
   A.pres=parseInt(document.getElementById('montoIn').value)||0;
   if(A.pres<300){toast('Escribe el monto que quieres invertir.','alerta');return;}
@@ -996,7 +998,7 @@ function armarPaquete(otra){
 }
 function armar(){
   const w=NEG[A.neg].w, maxV=Math.max(1,...P.map(x=>x.v));
-  const pool=P.filter(x=>disp(x.c)>0&&(A.est==='Mezcla'||(A.est==='Acero'?norm(x.m).includes('acero'):norm(x.m).includes('oro'))))
+  const pool=P.filter(x=>disp(x.c)>0&&matOk(x))
     .map(x=>{let s=(w[x.cat]||1)*(A.pref==='top'?1+x.v/maxV*1.5:1)*(A.pref==='gan'?x.p/50:1)*(A.pref==='var'?1:1)+Math.sin(A.semilla*7+x.p)*.25; return {x,s};})
     .sort((a,b)=>b.s-a.s).map(o=>o.x);
   const llenar=lista=>{ const tope=A.pref==='var'?2:4, out={}; let g=0,pz=0,guard=0,ronda=0;
@@ -1026,7 +1028,7 @@ function mostrarProp(otra){
     <p class="sub" style="font-size:13px;margin:12px 0 0">Recuperas tu inversión vendiendo <b style="color:var(--ciruela)">${rec} de ${pr.pz}</b> piezas (al doble). Envío DHL estimado: ${tarifaPeso(pr.pz*PESO_G/1000)?fmt(tarifaPeso(pr.pz*PESO_G/1000).costo):'a cotizar'}.</p>
     <div class="acc"><button class="c" onclick="aceptar(true)">Agregar y pagar →</button><button class="s" onclick="aceptar(false)">Solo agregar</button></div>
     <p class="sub" style="font-size:13px;margin:12px 0 0;text-align:center"><u style="cursor:pointer" onclick="armarPaquete(true)">Otra combinación</u> &nbsp;·&nbsp; <u style="cursor:pointer" onclick="aceptarCalc()">Ajustar precios en la calculadora</u></p></div>`
-    :`<div class="prop"><b style="color:var(--ciruela)">Con ${fmt(A.pres)} y ese estilo no alcanzan ${MIN} piezas.</b><div class="acc"><button class="p" onclick="A.est='Mezcla';renderPreg();mostrarProp()">Probar “de todo un poco”</button><button class="s" onclick="document.getElementById('montoIn').value=2500;armarPaquete()">Subir a $2,500</button></div></div>`;
+    :`<div class="prop"><b style="color:var(--ciruela)">Con ${fmt(A.pres)} y esos materiales no alcanzan ${MIN} piezas.</b><div class="acc"><button class="p" onclick="A.est=[];renderPreg();mostrarProp()">Probar con todos los materiales</button><button class="s" onclick="document.getElementById('montoIn').value=2500;armarPaquete()">Subir a $2,500</button></div></div>`;
   const pel=document.getElementById('propuesta'); pel.innerHTML=html; pel.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function aceptar(pagar){ Object.entries(A.prop.out).forEach(([c,q])=>add(c,q,true)); bump(); document.getElementById('propuesta').innerHTML=''; toast(`Agregamos ${A.prop.pz} piezas a tu pedido ✓`,'ok'); if(pagar) setTimeout(abrirCheckout,350); }
