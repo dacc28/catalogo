@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-04T19:11:37.541Z",
+ "actualizado": "2026-11-04T19:41:18.738Z",
  "categorias": [
   {
    "p": "ANI",
@@ -86,18 +86,6 @@
    "notas": "",
    "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
    "creado": "2026-10-27T00:43:11.368Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00012",
-   "nombre": "Anillo Ajustable Corte Pera Dorado",
-   "categoria": "ANI",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4e73772b0f9a89ff699895fb2dcd0fcd.jpg",
-   "creado": "2026-10-27T00:44:06.875Z",
    "disponible": true
   },
   {
@@ -269,18 +257,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00005",
-   "nombre": "Aretes de Zirconia",
-   "categoria": "ARE",
-   "material": "Chapa de Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f619491e2275a49c55460c468498715c.jpg",
-   "creado": "2026-10-19T01:53:45.698Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00006",
    "nombre": "Par Xuping Brillante",
    "categoria": "ARE",
@@ -317,18 +293,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00011",
-   "nombre": "Aretes Zirconia Pera",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e92e4186b544badc808cb44371617697.jpg",
-   "creado": "2026-10-19T02:07:55.947Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00012",
    "nombre": "Aretes Pera Xuping",
    "categoria": "ARE",
@@ -358,22 +322,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/53fa4c2c86504cd7d9f5e4f2154b6d15.jpg",
    "creado": "2026-10-20T15:52:10.573Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00018",
-   "nombre": "Aretes Perla con Nudo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d601b7924ddcce73887d1e1bdc958749.jpg",
-   "creado": "2026-10-20T16:19:05.578Z",
    "disponible": true
   },
   {
@@ -1162,7 +1114,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
    "creado": "2026-10-19T02:22:32.186Z",
@@ -1250,18 +1202,6 @@
    "notas": "",
    "foto": "fotos/585e7a9a408c4a31caf9fff3fdba7491.jpg",
    "creado": "2026-10-19T02:52:30.399Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00032",
-   "nombre": "Collar Piedra Verde Menta",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f56fa6ee25fb2c935fbfe921ac0993b4.jpg",
-   "creado": "2026-10-19T02:53:29.587Z",
    "disponible": true
   },
   {
@@ -1514,18 +1454,6 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00055",
-   "nombre": "Collar Vanc",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2804a2c47e46a4b0589c3479ed8efbc3.jpg",
-   "creado": "2026-11-01T20:21:28.845Z",
    "disponible": true
   },
   {
