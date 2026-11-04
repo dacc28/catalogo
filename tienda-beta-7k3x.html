@@ -200,7 +200,8 @@ a{color:inherit}
 .top-lista{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;position:relative}
 @media (max-width:760px){.top-lista{grid-template-columns:1fr}}
 .top1{background:#fff;color:var(--tinta);border-radius:22px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
-.top1 .foto{aspect-ratio:16/10}
+.top1 .foto{aspect-ratio:16/10;overflow:hidden}
+.top1 .foto img{object-fit:contain}
 .top1 .foto svg{width:30%;height:auto}
 .top-resto{display:grid;gap:8px}
 .tr{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:10px;display:grid;grid-template-columns:auto 52px 1fr auto;gap:10px;align-items:center}
@@ -494,13 +495,40 @@ a{color:inherit}
 .noti b{display:block}
 .noti button{margin-left:auto;background:var(--ciruela);color:#fff;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12.5px;white-space:nowrap}
 .enviado{display:inline-flex;align-items:center;gap:6px;background:var(--lima);color:var(--ciruela);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;margin:4px 6px 0 0}
+/* fotos reales */
+.foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff}
+.foto.sinfoto img{display:none}
+.mf img,.mini-foto img{width:100%;height:100%;object-fit:cover;border-radius:inherit;background:#fff}
+.mf{overflow:hidden}
+.mf.sinfoto img{display:none}
+/* armador de paquetes */
+.arma{background:var(--ciruela);color:#fff;border-radius:28px;padding:24px;position:relative;overflow:hidden}
+.arma .seccion-t h3{color:#fff}.arma .seccion-t h3 i{color:var(--amarillo)}.arma .seccion-t small{color:rgba(255,255,255,.75)}
+.preg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative}
+@media (max-width:860px){.preg{grid-template-columns:1fr}}
+.preg>div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:14px}
+.preg .q{font-weight:800;font-size:14px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.preg .q span{width:22px;height:22px;border-radius:50%;background:var(--amarillo);color:var(--ciruela);display:grid;place-items:center;font-size:12px;flex:none}
+.preg .ops{display:flex;flex-wrap:wrap;gap:6px}
+.preg .ops button{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px;color:#fff;transition:all .15s}
+.preg .ops button.on{background:var(--amarillo);color:var(--ciruela);border-color:var(--amarillo)}
+.monto{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-top:14px;position:relative;flex-wrap:wrap}
+@media (max-width:640px){.monto{grid-template-columns:1fr}}
+.monto .cajam{background:#fff;color:var(--ciruela);border-radius:18px;padding:6px 6px 6px 16px;display:flex;align-items:center;gap:8px}
+.monto .cajam label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
+.monto .cajam input{flex:1;border:0;outline:none;font-family:Fraunces,serif;font-size:26px;font-weight:700;color:var(--ciruela);min-width:0;width:100%}
+.monto .rap{display:flex;gap:4px;flex-wrap:wrap}
+.monto .rap button{background:var(--crema);color:var(--ciruela);border-radius:999px;padding:6px 10px;font-weight:800;font-size:12px}
+.monto .armar{background:var(--coral);color:#fff;border-radius:18px;padding:16px 22px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 10px 24px rgba(242,101,63,.35)}
+.arma .prop{margin-top:16px;color:var(--tinta)}
+.arma .prop .li .mf{width:40px;height:40px}
 footer{background:var(--tinta);color:rgba(255,255,255,.7);font-size:13px;padding:30px 0 100px;text-align:center}
 footer b{color:#fff}
 </style>
 </head>
 <body>
 
-<div class="demo"><span class="lbl">🔒 Beta privada · solo con enlace · datos de prueba</span><span class="lbl">Modo prueba:</span><button class="fin" onclick="simFin()">⏩ Fin del apartado</button><button class="fin" onclick="simLlega()">📦 Llega existencia</button><button class="fin" onclick="salirBeta()">Salir</button></div>
+<div class="demo"><span class="lbl">🔒 Beta privada · solo con enlace · datos de prueba</span><span class="lbl">Modo prueba:</span><button class="fin" onclick="simFin()">⏩ Fin del apartado</button><button class="fin" onclick="simAgota()">🚫 Simular agotado</button><button class="fin" onclick="simLlega()">📦 Llega existencia</button><button class="fin" onclick="salirBeta()">Salir</button></div>
 
 <!-- =================================================================== TIENDA (página aparte) -->
 <div id="pgTienda">
@@ -513,32 +541,33 @@ footer b{color:#fff}
   </div>
 </div></nav>
 <div class="subnav"><div class="wrap">
-  <a class="dest" onclick="abrirAsistente()">✨ Arma mi pedido</a>
+  <a class="dest" onclick="sec('arma')">✨ Arma tu paquete</a>
   <a onclick="sec('top')">🏆 Top más vendidos</a>
-  <a onclick="sec('preventa')">⏳ Preventa</a>
   <a onclick="sec('modelos')">Todos los modelos</a>
   <a class="calc" onclick="sec('calculadora')">🧮 Calculadora de ganancias</a>
 </div></div>
 
 <div class="wrap t-hero">
-  <div class="fila"><div><span class="kicker">Tienda en línea · mayoreo</span><h1 style="margin-top:8px">Surte tu negocio <i>en minutos.</i></h1></div><div class="actividad" id="actividad">Inventario conectado en vivo</div></div>
+  <div class="fila"><div><span class="kicker">Tienda en línea · mayoreo</span><h1 style="margin-top:8px">Surte tu negocio <i>en minutos.</i></h1></div><div class="actividad" id="actividad">Catálogo real · <span id="nModelos">…</span> modelos</div></div>
   <div class="herr">
     <div class="caja"><span>🔎</span><input id="buscar" placeholder="Busca: argolla, perla, dorado…" oninput="S.busca=this.value;renderGrid(false)"></div>
-    <button class="btn-asis" onclick="abrirAsistente()">✨ Arma mi pedido</button>
+    <button class="btn-asis" onclick="sec('arma')">✨ Arma tu paquete</button>
   </div>
   <div class="hola-bar" id="hola"></div>
 </div>
 
 <div class="wrap vo">
   <div>
-    <section class="sec top" id="top"><div class="blob a" style="opacity:.35;width:380px;height:380px"></div>
-      <div class="seccion-t" style="position:relative"><div><span class="kicker" style="color:var(--amarillo)">Esta semana</span><h3>Top <i>más vendidos</i></h3></div><small>Piezas vendidas en la tienda · precio sugerido de reventa al triple</small></div>
-      <div class="top-lista" id="topLista"></div>
+    <section class="sec arma" id="arma"><div class="blob a" style="opacity:.35;width:380px;height:380px"></div>
+      <div class="seccion-t" style="position:relative"><div><span class="kicker" style="color:var(--amarillo)">Arma tu paquete</span><h3>Contesta 3 preguntas, <i>pon tu monto</i> y te armamos tu paquete.</h3></div><small>Mercancía a tu medida con lo que hay disponible hoy. Después lo ajustas como quieras.</small></div>
+      <div class="preg" id="preg"></div>
+      <div class="monto"><div><div class="cajam"><label>Quiero invertir</label><span style="font-family:Fraunces,serif;font-size:24px;font-weight:700">$</span><input id="montoIn" inputmode="numeric" value="1500" oninput="A.pres=parseInt(this.value)||0" onkeydown="if(event.key==='Enter')armarPaquete()"><span class="sub" style="font-size:12px;padding-right:8px">MXN</span></div><div class="rap" style="margin-top:6px">${''}</div></div><button class="armar" onclick="armarPaquete()">Armar mi paquete →</button></div>
+      <div id="propuesta"></div>
     </section>
 
-    <section class="sec pv-wrap" id="preventa">
-      <div class="seccion-t"><div><span class="kicker">Preventa</span><h3>Apártalas hoy, <i>llegan pronto.</i></h3><small style="color:#5A2748b0">Salen en cuanto llegan. Si las combinas con otros modelos, tu paquete sale completo.</small></div><div class="reloj" id="reloj">—</div></div>
-      <div class="grid pv-grid" id="gridPv"></div>
+    <section class="sec top" id="top"><div class="blob a" style="opacity:.35;width:380px;height:380px"></div>
+      <div class="seccion-t" style="position:relative"><div><span class="kicker" style="color:var(--amarillo)">Marvea</span><h3>Top <i>más vendidos</i></h3></div><small>Lo que más piden nuestras clientas · precio sugerido de reventa al triple</small></div>
+      <div class="top-lista" id="topLista"></div>
     </section>
 
     <section class="sec" id="modelos">
@@ -581,33 +610,34 @@ const ICONOS = {
   Cadenas:'<svg viewBox="0 0 100 100" fill="none" stroke="#5A2748" stroke-width="5"><rect x="14" y="40" width="22" height="14" rx="7"/><rect x="39" y="40" width="22" height="14" rx="7"/><rect x="64" y="40" width="22" height="14" rx="7"/><rect x="26" y="56" width="22" height="14" rx="7" stroke-opacity=".5"/><rect x="51" y="56" width="22" height="14" rx="7" stroke-opacity=".5"/></svg>',
   Anillos:'<svg viewBox="0 0 100 100" fill="none" stroke="#5A2748" stroke-width="5"><circle cx="50" cy="60" r="24"/><path d="M38 34l12-14 12 14z" fill="#F2653F" stroke="none"/></svg>'
 };
-const FONDOS = {Pulseras:'#F5C9D8',Aretes:'#CFE6F7',Collares:'#F8EE9A',Cadenas:'#DCE75A',Anillos:'#FBDFD3'};
-const CAT_COLOR = {Pulseras:'#F5C9D8',Aretes:'#9CC9EC',Collares:'#F2D84B',Cadenas:'#B9C93A',Anillos:'#F2653F'};
+const FONDOS = new Proxy({Pulseras:'#F5C9D8',Aretes:'#CFE6F7',Collares:'#F8EE9A',Cadenas:'#DCE75A',Anillos:'#FBDFD3',Dijes:'#F5C9D8',Juegos:'#CFE6F7',Tobilleras:'#DCE75A',Accesorios:'#F8EE9A'},{get:(o,k)=>o[k]||'#FBF6EC'});
+const CAT_COLOR = new Proxy({Pulseras:'#F5C9D8',Aretes:'#9CC9EC',Collares:'#F2D84B',Cadenas:'#B9C93A',Anillos:'#F2653F',Dijes:'#E8A0C0',Juegos:'#5A2748',Tobilleras:'#8DB8A0',Accesorios:'#C9A86A'},{get:(o,k)=>o[k]||'#9a8e95'});
 const PESO_G=60, MIN=12;
 const TARIFAS=[{id:'2kg',nombre:'Hasta 2 kg',max:2,costo:240},{id:'5kg',nombre:'Hasta 5 kg',max:5,costo:305}];
-const LLEGADA_PV=Date.now()+(3*24+14)*3600*1000;
-const P = [
-  {c:'PUL-0142',n:'Pulsera eslabón corazón',cat:'Pulseras',m:'Acero Inoxidable',p:45,ex:18,pal:'corazón',et:'Nuevo',v:64},
-  {c:'PUL-0097',n:'Pulsera doble perla',cat:'Pulseras',m:'Acero Inoxidable con perla',p:55,ex:7,pal:'perla',v:21},
-  {c:'ARE-0210',n:'Arete argolla texturizada',cat:'Aretes',m:'Acero Inoxidable',p:38,ex:24,pal:'argolla',v:86},
-  {c:'ARE-0188',n:'Arete gota zirconia',cat:'Aretes',m:'Chapa de oro',p:62,ex:2,pal:'gota',v:33},
-  {c:'COL-0071',n:'Collar medalla mariposa',cat:'Collares',m:'Chapa de oro',p:85,ex:11,pal:'mariposa',v:38},
-  {c:'COL-0064',n:'Collar inicial con zirconia',cat:'Collares',m:'Acero Inoxidable',p:72,ex:15,pal:'inicial',v:52},
-  {c:'CAD-0033',n:'Cadena Figaro 50 cm',cat:'Cadenas',m:'Acero Inoxidable',p:48,ex:30,pal:'figaro',v:71},
-  {c:'CAD-0029',n:'Cadena cubana 45 cm',cat:'Cadenas',m:'Acero Inoxidable',p:58,ex:0,pal:'cubana',v:44},
-  {c:'ANI-0120',n:'Anillo solitario talla 6',cat:'Anillos',m:'Acero Inoxidable',p:35,ex:12,pal:'solitario',v:47},
-  {c:'ANI-0118',n:'Anillo trenzado ajustable',cat:'Anillos',m:'Oro Laminado',p:42,ex:5,pal:'trenzado',et:'Nuevo',v:18},
-  {c:'PV-COL-0080',n:'Collar trébol esmaltado',cat:'Collares',m:'Acero Inoxidable',p:78,ex:40,pal:'trébol',pv:true,v:0},
-  {c:'PV-PUL-0150',n:'Pulsera tenis zirconia',cat:'Pulseras',m:'Oro Laminado',p:95,ex:30,pal:'tenis',pv:true,v:0},
-  {c:'PV-ARE-0220',n:'Arete broquel flor',cat:'Aretes',m:'Acero Inoxidable',p:36,ex:60,pal:'broquel',pv:true,v:0},
-  {c:'PV-ANI-0130',n:'Anillo sello minimal',cat:'Anillos',m:'Acero Inoxidable',p:40,ex:36,pal:'sello',pv:true,v:0},
-];
+let P=[]; const CATS={};
+const hash=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return h;};
+function fotoHTML(x,cls){ return x.foto?`<img src="${x.foto}" alt="" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('sinfoto')">`+(ICONOS[x.cat]||ICONOS.Collares):(ICONOS[x.cat]||ICONOS.Collares); }
+async function cargarCatalogo(){
+  let d=null;
+  try{ const r=await fetch('catalogo.json?v='+Date.now(),{cache:'no-cache'}); if(r.ok) d=await r.json(); }catch(e){}
+  if(!d||!d.productos||!d.productos.length) return false;
+  (d.categorias||[]).forEach(c=>{CATS[c.p]=c.n;});
+  P=d.productos.filter(p=>p&&p.codigo&&p.precio>0).map(p=>{
+    const cat=CATS[p.categoria]||p.categoria, h=hash(p.codigo), et=(p.etiqueta||'').trim(), etl=et.toLowerCase();
+    const ult=etl==='últimas piezas'||etl==='ultimas piezas';
+    // existencia y popularidad simuladas (privadas) hasta conectar el sistema
+    const ex=ult?2:5+(h%20);
+    const v=(etl.includes('vendido')?60:etl.includes('tendencia')?45:etl.includes('new')||etl.includes('dupe')?25:8)+(h%15);
+    return {c:p.codigo,n:p.nombre,cat,catP:p.categoria,m:p.material||'',p:Number(p.precio),foto:p.foto||'',et:ult?'':(et&&etl!=='ninguna'?et:''),notas:p.notas||'',ex,v,creado:p.creado||''};
+  });
+  return true;
+}
 const CLIENTA_DEMO={cuenta:true,nombre:'Lucía Pérez',negocio:'Accesorios Luna',mail:'lucia@correo.com',dir:'Av. Vasconcelos 100',ciudad:'San Pedro Garza García',cp:'N.L. · 66220',ref:'Casa blanca con portón negro, entre Gómez Morín y Río Mississippi',
-  ultimo:{folio:'MV-20418',items:{'ARE-0210':6,'CAD-0033':4,'PUL-0142':4}},paquete:{piezas:10,kg:0.6,tarifa:'2kg',folios:['MV-20418']}};
+  ultimo:{folio:'MV-20418',items:{}},paquete:{piezas:10,kg:0.6,tarifa:'2kg',folios:['MV-20418']}};
 const CLIENTAS={};
 
 /* ============================================================ ESTADO */
-const S={stock:Object.fromEntries(P.map(x=>[x.c,{ex:x.ex,cupo:x.ex,otras:0}])),cart:{},filtro:'Todos',busca:'',cliente:null,form:{},
+const S={stock:{},cart:{},filtro:'Todos',busca:'',cliente:null,form:{},
   tarifa:null,resguardar:false,sumar:false,factura:false,clicks:0,contando:false,avisos:new Map(),notis:[],crearCuenta:true,timerFin:null,
   calc:{},mult:2};
 const prod=c=>P.find(x=>x.c===c);
@@ -615,11 +645,11 @@ const disp=c=>Math.max(0,S.stock[c].ex-S.stock[c].otras-(S.cart[c]||0));
 const pzs=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
 const sub=()=>Object.entries(S.cart).reduce((a,[c,q])=>a+prod(c).p*q,0);
 const kg=()=>pzs()*PESO_G/1000;
-const hayPV=()=>Object.keys(S.cart).some(c=>prod(c).pv);
+const hayPV=()=>false;
 const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX');
 const tarifaPeso=k=>TARIFAS.find(t=>k<=t.max)||null;
 const norm=s=>(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-const topList=()=>P.filter(x=>!x.pv).sort((a,b)=>b.v-a.v).slice(0,5);
+const topList=()=>[...P].sort((a,b)=>b.v-a.v).slice(0,5);
 function envio(){
   if(!pzs()) return {costo:0};
   const pq=S.cliente&&S.cliente.paquete;
@@ -640,9 +670,8 @@ function sec(id){const el=document.getElementById(id);const y=el.getBoundingClie
 /* ============================================================ TARJETAS (se dibujan una vez; luego se actualizan en sitio, sin parpadeo) */
 function card(x){
   return `<article class="prod" id="k-${x.c}" style="--f:${FONDOS[x.cat]}">
-    <div class="foto">${ICONOS[x.cat]}<span class="tag"></span><button class="calc-ic" title="Agregar a la calculadora" onclick="calcToggle('${x.c}')">🧮</button></div>
+    <div class="foto">${fotoHTML(x)}<span class="tag"></span><button class="calc-ic" title="Agregar a la calculadora" onclick="calcToggle('${x.c}')">🧮</button></div>
     <div class="cuerpo"><div class="cat">${x.cat}</div><div class="nom">${x.n}</div><div class="mat">${x.m}</div>
-      ${x.pv?'<div class="cupo"><small>⏳ Apártala desde hoy · sale al llegar</small></div>':''}
       <div class="fila-c"><b>$${x.p} <small>MXN</small></b>
         <span class="ctl"><span class="step"><button class="menos" onclick="quitar1('${x.c}')">−</button><input type="number" min="0" inputmode="numeric" value="0" onchange="setQty('${x.c}',this.value)" onfocus="this.select()"><button class="sm" onclick="add('${x.c}')">+</button></span>
         <button class="avisame oculto" onclick="avisame('${x.c}')">Avísame</button></span>
@@ -653,8 +682,7 @@ function patch(c){
   const el=document.getElementById('k-'+c); if(!el) return;
   const x=prod(c),d=disp(c),q=S.cart[c]||0,s=S.stock[c];
   const tg=el.querySelector('.tag');
-  if(x.pv){tg.textContent='Preventa';tg.className='tag pv';}
-  else if(s.ex===0){tg.textContent='Agotado';tg.className='tag ago';}
+  if(s.ex===0){tg.textContent='Agotado';tg.className='tag ago';}
   else if(d>0&&d<=2){tg.textContent='Últimas piezas';tg.className='tag ult';}
   else if(x.et){tg.textContent=x.et;tg.className='tag';} else tg.className='tag oculto';
   const ago=s.ex===0, stp=el.querySelector('.step');
@@ -666,12 +694,12 @@ function patch(c){
 }
 function flash(c){const s=document.getElementById('k-'+c);if(s){s.classList.add('flash');setTimeout(()=>s.classList.remove('flash'),450);}}
 function renderFiltros(){
-  const cats=['Todos',...new Set(P.filter(x=>!x.pv).map(x=>x.cat))];
+  const cats=['Todos',...new Set(P.map(x=>x.cat))];
   document.getElementById('filtros').innerHTML=cats.map(c=>`<button class="${S.filtro===c?'on':''}" onclick="S.filtro='${c}';renderFiltros();renderGrid(true)">${c}</button>`).join('');
 }
 function renderGrid(anim){
   const g=document.getElementById('grid'),b=norm(S.busca);
-  const l=P.filter(x=>!x.pv&&(S.filtro==='Todos'||x.cat===S.filtro)&&(!b||norm(x.n+' '+x.m+' '+x.cat).includes(b)||(b==='dorado'&&norm(x.m).includes('oro'))));
+  const l=P.filter(x=>(S.filtro==='Todos'||x.cat===S.filtro)&&(!b||norm(x.n+' '+x.m+' '+x.cat+' '+x.c+' '+x.et).includes(b)||(b==='dorado'&&norm(x.m).includes('oro'))));
   g.classList.toggle('anim',!!anim);
   g.innerHTML=l.length?l.map(card).join(''):'<div class="vacio" style="grid-column:1/-1">No encontramos ese modelo. Prueba con otra palabra o escríbenos por WhatsApp.</div>';
   l.forEach(x=>patch(x.c)); if(anim) setTimeout(()=>g.classList.remove('anim'),600);
@@ -681,11 +709,11 @@ function renderGrid(anim){
 function renderTop(){
   const t=topList(), max=t[0].v, [a,...r]=t;
   document.getElementById('topLista').innerHTML=`
-    <div class="top1" data-top="${a.c}" style="--f:${FONDOS[a.cat]}"><div class="foto" style="--f:${FONDOS[a.cat]}"><span class="medalla">🏆 #1 de la semana</span>${ICONOS[a.cat]}</div>
-      <div class="cuerpo"><div class="cat">${a.cat} · ${a.v} vendidas esta semana · sugerimos venderlo al triple</div><div class="nom" style="font-size:22px">${a.n}</div><div class="mat">${a.m}</div>
+    <div class="top1" data-top="${a.c}" style="--f:${FONDOS[a.cat]}"><div class="foto" style="--f:${FONDOS[a.cat]}">${fotoHTML(a)}<span class="medalla">🏆 #1</span></div>
+      <div class="cuerpo"><div class="cat">${a.cat}${a.et?' · '+a.et:''} · sugerimos venderlo al triple</div><div class="nom" style="font-size:22px">${a.n}</div><div class="mat">${a.m}</div>
       <div class="fila-c"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b>$${a.p} <small>MXN</small></b><span class="aprox">véndelo en <b class="ap">≈</b><strong>${fmt(a.p*3)}</strong></span></span><span class="quick"><button onclick="add('${a.c}')">+1</button><button class="c" onclick="add('${a.c}',3)">+3</button></span></div></div></div>
-    <div class="top-resto">${r.map((x,i)=>`<div class="tr" data-top="${x.c}"><span class="rk">${i+2}</span><span class="mf" style="--f:${FONDOS[x.cat]}">${ICONOS[x.cat]}</span>
-      <div><div class="t">${x.n}</div><div class="s">$${x.p} · ${x.v} vendidas</div><span class="aprox chico" style="margin-top:4px">véndelo en <b class="ap">≈</b><strong>${fmt(x.p*3)}</strong></span><div class="bar"><i style="width:${x.v/max*100}%"></i></div></div>
+    <div class="top-resto">${r.map((x,i)=>`<div class="tr" data-top="${x.c}"><span class="rk">${i+2}</span><span class="mf" style="--f:${FONDOS[x.cat]}">${fotoHTML(x)}</span>
+      <div><div class="t">${x.n}</div><div class="s">$${x.p}${x.et?' · '+x.et:''}</div><span class="aprox chico" style="margin-top:4px">véndelo en <b class="ap">≈</b><strong>${fmt(x.p*3)}</strong></span></div>
       <span class="quick"><button onclick="add('${x.c}')">+1</button><button class="c" onclick="add('${x.c}',3)">+3</button></span></div>`).join('')}</div>`;
   t.forEach(x=>document.querySelectorAll(`[data-top="${x.c}"]`).forEach(patchTop));
 }
@@ -720,15 +748,14 @@ function renderCarrito(){
   document.getElementById('tabN').textContent=n;
   const mi=document.getElementById('minimo'); mi.className='minimo'+(ok?' ok':'');
   mi.innerHTML=`<div class="t"><span>Mínimo de mayoreo</span><span><b>${n}</b> / ${MIN} piezas</span></div><div class="barra"><i style="width:${Math.min(100,n/MIN*100)}%"></i></div>
-    <small>${ok?'✓ Ya cumples el mínimo':(n?`Te faltan ${MIN-n} · <button onclick="completar()">completar con el Top</button>`:'Agrega modelos o deja que te armemos el pedido')}</small>`;
+    <small>${ok?'✓ Ya cumples el mínimo':(n?`Te faltan ${MIN-n} · <button onclick="completar()">completar con el Top</button>`:'Agrega modelos o deja que te armemos tu paquete')}</small>`;
   document.getElementById('notis').innerHTML=S.notis.map((o,i)=>`<div class="noti">🔔<div><b>¡Ya está disponible ${prod(o.c).n}!</b>Te avisamos por ${[o.av.mail?'correo':'',o.av.wa?'WhatsApp':''].filter(Boolean).join(' y ')}.</div><button onclick="add('${o.c}');S.notis.splice(${i},1);renderCarrito()">Agregar</button></div>`).join('');
-  document.getElementById('lista').innerHTML=n?Object.entries(S.cart).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf" style="--f:${FONDOS[x.cat]}">${ICONOS[x.cat]}</div><div><div class="t">${x.n}</div><div class="s">${x.pv?'Preventa · ':''}$${x.p} c/u</div></div><div class="q"><button onclick="quitar1('${c}')">−</button>${q}<button onclick="add('${c}')" ${disp(c)?'':'disabled'}>+</button></div></div>`}).join(''):'<div class="vacio">Tu pedido está vacío.<br>Usa <b>+</b>, escribe la cantidad o prueba <b>✨ Arma mi pedido</b>.</div>';
+  document.getElementById('lista').innerHTML=n?Object.entries(S.cart).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf" style="--f:${FONDOS[x.cat]}">${fotoHTML(x)}</div><div><div class="t">${x.n}</div><div class="s">$${x.p} c/u</div></div><div class="q"><button onclick="quitar1('${c}')">−</button>${q}<button onclick="add('${c}')" ${disp(c)?'':'disabled'}>+</button></div></div>`}).join(''):'<div class="vacio">Tu pedido está vacío.<br>Usa <b>+</b>, escribe la cantidad o prueba <b>✨ Arma tu paquete</b>.</div>';
   const e=envio(), gan=Object.entries(S.cart).reduce((a,[c,q])=>a+(pVenta(c)-prod(c).p)*q,0);
   document.getElementById('tot').innerHTML=`<div class="f"><span>Subtotal</span><span>${fmt(sub())}</span></div>
     <div class="f"><span>Envío DHL ${n?`(${kg().toFixed(2)} kg)`:''}</span><span>${n?(e.costo===null?'a cotizar':fmt(e.costo)):'—'}</span></div>
     <div class="f total"><span>Total</span><span>${fmt(total())} <small style="font-size:12px;font-weight:600">MXN</small></span></div>
     ${n?`<div class="ganancia"><span>💰 Ganas entre ${fmt(sub())} y ${fmt(sub()*2)} <small style="font-weight:600">(×2–×3)</small></span><button onclick="calcDesdeCarrito();sec('calculadora');toggleCarritoM(false)">ajustar</button></div>`:''}
-    ${hayPV()?'<div class="nota" style="font-size:12px">Incluye preventa: tu paquete sale cuando llegue.</div>':''}
     <button class="comprar" ${ok?'':'disabled'} onclick="abrirCheckout()">Comprar ahora →</button>
     ${n?'<div class="libera">⏱ Tus piezas quedan apartadas 15 minutos. Si no terminas tu compra, regresan solas al inventario.</div>':''}`;
   document.getElementById('bmTot').textContent=fmt(total());
@@ -744,21 +771,20 @@ setInterval(()=>{
   if(!pzs()) t.textContent=''; else { const ms=S.timerFin-Date.now();
     if(ms<=0){const cs=Object.keys(S.cart);S.cart={};cs.forEach(patch);actualizar();toast('Pasaron los 15 minutos: tus piezas regresaron al inventario y quedan libres para otras compras.','alerta');}
     else t.textContent=`⏱ apartadas ${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms%60000/1000)).padStart(2,'0')}`; }
-  const r=LLEGADA_PV-Date.now(),d=Math.floor(r/864e5),h=Math.floor(r%864e5/36e5),m=Math.floor(r%36e5/6e4),s=Math.floor(r%6e4/1e3);
-  document.getElementById('reloj').textContent=`Llegan en ${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
 },1000);
 const QUIEN=['Karen · Saltillo','Fer · CDMX','Andrea · Torreón','Pau · Guadalajara','Vale · Monterrey','Sofi · Reynosa'];
 setInterval(()=>{
   const cs=P.filter(x=>disp(x.c)>1); if(!cs.length) return;
   const x=cs[Math.floor(Math.random()*cs.length)],n=1+Math.floor(Math.random()*2);
-  S.stock[x.c].otras+=n; if(!x.pv) x.v+=n; patch(x.c); flash(x.c); actualizar();
+  S.stock[x.c].otras+=n; x.v+=n; patch(x.c); flash(x.c); actualizar();
   document.getElementById('actividad').textContent=`${QUIEN[Math.floor(Math.random()*QUIEN.length)]} apartó ${n} · ${x.n}`;
 },12000);
 
 function simFin(){ if(!pzs()){toast('Agrega piezas primero para ver cómo se liberan.');return;} S.timerFin=Date.now()-1; }
 /* ============================================================ CALCULADORA DE GANANCIAS */
 function renderCalcSel(){
-  document.getElementById('calcSel').innerHTML='<option value="">Elige un modelo…</option>'+P.map(x=>`<option value="${x.c}">${x.n} · $${x.p}${x.pv?' (preventa)':''}</option>`).join('');
+  const porCat={}; P.forEach(x=>{(porCat[x.cat]=porCat[x.cat]||[]).push(x);});
+  document.getElementById('calcSel').innerHTML='<option value="">Elige un modelo…</option>'+Object.entries(porCat).map(([k,l])=>`<optgroup label="${k}">`+l.map(x=>`<option value="${x.c}">${x.n} · $${x.p}</option>`).join('')+'</optgroup>').join('');
   document.getElementById('multBtns').innerHTML=[2,2.5,3].map(m=>`<button class="${S.mult===m?'on':''}" onclick="setMult(${m})">×${m}</button>`).join(' ');
 }
 function setMult(m){S.mult=m;Object.keys(S.calc).forEach(c=>S.calc[c].pv=Math.round(prod(c).p*m));renderCalcSel();renderCalc();renderCarrito();}
@@ -772,7 +798,7 @@ function renderCalc(){
   const b=document.getElementById('calcBody'), ks=Object.keys(S.calc);
   if(!ks.length){ b.innerHTML='<div class="vacioC">Toca 🧮 en cualquier modelo, elige uno arriba o usa tu carrito.<br>Así ves cuánto ganarías antes de comprar.</div>'; return; }
   b.innerHTML=`<table class="ctab"><thead><tr><th>Modelo</th><th>Te cuesta</th><th>Cuántas</th><th>Lo vendes en</th><th>Ganas</th><th></th></tr></thead><tbody>
-    ${ks.map(c=>{const x=prod(c),o=S.calc[c];return `<tr><td><span class="m"><span class="mf" style="--f:${FONDOS[x.cat]}">${ICONOS[x.cat]}</span>${x.n}</span></td>
+    ${ks.map(c=>{const x=prod(c),o=S.calc[c];return `<tr><td><span class="m"><span class="mf" style="--f:${FONDOS[x.cat]}">${fotoHTML(x)}</span>${x.n}</span></td>
       <td data-l="Te cuesta">$${x.p}</td><td data-l="Cuántas"><input type="number" min="0" value="${o.q}" oninput="calcSet('${c}','q',this.value)"></td>
       <td data-l="Lo vendes en"><input type="number" min="0" value="${o.pv}" oninput="calcSet('${c}','pv',this.value)"></td>
       <td data-l="Ganas" class="g" id="g-${c}"></td><td><button class="del" onclick="calcQuitar('${c}')">✕</button></td></tr>`}).join('')}
@@ -828,7 +854,7 @@ function repetir(){let f=0;Object.entries(S.cliente.ultimo.items).forEach(([c,q]
 function avisame(c){
   if(S.avisos.has(c)) return; const cl=S.cliente||{};
   abrirModal(`<div class="m-cab"><h3>Avísame cuando <i>esté disponible</i></h3><button class="x-btn" onclick="cerrarModal()">✕</button></div>
-   <div class="m-body"><div class="yo" style="margin-bottom:12px"><span class="mf" style="width:42px;height:42px;border-radius:12px;background:${FONDOS[prod(c).cat]};display:grid;place-items:center;flex:none">${ICONOS[prod(c).cat]}</span><div><b>${prod(c).n}</b><br><span class="sub">${prod(c).m} · $${prod(c).p}</span></div></div>
+   <div class="m-body"><div class="yo" style="margin-bottom:12px"><span class="mf" style="width:42px;height:42px;border-radius:12px;background:${FONDOS[prod(c).cat]};display:grid;place-items:center;flex:none">${fotoHTML(prod(c))}</span><div><b>${prod(c).n}</b><br><span class="sub">${prod(c).m} · $${prod(c).p}</span></div></div>
    <p class="sub" style="margin:0 0 10px;font-size:13.5px">En cuanto vuelva a haber piezas te avisamos en automático y te la dejamos lista en tu carrito.</p>
    <div class="form"><div class="campo"><label>Correo</label><input id="avMail" type="email" value="${cl.mail||S.form.mail||''}" placeholder="tu@correo.com"></div><div class="campo"><label>WhatsApp</label><input id="avWa" inputmode="numeric" maxlength="10" value="${cl.wa||S.form.wa||''}" placeholder="81 0000 0000"></div></div>
    <div class="acc"><button class="p" onclick="guardarAviso('${c}')">Avísame</button></div></div>`,true);
@@ -839,9 +865,10 @@ function guardarAviso(c){
   S.avisos.set(c,{mail,wa}); patch(c); cerrarModal();
   toast(`Listo: te avisamos por ${[mail?'correo':'',wa?'WhatsApp':''].filter(Boolean).join(' y ')} cuando <b>${prod(c).n}</b> esté disponible.`,'ok');
 }
+function simAgota(){ const x=P.find(y=>S.stock[y.c].ex>0&&!S.cart[y.c]); if(!x) return; S.stock[x.c].ex=0; S.stock[x.c].otras=0; patch(x.c); actualizar(); S.filtro='Todos'; S.busca=''; document.getElementById('buscar').value=''; renderFiltros(); renderGrid(false); document.getElementById('k-'+x.c)?.scrollIntoView({behavior:'smooth',block:'center'}); toast(`Prueba: <b>${x.n}</b> quedó como agotado. Déjale un “Avísame”.`); }
 function simLlega(){
-  const c=[...S.avisos.keys()].find(k=>S.stock[k].ex===0)||P.find(x=>S.stock[x.c].ex===0&&!x.pv)?.c;
-  if(!c){toast('Primero deja un “Avísame” en un modelo agotado (Cadena cubana).');return;}
+  const c=[...S.avisos.keys()].find(k=>S.stock[k].ex===0)||P.find(x=>S.stock[x.c].ex===0)?.c;
+  if(!c){toast('Primero usa “Simular agotado” y deja un “Avísame” en ese modelo.');return;}
   S.stock[c].ex=10; const av=S.avisos.get(c); patch(c); if(av){ S.notis.unshift({c,av}); S.avisos.delete(c); patch(c); }
   actualizar(); if(innerWidth<980) toggleCarritoM(true);
   toast(av?`📦 Llegó <b>${prod(c).n}</b>: se envió aviso ${[av.mail?'por correo':'',av.wa?'por WhatsApp':''].filter(Boolean).join(' y ')} y ya aparece en tu carrito.`:`Llegó existencia de <b>${prod(c).n}</b>.`,'ok');
@@ -849,46 +876,37 @@ function simLlega(){
 
 /* ============================================================ ASISTENTE "ARMA MI PEDIDO" (tipo chat) */
 const NEG={
-  tienda:{txt:'Tengo tienda o local',w:{Aretes:1,Collares:1,Pulseras:1,Anillos:1,Cadenas:1},porque:'Para un local conviene variedad: que el aparador se vea lleno con poquitas piezas de muchos modelos.'},
-  redes:{txt:'Vendo por redes / catálogo',w:{Aretes:1.3,Collares:1.4,Pulseras:1.1,Anillos:.8,Cadenas:.9},porque:'En redes se venden más los collares y aretes: se ven mejor en foto y en video.'},
-  bazar:{txt:'Bazares o temporadas',w:{Pulseras:1.3,Aretes:1.2,Anillos:1.2,Collares:.9,Cadenas:.8},porque:'En bazar se mueven las piezas de precio bajo que se compran por impulso o para regalo.'},
-  empiezo:{txt:'Apenas voy a empezar',w:{Aretes:1.2,Cadenas:1.1,Pulseras:1.1,Collares:1,Anillos:1},porque:'Para empezar, lo más seguro es lo que ya se vende mucho: menos riesgo y recuperas más rápido.'}
+  tienda:{txt:'Tengo tienda o local',w:{Aretes:1,Collares:1,Pulseras:1,Anillos:1,Cadenas:1,Dijes:.8,Juegos:.9},porque:'Para un local conviene variedad: que el aparador se vea lleno con poquitas piezas de muchos modelos.'},
+  redes:{txt:'Vendo por redes / catálogo',w:{Aretes:1.3,Collares:1.4,Pulseras:1.1,Anillos:.8,Cadenas:.9,Dijes:.7,Juegos:1.2},porque:'En redes se venden más los collares y aretes: se ven mejor en foto y en video.'},
+  bazar:{txt:'Bazares o temporadas',w:{Pulseras:1.3,Aretes:1.2,Anillos:1.2,Collares:.9,Cadenas:.8,Dijes:1.2,Juegos:.7},porque:'En bazar se mueven las piezas de precio bajo que se compran por impulso o para regalo.'},
+  empiezo:{txt:'Apenas voy a empezar',w:{Aretes:1.2,Cadenas:1.1,Pulseras:1.1,Collares:1,Anillos:1,Dijes:.6,Juegos:.8},porque:'Para empezar, lo más seguro es lo que ya se vende mucho: menos riesgo y recuperas más rápido.'}
 };
-const A={paso:0,neg:null,pres:null,est:null,pref:null,semilla:0,prop:null,log:[]};
-function abrirAsistente(){
-  Object.assign(A,{paso:0,neg:null,pres:null,est:null,pref:null,semilla:0,prop:null,log:[]});
-  abrirModal(`<div class="m-cab"><h3>Arma mi pedido <i>conmigo</i></h3><button class="x-btn" onclick="cerrarModal()">✕</button></div><div class="m-body"><div class="chat" id="chat"></div></div>`);
-  decir('¡Hola! Soy el asistente de Marvea ✨ Te armo un pedido de mayoreo según tu negocio y tu presupuesto, y te digo cuánto puedes ganar. ¿Cómo vendes?',
-    [...Object.entries(NEG).map(([k,v])=>[v.txt,`resp('neg','${k}')`]),['⚡ Ármalo tú, rápido',"rapido()",'rap']]);
+const A={neg:'empiezo',pres:1500,est:'Mezcla',pref:'top',semilla:0,prop:null};
+const PREG=[
+  ['neg','¿Cómo vendes?',Object.entries(NEG).map(([k,v])=>[k,v.txt])],
+  ['est','¿Qué estilo buscan tus clientes?',[['Acero','Acero (no se oxida)'],['Oro','Dorado'],['Mezcla','De todo un poco']]],
+  ['pref','¿Qué te importa más?',[['top','🏆 Lo más pedido'],['var','🎨 Más variedad'],['gan','💰 Más ganancia por pieza']]],
+];
+function renderPreg(){
+  document.getElementById('preg').innerHTML=PREG.map(([k,q,ops],i)=>`<div><div class="q"><span>${i+1}</span>${q}</div><div class="ops">${ops.map(([v,l])=>`<button class="${A[k]===v?'on':''}" onclick="A['${k}']='${v}';renderPreg()">${l}</button>`).join('')}</div></div>`).join('');
+  document.querySelector('.monto .rap').innerHTML=[1000,1500,2500,4000,6000].map(v=>`<button onclick="A.pres=${v};document.getElementById('montoIn').value=${v}">${fmt(v)}</button>`).join('');
 }
-function pintar(){
-  document.getElementById('chat').innerHTML=A.log.map(m=>m.t==='mv'?`<div class="bub mv"><span class="quien">Asistente Marvea</span>${m.h}</div>`:m.t==='yo'?`<div class="bub yo">${m.h}</div>`:m.t==='opc'?`<div class="opc">${m.h}</div>`:m.h).join('');
-  const md=document.getElementById('modal'); md.scrollTo({top:md.scrollHeight,behavior:'smooth'});
+function armarPaquete(otra){
+  A.pres=parseInt(document.getElementById('montoIn').value)||0;
+  if(A.pres<300){toast('Escribe el monto que quieres invertir.','alerta');return;}
+  mostrarProp(otra);
 }
-function decir(txt,ops,extra){
-  A.log=A.log.filter(m=>m.t!=='opc'); A.log.push({t:'tip',h:'<div class="escribiendo"><i></i><i></i><i></i></div>'}); pintar();
-  setTimeout(()=>{ A.log=A.log.filter(m=>m.t!=='tip'); A.log.push({t:'mv',h:txt}); if(extra) A.log.push({t:'raw',h:extra});
-    if(ops) A.log.push({t:'opc',h:ops.map(([l,f,cl])=>`<button class="${cl||''}" onclick="${f}">${l}</button>`).join('')}); pintar(); },650);
-}
-function yo(t){A.log=A.log.filter(m=>m.t!=='opc');A.log.push({t:'yo',h:t});pintar();}
-function resp(campo,val){
-  if(campo==='neg'){A.neg=val;yo(NEG[val].txt);decir('¡Perfecto! ¿Cuánto quieres invertir en este pedido?',[[ '$1,000',"resp('pres',1000)"],['$1,500',"resp('pres',1500)"],['$2,500',"resp('pres',2500)"],['$4,000',"resp('pres',4000)"]]);}
-  if(campo==='pres'){A.pres=val;yo(fmt(val));decir('¿Qué estilo buscan tus clientes?',[['Acero (no se oxida)',"resp('est','Acero')"],['Dorado',"resp('est','Oro')"],['De todo un poco',"resp('est','Mezcla')"]]);}
-  if(campo==='est'){A.est=val;yo({Acero:'Acero',Oro:'Dorado',Mezcla:'De todo un poco'}[val]);decir('Última: ¿qué te importa más?',[['🏆 Lo más vendido',"resp('pref','top')"],['🎨 Más variedad',"resp('pref','var')"],['💰 Más ganancia por pieza',"resp('pref','gan')"]]);}
-  if(campo==='pref'){A.pref=val;yo({top:'Lo más vendido',var:'Más variedad',gan:'Más ganancia por pieza'}[val]);mostrarProp();}
-}
-function rapido(){ yo('⚡ Ármalo tú, rápido'); Object.assign(A,{neg:'empiezo',pres:1000,est:'Mezcla',pref:'top'}); mostrarProp(); }
 function armar(){
-  const w=NEG[A.neg].w, maxV=Math.max(...P.map(x=>x.v));
-  const pool=P.filter(x=>!x.pv&&disp(x.c)>0&&(A.est==='Mezcla'||(A.est==='Acero'?norm(x.m).includes('acero'):norm(x.m).includes('oro'))))
-    .map(x=>{let s=w[x.cat]*(A.pref==='top'?1+x.v/maxV*1.5:1)*(A.pref==='gan'?x.p/50:1)*(A.pref==='var'?1:1)+Math.sin(A.semilla*7+x.p)*.25; return {x,s};})
+  const w=NEG[A.neg].w, maxV=Math.max(1,...P.map(x=>x.v));
+  const pool=P.filter(x=>disp(x.c)>0&&(A.est==='Mezcla'||(A.est==='Acero'?norm(x.m).includes('acero'):norm(x.m).includes('oro'))))
+    .map(x=>{let s=(w[x.cat]||1)*(A.pref==='top'?1+x.v/maxV*1.5:1)*(A.pref==='gan'?x.p/50:1)*(A.pref==='var'?1:1)+Math.sin(A.semilla*7+x.p)*.25; return {x,s};})
     .sort((a,b)=>b.s-a.s).map(o=>o.x);
   const llenar=lista=>{ const tope=A.pref==='var'?2:4, out={}; let g=0,pz=0,guard=0,ronda=0;
     while(guard++<600){ let puso=false;
       for(const x of lista){ const ya=out[x.c]||0; if(ya>=Math.min(disp(x.c),tope*(ronda+1))) continue; if(g+x.p>A.pres) continue; out[x.c]=ya+1; g+=x.p; pz++; puso=true; }
       if(!puso){ if(ronda>5) break; ronda++; } }
     return {out,g,pz}; };
-  const corta=A.pref==='top'?pool.slice(0,5):A.pref==='gan'?pool.slice(0,6):pool;
+  const corta=A.pref==='top'?pool.slice(0,6):A.pref==='gan'?pool.slice(0,8):pool.slice(0,14);
   let r=llenar(corta); if(r.pz<MIN&&corta.length<pool.length) r=llenar(pool);
   const {out,g,pz}=r;
   return {out,g,pz};
@@ -900,20 +918,21 @@ function mostrarProp(otra){
   const porCat={}; Object.entries(pr.out).forEach(([c,q])=>{const k=prod(c).cat;porCat[k]=(porCat[k]||0)+q;});
   const prom=pr.pz?venta/pr.pz:0, rec=prom?Math.ceil(pr.g/prom):0;
   const html=ok?`<div class="prop">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><span class="kicker">Tu paquete sugerido</span><span class="sub" style="font-size:12.5px">${otra?'Otra combinación':'Según tus 3 respuestas y tu monto'}</span></div>
     <div class="porque">💡 ${NEG[A.neg].porque}</div>
-    <b style="color:var(--ciruela);font-family:Fraunces,serif;font-size:20px">Tu pedido · ${pr.pz} piezas, ${Object.keys(pr.out).length} modelos</b>
+    <b style="color:var(--ciruela);font-family:Fraunces,serif;font-size:20px">${pr.pz} piezas · ${Object.keys(pr.out).length} modelos · ${fmt(pr.g)} de ${fmt(A.pres)}</b>
     <div class="mix">${Object.entries(porCat).map(([k,q])=>`<i style="width:${q/pr.pz*100}%;background:${CAT_COLOR[k]}"></i>`).join('')}</div>
     <div class="ley">${Object.entries(porCat).map(([k,q])=>`<span style="--c:${CAT_COLOR[k]}">${k} ${q}</span>`).join('')}</div>
     <div class="k3"><div><span>Inviertes</span><b>${fmt(pr.g)}</b></div><div><span>Lo vendes en (×2–×3)</span><b style="font-size:18px">${fmt(venta)} – ${fmt(pr.g*3)}</b></div><div class="g"><span>Ganas</span><b style="font-size:18px">${fmt(gan)} – ${fmt(pr.g*2)}</b></div></div>
-    ${Object.entries(pr.out).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf" style="--f:${FONDOS[x.cat]}">${ICONOS[x.cat]}</div><div><div class="t">${x.n}${x.v>=50?' <span style="color:var(--coral);font-size:11px">🏆 top</span>':''}</div><div class="s">${x.m} · $${x.p}</div></div><div class="q">${q} pzs</div></div>`}).join('')}
+    ${Object.entries(pr.out).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf" style="--f:${FONDOS[x.cat]}">${fotoHTML(x)}</div><div><div class="t">${x.n}${x.et?' <span style="color:var(--coral);font-size:11px">'+x.et+'</span>':''}</div><div class="s">${x.m} · $${x.p}</div></div><div class="q">${q} pzs</div></div>`}).join('')}
     <div class="nota cielo" style="margin-top:10px">Recuperas tu inversión vendiendo <b>${rec} de ${pr.pz}</b> piezas (al doble). Envío DHL estimado: ${tarifaPeso(pr.pz*PESO_G/1000)?fmt(tarifaPeso(pr.pz*PESO_G/1000).costo):'a cotizar'}.</div>
     <div class="acc"><button class="c" onclick="aceptar(true)">Agregar y pagar →</button><button class="p" onclick="aceptar(false)">Solo agregar</button></div>
-    <div class="acc" style="margin-top:8px"><button class="s" onclick="mostrarProp(true)">🔄 Otra combinación</button><button class="s" onclick="aceptarCalc()">🧮 Ajustar precios</button></div></div>`
-    :`<div class="prop"><b style="color:var(--ciruela)">Con ${fmt(A.pres)} y ese estilo no alcanzan ${MIN} piezas.</b><div class="acc"><button class="p" onclick="A.est='Mezcla';mostrarProp()">Probar “de todo un poco”</button><button class="s" onclick="A.pres=2500;mostrarProp()">Subir a $2,500</button></div></div>`;
-  decir(otra?'Va, aquí tienes otra opción 👇':'Listo, esto te propongo 👇',null,html);
+    <div class="acc" style="margin-top:8px"><button class="s" onclick="armarPaquete(true)">🔄 Otra combinación</button><button class="s" onclick="aceptarCalc()">🧮 Ajustar precios</button></div></div>`
+    :`<div class="prop"><b style="color:var(--ciruela)">Con ${fmt(A.pres)} y ese estilo no alcanzan ${MIN} piezas.</b><div class="acc"><button class="p" onclick="A.est='Mezcla';renderPreg();mostrarProp()">Probar “de todo un poco”</button><button class="s" onclick="document.getElementById('montoIn').value=2500;armarPaquete()">Subir a $2,500</button></div></div>`;
+  const pel=document.getElementById('propuesta'); pel.innerHTML=html; pel.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function aceptar(pagar){ Object.entries(A.prop.out).forEach(([c,q])=>add(c,q,true)); bump(); cerrarModal(); toast(`Agregamos ${A.prop.pz} piezas a tu pedido ✓`,'ok'); if(pagar) setTimeout(abrirCheckout,350); }
-function aceptarCalc(){ Object.entries(A.prop.out).forEach(([c,q])=>{S.calc[c]={q,pv:Math.round(prod(c).p*S.mult)};patch(c);}); renderCalc(); cerrarModal(); sec('calculadora'); }
+function aceptar(pagar){ Object.entries(A.prop.out).forEach(([c,q])=>add(c,q,true)); bump(); document.getElementById('propuesta').innerHTML=''; toast(`Agregamos ${A.prop.pz} piezas a tu pedido ✓`,'ok'); if(pagar) setTimeout(abrirCheckout,350); }
+function aceptarCalc(){ Object.entries(A.prop.out).forEach(([c,q])=>{S.calc[c]={q,pv:Math.round(prod(c).p*S.mult)};patch(c);}); renderCalc(); sec('calculadora'); }
 
 function crearCuentaDespues(wa){ const c=CLIENTAS[wa]; if(!c) return; c.cuenta=true; c.pass='marvea-sol-'+Math.floor(1000+Math.random()*9000);
   const el=document.querySelector('#coBody .club'); if(el) el.innerHTML=`<span class="kicker" style="color:var(--ciruela)">Tu perfil en el Marvea Business Club</span><div class="cred"><span>Usuario</span><b>${c.wa}</b></div><div class="cred" style="border:0"><span>Contraseña</span><b>${c.pass}</b></div><div style="margin-top:8px"><span class="enviado">✉️ Enviado a ${c.mail||'tu correo'}</span><span class="enviado">📱 Enviado por WhatsApp</span></div>`;
@@ -961,7 +980,7 @@ function finalizar(metodo,folio){
   if(!c){const wa=S.form.wa.replace(/\D/g,'');c=CLIENTAS[wa]={wa,nombre:S.form.nombre,negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',cp:S.form.cp||'',ref:S.form.ref||''};}
   const e=envio(),items={...S.cart},n=pzs(),sub0=sub(),tot=total(),k=kg(),pv=hayPV(),fac=S.factura,ivaV=iva();
   const gan=Object.entries(items).reduce((a,[cd,q])=>a+(pVenta(cd)-prod(cd).p)*q,0);
-  Object.entries(items).forEach(([cd,q])=>{S.stock[cd].ex-=q; if(!prod(cd).pv) prod(cd).v+=q;});
+  Object.entries(items).forEach(([cd,q])=>{S.stock[cd].ex-=q; prod(cd).v+=q;});
   if(S.sumar&&c.paquete){c.paquete.piezas+=n;c.paquete.kg+=k;c.paquete.folios.push(folio);if(e.t)c.paquete.tarifa=e.t.id;}
   else if(S.resguardar){c.paquete={piezas:n,kg:k,tarifa:(e.t||TARIFAS[1]).id,folios:[folio]};}
   c.ultimo={folio,items}; const resg=S.sumar||S.resguardar;
@@ -998,8 +1017,14 @@ function entrarBeta(){ const v=(document.getElementById('gateIn').value||'').tri
 function salirBeta(){ try{localStorage.removeItem('marvea.beta');}catch(e){} location.reload(); }
 try{ if(localStorage.getItem('marvea.beta')==='1'||new URLSearchParams(location.search).get('acceso')===CODIGO_BETA){ document.getElementById('gate').classList.add('off'); try{localStorage.setItem('marvea.beta','1');}catch(e){} } }catch(e){}
 /* ============================================================ ARRANQUE */
-document.getElementById('gridPv').innerHTML=P.filter(x=>x.pv).map(card).join(''); P.filter(x=>x.pv).forEach(x=>patch(x.c));
-renderTop(); renderFiltros(); renderGrid(true); renderCalcSel(); renderCalc(); actualizar();
+(async()=>{
+  const ok=await cargarCatalogo();
+  if(!ok){ document.getElementById('grid').innerHTML='<div class="vacio" style="grid-column:1/-1">No se pudo cargar el catálogo (catalogo.json). Si abriste el archivo desde tu computadora, ábrelo desde www.marveamayoreo.com.</div>'; document.getElementById('nModelos').textContent='0'; return; }
+  P.forEach(x=>{S.stock[x.c]={ex:x.ex,otras:0};});
+  const top=topList(); CLIENTA_DEMO.ultimo.items=Object.fromEntries(top.slice(0,3).map((x,i)=>[x.c,[6,4,4][i]]));
+  document.getElementById('nModelos').textContent=P.length;
+  renderPreg(); renderTop(); renderFiltros(); renderGrid(true); renderCalcSel(); renderCalc(); actualizar();
+})();
 </script>
 </body>
 </html>
