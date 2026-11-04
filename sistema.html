@@ -2432,14 +2432,41 @@ function vendidasEnLive(codigo){ let n=0; for(const c of state.carts.values()){ 
 function inicialDe(p){ const l=viewedLive(); if(l&&l.inicial&&l.inicial[p.codigo]!=null) return Number(l.inicial[p.codigo])||0; return (Number(p.existencia)||0)+vendidasEnLive(p.codigo); }
 function cartParaNombre(nombre,clienteId){ const q=normaliza(nombre); const vivos=[...state.carts.values()].filter(c=>c.estado!=="cancelado"); if(clienteId){ const byId=vivos.find(c=>c.clienteId===clienteId); if(byId) return byId; } return vivos.find(c=>normaliza(c.cliente)===q)||vivos.find(c=>normaliza(c.cliente).startsWith(q))||null; }
 
-async function abiertaDeClienta(nombre,clienteId,excepto){ // el carrito abierto que ya tiene la clienta (en cualquier live o venta directa)
+
+function idDeClienta(nombre,clienteId){ if(clienteId) return clienteId; const q=normaliza(nombre||""); const k=q&&[...state.clientas.values()].find(x=>normaliza(x.nombre)===q); return k?k.id:""; }
+async function resguardoDe(nombre,clienteId,excepto){ // su pedido cerrado en resguardo (sin enviar), solo clientas registradas
+  const id=idDeClienta(nombre,clienteId); if(!id||!state.db) return null;
+  try{ const s=await state.db.collection("carritos").where("estado","==","final").get();
+    return s.docs.map(d=>cartFromDoc(d.id,d.data()||{})).filter(c=>c.id!==excepto&&c.clienteId===id&&c.resguardo&&!c.enviado&&esVentaDirectaCart(c)&&c.items.length).sort((a,b)=>String(a.creado).localeCompare(String(b.creado)))[0]||null; }catch(e){ return null; }
+}
+async function reabrirResguardo(c){ pagoAAnticipo(c); c.estado="abierto"; c.finalizado=""; const m="Pedido en resguardo: se le siguen sumando piezas"; c.nota=String(c.nota||"").includes(m)?c.nota:((c.nota?c.nota+" · ":"")+m); await saveCart(c); toast(`${c.cliente}: su pedido en resguardo se reabrió y se le suma ahí`); return c; }
+async function abiertaDeClienta(nombre,clienteId,excepto){ const o=await abiertaDeClienta0(nombre,clienteId,excepto); if(o) return o; const r=await resguardoDe(nombre,clienteId,excepto); return r?await reabrirResguardo(r):null; }
+async function ventaDirectaDe(nombre,clienteId){ const o=await ventaDirectaDe0(nombre,clienteId); if(o) return o; const r=await resguardoDe(nombre,clienteId); return r?await reabrirResguardo(r):null; }
+async function unificarClientas041126(){ // una sola vez, en la Mac: clientas registradas con varios pedidos pendientes → uno solo
+  if(!state.db||state.migrUni||!window.marveaNative) return; state.migrUni=true;
+  try{
+    const m=await state.db.doc("config/migraciones").get(); const prev=(m.exists&&m.data())||{}; if(prev.unificarClientas041126) return;
+    const todos=[]; for(const e of ["abierto","cerrado","final"]){ const s=await state.db.collection("carritos").where("estado","==",e).get(); todos.push(...s.docs.map(d=>cartFromDoc(d.id,d.data()||{}))); }
+    const pend=todos.filter(c=>c.clienteId&&c.items.length&&esVentaDirectaCart(c)&&(c.estado!=="final"||(c.resguardo&&!c.enviado)));
+    const g=new Map(); for(const c of pend){ if(!g.has(c.clienteId)) g.set(c.clienteId,[]); g.get(c.clienteId).push(c); }
+    const hechos=[];
+    for(const lista of g.values()){ if(lista.length<2) continue; lista.sort((a,b)=>String(a.creado).localeCompare(String(b.creado)));
+      const V=lista[0]; const resg=lista.some(c=>c.resguardo);
+      if(V.estado!=="abierto"){ pagoAAnticipo(V); V.estado="abierto"; V.finalizado=""; }
+      for(const x of lista.slice(1)){ if(x.pago){ x.anticipos=[...(x.anticipos||[]),{monto:Number(x.pago.monto)||0,medio:x.pago.medio||"Transferencia",fecha:x.pago.fecha||new Date().toISOString(),nota:"Pagado al cerrar la venta",usuario:""}].filter(a=>a.monto>0); x.pago=null; } await juntarAlCarrito(x,V); }
+      if(resg) V.resguardo=true; await saveCart(V); hechos.push({cliente:V.cliente,id:V.id,juntados:lista.slice(1).map(x=>x.id),piezas:cartPieces(V)}); }
+    const now=new Date().toISOString(); await state.db.doc("config/migraciones").set({...prev,unificarClientas041126:now});
+    if(hechos.length){ await state.db.doc("config/unificarClientas041126").set({fecha:now,hechos}); renderAll(); toast("Pedidos unificados: "+hechos.map(x=>x.cliente+" ("+x.piezas+" pzas)").join(", ")); }
+  }catch(e){ console.warn("unificar clientas",e); state.migrUni=false; }
+}
+async function abiertaDeClienta0(nombre,clienteId,excepto){ // el carrito abierto que ya tiene la clienta (en cualquier live o venta directa)
   const q=normaliza(nombre||""); if(!q&&!clienteId) return null; let lista=[];
   try{ const s=await state.db.collection("carritos").where("estado","==","abierto").get(); lista=s.docs.map(d=>cartFromDoc(d.id,d.data()||{})); }
   catch(e){ const m=new Map(state.cartsAbiertos||[]); for(const c of (state.carts||new Map()).values()) if(c.estado==="abierto") m.set(c.id,c); lista=[...m.values()]; }
   lista=lista.filter(c=>c.estado==="abierto"&&c.id!==excepto&&state.lives.some(l=>l.id===c.liveId));
   return (clienteId&&lista.find(c=>c.clienteId===clienteId))||(q&&lista.find(c=>normaliza(c.cliente)===q))||null;
 }
-async function ventaDirectaDe(nombre,clienteId){ // su carrito abierto de venta directa (si tiene)
+async function ventaDirectaDe0(nombre,clienteId){ // su carrito abierto de venta directa (si tiene)
   const q=normaliza(nombre||""); if(!q&&!clienteId) return null; let lista=[];
   try{ const s=await state.db.collection("carritos").where("estado","==","abierto").get(); lista=s.docs.map(d=>cartFromDoc(d.id,d.data()||{})); }catch(e){ lista=[...(state.cartsAbiertos||new Map()).values()]; }
   lista=lista.filter(c=>c.estado==="abierto"&&esVentaDirectaCart(c));
@@ -3911,7 +3938,7 @@ async function boot(){
   db.collection("productos").onSnapshot(s=>{
     const m=new Map();
     for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
-    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); await todoAVenta031126(); await corregirPagosDobles031126(); },20000);
+    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); await todoAVenta031126(); await corregirPagosDobles031126(); await unificarClientas041126(); },20000);
   },e=>{ console.warn("productos",e); $("#dbNotice").hidden=false; });
 }
 if(location.hash==="#conteo"){ document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; }
