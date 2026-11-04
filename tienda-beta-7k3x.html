@@ -524,6 +524,104 @@ a{color:inherit}
 .arma .prop .li .mf{width:40px;height:40px}
 footer{background:var(--tinta);color:rgba(255,255,255,.7);font-size:13px;padding:30px 0 100px;text-align:center}
 footer b{color:#fff}
+
+/* ===================== tema minimal (menos es más) ===================== */
+body{background:#FDFBF7}
+.demo{background:#fff;color:var(--gris);border-bottom:1px solid var(--linea);font-size:11.5px}
+.demo button,.demo .fin{background:var(--crema);color:var(--ciruela)}
+.t-nav{background:#fff;color:var(--ciruela);border-bottom:1px solid var(--linea)}
+.t-nav .blob{display:none}
+.t-logo small{color:var(--coral)}
+.t-volver{color:var(--gris);opacity:1}
+.t-btn{background:transparent;border:1px solid var(--linea);color:var(--ciruela)}
+.t-cart{background:var(--ciruela)} .t-cart .n{background:#fff;color:var(--ciruela)}
+.subnav{background:rgba(253,251,247,.92)}
+.subnav a,.subnav a.dest,.subnav a.calc{background:none;box-shadow:none;color:var(--gris);padding:8px 10px;font-weight:600;border-radius:0;border-bottom:2px solid transparent}
+.subnav a:hover{color:var(--ciruela);border-bottom-color:var(--coral)}
+.t-hero h1{font-weight:500}
+.caja{border-radius:999px;box-shadow:none;background:#fff}
+.btn-asis{background:var(--ciruela);box-shadow:none;border-radius:999px;font-weight:700}
+.btn-asis::after{display:none}
+.hola-bar{background:#fff;border:1px solid var(--linea)}
+.seccion-t h3{font-weight:500}
+/* arma tu paquete */
+.arma{background:#fff;color:var(--tinta);border:1px solid var(--linea);border-radius:24px;padding:26px 28px}
+.arma .blob{display:none}
+.arma .seccion-t h3{color:var(--ciruela)}.arma .seccion-t h3 i{color:var(--coral)}.arma .seccion-t small{color:var(--gris)}
+.preg{grid-template-columns:1fr;gap:0;border-top:1px solid var(--linea)}
+.preg>div{background:none;border:0;border-bottom:1px solid var(--linea);border-radius:0;padding:14px 0;display:grid;grid-template-columns:230px 1fr;gap:12px;align-items:center}
+@media (max-width:760px){.preg>div{grid-template-columns:1fr;gap:8px}}
+.preg .q{margin:0;font-weight:600;color:var(--ciruela);font-size:14.5px}
+.preg .q span{background:none;color:var(--gris);width:auto;height:auto;font-size:12px;font-weight:700}
+.preg .ops button{background:none;border:1px solid var(--linea);color:var(--gris);font-weight:600;padding:7px 13px}
+.preg .ops button.on{background:var(--ciruela);border-color:var(--ciruela);color:#fff}
+.monto{margin-top:18px;grid-template-columns:1fr auto}
+.monto .cajam{border:1px solid var(--linea);border-radius:999px;padding:4px 6px 4px 18px}
+.monto .cajam input{font-size:22px}
+.monto .rap{margin-top:8px}
+.monto .rap button{background:none;border:1px solid var(--linea);color:var(--gris);font-weight:600}
+.monto .armar{background:var(--coral);border-radius:999px;padding:14px 26px;box-shadow:none;font-size:15px}
+.prop{box-shadow:none;border:1px solid var(--linea);border-radius:20px;padding:18px 20px}
+.prop .porque{background:none;padding:0;color:var(--gris);font-style:italic;font-size:13px;margin-bottom:4px}
+.prop .mix{height:5px;margin:10px 0 4px}
+.prop .k3{gap:0;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);margin:12px 0 4px}
+.prop .k3 div{background:none;border-radius:0;padding:10px 8px 10px 0}
+.prop .k3 b{font-size:20px;font-weight:600}
+.prop .k3 .g b{color:var(--ciruela)}
+.acc .c{background:var(--coral)} .acc .p{background:var(--ciruela)} .acc .s{border-color:var(--linea);color:var(--ciruela)}
+/* top */
+.top{background:#fff;color:var(--tinta);border:1px solid var(--linea);border-radius:24px;padding:26px 28px}
+.top .blob{display:none}
+.top .seccion-t h3{color:var(--ciruela)}.top .seccion-t h3 i{color:var(--coral)}.top .seccion-t small{color:var(--gris)}
+.top1{border:1px solid var(--linea);box-shadow:none;border-radius:20px}
+.tr{background:none;border:0;border-bottom:1px solid var(--linea);border-radius:0;padding:10px 0}
+.tr:last-child{border-bottom:0}
+.tr .rk{color:var(--gris);font-size:16px;font-weight:500}
+.tr .s{color:var(--gris);opacity:1}
+.quick button{background:none;border:1px solid var(--linea);color:var(--ciruela);font-weight:700}
+.quick button.c{background:var(--ciruela);border-color:var(--ciruela);color:#fff}
+.top1 .quick button:not(.c){background:none}
+.medalla{background:var(--ciruela)}
+.aprox{background:none;border:1px solid var(--linea);padding:3px 10px}
+/* calculadora */
+.calc{border:1px solid var(--linea);box-shadow:none;border-radius:24px;padding:26px 28px}
+.calc .vacioC{background:none;border:1px dashed var(--linea);border-radius:14px}
+.calc-add select{background:#fff;border-radius:999px;font-weight:600}
+.calc-add .p{background:var(--ciruela);border-radius:999px} .calc-add .s{background:none;border-radius:999px}
+.mult button{background:none;border-radius:999px} .mult button.on{background:var(--ciruela)}
+.ctab{border-spacing:0}
+.ctab td{background:none;border-bottom:1px solid var(--linea);padding:10px 8px;border-radius:0!important}
+.ctab input{border-radius:999px;background:#fff}
+.ctab .g{color:var(--ciruela)}
+.kpis{gap:0;margin-top:4px}
+.kpi{background:none!important;border-radius:0;padding:14px 8px 0}
+.kpi b{font-weight:600;font-size:22px}
+.recupera{background:none;color:var(--gris);padding:8px 8px 0;font-size:13px}
+.recupera b{color:var(--ciruela)}
+.recupera .pzs i{background:var(--linea)} .recupera .pzs i.on{background:var(--coral)}
+/* modelos */
+.prod{box-shadow:none;border:1px solid var(--linea);border-radius:18px}
+.prod:hover{box-shadow:0 12px 30px rgba(90,39,72,.08)}
+.foto{background:#fff;background-image:none}
+.calc-ic{background:#fff;border:1px solid var(--linea);width:28px;height:28px;font-size:13px}
+.filtros button{box-shadow:none;border:1px solid var(--linea);background:none;color:var(--gris);font-weight:600}
+.filtros button.on{background:var(--ciruela);color:#fff;border-color:var(--ciruela)}
+.tag{font-weight:700}
+/* carrito */
+.carrito{box-shadow:none;border:1px solid var(--linea);border-radius:24px}
+.minimo .barra{height:4px;background:var(--linea)} .minimo .barra i{background:var(--ciruela)}
+.ganancia{background:none;border-top:1px dashed var(--linea);border-radius:0;padding:8px 0 0;font-weight:600;color:var(--gris)}
+.comprar{box-shadow:none;background:var(--ciruela)}
+.tot{background:#fff}
+.nota,.nota.cielo{background:var(--crema)}
+.pago.wa{background:#fff;color:var(--ciruela);border:1px solid var(--linea);box-shadow:none}
+.pago.tarjeta{box-shadow:none}
+.club{background:var(--crema)}
+.gate{background:#FDFBF7} .gate-box{box-shadow:none;border:1px solid var(--linea)}
+footer{background:#fff;color:var(--gris);border-top:1px solid var(--linea)}
+footer b{color:var(--ciruela)}
+@media (max-width:620px){.t-logo small{display:none}}
+.barra-m{box-shadow:0 10px 30px rgba(90,39,72,.25)}
 </style>
 </head>
 <body>
@@ -548,7 +646,7 @@ footer b{color:#fff}
 </div></div>
 
 <div class="wrap t-hero">
-  <div class="fila"><div><span class="kicker">Tienda en línea · mayoreo</span><h1 style="margin-top:8px">Surte tu negocio <i>en minutos.</i></h1></div><div class="actividad" id="actividad">Catálogo real · <span id="nModelos">…</span> modelos</div></div>
+  <div class="fila"><div><span class="kicker">Mayoreo</span><h1 style="margin-top:8px">Surte tu negocio <i>en minutos.</i></h1></div><div class="actividad" id="actividad">Catálogo real · <span id="nModelos">…</span> modelos</div></div>
   <div class="herr">
     <div class="caja"><span>🔎</span><input id="buscar" placeholder="Busca: argolla, perla, dorado…" oninput="S.busca=this.value;renderGrid(false)"></div>
     <button class="btn-asis" onclick="sec('arma')">✨ Arma tu paquete</button>
@@ -559,14 +657,14 @@ footer b{color:#fff}
 <div class="wrap vo">
   <div>
     <section class="sec arma" id="arma"><div class="blob a" style="opacity:.35;width:380px;height:380px"></div>
-      <div class="seccion-t" style="position:relative"><div><span class="kicker" style="color:var(--amarillo)">Arma tu paquete</span><h3>Contesta 3 preguntas, <i>pon tu monto</i> y te armamos tu paquete.</h3></div><small>Mercancía a tu medida con lo que hay disponible hoy. Después lo ajustas como quieras.</small></div>
+      <div class="seccion-t" style="position:relative"><div><span class="kicker">Arma tu paquete</span><h3>Tres preguntas, <i>tu monto,</i> y listo.</h3></div><small>Te armamos un paquete con lo disponible hoy. Lo ajustas como quieras.</small></div>
       <div class="preg" id="preg"></div>
       <div class="monto"><div><div class="cajam"><label>Quiero invertir</label><span style="font-family:Fraunces,serif;font-size:24px;font-weight:700">$</span><input id="montoIn" inputmode="numeric" value="1500" oninput="A.pres=parseInt(this.value)||0" onkeydown="if(event.key==='Enter')armarPaquete()"><span class="sub" style="font-size:12px;padding-right:8px">MXN</span></div><div class="rap" style="margin-top:6px">${''}</div></div><button class="armar" onclick="armarPaquete()">Armar mi paquete →</button></div>
       <div id="propuesta"></div>
     </section>
 
     <section class="sec top" id="top"><div class="blob a" style="opacity:.35;width:380px;height:380px"></div>
-      <div class="seccion-t" style="position:relative"><div><span class="kicker" style="color:var(--amarillo)">Marvea</span><h3>Top <i>más vendidos</i></h3></div><small>Lo que más piden nuestras clientas · precio sugerido de reventa al triple</small></div>
+      <div class="seccion-t" style="position:relative"><div><span class="kicker">Lo más pedido</span><h3>Top <i>más vendidos</i></h3></div><small>Precio sugerido de reventa al triple</small></div>
       <div class="top-lista" id="topLista"></div>
     </section>
 
@@ -576,7 +674,7 @@ footer b{color:#fff}
     </section>
 
     <section class="sec calc" id="calculadora">
-      <div class="seccion-t"><div><span class="kicker">Calculadora de ganancias</span><h3>¿Cuánto <i>vas a ganar?</i></h3><small>Elige modelos, cuántos y a cuánto los venderías. No compras nada hasta que tú quieras.</small></div></div>
+      <div class="seccion-t"><div><span class="kicker">Calculadora de ganancias</span><h3>¿Cuánto <i>vas a ganar?</i></h3><small>Cuántos y a cuánto los venderías. No compras nada hasta que tú quieras.</small></div></div>
       <div class="calc-add"><select id="calcSel"></select><button class="p" onclick="calcAddSel()">Agregar a la calculadora</button><button class="s" onclick="calcDesdeCarrito()">Usar mi carrito</button></div>
       <div class="mult">Vender a: <span id="multBtns"></span> <span style="font-weight:600">o escribe tu precio en cada modelo</span></div>
       <div id="calcBody"></div>
@@ -803,7 +901,7 @@ function renderCalc(){
       <td data-l="Lo vendes en"><input type="number" min="0" value="${o.pv}" oninput="calcSet('${c}','pv',this.value)"></td>
       <td data-l="Ganas" class="g" id="g-${c}"></td><td><button class="del" onclick="calcQuitar('${c}')">✕</button></td></tr>`}).join('')}
     </tbody></table><div class="kpis" id="kpis"></div><div class="recupera" id="recupera"></div>
-    <div class="acc"><button class="c" onclick="calcAlCarrito()">Pasar estas cantidades a mi carrito →</button><button class="s" onclick="S.calc={};P.forEach(x=>patch(x.c));renderCalc()">Limpiar</button></div>`;
+    <div class="acc"><button class="p" onclick="calcAlCarrito()">Pasar estas cantidades a mi carrito →</button></div><p class="sub" style="font-size:13px;margin:10px 0 0;text-align:center"><u style="cursor:pointer" onclick="S.calc={};P.forEach(x=>patch(x.c));renderCalc()">Limpiar calculadora</u></p>`;
   calcKpis();
 }
 function calcKpis(){
@@ -888,7 +986,7 @@ const PREG=[
   ['pref','¿Qué te importa más?',[['top','🏆 Lo más pedido'],['var','🎨 Más variedad'],['gan','💰 Más ganancia por pieza']]],
 ];
 function renderPreg(){
-  document.getElementById('preg').innerHTML=PREG.map(([k,q,ops],i)=>`<div><div class="q"><span>${i+1}</span>${q}</div><div class="ops">${ops.map(([v,l])=>`<button class="${A[k]===v?'on':''}" onclick="A['${k}']='${v}';renderPreg()">${l}</button>`).join('')}</div></div>`).join('');
+  document.getElementById('preg').innerHTML=PREG.map(([k,q,ops],i)=>`<div><div class="q"><span>${i+1}.</span> ${q}</div><div class="ops">${ops.map(([v,l])=>`<button class="${A[k]===v?'on':''}" onclick="A['${k}']='${v}';renderPreg()">${l}</button>`).join('')}</div></div>`).join('');
   document.querySelector('.monto .rap').innerHTML=[1000,1500,2500,4000,6000].map(v=>`<button onclick="A.pres=${v};document.getElementById('montoIn').value=${v}">${fmt(v)}</button>`).join('');
 }
 function armarPaquete(otra){
@@ -918,16 +1016,16 @@ function mostrarProp(otra){
   const porCat={}; Object.entries(pr.out).forEach(([c,q])=>{const k=prod(c).cat;porCat[k]=(porCat[k]||0)+q;});
   const prom=pr.pz?venta/pr.pz:0, rec=prom?Math.ceil(pr.g/prom):0;
   const html=ok?`<div class="prop">
-    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><span class="kicker">Tu paquete sugerido</span><span class="sub" style="font-size:12.5px">${otra?'Otra combinación':'Según tus 3 respuestas y tu monto'}</span></div>
+    <span class="kicker">${otra?'Otra combinación':'Tu paquete sugerido'}</span>
     <div class="porque">💡 ${NEG[A.neg].porque}</div>
     <b style="color:var(--ciruela);font-family:Fraunces,serif;font-size:20px">${pr.pz} piezas · ${Object.keys(pr.out).length} modelos · ${fmt(pr.g)} de ${fmt(A.pres)}</b>
     <div class="mix">${Object.entries(porCat).map(([k,q])=>`<i style="width:${q/pr.pz*100}%;background:${CAT_COLOR[k]}"></i>`).join('')}</div>
     <div class="ley">${Object.entries(porCat).map(([k,q])=>`<span style="--c:${CAT_COLOR[k]}">${k} ${q}</span>`).join('')}</div>
     <div class="k3"><div><span>Inviertes</span><b>${fmt(pr.g)}</b></div><div><span>Lo vendes en (×2–×3)</span><b style="font-size:18px">${fmt(venta)} – ${fmt(pr.g*3)}</b></div><div class="g"><span>Ganas</span><b style="font-size:18px">${fmt(gan)} – ${fmt(pr.g*2)}</b></div></div>
     ${Object.entries(pr.out).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf" style="--f:${FONDOS[x.cat]}">${fotoHTML(x)}</div><div><div class="t">${x.n}${x.et?' <span style="color:var(--coral);font-size:11px">'+x.et+'</span>':''}</div><div class="s">${x.m} · $${x.p}</div></div><div class="q">${q} pzs</div></div>`}).join('')}
-    <div class="nota cielo" style="margin-top:10px">Recuperas tu inversión vendiendo <b>${rec} de ${pr.pz}</b> piezas (al doble). Envío DHL estimado: ${tarifaPeso(pr.pz*PESO_G/1000)?fmt(tarifaPeso(pr.pz*PESO_G/1000).costo):'a cotizar'}.</div>
-    <div class="acc"><button class="c" onclick="aceptar(true)">Agregar y pagar →</button><button class="p" onclick="aceptar(false)">Solo agregar</button></div>
-    <div class="acc" style="margin-top:8px"><button class="s" onclick="armarPaquete(true)">🔄 Otra combinación</button><button class="s" onclick="aceptarCalc()">🧮 Ajustar precios</button></div></div>`
+    <p class="sub" style="font-size:13px;margin:12px 0 0">Recuperas tu inversión vendiendo <b style="color:var(--ciruela)">${rec} de ${pr.pz}</b> piezas (al doble). Envío DHL estimado: ${tarifaPeso(pr.pz*PESO_G/1000)?fmt(tarifaPeso(pr.pz*PESO_G/1000).costo):'a cotizar'}.</p>
+    <div class="acc"><button class="c" onclick="aceptar(true)">Agregar y pagar →</button><button class="s" onclick="aceptar(false)">Solo agregar</button></div>
+    <p class="sub" style="font-size:13px;margin:12px 0 0;text-align:center"><u style="cursor:pointer" onclick="armarPaquete(true)">Otra combinación</u> &nbsp;·&nbsp; <u style="cursor:pointer" onclick="aceptarCalc()">Ajustar precios en la calculadora</u></p></div>`
     :`<div class="prop"><b style="color:var(--ciruela)">Con ${fmt(A.pres)} y ese estilo no alcanzan ${MIN} piezas.</b><div class="acc"><button class="p" onclick="A.est='Mezcla';renderPreg();mostrarProp()">Probar “de todo un poco”</button><button class="s" onclick="document.getElementById('montoIn').value=2500;armarPaquete()">Subir a $2,500</button></div></div>`;
   const pel=document.getElementById('propuesta'); pel.innerHTML=html; pel.scrollIntoView({behavior:'smooth',block:'start'});
 }
