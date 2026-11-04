@@ -88,15 +88,20 @@
   }
   const abrirDHL = g => { g = String(g || "").replace(/\s+/g, ""); if (!g) return toast("Escribe tu número de guía", true); window.open("https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1", "_blank", "noopener"); medir("club_rastrear"); };
   $("#rastreoClub").addEventListener("submit", e => { e.preventDefault(); abrirDHL($("#guiaRapida").value); });
+  function rastreoDe(g) { // la guía que pone Marvea: "1234" (DHL), "FedEx 1234", "Estafeta 1234"...
+    g = String(g || "").trim(); if (!g) return ""; const m = g.match(/^(fedex|estafeta|paquetexpress|otra)\s+(.+)$/i);
+    if (!m) return "https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1";
+    if (m[1].toLowerCase() === "fedex") return "https://www.fedex.com/fedextrack/?trknbr=" + encodeURIComponent(m[2]);
+    return ""; }
   function pintarPedidos() {
     const box = $("#listaPedidos"); box.innerHTML = "";
     if (!S.pedidos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto finalicemos tu primera compra en un live o por WhatsApp, la verás aquí con sus fotos y su propio campo de guía DHL. Mientras, puedes rastrear cualquier envío arriba.</div>'; return; }
     for (const p of S.pedidos) {
       const el = document.createElement("div"); el.className = "glass ped";
-      const guia = (p.guia || "").trim(); const track = guia ? "https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(guia) + "&submit=1" : "";
+      const guia = (p.guia || "").trim(); const track = rastreoDe(guia);
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
         + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
-        + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> Guía DHL</label><input value="' + esc(guia) + '" placeholder="Pega aquí tu número de guía" maxlength="30">'
+        + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> Guía de envío</label><input value="' + esc(guia) + '" placeholder="Pega aquí tu número de guía" maxlength="30">'
         + (track ? '<a class="btn claro sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') + '<button class="btn vidrio sm guardar">Guardar guía</button>'
         + (p.estado !== "entregado" ? '<button class="btn vidrio sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>';
       $(".guardar", el).addEventListener("click", async () => { const g = $(".guia input", el).value.trim(); const { error } = await sb.from("pedidos").update({ guia: g, estado: g && p.estado === "preparando" ? "enviado" : p.estado }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.guia = g; if (g && p.estado === "preparando") p.estado = "enviado"; toast("Guía guardada"); pintarPedidos(); pintarInicio(); });
