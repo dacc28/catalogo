@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-04T15:56:56.501Z",
+ "actualizado": "2026-11-04T16:59:19.371Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1166,18 +1166,6 @@
    "notas": "",
    "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
    "creado": "2026-10-19T02:22:32.186Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00023",
-   "nombre": "Collar Rainbow",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d5cfff539d1d0c1ad201d8d78945fd48.jpg",
-   "creado": "2026-10-19T02:24:00.818Z",
    "disponible": true
   },
   {
