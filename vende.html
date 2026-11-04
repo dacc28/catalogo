@@ -1450,7 +1450,7 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
     <button role="tab" id="tab-dash" aria-selected="false" data-view="dash">Resumen</button>
     <button role="tab" id="tab-live" aria-selected="false" data-view="live">Live y carritos</button>
     <button role="tab" id="tab-rapido" aria-selected="false" data-view="rapido">Live rápido</button>
-    <button role="tab" id="tab-venta" aria-selected="false" data-view="venta">Venta directa</button>
+    <button role="tab" id="tab-venta" aria-selected="false" data-view="venta">Venta</button>
     <button role="tab" id="tab-cli" aria-selected="false" data-view="cli">Clientas</button>
     <button role="tab" id="tab-inv" aria-selected="true" data-view="inv">Inventario</button>
     <button role="tab" id="tab-new" aria-selected="false" data-view="new">Nuevo producto</button>
@@ -1973,14 +1973,14 @@ function conCheck(c,it,foto){
   const b=h("button",{type:"button",class:"empchk"+(ok?" on":"")+(parcial?" parcial":""),title:ok?"Ya está en el carrito físico · toca para quitar la palomita":"Toca cuando ya la pongas en el carrito físico","aria-label":ok?"Quitar palomita":"Palomear: ya está en el carrito físico",onclick:e=>{ e.stopPropagation(); marcarEmpacado(c,it.codigo,!ok); }},ok?"✓":parcial?(Number(it.emp)||0)+"/"+it.cant:"");
   return h("div",{class:"empwrap"+(ok?" on":"")},foto,b);
 }
-function empResumen(c){ const lv=(c&&c.items||[]).reduce((a,i)=>a+(Number(i.live)||0),0); const base=empResumen0(c); if(!lv) return base; const t=h("div",{class:"liveres"},h("span",{class:"tag-live"},"Vendido en Live"),h("span",null,lv+" pieza"+(lv===1?"":"s")+" de este carrito "+(lv===1?"se vendió":"se vendieron")+" en el live")); return base?h("div",{class:"empwrapres"},t,base):t; }
+function empResumen(c){ const lv=(c&&c.items||[]).reduce((a,i)=>a+Math.min(Number(i.cant)||0,Number(i.live)||0),0); const base=empResumen0(c); if(!lv) return base; const t=h("div",{class:"liveres"},h("span",{class:"tag-live"},"Vendido en Live"),h("span",null,lv+" pieza"+(lv===1?"":"s")+" de este carrito "+(lv===1?"se vendió":"se vendieron")+" en el live")); return base?h("div",{class:"empwrapres"},t,base):t; }
 function empResumen0(c){ const r=empCuenta(c); if(!r.t) return null; const todo=r.o>=r.t; return h("div",{class:"empres"+(todo?" todo":"")},h("span",null,todo?"✓ Todo en el carrito físico":"Puestas en el carrito físico"),h("b",null,r.o+" / "+r.t)); }
 
 /* ---- rastreabilidad: en qué carrito está cada pieza ---- */
 function vigilarApartados(){
   if(state.apartUnsub||!state.db) return;
   state.apartUnsub=state.db.collection("carritos").where("estado","==","abierto").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x) m.set(d.id,cartFromDoc(d.id,x)); } state.cartsAbiertos=m; state.apartIdx=null;
-    try{ if(state.view==="inv") renderGrid(); const bx=document.getElementById("apartBox"); if(bx&&bx.dataset.codigo) bx.replaceChildren(...apartadosHijos(bx.dataset.codigo)); }catch(e){} },e=>console.warn("apartados",e));
+    try{ if(state.view==="rapido"){ const a=document.activeElement; if(!(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.id!=="cmdInput")) renderRapido(); } if(state.view==="inv") renderGrid(); const bx=document.getElementById("apartBox"); if(bx&&bx.dataset.codigo) bx.replaceChildren(...apartadosHijos(bx.dataset.codigo)); }catch(e){} },e=>console.warn("apartados",e));
 }
 function apartadosDe(codigo){
   if(!state.apartIdx){ const idx=new Map(); const todos=new Map(state.cartsAbiertos||[]); for(const c of (state.carts||new Map()).values()) if(c.estado==="abierto") todos.set(c.id,c); else todos.delete(c.id);
@@ -1988,8 +1988,8 @@ function apartadosDe(codigo){
     state.apartIdx=idx; }
   return state.apartIdx.get(codigo)||[];
 }
-function lugarDe(c){ const l=state.lives.find(x=>x.id===c.liveId); if(!l) return "Carrito"; if(l.tipo==="mostrador") return "Venta directa"+(l.dia&&l.dia!==hoyKey()?" · "+new Date(l.dia+"T12:00:00").toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""); return l.nombre||"Live"; }
-function irACarrito(c){ const l=state.lives.find(x=>x.id===c.liveId); closeDrawer(); if(l&&l.tipo==="mostrador"){ setView("venta"); if(c.liveId!==state.ventaLiveId) ventaSubscribe(c.liveId); state.ventaCartId=c.id; renderVenta(); } else { setView("live"); if(l) selectLive(l.id); state.cartId=c.id; renderLive(); } }
+function lugarDe(c){ const l=state.lives.find(x=>x.id===c.liveId); if(!l) return "Carrito"; if(l.tipo==="mostrador") return "Venta"+(l.dia&&l.dia!==hoyKey()?" · "+new Date(l.dia+"T12:00:00").toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""); return l.nombre||"Live"; }
+function irACarrito(c){ try{ const a=document.activeElement; if(a&&a.blur) a.blur(); }catch(e){} const l=state.lives.find(x=>x.id===c.liveId); closeDrawer(); if(l&&l.tipo==="mostrador"){ if(c.liveId!==state.ventaLiveId) ventaSubscribe(c.liveId); state.ventaCartId=c.id; setView("venta"); renderVenta(); } else { setView("live"); if(l) selectLive(l.id); state.cartId=c.id; renderLive(); } }
 function apartadosHijos(codigo){
   const a=apartadosDe(codigo); const pz=a.reduce((s,x)=>s+x.cant,0);
   if(!a.length) return [h("h4",null,"Carrito activo"),h("p",{style:"margin:0;color:var(--muted);font-size:14px"},"Ahorita no está apartada en ningún carrito abierto.")];
@@ -2418,7 +2418,7 @@ async function juntarAlCarrito(L,V,ctx){ // todo el pedido del carrito L pasa al
   return V;
 }
 async function moverAVenta(L){ // su carrito del live pasa a venta directa (todo marcado como Venta del Live)
-  const vl=await ensureVentaLive(); const deVD=/venta directa/i.test(String(L.nota||""));
+  const lv0=state.lives.find(x=>x.id===L.liveId); const dia0=lv0&&String(lv0.creado||"").slice(0,10); const vl=state.lives.find(x=>x.tipo==="mostrador"&&x.dia===dia0)||await ensureVentaLive(); const deVD=/venta directa/i.test(String(L.nota||""));
   if(!deVD) for(const it of L.items) it.live=it.cant;
   L.liveId=vl.id; L.nota=notaLive(L); await saveCart(L); return L;
 }
@@ -2460,6 +2460,35 @@ async function cargarHistorial(codigo){
     h("div",{class:"apartlist"},...muestra.map(x=>h("button",{type:"button",class:"apartrow",onclick:()=>irACarrito(x.c)},h("span",{class:"an"},h("b",null,x.c.cliente||"Sin nombre"),h("small",null,lugarDe(x.c)+" · cerrada el "+fecha(x.f))),h("span",{class:"ac"},x.n+" pza"+(x.n===1?"":"s")),x.c.pago?h("span",{class:"chip paid"},"Pagada"):h("span",{class:"chip"},"Por cobrar")))),
     ...(filas.length>muestra.length?[h("button",{type:"button",class:"btn sm ghost",style:"margin-top:8px",onclick:()=>{ box.dataset.todo="1"; cargarHistorial(codigo); }},"Ver las "+filas.length+" ventas")]:[]));
 }
+async function ventaParaClienta(nombre,clienteId){ // su carrito nuevo en Venta (el panel central)
+  const k=clienteId?state.clientas.get(clienteId):[...state.clientas.values()].find(x=>normaliza(x.nombre)===normaliza(nombre));
+  const cliente=k?k.nombre:String(nombre||"").trim(); if(!cliente) return null;
+  const vl=await ensureVentaLive(); const now=new Date().toISOString();
+  const data={liveId:vl.id,cliente,clienteId:k?k.id:"",referencia:nuevaReferencia(),nota:"Incluye piezas vendidas en Live",estado:"abierto",items:[],total:0,origen:"live",creado:now,actualizado:now};
+  const ref=await state.db.collection("carritos").add(data); const c=cartFromDoc(ref.id,data);
+  if(state.ventaLiveId===vl.id&&state.ventaCarts) state.ventaCarts.set(c.id,c); if(state.cartsAbiertos) state.cartsAbiertos.set(c.id,c);
+  toast(`Nuevo carrito de ${cliente} en Venta`); return c;
+}
+async function todoAVenta031126(){ // una sola vez, en la Mac: todos los pedidos abiertos de los lives pasan a Venta y se unifican por clienta
+  if(!state.db||state.migrTodo||!window.marveaNative) return; state.migrTodo=true;
+  try{
+    const m=await state.db.doc("config/migraciones").get(); const prev=(m.exists&&m.data())||{}; if(prev.todoAVenta031126) return;
+    const snap=async()=>{ const out=[]; for(const e of ["abierto","cerrado"]){ const s=await state.db.collection("carritos").where("estado","==",e).get(); out.push(...s.docs.map(d=>cartFromDoc(d.id,d.data()||{}))); } return out.filter(c=>state.lives.some(l=>l.id===c.liveId)); };
+    const hechos=[]; const clave=c=>c.clienteId||normaliza(c.cliente);
+    let todos=await snap();
+    for(const L0 of todos.filter(c=>!esVentaDirectaCart(c)&&c.items.length)){
+      let L=L0; try{ const f=await state.db.doc("carritos/"+L0.id).get(); if(!f.exists) continue; L=cartFromDoc(L0.id,f.data()||{}); if(!["abierto","cerrado"].includes(L.estado)||!L.items.length) continue; }catch(e){ continue; }
+      const V=todos.find(v=>v.id!==L.id&&esVentaDirectaCart(v)&&v.estado==="abierto"&&((L.clienteId&&v.clienteId===L.clienteId)||normaliza(v.cliente)===normaliza(L.cliente)));
+      const pzs=L.items.reduce((a,i)=>a+i.cant,0);
+      if(V){ await juntarAlCarrito(L,V); L.estado="cancelado"; hechos.push(L.cliente+" (+"+pzs+" a su carrito)"); }
+      else { if(L.estado!=="abierto") L.estado="abierto"; await moverAVenta(L); hechos.push(L.cliente+" ("+pzs+" pzas pasan a Venta)"); }
+    }
+    todos=await snap(); const grupos=new Map(); for(const c of todos.filter(c=>esVentaDirectaCart(c)&&c.estado==="abierto")){ const k=clave(c); if(!k||normaliza(c.cliente)===normaliza(VENTA_CLIENTE)) continue; if(!grupos.has(k)) grupos.set(k,[]); grupos.get(k).push(c); }
+    for(const g of grupos.values()){ if(g.length<2) continue; g.sort((a,b)=>String(a.creado).localeCompare(String(b.creado))); const V=g[0]; for(const x of g.slice(1)){ await juntarAlCarrito(x,V); hechos.push(V.cliente+" (dos carritos en uno)"); } }
+    const now=new Date().toISOString(); await state.db.doc("config/migraciones").set({...prev,todoAVenta031126:now});
+    if(hechos.length){ await state.db.doc("config/todoAVenta031126").set({fecha:now,hechos}); renderAll(); toast("Pedidos del live enviados a Venta: "+hechos.length+" · "+hechos.slice(0,4).join(", ")+(hechos.length>4?"…":"")); }
+  }catch(e){ console.warn("todo a venta",e); state.migrTodo=false; }
+}
 async function juntarDuplicados031126(){ // una sola vez, en la Mac: Susi Góngora y Gloria Vargas quedaron capturadas dos veces el 2-nov
   if(!state.db||state.migrJunta||!window.marveaNative||!state.products.size) return; state.migrJunta=true;
   try{
@@ -2489,7 +2518,8 @@ async function juntarDuplicados031126(){ // una sola vez, en la Mac: Susi Góngo
 async function despachar(p,qty,nombre,clienteId,unit){
   const l=activeLive(); if(!l){ toast("Primero inicia un live",true); return false; }
   if(state.liveId!==l.id) selectLive(l.id);
-  let c=null; { const o=await ventaDirectaDe(nombre,clienteId); if(o){ c=o; toast(`${o.cliente} tiene carrito en Venta directa · sus piezas van ahí como "Vendido en Live"`); } }
+  let c=await ventaDirectaDe(nombre,clienteId);
+  if(!c){ try{ c=await ventaParaClienta(nombre,clienteId); }catch(e){ console.warn("venta para clienta",e); } }
   if(!c) c=cartParaNombre(nombre,clienteId);
   if(!c){ const o=await abiertaDeClienta(nombre,clienteId); if(o&&esVentaDirectaCart(o)){ c=o; toast(`${o.cliente} ya tiene carrito en Venta directa · sus piezas van ahí como "Vendido en Live"`); } }
   if(!c){
@@ -2544,8 +2574,9 @@ function renderRapido(){
   if(state.liveId!==l.id) selectLive(l.id);
   const sel=state.rapidoSel?state.products.get(state.rapidoSel):null; if(state.rapidoSel&&!sel) state.rapidoSel=null;
   const paso=(n,titulo,extra,...kids)=>h("section",{class:"vd-paso"},h("div",{class:"vd-pasohead"},h("span",{class:"vd-num"},String(n)),h("h4",null,titulo),extra||null),...kids);
-  const abiertos=[...state.carts.values()].filter(c=>c.estado==="abierto");
-  const despachadas=[...state.carts.values()].filter(c=>c.estado!=="cancelado").reduce((s,c)=>s+cartPieces(c),0);
+  vigilarApartados(); const despL=(state.lives.find(x=>x.id===l.id)||{}).despachos||[];
+  const abiertos=(()=>{ const m=new Map(); for(const c of state.carts.values()) if(c.estado==="abierto") m.set(c.id,c); const ids=new Set(despL.map(d=>d.cartId)); for(const c of (state.cartsAbiertos||new Map()).values()) if(c.estado==="abierto"&&(ids.has(c.id)||c.items.some(i=>Number(i.live)>0))) m.set(c.id,c); return [...m.values()]; })();
+  const despachadas=despL.reduce((s,d)=>s+(Number(d.qty)||0),0);
 
   /* ---- comando rápido: "2 mariposa Ana" ---- */
   const cmd=h("input",{id:"cmdInput",class:"vd-input lr-cmd",placeholder:"Ej. 2 mariposa Ana",autocomplete:"off",spellcheck:"false",value:cmdVal});
@@ -2593,7 +2624,7 @@ function renderRapido(){
 
   /* ---- despachos (últimos 5; el resto se despliega) ---- */
   const despachos=(state.lives.find(x=>x.id===l.id)||{}).despachos||[];
-  const fila=(d,i)=>h("div",{class:"lr-d"},h("span",{class:"lr-dq"},d.qty+" ×"),h("div",{style:"min-width:0;flex:1"},h("b",null,d.palabra||d.codigo)," → "+d.cliente,h("div",{class:"lr-muted"},new Date(d.t).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}))),h("button",{class:"btn sm ghost",type:"button",onclick:async()=>{ const c=state.carts.get(d.cartId); if(!c){ toast("Ese carrito ya no existe",true); await quitarDespacho(l,i); renderRapido(); return; } await changeItem(c,d.codigo,-d.qty); await quitarDespacho(l,i); renderRapido(); toast("Deshecho"); }},"Deshacer"));
+  const fila=(d,i)=>h("div",{class:"lr-d"},h("span",{class:"lr-dq"},d.qty+" ×"),h("div",{style:"min-width:0;flex:1"},h("b",null,d.palabra||d.codigo)," → "+d.cliente,h("div",{class:"lr-muted"},new Date(d.t).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}))),h("button",{class:"btn sm ghost",type:"button",onclick:async()=>{ const c=state.carts.get(d.cartId)||(state.cartsAbiertos&&state.cartsAbiertos.get(d.cartId)); if(!c){ toast("Ese carrito ya no existe",true); await quitarDespacho(l,i); renderRapido(); return; } await changeItem(c,d.codigo,-d.qty); await quitarDespacho(l,i); renderRapido(); toast("Deshecho"); }},"Deshacer"));
   const log=h("section",{class:"lr-log"},h("div",{class:"vd-pasohead"},h("h4",null,"Últimos despachos"),despachos.length?h("span",{class:"lr-muted"},despachos.length+" en total"):null),
     despachos.length?h("div",{class:"lr-dlist"},...despachos.slice(0,5).map(fila)):h("div",{class:"lr-muted"},"Aquí verás cada despacho, con opción de deshacer."),
     despachos.length>5?h("details",{class:"vd-mas"},h("summary",null,despachos.length-5===1?"Ver 1 anterior":"Ver los "+(despachos.length-5)+" anteriores"),h("div",{class:"lr-dlist",style:"margin-top:8px"},...despachos.slice(5).map((d,j)=>fila(d,j+5)))):null);
@@ -3139,7 +3170,7 @@ async function closeLive(l){
 }
 async function createCart(name,clienteId){
   const l=viewedLive(); if(!state.db||!l||l.estado!=="abierto") return;
-  if((name||"").trim()||clienteId){ const o=(await ventaDirectaDe(name,clienteId))||(await abiertaDeClienta(name,clienteId)); if(o){ if(o.liveId===l.id){ state.cartId=o.id; state.cartSearch=""; renderLive(true); toast(`${o.cliente} ya tiene carrito en este live`); return; } if(esVentaDirectaCart(o)){ state.liveTag={id:o.id,hasta:Date.now()+4*3600e3}; irACarrito(o); toast(`${o.cliente} ya tiene carrito en Venta directa · lo que agregues aquí queda como "Vendido en Live"`); return; } } }
+  if((name||"").trim()||clienteId){ let o=await ventaDirectaDe(name,clienteId); if(!o){ try{ o=await ventaParaClienta(name,clienteId); }catch(e){} } if(o){ state.liveTag={id:o.id,hasta:Date.now()+4*3600e3}; irACarrito(o); toast(`Carrito de ${o.cliente} en Venta · lo que agregues queda como "Vendido en Live"`); return; } o=await abiertaDeClienta(name,clienteId); if(o){ if(o.liveId===l.id){ state.cartId=o.id; state.cartSearch=""; renderLive(true); toast(`${o.cliente} ya tiene carrito en este live`); return; } if(esVentaDirectaCart(o)){ state.liveTag={id:o.id,hasta:Date.now()+4*3600e3}; irACarrito(o); toast(`${o.cliente} ya tiene carrito en Venta directa · lo que agregues aquí queda como "Vendido en Live"`); return; } } }
   const cliente=(name||"").trim()||"Clienta "+(state.carts.size+1);
   const now=new Date().toISOString();
   const referencia=nuevaReferencia();
@@ -3607,7 +3638,7 @@ function renderVenta(keepFocus){
   if(!state.ventaLiveId){ const hoy=ventaLiveHoy(); if(hoy) ventaSubscribe(hoy.id); }
   // todas las ventas directas abiertas, de cualquier día
   if(!state.abiertasUnsub){ state.abiertasUnsub=state.db.collection("carritos").where("estado","==","abierto").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x) m.set(d.id,cartFromDoc(d.id,x)); } state.ventaAbiertas=m; if(state.view==="venta") renderVenta(); },e=>console.warn("abiertas",e)); }
-  const focused=document.activeElement&&document.activeElement.id; const focusVal=focused==="ventaInput"?$("#ventaInput").value:null; const cliVal=focused==="ventaCli"?$("#ventaCli").value:null; const qtyVal=$("#ventaQty")?$("#ventaQty").value:"1";
+  const focused=document.activeElement&&document.activeElement.id; const focusVal=focused==="ventaInput"?$("#ventaInput").value:null; const cliVal=(focused==="ventaCli"&&$("#ventaCli").value)?$("#ventaCli").value:null; const qtyVal=$("#ventaQty")?$("#ventaQty").value:"1";
   { const c0=ventaActual(); if(c0&&c0.estado==="abierto"&&c0.pago){ revisarPagoAbierta(c0); } }
   const esHoy=esHoyVenta(); const c=ventaActual(); if(!c) state.ventaPagoForm=false; const editable=esHoy&&!!c&&c.estado==="abierto"; const k=c?clienteDe(c):null;
   // la lista del día no muestra ventas abiertas vacías (se crean al escribir la clienta y no tienen nada todavía)
@@ -3755,7 +3786,7 @@ function renderVenta(keepFocus){
     ventaLiveActual()?h("div",{class:"vd-sec",style:"margin-top:12px"},h("button",{class:"btn sm",type:"button",onclick:()=>liveExcel(ventaLiveActual(),state.ventaCarts)},"Excel del día"),h("button",{class:"btn sm",type:"button",onclick:()=>livePdf(ventaLiveActual(),state.ventaCarts)},"PDF del día")):null);
   const lado=h("div",{class:"vd-ladocol"},panelAb,panelHist);
 
-  const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,"Venta directa"),h("div",{class:"vd-muted"},(!ventaLiveActual()||ventaLiveActual().dia===hoyKey())?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):(esHoy?"Venta abierta de ":"Consultando: ")+String((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""),c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
+  const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,"Venta"),h("div",{class:"vd-muted"},(!ventaLiveActual()||ventaLiveActual().dia===hoyKey())?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):(esHoy?"Venta abierta de ":"Consultando: ")+String((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""),c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
     (c&&esHoy)?h("button",{class:"btn",type:"button",onclick:()=>{ if(ventaLiveActual()&&ventaLiveActual().dia!==hoyKey()){ const lh=ventaLiveHoy(); ventaSubscribe(lh?lh.id:null); } state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"):null);
   const main=h("div",{class:"cartpanel vd-main"},cab,paso1,paso2,paso3);
   host.replaceChildren(h("div",{class:"venta vd"},main,lado));
@@ -3779,7 +3810,7 @@ function openGlobalSearch(){
       searchProducts(q).slice(0,8).forEach(p=>items.push({tipo:"Producto",t:p.nombre,s:(p.palabra?p.palabra+" · ":"")+p.codigo+" · $"+fmtMoney(p.precio)+" · "+p.existencia+" pzas",run:()=>{ closeGlobalSearch(); setView("inv"); openDrawer(p.codigo); }}));
       buscarClientas(q).slice(0,6).forEach(k=>items.push({tipo:"Clienta",t:k.nombre,s:[k.facebook?"FB: "+k.facebook:null,k.whatsapp||null,k.ciudad||null].filter(Boolean).join(" · "),run:()=>{ closeGlobalSearch(); openClienta(k.id); }}));
       state.lives.filter(l=>normaliza(l.nombre).includes(qn)).slice(0,5).forEach(l=>items.push({tipo:l.tipo==="mostrador"?"Ventas directas":"Live",t:l.nombre,s:fmtDate(l.creado)+(l.estado==="abierto"?" · abierto":""),run:()=>{ closeGlobalSearch(); if(l.tipo==="mostrador"){ setView("venta"); ventaSubscribe(l.id); renderVenta(); } else { setView("live"); selectLive(l.id); } }}));
-      [["inv","Inventario"],["new","Nuevo producto"],["live","Live y carritos"],["rapido","Live rápido"],["venta","Venta directa"],["cli","Clientas"],["dash","Resumen"],["scan","Escanear"]].filter(([v,n])=>normaliza(n).includes(qn)).forEach(([v,n])=>items.push({tipo:"Ir a",t:n,s:"",run:()=>{ closeGlobalSearch(); setView(v); }}));
+      [["inv","Inventario"],["new","Nuevo producto"],["live","Live y carritos"],["rapido","Live rápido"],["venta","Venta"],["cli","Clientas"],["dash","Resumen"],["scan","Escanear"]].filter(([v,n])=>normaliza(n).includes(qn)).forEach(([v,n])=>items.push({tipo:"Ir a",t:n,s:"",run:()=>{ closeGlobalSearch(); setView(v); }}));
     }
     idx=Math.min(idx,Math.max(0,items.length-1));
     list.replaceChildren(...(items.length?items.map((it,i)=>h("button",{type:"button",class:"gsitem"+(i===idx?" hl":""),onmousedown:e=>{ e.preventDefault(); it.run(); }},h("span",{class:"gstipo"},it.tipo),h("span",{class:"gst"},it.t),it.s?h("span",{class:"gss"},it.s):h("span"))):[h("div",{class:"gsempty"},q?"Sin resultados para «"+q+"»":"Escribe para buscar en productos, clientas, lives y secciones")]));
@@ -3813,7 +3844,7 @@ async function boot(){
   db.collection("productos").onSnapshot(s=>{
     const m=new Map();
     for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
-    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); },20000);
+    state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); await todoAVenta031126(); },20000);
   },e=>{ console.warn("productos",e); $("#dbNotice").hidden=false; });
 }
 if(location.hash==="#conteo"){ document.body.classList.add("conteo-mode"); $("#conteoHost").hidden=false; }
