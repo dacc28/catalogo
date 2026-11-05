@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-05T05:16:52.474Z",
+ "actualizado": "2026-11-05T16:13:05.110Z",
  "categorias": [
   {
    "p": "ANI",
@@ -197,18 +197,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00028",
-   "nombre": "Anillo Ajustable Churumbela Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/88ad23468ff109625a124a376a311557.jpg",
-   "creado": "2026-10-27T01:11:58.964Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00029",
    "nombre": "Anillo Ajustable Giratorio",
    "categoria": "ANI",
@@ -266,18 +254,6 @@
    "notas": "",
    "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
    "creado": "2026-10-19T02:01:12.007Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00009",
-   "nombre": "Aretes Cushion de Zirconia",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8f4e3d917bdd135758293e140b702e04.jpg",
-   "creado": "2026-10-19T02:04:48.140Z",
    "disponible": true
   },
   {
@@ -1421,18 +1397,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00053",
-   "nombre": "Gargantilla Omega lisa",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2b8a0eaec2be02d0101c5815a41a4f55.jpg",
-   "creado": "2026-10-20T21:06:57.644Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00054",
    "nombre": "Collar de Caracol Turbo",
    "categoria": "COL",
@@ -1658,18 +1622,6 @@
    "notas": "",
    "foto": "fotos/4134a8db329b146e555e99c23a8a140b.jpg",
    "creado": "2026-11-03T20:23:09.385Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00001",
-   "nombre": "Pulsera de Acero con Piedras Multicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eb63e97b63ad32d3166f4119372b658c.jpg",
-   "creado": "2026-10-19T01:17:13.969Z",
    "disponible": true
   },
   {
