@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-04T23:38:40.004Z",
+ "actualizado": "2026-11-05T00:45:13.070Z",
  "categorias": [
   {
    "p": "ANI",
@@ -350,6 +350,18 @@
    "notas": "",
    "foto": "fotos/171c384dce61cf1b148ebc05d24b587e.jpg",
    "creado": "2026-10-20T17:19:22.890Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00020",
+   "nombre": "Aretes Azul",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9cebd5465ddd9f3e65b6c6b6d3bd5c47.jpg",
+   "creado": "2026-10-20T17:20:14.987Z",
    "disponible": true
   },
   {
