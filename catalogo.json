@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-05T16:13:05.110Z",
+ "actualizado": "2026-11-05T16:18:06.746Z",
  "categorias": [
   {
    "p": "ANI",
@@ -713,18 +713,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00053",
-   "nombre": "Aretes Xuping Ojo Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/b8f244ed69325310d6482ff3d5970b81.jpg",
-   "creado": "2026-10-20T23:35:52.357Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00054",
    "nombre": "Aretes Xuping Arracada Azul",
    "categoria": "ARE",
@@ -1241,18 +1229,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00039",
-   "nombre": "Collar Dije Barril",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c4c44e478df531e66f1d840dfca31576.jpg",
-   "creado": "2026-10-20T16:15:19.713Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00040",
    "nombre": "Collar Perlita",
    "categoria": "COL",
@@ -1322,18 +1298,6 @@
    "notas": "",
    "foto": "fotos/74172cd89992fac3727fcb63a9ad2564.jpg",
    "creado": "2026-10-20T17:24:28.236Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00047",
-   "nombre": "Collar Eslabon Bicolor",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f00dfda5ee12a80f157ee39513df8793.jpg",
-   "creado": "2026-10-20T17:26:38.885Z",
    "disponible": true
   },
   {
@@ -1594,7 +1558,7 @@
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ad0fe3faa81b57d79d6b6caf73404941.jpg",
    "creado": "2026-11-01T22:01:35.363Z",
