@@ -110,29 +110,61 @@
     }
   }
 
+  function ganDe(r, pv) { // ganancia por pieza, si vende lo que le queda, y lo que ya ganó
+    const pp = pv == null || isNaN(pv) ? null : pv - r.costo;
+    return { pp, potencial: pp == null ? 0 : pp * r.disponibles };
+  }
+  function ganHTML(r, pv) { const g = ganDe(r, pv);
+    if (g.pp == null) return '<span class="gsin">Pon tu precio</span>' + (r.vendido ? '<small>Ya ganaste ' + mxn(r.ganancia) + '</small>' : '');
+    return '<b class="' + (g.pp < 0 ? "neg" : "") + '">' + mxn(g.pp) + ' <i>c/u</i></b>' + (r.disponibles ? '<small>Si vendes ' + (r.disponibles === 1 ? "la que queda" : "las " + r.disponibles) + ': <b>' + mxn(g.potencial) + '</b></small>' : '') + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : ''); }
+  function pintarResumenNegocio() {
+    const disp = S.inv.reduce((s, r) => s + r.disponibles, 0), gan = S.inv.reduce((s, r) => s + r.ganancia, 0), ing = S.inv.reduce((s, r) => s + r.ingresos, 0);
+    const pot = S.inv.reduce((s, r) => s + ganDe(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta).potencial, 0);
+    const sinPrecio = S.inv.filter(r => (r.precioTmp !== undefined ? r.precioTmp : r.precioVenta) == null && r.disponibles > 0).length;
+    $("#resumenNegocio").innerHTML = '<span class="chip vidrio"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip vidrio"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(ing) + ' vendidos</span><span class="chip prep"><i class="fa-solid fa-arrow-trend-up"></i> ' + mxn(gan) + ' de ganancia ya hecha</span><span class="chip ent"><i class="fa-solid fa-coins"></i> ' + mxn(pot) + ' más si vendes lo que te queda</span><span class="chip total"><i class="fa-solid fa-star"></i> Ganancia total: ' + mxn(gan + pot) + '</span>' + (sinPrecio ? '<span class="chip vidrio"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio de venta</span>' : "");
+  }
+  async function cancelarVenta(v) {
+    const r = S.inv.find(x => x.codigo === v.codigo) || {}; if (!confirm("¿Cancelar esta venta?\n" + (r.nombre || v.codigo) + " · " + v.cant + " × " + mxn(v.precio_venta) + "\nLa pieza vuelve a tu inventario.")) return;
+    const { error } = await sb.from("ventas").delete().eq("id", v.id); if (error) return toast("No se pudo cancelar: " + error.message, true);
+    S.ventas = S.ventas.filter(x => x.id !== v.id); calcular(); pintarNegocio(); pintarInicio(); toast("Venta cancelada · la pieza regresó a tu inventario");
+  }
+  function pintarVentasHechas() {
+    let box = $("#ventasHechas"); if (!box) { box = document.createElement("div"); box.id = "ventasHechas"; box.className = "ventas-hechas"; const w = $("#tablaInv").closest(".tabla-wrap"); w.parentNode.insertBefore(box, $("#invVacio").nextSibling); }
+    const vs = S.ventas.slice(0, 40); if (!vs.length) { box.innerHTML = ""; return; }
+    const nom = c => { const r = S.inv.find(x => x.codigo === c); return r ? (r.nombre || c) : c; };
+    box.innerHTML = '<h3>Ventas que registraste</h3><p>¿Te equivocaste? Cancela la venta y la pieza regresa a tu inventario.</p><div class="vh-lista"></div>';
+    const lista = $(".vh-lista", box);
+    for (const v of vs) { const el = document.createElement("div"); el.className = "vh";
+      el.innerHTML = '<div><b>' + esc(nom(v.codigo)) + '</b><span>' + fecha(v.fecha || v.creado) + ' · ' + v.cant + ' × ' + mxn(v.precio_venta) + '</span></div><b>' + mxn((Number(v.cant) || 0) * (Number(v.precio_venta) || 0)) + '</b><button class="btn vidrio sm cancelar"><i class="fa-solid fa-rotate-left"></i> Cancelar</button>';
+      $(".cancelar", el).addEventListener("click", () => cancelarVenta(v)); lista.append(el); }
+  }
   function pintarNegocio() {
     const tb = $("#tablaInv tbody"); tb.innerHTML = ""; $("#invVacio").style.display = S.inv.length ? "none" : "block"; $("#tablaInv").style.display = S.inv.length ? "" : "none";
-    const disp = S.inv.reduce((s, r) => s + r.disponibles, 0), gan = S.inv.reduce((s, r) => s + r.ganancia, 0), ing = S.inv.reduce((s, r) => s + r.ingresos, 0), sinPrecio = S.inv.filter(r => r.precioVenta == null && r.disponibles > 0).length;
-    $("#resumenNegocio").innerHTML = '<span class="chip vidrio"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip vidrio"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(ing) + ' vendidos</span><span class="chip prep"><i class="fa-solid fa-arrow-trend-up"></i> ' + mxn(gan) + ' de ganancia</span>' + (sinPrecio ? '<span class="chip vidrio"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio de venta</span>' : "");
+    for (const r of S.inv) delete r.precioTmp;
+    pintarResumenNegocio();
     for (const r of S.inv) {
       const tr = document.createElement("tr"); if (!r.disponibles) tr.className = "agotado";
+      const ultima = S.ventas.find(v => v.codigo === r.codigo);
       tr.innerHTML = '<td><div class="pcell">' + (r.foto ? '<img src="' + esc(r.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div><b>' + esc(r.nombre || r.codigo) + '</b><span>' + esc(r.codigo) + (r.material ? ' · ' + esc(r.material) : '') + '</span></div></div></td>'
-        + '<td>' + r.comprado + '</td><td>' + r.vendido + '</td><td><b>' + r.disponibles + '</b></td><td>' + mxn(r.costo) + '</td>'
+        + '<td>' + r.comprado + '</td><td>' + r.vendido + (ultima ? ' <button class="ico deshacer" title="Cancelar la última venta de esta pieza"><i class="fa-solid fa-rotate-left"></i></button>' : '') + '</td><td><b>' + r.disponibles + '</b></td><td>' + mxn(r.costo) + '</td>'
         + '<td><span class="inp">$<input type="number" min="0" step="1" class="precio" value="' + (r.precioVenta == null ? "" : Math.round(r.precioVenta)) + '" placeholder="' + Math.round(r.costo * 2) + '"></span></td>'
-        + '<td class="gan">' + mxn(r.ganancia) + '</td>'
+        + '<td class="gan">' + ganHTML(r, r.precioVenta) + '</td>'
         + '<td><span class="inp"><input type="number" min="1" max="' + (r.disponibles || 1) + '" step="1" class="cant" value="1" style="width:40px"></span> <button class="ico vender" title="Registrar venta"' + (r.disponibles ? "" : " disabled") + '><i class="fa-solid fa-plus"></i></button></td>'
         + '<td><button class="ico visible' + (r.visible ? "" : " off") + '" title="' + (r.visible ? "Visible en tu catálogo" : "Oculta en tu catálogo") + '"><i class="fa-regular ' + (r.visible ? "fa-eye" : "fa-eye-slash") + '"></i></button></td>';
       const precioIn = $(".precio", tr);
-      precioIn.addEventListener("change", async () => { const v = precioIn.value === "" ? null : Number(precioIn.value); const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: v, visible: r.visible }); if (error) return toast("No se guardó el precio: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: v, visible: r.visible }; toast("Precio guardado"); });
-      $(".visible", tr).addEventListener("click", async () => { const nv = !r.visible; const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }); if (error) return toast("No se guardó: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }; calcular(); pintarNegocio(); toast(nv ? "Visible en tu catálogo" : "Oculta de tu catálogo"); });
+      precioIn.addEventListener("input", () => { r.precioTmp = precioIn.value === "" ? null : Number(precioIn.value); $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp); pintarResumenNegocio(); });
+      precioIn.addEventListener("change", async () => { const v = precioIn.value === "" ? null : Number(precioIn.value); const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: v, visible: r.visible }); if (error) return toast("No se guardó el precio: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: v, visible: r.visible }; r.precioVenta = v; delete r.precioTmp; $(".gan", tr).innerHTML = ganHTML(r, v); pintarResumenNegocio(); toast("Precio guardado"); });
+      $(".visible", tr).addEventListener("click", async () => { const nv = !r.visible; const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }); if (error) return toast("No se guardó: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }; calcular(); pintarNegocio(); pintarMiniCat(); });
+      const dz = $(".deshacer", tr); if (dz) dz.addEventListener("click", () => cancelarVenta(ultima));
       $(".vender", tr).addEventListener("click", async () => {
         const cant = Math.max(1, Math.min(r.disponibles, Number($(".cant", tr).value) || 1)); let pv = precioIn.value === "" ? null : Number(precioIn.value);
         if (pv == null) { const s = prompt("¿A cuánto vendiste cada pieza?", Math.round(r.costo * 2)); if (s == null) return; pv = Number(s) || 0; precioIn.value = pv; precioIn.dispatchEvent(new Event("change")); }
         const { data, error } = await sb.from("ventas").insert({ clienta_id: S.yo.id, codigo: r.codigo, cant, precio_venta: pv }).select().single(); if (error) return toast("No se registró: " + error.message, true);
-        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv)); medir("club_venta");
+        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
       });
       tb.append(tr);
     }
+    pintarVentasHechas();
   }
 
   /* ---------- Mi catálogo: PDF con su nombre, logo y precios (sin links ni datos del proveedor) ---------- */
