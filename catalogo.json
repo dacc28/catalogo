@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-05T00:45:13.070Z",
+ "actualizado": "2026-11-05T03:39:12.893Z",
  "categorias": [
   {
    "p": "ANI",
@@ -40,18 +40,6 @@
   }
  ],
  "productos": [
-  {
-   "codigo": "ANI-00001",
-   "nombre": "Anillo Ajustable de Líneas",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/76b22a59776f6b1ad645d0d36ced9dbc.jpg",
-   "creado": "2026-10-19T01:12:42.851Z",
-   "disponible": true
-  },
   {
    "codigo": "ANI-00002",
    "nombre": "Anillo Ajustable Chunky",
@@ -802,7 +790,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
    "creado": "2026-11-01T20:09:55.282Z",
@@ -1070,30 +1058,6 @@
    "notas": "",
    "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
    "creado": "2026-10-19T01:37:56.830Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00016",
-   "nombre": "Collar Ojo Serpiente",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/135661a33cc9e2e836e003822a0558e0.jpg",
-   "creado": "2026-10-19T01:52:16.304Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00018",
-   "nombre": "Collar Hematita",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/1b4ccfd1a533a333185059d817196ff1.jpg",
-   "creado": "2026-10-19T02:14:35.318Z",
    "disponible": true
   },
   {
@@ -1390,7 +1354,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/f00dfda5ee12a80f157ee39513df8793.jpg",
    "creado": "2026-10-20T17:26:38.885Z",
