@@ -42,7 +42,7 @@
   if (GOOGLE_ACTIVO) { $("#btnGoogle").style.display = ""; $("#btnGoogle").addEventListener("click", async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: BASE + "club.html?google=1" } }); if (error) toast("No se pudo abrir Google: " + error.message, true); }); }
   /* Google: la sesión existe pero todavía no está ligada a una clienta → completar WhatsApp (y, si ya había cuenta, fusionar con contraseña) */
   async function completarGoogle(user) {
-    $("#login").style.display = "none"; $("#cargando").style.display = "none"; const f = $("#formGoogle"); f.style.display = "";
+    $("#cargando").style.display = "none"; $("#app").classList.remove("on"); $("#login").style.display = ""; $("#formLogin").style.display = "none"; $("#formRegistro").style.display = "none"; const f = $("#formGoogle"); f.style.display = "";
     const md = user.user_metadata || {}; $("#gNombre").value = md.full_name || md.name || ""; $("#gFusion").style.display = "none";
     $("#gSalir").onclick = async e => { e.preventDefault(); await sb.auth.signOut(); location.replace("club.html"); };
     f.onsubmit = async e => {
