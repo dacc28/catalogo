@@ -4,278 +4,312 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Marvea · Mayoreo de joyería en línea · Monterrey</title>
-<meta name="description" content="Marvea: joyería de acero inoxidable, oro laminado y chapa de oro, seleccionada para vender y con el mejor precio de mayoreo. Tienda en línea con pago con tarjeta, desde 12 piezas surtidas, envíos DHL Express a todo México.">
+<meta name="description" content="Marvea: joyería de acero inoxidable, oro laminado y chapa de oro al mayoreo, desde 12 piezas surtidas. Compra en línea con tarjeta, Apple Pay o transferencia y recibe mañana por DHL Express.">
 <meta property="og:title" content="Marvea · Donde emprendes tu negocio">
-<meta property="og:description" content="Mayoreo de joyería en línea para quienes emprenden. Desde 12 piezas surtidas a tu gusto, con envío DHL que llega mañana.">
+<meta property="og:description" content="Mayoreo de joyería en línea desde 12 piezas surtidas. Paga con tarjeta y recibe mañana por DHL.">
 <meta property="og:image" content="https://www.marveamayoreo.com/poster.jpg">
-<meta name="theme-color" content="#FBF6EC">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="logo-m.png" type="image/png">
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B7H8FPWDP7"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B7H8FPWDP7');</script>
-<link rel="icon" href="logo-m.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="glass.css?v=6">
+<link rel="stylesheet" href="mv.css?v=1">
 </head>
 <body>
 
-<div class="fondo" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i><i class="b5"></i></div>
-
-<nav class="nav">
+<!-- ===================== ENCABEZADO ===================== -->
+<header class="top">
+  <div class="aviso"><span><i class="fa-solid fa-plane-up"></i> Envío DHL Express · sale hoy, llega mañana</span><span class="sep">·</span><span>Desde 12 piezas surtidas, sin monto mínimo</span><span class="sep">·</span><span><i class="fa-regular fa-credit-card"></i> Tarjeta, Apple Pay o transferencia</span></div>
   <div class="barra">
-    <a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a>
-    <ul>
-      <li><a href="tienda.html" class="tienda"><i class="fa-solid fa-bag-shopping"></i> Comprar</a></li>
-      <li><a href="index.html#como-funciona">Cómo funciona</a></li>
-      <li><a href="index.html#ganar">Calculadora</a></li>
-      <li><a href="index.html#envios">Envíos</a></li>
-      <li><a href="club.html">Business Club</a></li>
-      <li><a href="index.html#preguntas">Preguntas</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a class="btn cristal sm" id="navCuenta" href="club.html"><i class="fa-regular fa-user"></i> Mi cuenta</a>
-      <a class="btn coral sm" href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-      <button class="hamb" aria-label="menú"><span></span><span></span><span></span></button>
-    </div>
+    <a class="logo" href="#/" onclick="irVista('inicio');return false"><img src="logo-m.png" alt="">Marvea</a>
+    <div class="buscar"><i class="fa-solid fa-magnifying-glass"></i><input id="buscar" type="search" placeholder="Busca aretes, collares, acero, dorado…" autocomplete="off" enterkeyhint="search"><button class="x" id="buscarX" aria-label="borrar">✕</button></div>
+    <nav class="acc-top">
+      <button class="t-btn" id="btnEntrar" onclick="abrirCuenta()"><i class="fa-regular fa-user"></i><span><small id="btnEntrarS">Hola</small><b class="txt">Mi cuenta</b></span></button>
+      <button class="t-btn solo-desk" onclick="abrirCuenta('pedidos')"><i class="fa-solid fa-box-open"></i><span><small>Mis</small><b>pedidos</b></span></button>
+      <button class="t-cart" onclick="verCarrito()" aria-label="Ver carrito"><i class="fa-solid fa-bag-shopping"></i><span class="n" id="tabN">0</span><b class="solo-desk">Carrito</b></button>
+    </nav>
   </div>
-</nav>
-
-<!-- ===== HERO ===== -->
-<header class="hero hero-2" id="inicio">
-  <div class="poster" style="background-image:url(poster.jpg)"></div>
-  <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="poster.jpg" data-h="hero.mp4" data-v="hero-v.mp4"></video>
-  <div class="velo"></div>
-  <div class="wrap">
-    <div class="vidrio tarjeta entra d1">
-      <span class="eyebrow coral">Mayoreo de joyería · Monterrey, N.L. · envíos a todo México</span>
-      <h1 style="margin-top:18px">Joyería que <i>se vende sola</i>, al precio de mayoreo</h1>
-      <p class="lead">Acero inoxidable, oro laminado y chapa de oro, seleccionados por tendencia. Compras desde 12 piezas surtidas a tu gusto, pagas con tarjeta y mañana lo tienes en tu puerta.</p>
-      <div class="cta">
-        <a class="btn coral lg" href="tienda.html">Comprar ahora <span class="fl">→</span></a>
-        <a class="btn cristal lg" href="index.html#como-funciona">Ver cómo funciona</a>
-      </div>
-      <div class="confianza">
-        <span><i class="fa-solid fa-gem"></i> Desde 12 piezas, sin monto mínimo</span>
-        <span><i class="fa-solid fa-plane-up"></i> Sale hoy, llega mañana · DHL Express</span>
-        <span><i class="fa-regular fa-credit-card"></i> Tarjeta, Apple Pay o transferencia</span>
-      </div>
-    </div>
-    <div class="hero-lado entra d3">
-      <div class="vidrio gana-card">
-        <span class="eyebrow">Ejemplo real</span>
-        <div class="gana-fila"><div><small>Compras</small><b>12 piezas</b><span>mezcla de aretes y collares</span></div><div><small>Inviertes</small><b id="hInv">$540</b><span>precio de mayoreo</span></div></div>
-        <div class="gana-fila"><div><small>Las vendes en</small><b id="hVen">$1,080 – $1,620</b><span>al doble o al triple</span></div><div class="dest"><small>Ganas</small><b id="hGan">$540 – $1,080</b><span>en tu primer pedido</span></div></div>
-        <a class="btn sm" href="index.html#ganar">Haz tu propia cuenta <span class="fl">→</span></a>
-      </div>
-      <div class="vidrio f"><div class="ic c">★</div><div><b>+6 años surtiendo negocios</b><span>empresa hermana de VJ Joyería</span></div></div>
-    </div>
-  </div>
-  <div class="scroll" aria-hidden="true"></div>
+  <div class="cats-bar"><div class="wrap" id="filtros"></div></div>
 </header>
 
-<!-- ===== CATEGORÍAS ===== -->
-<section class="corta" id="categorias">
+<main id="vistas">
+
+<!-- ===================== INICIO ===================== -->
+<section class="vista on" id="v-inicio">
   <div class="wrap">
-    <div class="cats-head rev"><div><span class="eyebrow">Catálogo vivo</span><h2 style="margin-top:12px">Elige por <i>categoría</i></h2></div><a class="btn cristal sm" href="tienda.html">Ver todo el catálogo <span class="fl">→</span></a></div>
-    <div class="cats-row rev" id="catsRow"><div class="vacio">Cargando categorías…</div></div>
+    <div class="hola-bar" id="hola"></div>
+
+    <div class="banner" id="banner">
+      <div class="banner-tx">
+        <span class="tag-coral">Mayoreo de joyería · Monterrey</span>
+        <h1>Joyería que se vende sola, <i>al precio de mayoreo</i></h1>
+        <p>Acero inoxidable, oro laminado y chapa de oro seleccionados por tendencia. Muchas clientas las venden al doble o al triple.</p>
+        <div class="banner-acc"><button class="btn coral lg" onclick="irVista('catalogo')">Ver todo el catálogo <i class="fa-solid fa-arrow-right"></i></button><button class="btn blanco lg" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button></div>
+      </div>
+      <div class="banner-img"><img src="poster.jpg" alt="Joyería Marvea"><div class="banner-sello"><b id="nModelos">…</b><span>modelos disponibles hoy</span></div></div>
+    </div>
+
+    <div class="ventajas">
+      <div><i class="fa-solid fa-gem"></i><b>Desde 12 piezas</b><span>surtidas a tu gusto</span></div>
+      <div><i class="fa-solid fa-plane-up"></i><b>Llega mañana</b><span>DHL Express a todo México</span></div>
+      <div><i class="fa-solid fa-lock"></i><b>Pago seguro</b><span>tarjeta, Apple Pay o transferencia</span></div>
+      <div><i class="fa-solid fa-store"></i><b>Tu catálogo gratis</b><span>con nuestras fotos y tus precios</span></div>
+    </div>
+
+    <div class="fila-t"><h2>Compra por <i>categoría</i></h2></div>
+    <div class="cat-circ" id="catsRow"></div>
+
+    <div class="fila-t"><h2>Lo más <i>vendido</i></h2><button class="link" onclick="S.orden='pop';document.getElementById('orden').value='pop';irVista('catalogo')">Ver todo <i class="fa-solid fa-chevron-right"></i></button></div>
+    <div class="carrusel" id="rowTop"></div>
+
+    <div class="promo-arma" onclick="abrirArmar()">
+      <div><span class="tag-coral">¿Primera vez?</span><h3>Dinos tu presupuesto y <i>te armamos el paquete</i></h3><p>3 preguntas y listo: piezas que más se venden, con lo disponible hoy. Lo ajustas como quieras.</p></div>
+      <button class="btn lg">Armar mi paquete <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+    <div class="fila-t"><h2>Acaban de <i>llegar</i></h2><button class="link" onclick="S.orden='nuevo';document.getElementById('orden').value='nuevo';irVista('catalogo')">Ver novedades <i class="fa-solid fa-chevron-right"></i></button></div>
+    <div class="carrusel" id="rowNuevo"></div>
+
+    <section class="bloque calc-home" id="calculadora">
+      <div class="bloque-tx"><span class="tag-coral">Calculadora</span><h2>¿Cuánto <i>ganarías</i>?</h2><p>Elige tus piezas, cuántas comprarías y a cuánto las venderías. Te decimos lo que inviertes y lo que ganas, y lo mandas al carrito con un clic.</p></div>
+      <div class="calc" id="calcHome"></div>
+    </section>
+
+    <section class="bloque" id="como-funciona">
+      <div class="fila-t"><h2>Así de <i>fácil</i></h2></div>
+      <div class="pasos">
+        <div><span>1</span><b>Elige tus piezas</b><p>Busca, filtra y agrega al carrito. Mínimo 12 piezas en total, combinando modelos. Tus piezas quedan apartadas mientras pagas.</p></div>
+        <div><span>2</span><b>Paga seguro</b><p>Tarjeta de crédito o débito, Apple Pay o Google Pay (al instante, ticket por correo) o transferencia (apartado 12 h).</p></div>
+        <div><span>3</span><b>Recibe y vende</b><p>Sale por DHL Express y llega mañana, o recoges gratis en Monterrey. Tu catálogo con nuestras fotos se arma solo en tu cuenta.</p></div>
+      </div>
+    </section>
+
+    <section class="bloque club-promo">
+      <div class="bloque-tx"><span class="tag-coral">Marvea Business Club · incluido en tu cuenta</span><h2>Tu negocio, <i>en tu misma cuenta</i></h2>
+        <p>Con la cuenta con la que compras tienes todo: tus pedidos y guía DHL, tus precios de menudeo y mayoreo, lo que vendes y cuánto ganas, y tu catálogo en PDF con nuestras fotos, tu logo y tu WhatsApp. Se activa con tu primera compra.</p>
+        <div class="banner-acc"><button class="btn lg" onclick="abrirCuenta()">Entrar a mi cuenta</button><button class="btn blanco lg" onclick="irVista('catalogo')">Hacer mi primera compra</button></div></div>
+      <div class="club-mock"><div class="cm-top"><span class="av">AL</span><div><b>Accesorios Luna</b><small>Catálogo creado en Marvea ✓</small></div></div><div class="cm-grid" id="catDemo"></div><div class="cm-wa"><i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp</div></div>
+    </section>
+
+    <section class="bloque envios" id="envios">
+      <div class="bloque-tx"><span class="tag-coral">Envíos DHL Express</span><h2>Sale hoy, <i>llega mañana</i></h2>
+        <p>Pedidos de lunes a jueves llegan al día siguiente donde hay oficina DHL; zonas extendidas, viernes, sábado y festivos: 2 a 3 días hábiles. ¿Quieres juntar pedidos? Pide resguardo al pagar (hasta 3).</p>
+        <div class="tarifas"><div><b>$240</b><span>hasta 2 kg · ≈ 30 piezas</span></div><div><b>$305</b><span>hasta 5 kg · ≈ 80 piezas</span></div><div><b>Gratis</b><span>recoger en Monterrey</span></div></div></div>
+      <form class="rastreo" id="rastreoForm" action="https://www.dhl.com/mx-es/home/tracking.html" method="get" target="_blank" rel="noopener" autocomplete="off">
+        <label for="guia"><i class="fa-solid fa-truck-fast"></i> Rastrea tu pedido</label>
+        <input id="guia" name="tracking-id" inputmode="numeric" placeholder="Número de guía DHL" required><input type="hidden" name="submit" value="1">
+        <button class="btn coral" type="submit">Rastrear</button>
+        <small>Tu guía también aparece en <a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a>.</small>
+      </form>
+    </section>
+
+    <section class="bloque" id="preguntas">
+      <div class="fila-t"><h2>Preguntas <i>frecuentes</i></h2></div>
+      <div class="faq">
+        <details><summary>¿Hay monto mínimo de compra?</summary><p>No. El mínimo es de 12 piezas surtidas a tu gusto, sin monto mínimo en pesos.</p></details>
+        <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio. Con cuenta (Google, correo o WhatsApp) guardamos tu domicilio y se activa tu Business Club: pedidos, precios y catálogo en un solo lugar.</p></details>
+        <details><summary>¿Cómo pago?</summary><p>Tarjeta de crédito o débito, Apple Pay o Google Pay (se confirma al instante y tu ticket llega por correo) o transferencia bancaria: tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></details>
+        <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, por DHL Express aéreo: hasta 2 kg $240 y hasta 5 kg $305 MXN; el peso final lo determina DHL. En Monterrey recoges gratis. Internacional, a cotizar.</p></details>
+        <details><summary>¿Puedo juntar varios pedidos en un envío?</summary><p>Sí. Al pagar elige resguardar: guardamos tu paquete y lo juntamos con tus siguientes pedidos (máximo 3 en resguardo); solo se cobra la diferencia si cambia la tarifa.</p></details>
+        <details><summary>¿Qué materiales manejan y cómo los cuido?</summary><p>Acero inoxidable, oro laminado y chapa de oro. Mantenlas secas, ponte perfume y cremas antes, nada de cloro ni detergentes, límpialas con paño seco y guárdalas separadas. El desgaste por uso no es defecto de fabricación.</p></details>
+        <details><summary>¿Hacen cambios o devoluciones?</summary><p>Por ser mayoreo elegido por ti, no hacemos cambios por elección o cambio de opinión. Sí respondemos por defectos de fabricación o errores de surtido reportados con evidencia en las 24 h siguientes. <a href="legal.html#terminos">Términos y condiciones</a>.</p></details>
+        <details><summary>¿Quiénes son?</summary><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mayoreo. Tienda en línea en Monterrey, Nuevo León, con envíos a todo México.</p></details>
+      </div>
+    </section>
   </div>
 </section>
 
-<!-- ===== LO QUE MÁS SE MUEVE ===== -->
-<section id="destacadas" style="padding-top:28px">
-  <div class="wrap">
-    <div class="centro rev">
-      <span class="eyebrow coral">Las favoritas</span>
-      <h2 style="margin-top:14px">Lo que <i>más se mueve</i> ahora</h2>
-      <p class="lead">Las piezas que más nos piden esta temporada, con su precio de mayoreo. Agrégalas desde aquí y paga en la tienda.</p>
-    </div>
-    <div class="grid-prod rev" id="masPedido"><div class="vacio">Cargando piezas…</div></div>
-    <div class="mas rev"><a class="btn" href="tienda.html">Ver los <span id="nModelos">…</span> modelos en la tienda <span class="fl">→</span></a></div>
-  </div>
-</section>
-
-<!-- ===== CÓMO FUNCIONA ===== -->
-<section class="corta" id="como-funciona">
-  <div class="wrap">
-    <div class="vidrio oscuro panel rev">
-      <div class="gota" style="width:420px;height:420px;left:-140px;bottom:-200px;background:var(--cielo)"></div>
-      <div class="gota" style="width:300px;height:300px;right:-80px;top:-120px;background:var(--amarillo)"></div>
-      <div class="centro">
-        <span class="eyebrow luz">Así de simple</span>
-        <h2 style="margin-top:14px">Tu primer pedido <i style="color:var(--amarillo)">en 3 pasos</i></h2>
-      </div>
-      <div class="pasos tres" data-stagger>
-        <div class="vidrio paso"><div class="n">1</div><h3>Elige tus piezas</h3><p>Entra a la tienda, filtra por categoría o material y arma tu pedido desde 12 piezas surtidas. Si no sabes por dónde empezar, te armamos un paquete con tu presupuesto.</p></div>
-        <div class="vidrio paso"><div class="n">2</div><h3>Paga seguro</h3><p>Tarjeta de crédito o débito, Apple Pay, Google Pay o transferencia. Tus piezas quedan apartadas mientras pagas: nadie más se las lleva.</p></div>
-        <div class="vidrio paso"><div class="n">3</div><h3>Recibe y vende</h3><p>Sale por DHL Express y llega mañana (gratis si recoges en Monterrey). Tu catálogo con nuestras fotos se genera solo en tu Business Club.</p></div>
-      </div>
-      <div class="stats" data-stagger>
-        <div class="vidrio s"><b><span data-contar="6" data-sufijo="+">0</span> años</b><span>surtiendo negocios en todo México</span></div>
-        <div class="vidrio s"><b><span data-contar="700" id="totalPiezas">0</span> piezas</b><span>disponibles hoy, inventario real</span></div>
-        <div class="vidrio s"><b>×2 a ×3</b><span>es lo que ganan nuestras clientas por pieza</span></div>
-      </div>
-      <div class="centro" style="margin-top:30px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn coral lg" href="tienda.html">Empezar mi pedido <span class="fl">→</span></a><a class="btn luz lg" href="https://wa.me/528132660673?text=Hola%20Marvea%2C%20quiero%20hacer%20mi%20primer%20pedido" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Tengo dudas</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CALCULADORA ===== -->
-<section class="ganar" id="ganar">
-  <div class="wrap">
-    <div class="rev">
-      <span class="eyebrow">Calculadora</span>
-      <h2 style="margin-top:14px">¿Cuánto ganarías? <i>Hazlo en 10 segundos</i></h2>
-      <p class="lead" style="margin-top:14px">Elige una pieza, di cuántas comprarías y a cuánto las venderías. Te decimos qué inviertes y qué ganas. Si te convence, la mandas directo a tu carrito.</p>
-      <ul class="lista-check">
-        <li><i class="fa-solid fa-check"></i> Precios de mayoreo reales, actualizados hoy</li>
-        <li><i class="fa-solid fa-check"></i> Combina modelos: el mínimo son 12 piezas en total</li>
-        <li><i class="fa-solid fa-check"></i> En tu Business Club tienes la calculadora completa con varias piezas</li>
-      </ul>
-    </div>
-    <div class="vidrio calc2 rev" id="calc2">
-      <div class="calc2-pieza" id="c2Pieza">
-        <div class="ph"><img id="c2Foto" alt="" src="logo-m.png"></div>
-        <div class="tx"><label for="c2Modelo">Pieza</label><select id="c2Modelo" class="cs-sel"><option value="">Cargando modelos…</option></select><div class="c2-det" id="c2Det">Elige una pieza del catálogo</div></div>
-      </div>
-      <div class="calc2-grid">
-        <div class="calc2-campo"><label>Cuántas comprarías</label><div class="step"><button type="button" id="c2Menos" aria-label="menos">−</button><input id="c2Cant" type="number" min="1" max="999" value="12" inputmode="numeric"><button type="button" id="c2Mas" aria-label="más">+</button></div></div>
-        <div class="calc2-campo"><label>A cuánto venderías cada una</label><div class="c2-precio"><span>$</span><input id="c2Venta" type="number" min="0" inputmode="numeric" value="0"></div><div class="c2-mult" id="c2Mult"><button type="button" data-m="2">×2</button><button type="button" data-m="2.5" class="on">×2.5</button><button type="button" data-m="3">×3</button></div></div>
-      </div>
-      <div class="res"><div class="vidrio caja"><b id="c2Inv">$0</b><span>Inviertes</span></div><div class="vidrio caja"><b id="c2Ven">$0</b><span>Vendes en</span></div><div class="vidrio caja dest"><b id="c2Gan">$0</b><span>Ganas</span></div></div>
-      <div class="c2-barra" id="c2Barra"><i style="width:0%"></i></div>
-      <div class="nota" id="c2Nota">Precios de mayoreo en pesos mexicanos (MXN). Mínimo de compra: 12 piezas surtidas.</div>
-      <div class="calc2-acc"><button class="btn coral full" id="c2Agregar"><i class="fa-solid fa-bag-shopping"></i> Agregar <span id="c2N">12</span> a mi carrito</button></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== NOVEDADES ===== -->
-<section id="nuevo" style="padding-top:0">
-  <div class="wrap">
-    <div class="centro rev">
-      <span class="eyebrow">Novedades</span>
-      <h2 style="margin-top:14px">Acaban de <i>llegar</i></h2>
-      <p class="lead">Entran modelos nuevos cada semana y se mueven rápido. Catálogo al día del <b id="fechaCat">día de hoy</b>.</p>
-    </div>
-    <div class="grid-prod rev" id="recienLlegado"><div class="vacio">Cargando piezas…</div></div>
-    <div class="mas rev"><a class="btn cristal" href="tienda.html#nuevo">Ver todas las novedades <span class="fl">→</span></a></div>
-  </div>
-</section>
-
-<!-- ===== BUSINESS CLUB ===== -->
-<section id="club">
-  <div class="wrap">
-    <div class="club-grid">
-      <div class="rev">
-        <span class="eyebrow coral">Marvea Business Club · incluido con tu compra</span>
-        <h2 style="margin-top:14px">Tu catálogo con <i>nuestras fotos</i>, listo en menos de 5 clics</h2>
-        <p class="lead" style="margin-top:14px">Compras, y la página genera sola el catálogo de tu negocio: tu nombre, tu logo, tus precios y tu WhatsApp. Tú ya no tienes que tomar ni editar fotos.</p>
-        <ul class="club-lista">
-          <li class="vidrio suave"><b>1</b><span><strong>Catálogo automático</strong> con nuestras fotos profesionales, tus precios de menudeo y de mayoreo.</span></li>
-          <li class="vidrio suave"><b>2</b><span>Lo compartes por WhatsApp o redes y <strong>tus clientas te piden con un botón</strong>.</span></li>
-          <li class="vidrio suave"><b>3</b><span>Tus pedidos, tu guía DHL, lo que vendes y <strong>cuánto has ganado</strong>, todo en tu celular.</span></li>
-        </ul>
-        <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="club.html">Entrar a mi Business Club</a><a class="btn cristal" href="tienda.html">Se activa con tu primera compra</a></div>
-      </div>
-      <div class="rev">
-        <div class="telefono" aria-hidden="true"><div class="pant">
-          <div class="cab"><span class="av">AL</span><div><span class="marca">Accesorios Luna</span><span class="ya">catálogo creado en Marvea ✓</span></div></div>
-          <div class="frase">Joyería en tendencia · envíos a todo México · 📱 81 0000 0000</div>
-          <div class="cats"><span class="on">Todo</span><span>Anillos</span><span>Collares</span><span>Aretes</span><span>Pulseras</span></div>
-          <div class="cat-grid" id="catDemo"></div>
-          <div class="wa-btn"><i class="fa-brands fa-whatsapp"></i> Lo quiero</div>
-        </div><div class="sello">Hecho con nuestras fotos · 0 fotos tomadas por ella</div></div>
-      </div>
+<!-- ===================== CATÁLOGO ===================== -->
+<section class="vista" id="v-catalogo">
+  <div class="wrap cat-layout">
+    <aside class="filtros-lat" id="filtrosLat">
+      <h4>Ordenar</h4>
+      <select id="orden" class="sel"><option value="pop">Más vendidos</option><option value="nuevo">Novedades</option><option value="menor">Precio: menor a mayor</option><option value="mayor">Precio: mayor a menor</option></select>
+      <h4>Material</h4>
+      <div class="radios" id="materiales"><label><input type="radio" name="mat" value="" checked> Todos</label><label><input type="radio" name="mat" value="acero"> Acero inoxidable</label><label><input type="radio" name="mat" value="laminado"> Oro laminado</label><label><input type="radio" name="mat" value="chapa"> Chapa de oro</label></div>
+      <h4>Categoría</h4>
+      <div class="radios" id="catsLat"></div>
+      <div class="lat-ayuda"><b>¿No sabes qué elegir?</b><p>Te armamos un paquete con tu presupuesto.</p><button class="btn sm coral" onclick="abrirArmar()">Arma mi paquete</button></div>
+    </aside>
+    <div class="cat-main">
+      <div class="sec-t"><div><h2 id="tituloGrid">Todos los modelos</h2><span class="cuenta" id="cuentaGrid"></span></div><button class="btn blanco sm solo-movil" onclick="document.getElementById('filtrosLat').classList.toggle('abierto')"><i class="fa-solid fa-sliders"></i> Filtrar</button></div>
+      <div class="grid" id="grid"></div>
     </div>
   </div>
 </section>
 
-<!-- ===== ENVÍOS ===== -->
-<section class="corta" id="envios">
+<!-- ===================== MI CUENTA (tienda + Business Club) ===================== -->
+<section class="vista" id="v-cuenta">
   <div class="wrap">
-    <div class="vidrio panel rev">
-      <div class="gota" style="width:360px;height:360px;right:-100px;bottom:-160px;background:var(--amarillo)"></div>
-      <div class="rastreo-grid">
-        <div>
-          <span class="eyebrow">Envíos <span class="dhl">DHL</span> Express aéreo</span>
-          <h2 style="margin-top:14px">Sale hoy, <i>llega mañana</i></h2>
-          <p class="lead" style="margin-top:12px">Pedidos de lunes a jueves llegan al día siguiente donde hay oficina DHL; zonas extendidas, viernes, sábado y festivos: 2 a 3 días hábiles. Si estás en Monterrey, recoges gratis.</p>
-          <div class="tarifas">
-            <div class="vidrio suave t"><b>$240</b><span>hasta 2 kg · ≈ 30 piezas</span></div>
-            <div class="vidrio suave t"><b>$305</b><span>hasta 5 kg · ≈ 80 piezas</span></div>
-            <div class="vidrio suave t"><b>Gratis</b><span>recoger en Monterrey</span></div>
+    <!-- sin sesión -->
+    <div class="cuenta-entrar" id="cuentaEntrar"></div>
+
+    <!-- con sesión -->
+    <div class="cuenta" id="app">
+      <aside class="cuenta-menu">
+        <div class="quien"><div class="av" id="avatar">M</div><div><b id="hola2">Hola</b><span id="subtitulo">Mi cuenta Marvea</span></div></div>
+        <nav id="tabs">
+          <button data-p="inicio" class="on"><i class="fa-solid fa-house"></i> Resumen</button>
+          <button data-p="pedidos" data-activo><i class="fa-solid fa-box-open"></i> Mis pedidos</button>
+          <button data-p="negocio" data-activo><i class="fa-solid fa-tags"></i> Mis precios y ventas</button>
+          <button data-p="catalogo" data-activo><i class="fa-solid fa-file-pdf"></i> Mi catálogo</button>
+          <button data-p="calculadora"><i class="fa-solid fa-calculator"></i> Calculadora</button>
+          <button data-p="perfil"><i class="fa-regular fa-id-card"></i> Mis datos y domicilio</button>
+        </nav>
+        <button class="salir" onclick="salir()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</button>
+      </aside>
+
+      <div class="cuenta-cuerpo">
+        <div class="cargando" id="cargando" style="display:none"><i class="fa-solid fa-circle-notch fa-spin"></i> Abriendo tu cuenta…</div>
+
+        <div class="panel on" id="p-inicio">
+          <div class="bloqueado" id="bloqueado" style="display:none">
+            <span class="tag-coral">Tu Business Club se activa con tu primera compra</span>
+            <h2>¡Bienvenida a Marvea!</h2>
+            <p>En cuanto pagues tu primer pedido, aquí aparecen tus piezas con nuestras fotos, tus precios de menudeo y mayoreo, tu guía DHL y tu catálogo en PDF. Mientras, ya puedes guardar tus datos y hacer cuentas con la calculadora.</p>
+            <div class="banner-acc"><button class="btn coral lg" onclick="irVista('catalogo')">Hacer mi primer pedido</button><button class="btn blanco lg" data-ir="calculadora">Calcular mi ganancia</button></div>
           </div>
-          <p class="nota">El peso final lo determina DHL. Internacional a cotizar. ¿Quieres juntar varios pedidos en un envío? Pide resguardo al pagar (hasta 3 pedidos).</p>
+          <div id="inicioActivo">
+            <div class="kpis">
+              <div class="kpi"><small>Piezas compradas</small><b id="kPiezas">0</b><span id="kPedidos">0 pedidos</span></div>
+              <div class="kpi"><small>Invertido en Marvea</small><b id="kInvertido">$0</b><span>a precio de mayoreo</span></div>
+              <div class="kpi"><small>Piezas vendidas</small><b id="kVendidas">0</b><span id="kDisponibles">0 disponibles</span></div>
+              <div class="kpi acento"><small>Tu ganancia</small><b id="kGanancia">$0</b><span id="kIngresos">$0 en ventas</span></div>
+            </div>
+            <div class="dos">
+              <div class="caja">
+                <div class="cab"><div><h3>Tu último pedido</h3><p id="uDesc">Aquí aparecerá tu pedido más reciente.</p></div><span id="uEstado"></span></div>
+                <div id="uPiezas" class="pzs"></div>
+                <div class="acciones"><button class="btn sm" onclick="irVista('catalogo')"><i class="fa-solid fa-bag-shopping"></i> Hacer un pedido nuevo</button><button class="btn blanco sm" data-ir="pedidos">Ver todos mis pedidos</button></div>
+              </div>
+              <div class="caja">
+                <div class="cab"><div><h3>Tu catálogo en PDF</h3><p>Con tu nombre, tu logo y tus precios. Solo las piezas que te quedan, sin datos de tu proveedor.</p></div></div>
+                <div class="mini-cat" id="iCat"></div>
+                <div class="acciones"><button class="btn sm" id="iPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar PDF</button><button class="btn blanco sm" data-ir="catalogo">Personalizar</button></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <form class="vidrio rastreo-form" id="rastreoForm" action="https://www.dhl.com/mx-es/home/tracking.html" method="get" target="_blank" rel="noopener" autocomplete="off">
-          <label for="guia">Rastrea tu pedido · número de guía DHL</label>
-          <input id="guia" name="tracking-id" type="text" inputmode="numeric" placeholder="Ej. 1234567890" required>
-          <input type="hidden" name="submit" value="1">
-          <button class="btn coral full" type="submit">Rastrear en DHL <span class="fl">→</span></button>
-          <p class="nota">Tu guía también aparece en <a href="club.html">tu Business Club</a>. ¿No la tienes? <a href="https://wa.me/528132660673?text=Hola%20Marvea%2C%20%C2%BFme%20comparten%20el%20n%C3%BAmero%20de%20gu%C3%ADa%20de%20mi%20pedido%3F" target="_blank" rel="noopener">Pídela por WhatsApp</a>.</p>
-        </form>
+
+        <div class="panel" id="p-pedidos">
+          <div class="caja">
+            <div class="cab"><div><h2>Mis pedidos</h2><p>Todo lo que has comprado en Marvea, con fotos y guía DHL.</p></div></div>
+            <form class="guia rastreo-club" id="rastreoClub" autocomplete="off"><label for="guiaRapida"><i class="fa-solid fa-truck-fast"></i> Rastrea un envío</label><input id="guiaRapida" inputmode="numeric" placeholder="Número de guía DHL" maxlength="30"><button class="btn sm" type="submit">Rastrear</button></form>
+            <div id="listaPedidos"></div>
+          </div>
+        </div>
+
+        <div class="panel" id="p-negocio">
+          <div class="caja">
+            <div class="cab"><div><h2>Mis precios y ventas</h2><p>Pon tu precio de <b>menudeo</b> (pieza por pieza) y tu precio de <b>mayoreo</b> (a partir de las piezas que tú digas). Registra cada venta y mira cuánto has ganado. Lo que ocultes no sale en tu catálogo.</p></div></div>
+            <div class="rapidos" id="rapidos"><span>Llenar todos:</span><button class="btn blanco sm" data-mult="2">Menudeo ×2</button><button class="btn blanco sm" data-mult="3">Menudeo ×3</button><button class="btn blanco sm" data-multm="1.5">Mayoreo ×1.5</button><span class="minm">Mayoreo desde <input id="minMayoreo" type="number" min="2" max="99" value="3"> piezas</span></div>
+            <div class="resumen" id="resumenNegocio"></div>
+            <div class="tabla-wrap"><table class="tabla" id="tablaInv"><thead><tr><th>Pieza</th><th>Te quedan</th><th>Tu costo</th><th>Menudeo</th><th>Mayoreo</th><th>Ganancia</th><th>Vender</th><th>Catálogo</th></tr></thead><tbody></tbody></table></div>
+            <div class="vacio" id="invVacio" style="display:none"><b>Todavía no hay piezas</b>Cuando confirmemos tu primer pedido, aquí aparecen tus piezas para poner precios y registrar ventas.</div>
+          </div>
+        </div>
+
+        <div class="panel" id="p-catalogo">
+          <div class="caja">
+            <div class="cab"><div><h2>Mi catálogo</h2><p>Tu catálogo en PDF con tu nombre, tu logo y tus precios, listo para mandar por WhatsApp o imprimir. Solo salen las piezas que te quedan y tienes visibles; sin datos de tu proveedor.</p></div></div>
+            <div class="cat-grid">
+              <div class="form">
+                <div class="campo ancho"><label for="cNombre">Nombre de tu negocio</label><input id="cNombre" placeholder="Ej. Joyería Luna" maxlength="40"></div>
+                <div class="campo"><label for="cWhats">WhatsApp para pedidos</label><input id="cWhats" inputmode="numeric" placeholder="10 dígitos" maxlength="16"></div>
+                <div class="campo"><label for="cRedes">Instagram / Facebook</label><input id="cRedes" placeholder="@joyerialuna" maxlength="40"></div>
+                <div class="campo ancho"><label for="cFrase">Frase de tu negocio (opcional)</label><input id="cFrase" placeholder="Ej. Acero inoxidable que no se despinta · Envíos en Saltillo" maxlength="90"></div>
+                <div class="campo ancho"><label>Color de tu catálogo</label><div class="colores" id="cColores"></div></div>
+              </div>
+              <div class="logo-box"><label>Tu logo (opcional)</label><div class="logo-prev" id="logoPrev"><span><i class="fa-regular fa-image"></i>Sin logo</span></div>
+                <div class="acciones"><label class="btn sm" for="logoFile"><i class="fa-solid fa-upload"></i> Subir logo</label><button class="btn blanco sm" id="logoQuitar" hidden>Quitar</button></div>
+                <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden><p class="suave">PNG o JPG. Con fondo transparente se ve mejor.</p></div>
+            </div>
+            <div class="campo ancho" style="margin-top:14px"><label>¿Qué precios poner?</label>
+              <div class="opciones" id="cPrecioModo"><label><input type="radio" name="pm" value="mios" checked> Menudeo y mayoreo</label><label><input type="radio" name="pm" value="menudeo"> Solo menudeo</label><label><input type="radio" name="pm" value="sin"> Sin precios</label></div></div>
+            <div class="resumen" id="cResumen"></div>
+            <div class="acciones"><button class="btn coral lg" id="cPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar mi catálogo en PDF</button><button class="btn blanco" id="cGuardar">Guardar datos</button></div>
+            <div class="ok" id="cOk">Listo, tus datos quedaron guardados.</div>
+          </div>
+        </div>
+
+        <div class="panel" id="p-calculadora">
+          <div class="caja"><div class="cab"><div><h2>Calculadora de ganancias</h2><p>Agrega varias piezas, pon cuántas comprarías y a cuánto las venderías. Pásalas a tu carrito con un clic.</p></div></div><div class="calc" id="calcCuenta"></div></div>
+        </div>
+
+        <div class="panel" id="p-perfil">
+          <div class="dos">
+            <div class="caja">
+              <div class="cab"><div><h2>Mis datos y domicilio</h2><p>Se usan al pagar para que no los vuelvas a escribir. Cámbialos cuando quieras.</p></div></div>
+              <div class="form">
+                <div class="campo"><label for="pNombre">Nombre completo</label><input id="pNombre" maxlength="60"></div>
+                <div class="campo"><label for="pWa">WhatsApp</label><input id="pWa" inputmode="numeric" maxlength="16"></div>
+                <div class="campo"><label for="pMail">Correo (ahí llega tu ticket)</label><input id="pMail" type="email" maxlength="120"></div>
+                <div class="campo"><label for="pNegocio">Nombre de tu negocio</label><input id="pNegocio" maxlength="80"></div>
+                <div class="campo ancho"><label for="pDir">Calle, número y colonia</label><input id="pDir" maxlength="200" placeholder="Ej. Av. Juárez 123, Centro"></div>
+                <div class="campo"><label for="pCp">Código postal</label><input id="pCp" inputmode="numeric" maxlength="5"></div>
+                <div class="campo"><label for="pCiudad">Ciudad</label><input id="pCiudad" maxlength="60"></div>
+                <div class="campo"><label for="pEstado">Estado</label><input id="pEstado" maxlength="60"></div>
+                <div class="campo"><label for="pRef">Referencias para el repartidor</label><input id="pRef" maxlength="200"></div>
+                <div class="campo ancho"><label>Tu usuario <span id="pVerif"></span></label><input id="pUsuario" disabled>
+                  <div id="pVerifBox" style="display:none;margin-top:8px;gap:8px;flex-wrap:wrap;align-items:center"><button type="button" class="btn blanco sm" id="pVerifEnviar">Verificar mi WhatsApp</button><input id="pVerifCodigo" placeholder="Código" inputmode="numeric" maxlength="8" style="display:none;max-width:140px"><button type="button" class="btn sm" id="pVerifOk" style="display:none">Confirmar</button></div></div>
+              </div>
+              <div class="acciones"><button class="btn" id="pGuardar">Guardar</button></div>
+              <div class="ok" id="pOk">Datos guardados.</div>
+            </div>
+            <div class="caja">
+              <div class="cab"><div><h3>Contraseña</h3><p>Elige una que solo tú conozcas (mínimo 8). Si la olvidas, la recuperas por correo o Marvea te ayuda a restablecerla.</p></div></div>
+              <div class="campo"><label for="n1">Nueva contraseña</label><input id="n1" type="password" autocomplete="new-password"></div>
+              <div class="campo"><label for="n2">Repítela</label><input id="n2" type="password" autocomplete="new-password"></div>
+              <div class="acciones"><button class="btn" id="nGuardar">Cambiar contraseña</button></div>
+              <div class="ok" id="nOk">Contraseña cambiada.</div>
+              <div class="cab" style="margin-top:20px"><div><h3>Entrar con Google</h3><p id="gEstado">Puedes entrar con Google además de tu contraseña.</p></div></div>
+              <div class="acciones"><button class="btn blanco" id="gLigar"><i class="fa-brands fa-google"></i> Ligar mi Google</button></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
-<!-- ===== PREGUNTAS + CUIDADOS ===== -->
-<section id="preguntas" style="padding-top:36px">
+<!-- ===================== PIE ===================== -->
+<footer class="pie">
   <div class="wrap">
-    <div class="centro rev"><span class="eyebrow">Resolvemos tus dudas</span><h2 style="margin-top:14px">Preguntas <i>frecuentes</i></h2></div>
-    <div class="acordeon rev">
-      <div class="vidrio item"><button>¿Hay monto mínimo de compra?</button><div class="cuerpo"><p>No. El mínimo es de 12 piezas surtidas a tu gusto, sin monto mínimo en pesos. Tú decides cuánto invertir.</p></div></div>
-      <div class="vidrio item"><button>¿Necesito cuenta para comprar?</button><div class="cuerpo"><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio. Si creas tu cuenta (con Google, correo o WhatsApp) guardamos tu domicilio para la próxima vez y se activa tu Business Club con tu catálogo.</p></div></div>
-      <div class="vidrio item"><button>¿Cómo pago?</button><div class="cuerpo"><p>Con tarjeta de débito o crédito, Apple Pay o Google Pay (se confirma al instante y tu ticket llega por correo) o por transferencia bancaria: tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></div></div>
-      <div class="vidrio item"><button>¿Hacen envíos a todo México?</button><div class="cuerpo"><p>Sí, por <b>DHL Express aéreo</b>: hasta 2 kg por $240 MXN y hasta 5 kg por $305 MXN; el peso final lo determina DHL. En Monterrey puedes recoger gratis. Envíos internacionales, a cotizar.</p></div></div>
-      <div class="vidrio item"><button>¿Puedo juntar varios pedidos en un envío?</button><div class="cuerpo"><p>Sí. Al pagar elige <b>resguardar</b>: guardamos tu paquete y lo juntamos con tus siguientes pedidos (máximo 3 en resguardo); solo se cobra la diferencia si cambia la tarifa de peso.</p></div></div>
-      <div class="vidrio item"><button>¿Qué materiales manejan y cómo los cuido?</button><div class="cuerpo"><p>Acero inoxidable, oro laminado y chapa de oro; el material viene en cada pieza. Para que duren: mantenlas secas, ponte perfume y cremas antes de usarlas, nada de cloro ni detergentes, límpialas con un paño seco y guárdalas separadas. El desgaste por uso, sudor o químicos no es defecto de fabricación.</p></div></div>
-      <div class="vidrio item"><button>¿Hacen cambios o devoluciones?</button><div class="cuerpo"><p>Por tratarse de piezas de mayoreo elegidas por ti, no hacemos cambios ni devoluciones por elección incorrecta o cambio de opinión. Sí respondemos por defectos de fabricación o errores de surtido reportados con evidencia dentro de las 24 horas de recibido. Consulta los <a href="legal.html#terminos">términos y condiciones</a>.</p></div></div>
-      <div class="vidrio item"><button>¿Quiénes son y dónde están?</button><div class="cuerpo"><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mayoreo. Somos tienda en línea en Monterrey, Nuevo León, y enviamos a todo México.</p></div></div>
+    <div class="pie-g">
+      <div><a class="logo" href="#/" onclick="irVista('inicio');return false"><img src="logo-m.png" alt="">Marvea</a><p>Mayoreo de joyería para quienes emprenden. Donde emprendes tu negocio. Empresa hermana de VJ Joyería · Monterrey, N.L.</p></div>
+      <div><h4>Compra</h4><a href="#/catalogo" onclick="irVista('catalogo');return false">Catálogo completo</a><a href="#" onclick="abrirArmar();return false">Arma mi paquete</a><a href="#calculadora" onclick="irSeccion('calculadora');return false">Calculadora</a><a href="#envios" onclick="irSeccion('envios');return false">Envíos y rastreo</a></div>
+      <div><h4>Mi cuenta</h4><a href="#/cuenta" onclick="abrirCuenta();return false">Entrar / crear cuenta</a><a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a><a href="#/cuenta/negocio" onclick="abrirCuenta('negocio');return false">Business Club</a><a href="#preguntas" onclick="irSeccion('preguntas');return false">Preguntas frecuentes</a></div>
+      <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Atención al cliente · 81 3238 0573</a><a href="mailto:contacto@marveamayoreo.com"><i class="fa-regular fa-envelope"></i> contacto@marveamayoreo.com</a>
+        <div class="redes"><a href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a><a href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a></div></div>
     </div>
-  </div>
-</section>
-
-<!-- ===== CONTACTO ===== -->
-<section id="contacto">
-  <div class="wrap">
-    <div class="vidrio coral panel centro rev">
-      <div class="gota" style="width:420px;height:420px;left:-160px;top:-160px;background:var(--amarillo);opacity:.5"></div>
-      <div class="gota" style="width:360px;height:360px;right:-120px;bottom:-160px;background:var(--rosa);opacity:.6"></div>
-      <span class="eyebrow luz">Únete a Marvea</span>
-      <h2 style="margin-top:16px;max-width:720px;margin-left:auto;margin-right:auto">Tu negocio <i>empieza hoy</i></h2>
-      <p class="lead" style="max-width:620px;margin-left:auto;margin-right:auto">Ya viste las piezas, los precios y cómo funciona. Arma tu selección desde 12 piezas y recíbela mañana.</p>
-      <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn lg" href="tienda.html">Comprar ahora <span class="fl">→</span></a><a class="btn luz lg" href="https://wa.me/528132660673?text=Hola%20Marvea%2C%20quiero%20hacer%20mi%20primer%20pedido" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Hablar por WhatsApp</a></div>
-      <div class="contactos">
-        <a class="contacto" href="https://wa.me/528132660673" target="_blank" rel="noopener"><div class="ic"><i class="fa-brands fa-whatsapp"></i></div><div><b>Ventas · 81 3266 0673</b><span>Pedidos y asesoría para comprar</span></div></a>
-        <a class="contacto" href="https://wa.me/528132380573" target="_blank" rel="noopener"><div class="ic"><i class="fa-brands fa-whatsapp"></i></div><div><b>Atención al cliente · 81 3238 0573</b><span>Dudas con tu pedido o tu cuenta</span></div></a>
-        <a class="contacto" href="mailto:contacto@marveamayoreo.com"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><b>contacto@marveamayoreo.com</b><span>Escríbenos por correo</span></div></a>
-        <a class="contacto" href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener"><div class="ic"><i class="fa-brands fa-instagram"></i></div><div><b>Instagram</b><span>@marveamayoreo</span></div></a>
-        <a class="contacto" href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener"><div class="ic"><i class="fa-brands fa-tiktok"></i></div><div><b>TikTok</b><span>@marveamayoreo</span></div></a>
-        <a class="contacto" href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener"><div class="ic"><i class="fa-brands fa-facebook-f"></i></div><div><b>Facebook</b><span>Marvea</span></div></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="vidrio">
-      <div><a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a><p style="margin:12px 0 0;max-width:320px">Mayoreo de joyería para quienes emprenden. Acero inoxidable, oro laminado y chapa de oro en tendencia, seleccionados para vender y con el mejor precio de mayoreo. Donde emprendes tu negocio.</p></div>
-      <div><h4>Compra</h4><a href="tienda.html">Tienda en línea</a><a href="index.html#destacadas">Lo que más se mueve</a><a href="index.html#nuevo">Novedades</a><a href="index.html#como-funciona">Cómo funciona</a><a href="index.html#envios">Envíos y rastreo</a></div>
-      <div><h4>Para tu negocio</h4><a href="club.html">Business Club</a><a href="index.html#ganar">Calculadora</a><a href="index.html#preguntas">Preguntas frecuentes</a><a href="legal.html#privacidad">Aviso de privacidad</a><a href="legal.html#terminos">Términos y condiciones</a></div>
-      <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Atención al Cliente · 81 3238 0573</a><a href="mailto:contacto@marveamayoreo.com"><i class="fa-solid fa-envelope"></i> contacto@marveamayoreo.com</a><a href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> @marveamayoreo</a><a href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> @marveamayoreo</a><a href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Marvea</a><a>Monterrey, Nuevo León · envíos a todo México</a></div>
-      <div class="copy"><span>© 2026 Marvea · Empresa hermana de VJ Joyería</span><span>Mira. Elige. Emprende.</span></div>
-    </div>
+    <div class="pie-b"><span>© 2026 Marvea · Mira. Elige. Emprende.</span><span><a href="legal.html#privacidad">Aviso de privacidad</a> · <a href="legal.html#terminos">Términos y condiciones</a></span></div>
   </div>
 </footer>
 
-<a class="whatsapp-flot" href="https://wa.me/528132660673" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
-<button class="ir-arriba" id="irArriba" aria-label="Ir al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg> Inicio</button>
-<div class="mini-carrito" id="miniCarrito"><span><b id="mcN">0</b> piezas listas</span><a class="btn coral sm" href="tienda.html?agregar=1">Ir a pagar <span class="fl">→</span></a></div>
+<!-- ===================== CARRITO (cajón) ===================== -->
+<div class="velo" id="veloC" onclick="toggleCarritoM(false)"></div>
+<aside class="carrito" id="carrito" aria-label="Tu carrito">
+  <header><h3><i class="fa-solid fa-bag-shopping"></i> Tu carrito</h3><small id="timer"></small><button class="x-btn" onclick="toggleCarritoM(false)" aria-label="cerrar">✕</button></header>
+  <div class="minimo" id="minimo"></div>
+  <div id="notis"></div>
+  <div class="lista" id="lista"></div>
+  <div class="tot" id="tot"></div>
+</aside>
+<div class="barra-m" id="barraM"><div class="info" onclick="toggleCarritoM(true)"><b id="bmTot">$0</b><span id="bmPz">0 piezas · ver carrito</span></div><button id="bmBtn" onclick="abrirCheckout()" disabled>Pagar</button></div>
+
+<div class="velo" id="velo" onclick="cerrarModal()"></div>
+<div class="modal" id="modal"></div>
 <div class="toasts" id="toasts"></div>
 
-<script src="glass.js?v=6"></script>
+<a class="wa-flot" href="https://wa.me/528132660673" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+<script src="supabase-2.45.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="mv-tienda.js?v=1"></script>
+<script src="mv-cuenta.js?v=1"></script>
 </body>
 </html>

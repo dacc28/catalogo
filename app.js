@@ -151,7 +151,8 @@
     if (!lista.length) return;
     try { localStorage.setItem("marvea.agregar", JSON.stringify({ items: lista, t: Date.now() })); } catch (e) {}
     medir("ir_al_carrito", { desde: desde || "", piezas: lista.reduce((a, i) => a + i.cant, 0) });
-    const dest = (window.self !== window.top ? "https://www.marveamayoreo.com/" : "") + "tienda.html?agregar=1";
+    try { if (window.top !== window.self && typeof window.top.mvAgregarItems === "function") { localStorage.removeItem("marvea.agregar"); window.top.mvAgregarItems(lista); return; } } catch (e) {}
+    const dest = (window.self !== window.top ? "https://www.marveamayoreo.com/" : "") + "index.html?agregar=1";
     try { window.top.location.href = dest; } catch (e) { location.href = dest; }
   }
   function mensajeWA() {
