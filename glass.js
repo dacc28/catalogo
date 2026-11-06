@@ -96,15 +96,52 @@
   const rf = $("#rastreoForm");
   if (rf) rf.addEventListener("submit", () => { const g = $("#guia"); g.value = (g.value || "").replace(/[^0-9A-Za-z]/g, ""); });
 
-  /* calculadora simple de precios de catálogo (modelo × cantidad) */
-  function calcSimple(prods, cats) {
-    const sel = $("#csModelo"), cant = $("#csCant"); if (!sel || !cant) return;
-    const porCat = {}; prods.forEach(p => { (porCat[cats[p.categoria] || p.categoria || "Otros"] = porCat[cats[p.categoria] || p.categoria || "Otros"] || []).push(p); });
-    sel.innerHTML = '<option value="">Elige un modelo…</option>' + Object.keys(porCat).sort().map(k => '<optgroup label="' + esc(k) + '">' + porCat[k].map(p => '<option value="' + esc(p.codigo) + '">' + esc(p.nombre) + ' · ' + money(p.precio) + '</option>').join("") + '</optgroup>').join("");
-    const pintar = () => { const p = prods.find(x => x.codigo === sel.value); const n = Math.max(1, Math.min(999, parseInt(cant.value) || 1)); const u = p ? Number(p.precio) || 0 : 0;
-      $("#csUnit").textContent = money(u); $("#csPz").textContent = String(n); $("#csTot").textContent = money(u * n);
-      $("#csNota").textContent = p ? (n < 12 ? "Recuerda: el mínimo de compra es de 12 piezas surtidas (puedes combinar modelos)." : "Véndelo entre " + money(u * 2) + " y " + money(u * 3) + " por pieza: ganarías entre " + money(u * n) + " y " + money(u * n * 2) + ".") : "Precios de mayoreo en pesos mexicanos (MXN). Mínimo de compra: 12 piezas surtidas."; };
-    sel.addEventListener("change", pintar); cant.addEventListener("input", pintar); pintar();
+  /* ---------- carrito pendiente: piezas agregadas desde la página principal; la tienda las toma al abrir (marvea.agregar) ---------- */
+  function pendientes() { try { const a = JSON.parse(localStorage.getItem("marvea.agregar") || "null"); return a && Array.isArray(a.items) && (Date.now() - (a.t || 0)) < 30 * 60000 ? a.items : []; } catch (e) { return []; } }
+  function toast(m, t) { const box = $("#toasts"); if (!box) return; const e = document.createElement("div"); e.className = "toast " + (t || ""); e.innerHTML = m; box.appendChild(e); setTimeout(() => e.remove(), 3800); }
+  function pintarMini() { const n = pendientes().reduce((a, i) => a + (Number(i.cant) || 0), 0); const m = $("#miniCarrito"); if (!m) return; $("#mcN").textContent = String(n); m.classList.toggle("on", n > 0); }
+  function agregarPendiente(codigo, cant, nombre) {
+    const items = pendientes(); const f = items.find(i => i.codigo === codigo); if (f) f.cant = (Number(f.cant) || 0) + cant; else items.push({ codigo, cant });
+    try { localStorage.setItem("marvea.agregar", JSON.stringify({ items, t: Date.now() })); } catch (e) {}
+    medir("agregar_desde_inicio", { codigo, cant }); pintarMini();
+    const tot = items.reduce((a, i) => a + (Number(i.cant) || 0), 0);
+    toast("<b>" + esc(nombre || codigo) + "</b> lista en tu carrito · " + tot + (tot === 1 ? " pieza" : " piezas") + (tot < 12 ? " (mínimo 12 para pagar)" : " ✓"), "ok");
+  }
+  document.addEventListener("click", e => { const b = e.target.closest("[data-agregar]"); if (!b) return; e.preventDefault(); agregarPendiente(b.dataset.agregar, 1, b.dataset.nombre); b.classList.add("ok"); b.textContent = "✓"; setTimeout(() => { b.classList.remove("ok"); b.textContent = "+"; }, 900); });
+  pintarMini();
+
+  /* ---------- categorías con foto ---------- */
+  function categorias(prods, cats, orden) {
+    const row = $("#catsRow"); if (!row) return;
+    const por = {}; prods.forEach(p => { (por[p.categoria] = por[p.categoria] || []).push(p); });
+    const lista = orden.filter(c => por[c.p] && por[c.p].length).map(c => ({ p: c.p, n: c.n, l: por[c.p] })).sort((a, b) => b.l.length - a.l.length);
+    row.innerHTML = lista.map(c => { const f = c.l.find(p => /tendencia|vendido/i.test(p.etiqueta || "")) || c.l[0]; const min = Math.min(...c.l.map(p => Number(p.precio) || 999)); return `<a class="catc vidrio" href="tienda.html#cat=${encodeURIComponent(c.n)}"><img loading="lazy" src="${esc(f.foto)}" alt="${esc(c.n)}"><div class="tx"><b>${esc(c.n)}</b><span>${c.l.length} modelos · desde ${money(min)}</span></div></a>`; }).join("");
+  }
+
+  /* ---------- calculadora v2: una pieza, cantidad, precio de venta → inviertes / vendes / ganas ---------- */
+  function calc2(prods, cats) {
+    const sel = $("#c2Modelo"), cant = $("#c2Cant"), venta = $("#c2Venta"); if (!sel || !cant || !venta) return;
+    let mult = 2.5, tocado = false;
+    const porCat = {}; prods.forEach(p => { const k = cats[p.categoria] || p.categoria || "Otros"; (porCat[k] = porCat[k] || []).push(p); });
+    sel.innerHTML = Object.keys(porCat).sort().map(k => '<optgroup label="' + esc(k) + '">' + porCat[k].map(p => '<option value="' + esc(p.codigo) + '">' + esc(p.nombre) + ' · ' + money(p.precio) + '</option>').join("") + '</optgroup>').join("");
+    const dest = prods.find(p => /vendido|tendencia/i.test(p.etiqueta || "")) || prods[0]; if (dest) sel.value = dest.codigo;
+    const pieza = () => prods.find(x => x.codigo === sel.value);
+    const pintar = () => {
+      const p = pieza(); const n = Math.max(1, Math.min(999, parseInt(cant.value) || 1)); const u = p ? Number(p.precio) || 0 : 0;
+      if (!tocado) venta.value = Math.round(u * mult);
+      const pv = Math.max(0, Number(venta.value) || 0), inv = u * n, ven = pv * n, gan = ven - inv;
+      $("#c2Foto").src = p && p.foto ? p.foto : "logo-m.png"; $("#c2Det").innerHTML = p ? "<b>" + money(u) + "</b> c/u mayoreo · " + esc(cats[p.categoria] || "") + (p.material ? " · " + esc(p.material) : "") : "Elige una pieza del catálogo";
+      $("#c2Inv").textContent = money(inv); $("#c2Ven").textContent = money(ven); $("#c2Gan").textContent = money(gan); $("#c2N").textContent = String(n);
+      const rec = pv > 0 ? Math.ceil(inv / pv) : 0; $("#c2Barra").querySelector("i").style.width = (n ? Math.min(100, rec / n * 100) : 0) + "%";
+      $("#c2Nota").innerHTML = !p ? "Precios de mayoreo en pesos mexicanos (MXN)." : n < 12 ? "Recuerda: el mínimo de compra es de <b>12 piezas</b> en total; puedes combinar modelos." : pv > u ? "Recuperas tu inversión vendiendo <b>" + rec + " de " + n + "</b>; las otras " + (n - rec) + " son ganancia pura. Margen " + Math.round((pv - u) / u * 100) + "%." : "Pon un precio de venta mayor al de mayoreo para ver tu ganancia.";
+      $$("#c2Mult button").forEach(b => b.classList.toggle("on", !tocado && Number(b.dataset.m) === mult));
+    };
+    sel.addEventListener("change", () => { tocado = false; pintar(); }); cant.addEventListener("input", pintar); venta.addEventListener("input", () => { tocado = true; pintar(); });
+    $("#c2Menos").addEventListener("click", () => { cant.value = Math.max(1, (parseInt(cant.value) || 1) - 1); pintar(); });
+    $("#c2Mas").addEventListener("click", () => { cant.value = Math.min(999, (parseInt(cant.value) || 0) + 1); pintar(); });
+    $$("#c2Mult button").forEach(b => b.addEventListener("click", () => { mult = Number(b.dataset.m); tocado = false; pintar(); }));
+    $("#c2Agregar").addEventListener("click", () => { const p = pieza(); if (!p) return; const n = Math.max(1, parseInt(cant.value) || 1); agregarPendiente(p.codigo, n, p.nombre); medir("calculadora_agregar", { codigo: p.codigo, cant: n }); });
+    pintar();
   }
 
   /* simulador rápido de ganancia */
@@ -120,7 +157,7 @@
     const e = (p.etiqueta || "").toLowerCase();
     const cls = e.includes("tendencia") ? "coral" : e.includes("ltimas") ? "rosa" : e.includes("dupe") ? "cielo" : e.includes("new") ? "lima" : e.includes("vendido") ? "amarillo" : "";
     const etq = p.etiqueta && e !== "ninguna" ? `<span class="etq ${cls}">${esc(p.etiqueta)}</span>` : "";
-    return `<a class="vidrio prod" href="tienda.html">${etq}<div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span>MXN · mayoreo</span></div><div class="ver"><span>Ver en la tienda 🔒</span></div></div></a>`;
+    return `<a class="vidrio prod" href="tienda.html#p=${encodeURIComponent(p.codigo)}">${etq}<button type="button" class="agr" data-agregar="${esc(p.codigo)}" data-nombre="${esc(p.nombre)}" title="Agregar a mi carrito" aria-label="Agregar ${esc(p.nombre)}">+</button><div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span class="vend">véndela en ${money(p.precio * 2)}+</span></div></div></a>`;
   }
   async function catalogo() {
     try {
@@ -136,7 +173,8 @@
       if (g2) g2.innerHTML = nuevo.length ? nuevo.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas nuevas.</div>';
       const total = $("#totalPiezas"); if (total) { const piezas = Number(d.piezas) > 0 ? Number(d.piezas) : prods.length * 12; total.dataset.contar = String(piezas); if (total.textContent !== "0") contador(total); }
       /* maqueta del Business Club: catálogo de ejemplo de una clienta, con nuestras fotos y sus precios (×2) */
-      calcSimple(prods, cats);
+      calc2(prods, cats); categorias(prods, cats, d.categorias || []);
+      const nm = $("#nModelos"); if (nm) nm.textContent = String(prods.length);
       const demo = $("#catDemo"); if (demo) { const l = prods.filter(p => p.foto).slice(0, 6); if (l.length >= 3) demo.innerHTML = l.map(p => `<div class="p"><div class="im"><img loading="lazy" src="${esc(p.foto)}" alt=""></div><b>${esc(p.nombre)}</b><span>${money(Number(p.precio) * 2)}</span></div>`).join(""); }
       if (location.hash) setTimeout(irAlHash, 100);
       const fecha = $("#fechaCat"); if (fecha && d.actualizado) fecha.textContent = new Date(d.actualizado).toLocaleDateString("es-MX", { day: "numeric", month: "long" });

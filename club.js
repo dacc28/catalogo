@@ -1,45 +1,42 @@
-/* Marvea Business Club · beta · lógica del perfil privado de clientas */
+/* Marvea Business Club · v6 (7-nov-2026) · misma cuenta que la tienda en línea */
 (() => {
   "use strict";
   const SB_URL = "https://kuuewntjxtjjktxbgxfk.supabase.co";
   const SB_KEY = "sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8"; // clave pública: solo permite lo que las reglas de seguridad autorizan
   const DOMINIO = "club.marveamayoreo.com";
   const BASE = "https://www.marveamayoreo.com/";
+  const FN_CUENTA = SB_URL + "/functions/v1/cuenta";
   const $ = (s, el) => (el || document).querySelector(s), $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
   const mxn = n => "$" + (Math.round(Number(n) || 0)).toLocaleString("es-MX");
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const digitos = w => { const d = String(w || "").replace(/\D/g, ""); if (d.length === 12 && d.startsWith("52")) return d.slice(2); if (d.length === 13 && d.startsWith("521")) return d.slice(3); return d.length >= 10 ? d.slice(-10) : d; };
+  const esCorreo = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || "").trim());
   const fecha = s => { try { return new Date(s).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
   const slugify = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
   const medir = (ev, p) => { try { if (typeof gtag === "function") gtag("event", ev, p || {}); } catch (e) {} };
-  let toastT; const toast = (m, mal) => { const t = $("#toast"); t.textContent = m; t.classList.toggle("mal", !!mal); t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2600); };
-
-  // menú móvil
-  const nav = $(".nav"); const h = $(".hamb", nav); h && h.addEventListener("click", () => nav.classList.toggle("abierto"));
+  let toastT; const toast = (m, mal) => { const t = $("#toast"); t.textContent = m; t.classList.toggle("mal", !!mal); t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 3600); };
 
   if (!window.supabase) { const e = $("#loginError"); e.textContent = "No se pudo cargar el Club. Revisa tu conexión e intenta de nuevo."; e.classList.add("on"); return; }
-  const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
-
-  const S = { yo: null, pedidos: [], ventas: [], precios: {}, inv: [] };
+  const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "marvea.club.auth" } });
+  const S = { yo: null, pedidos: [], pedidosWeb: [], ventas: [], precios: {}, inv: [], activo: false };
+  async function cuentaApi(body, tok) { const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + (tok || SB_KEY) }, body: JSON.stringify(body) }); let j = {}; try { j = await r.json(); } catch (x) {} if (!r.ok) throw new Error(j.error || ("error " + r.status)); return j; }
+  async function loginDe(u) { u = String(u || "").trim(); if (esCorreo(u)) { try { const j = await cuentaApi({ accion: "resolver", usuario: u }); if (j.login) return j.login; } catch (x) {} return u.toLowerCase(); } const d = digitos(u); return d.length === 10 ? d + "@" + DOMINIO : null; }
 
   /* ---------- acceso ---------- */
   $("#verPass").addEventListener("click", () => { const i = $("#pass"); i.type = i.type === "password" ? "text" : "password"; $("#verPass i").className = i.type === "password" ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"; });
   $("#formLogin").addEventListener("submit", async e => {
     e.preventDefault(); const err = $("#loginError"); err.classList.remove("on");
-    const d = digitos($("#usuario").value), p = $("#pass").value;
-    if (d.length !== 10) { err.textContent = "Escribe tu WhatsApp a 10 dígitos (sin +52)."; err.classList.add("on"); return; }
+    const login = await loginDe($("#usuario").value), p = $("#pass").value;
+    if (!login) { err.textContent = "Escribe tu WhatsApp a 10 dígitos o tu correo."; err.classList.add("on"); return; }
     const b = $("#btnEntrar"); b.disabled = true; b.textContent = "Entrando…";
-    const { error } = await sb.auth.signInWithPassword({ email: d + "@" + DOMINIO, password: p });
+    const { error } = await sb.auth.signInWithPassword({ email: login, password: p });
     b.disabled = false; b.innerHTML = 'Entrar <span class="fl">→</span>';
-    if (error) { err.textContent = /invalid/i.test(error.message) ? "Usuario o contraseña incorrectos. Si no tienes acceso todavía, pídelo por WhatsApp." : "No pudimos entrar: " + error.message; err.classList.add("on"); medir("club_login_error"); return; }
+    if (error) { err.textContent = /invalid/i.test(error.message) ? "Usuario o contraseña incorrectos." : "No pudimos entrar: " + error.message; err.classList.add("on"); medir("club_login_error"); return; }
     medir("club_login"); abrir();
   });
   const salir = async () => { try { await sb.auth.signOut(); } catch (e) {} medir("club_logout"); location.replace("club.html"); };
-
-  /* ---------- crear cuenta (la misma de la tienda): la contraseña la elige la clienta ---------- */
-  const FN_CUENTA = "https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/cuenta";
-  const GOOGLE_ACTIVO = true; // proveedor Google configurado en Supabase (Auth › Providers) el 6-nov-2026
-  if (GOOGLE_ACTIVO) { $("#btnGoogle").style.display = ""; $("#btnGoogle").addEventListener("click", async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: BASE + "club.html?google=1" } }); if (error) toast("No se pudo abrir Google: " + error.message, true); }); }
+  const google = async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: BASE + "club.html?google=1" } }); if (error) toast("No se pudo abrir Google: " + error.message, true); };
+  $("#btnGoogle").addEventListener("click", google); $("#btnGoogle2").addEventListener("click", google);
   /* Google: la sesión existe pero todavía no está ligada a una clienta → completar WhatsApp (y, si ya había cuenta, fusionar con contraseña) */
   async function completarGoogle(user) {
     $("#cargando").style.display = "none"; $("#app").classList.remove("on"); $("#login").style.display = ""; $("#formLogin").style.display = "none"; $("#formRegistro").style.display = "none"; const f = $("#formGoogle"); f.style.display = "";
@@ -52,12 +49,10 @@
       const b = $("#btnGoogleOk"); b.disabled = true; b.textContent = "Guardando…";
       try {
         const fus = $("#gFusion").style.display !== "none";
-        const body = fus ? { accion: "google-fusionar", wa, password: $("#gPassVieja").value } : { accion: "google-completar", wa, nombre: v("gNombre"), password: $("#gPass").value, correo: user.email || "", dir: v("gDir"), ciudad: v("gCiudad"), estado: v("gEstado"), cp: v("gCp") };
-        const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + tok }, body: JSON.stringify(body) });
-        let j = {}; try { j = await r.json(); } catch (x) {}
-        if (!r.ok) throw new Error(j.error || ("error " + r.status));
+        const body = fus ? { accion: "google-fusionar", wa, password: $("#gPassVieja").value } : { accion: "google-completar", wa, nombre: v("gNombre"), password: $("#gPass").value, correo: user.email || "" };
+        const j = await cuentaApi(body, tok);
         if (j.existe) { $("#gFusion").style.display = ""; $("#gPassVieja").focus(); err.textContent = "Ese WhatsApp ya tiene cuenta: escribe su contraseña para ligar tu Google."; err.classList.add("on"); return; }
-        if (fus) { toast("Google quedó ligado a tu cuenta. Vuelve a entrar."); await sb.auth.signOut(); setTimeout(() => location.replace("club.html"), 1200); return; }
+        if (fus) { toast("Google quedó ligado a tu cuenta. Vuelve a entrar con Google."); await sb.auth.signOut(); setTimeout(() => location.replace("club.html"), 1200); return; }
         medir("club_google_completar"); f.style.display = "none"; abrir();
       } catch (x) { err.textContent = String(x.message || x); err.classList.add("on"); }
       finally { b.disabled = false; b.innerHTML = 'Guardar y entrar <span class="fl">→</span>'; }
@@ -66,29 +61,29 @@
   const verRegistro = v => { $("#formRegistro").style.display = v ? "" : "none"; $("#formLogin").style.display = v ? "none" : ""; };
   $("#irRegistro").addEventListener("click", e => { e.preventDefault(); verRegistro(true); $("#rNombre").focus(); });
   $("#irLogin").addEventListener("click", e => { e.preventDefault(); verRegistro(false); });
-  $("#olvide").addEventListener("click", async e => { // enlace por correo (Resend); si aún no hay correo configurado, WhatsApp
-    e.preventDefault(); const err = $("#loginError"); err.classList.remove("on"); const d = digitos($("#usuario").value);
-    if (d.length !== 10) { err.textContent = "Escribe tu WhatsApp arriba y vuelve a tocar Recupérala."; err.classList.add("on"); return; }
-    let j = {}; try { const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }, body: JSON.stringify({ accion: "recuperar", wa: d }) }); j = await r.json(); } catch (x) {}
-    if (j.ok) { toast(j.mensaje || "Te enviamos un correo para crear tu contraseña nueva."); return; }
-    window.open("https://wa.me/528132380573?text=" + encodeURIComponent("Hola Marvea, olvidé la contraseña de mi cuenta (" + d + "). ¿Me ayudan a restablecerla?"), "_blank"); toast(j.mensaje || "Atención al cliente te ayuda por WhatsApp.");
+  if (/[?&]registro=1/.test(location.search)) verRegistro(true);
+  $("#olvide").addEventListener("click", async e => { // enlace por correo (Resend); si la cuenta no tiene correo, WhatsApp
+    e.preventDefault(); const err = $("#loginError"); err.classList.remove("on"); const u = ($("#usuario").value || "").trim();
+    if (!u) { err.textContent = "Escribe tu WhatsApp o tu correo arriba y vuelve a tocar Recupérala."; err.classList.add("on"); return; }
+    let j = {}; try { j = await cuentaApi({ accion: "recuperar", usuario: u }); } catch (x) { j = { error: x.message }; }
+    if (j.ok) { toast(j.mensaje || "Si esa cuenta existe, te enviamos un correo para crear tu contraseña nueva."); return; }
+    window.open("https://wa.me/528132380573?text=" + encodeURIComponent("Hola Marvea, olvidé la contraseña de mi cuenta (" + u + "). ¿Me ayudan a restablecerla?"), "_blank"); toast(j.mensaje || j.error || "Atención al cliente te ayuda a restablecerla por WhatsApp.");
   });
   // llegó desde el correo "crear contraseña nueva": Supabase abre la sesión y la mandamos directo a cambiarla
   sb.auth.onAuthStateChange((ev) => { if (ev === "PASSWORD_RECOVERY" || (/[?&]nueva=1/.test(location.search) && ev === "SIGNED_IN")) { setTimeout(() => { try { ir("perfil"); $("#n1").focus(); toast("Escribe tu contraseña nueva y guárdala."); } catch (x) {} }, 1500); } });
   $("#formRegistro").addEventListener("submit", async e => {
     e.preventDefault(); const err = $("#regError"); err.classList.remove("on");
     const v = id => ($("#" + id).value || "").trim();
-    const d = { accion: "registrar", nombre: v("rNombre"), wa: digitos(v("rWa")), correo: v("rMail").toLowerCase(), negocio: v("rNegocio"), password: $("#rPass").value, dir: v("rDir"), ciudad: v("rCiudad"), estado: v("rEstado"), cp: v("rCp"), ref: v("rRef") };
+    const d = { accion: "registrar", nombre: v("rNombre"), wa: digitos(v("rWa")), correo: v("rMail").toLowerCase(), password: $("#rPass").value };
     const falla = t => { err.textContent = t; err.classList.add("on"); };
-    if (d.nombre.length < 2) return falla("Escribe tu nombre."); if (d.wa.length !== 10) return falla("Tu WhatsApp debe tener 10 dígitos (sin +52)."); if (!d.correo.includes("@")) return falla("Escribe tu correo.");
+    if (d.nombre.length < 2) return falla("Escribe tu nombre."); if (v("rWa") && d.wa.length !== 10) return falla("Tu WhatsApp debe tener 10 dígitos (sin +52)."); if (d.correo && !esCorreo(d.correo)) return falla("Revisa tu correo.");
+    if (!d.wa && !d.correo) return falla("Deja tu WhatsApp o tu correo (o los dos).");
     if (d.password.length < 8) return falla("La contraseña debe tener al menos 8 caracteres."); if (d.password !== $("#rPass2").value) return falla("Las contraseñas no coinciden.");
     const b = $("#btnRegistrar"); b.disabled = true; b.textContent = "Creando tu cuenta…";
     try {
-      const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }, body: JSON.stringify(d) });
-      let j = {}; try { j = await r.json(); } catch (x) {}
-      if (!r.ok || !j.ok) throw new Error(j.error || ("no se pudo crear la cuenta (" + r.status + ")"));
-      const { error } = await sb.auth.signInWithPassword({ email: d.wa + "@" + DOMINIO, password: d.password }); if (error) throw error;
-      medir("club_registro"); abrir();
+      const j = await cuentaApi(d); if (!j.ok) throw new Error(j.error || "no se pudo crear la cuenta");
+      const { error } = await sb.auth.signInWithPassword({ email: j.login || (d.wa ? d.wa + "@" + DOMINIO : d.correo), password: d.password }); if (error) throw error;
+      medir("club_registro", { via: d.wa ? "whatsapp" : "correo" }); abrir();
     } catch (x) { falla(String(x.message || x)); }
     finally { b.disabled = false; b.innerHTML = 'Crear mi cuenta <span class="fl">→</span>'; }
   });
@@ -100,6 +95,7 @@
       try { const { data } = await sb.auth.getUser(); const u = data && data.user; const esGoogle = u && ((u.app_metadata || {}).provider === "google" || ((u.app_metadata || {}).providers || []).includes("google")); if (u && esGoogle && /no está vinculado/.test(String(e.message || e))) { return completarGoogle(u); } } catch (x) {}
       $("#cargando").style.display = "none"; $("#login").style.display = ""; const err = $("#loginError"); err.textContent = "No pudimos abrir tu espacio: " + (e.message || e); err.classList.add("on"); await sb.auth.signOut(); return; }
     $("#cargando").style.display = "none"; $("#app").classList.add("on"); pintarTodo();
+    if (/[?&]google=1/.test(location.search) || /[?&]registro=1/.test(location.search)) history.replaceState(null, "", location.pathname);
   }
 
   async function cargar() {
@@ -117,22 +113,23 @@
       const ya = new Set(S.pedidos.map(p => String(p.titulo || "")));
       S.pedidosWeb = (web || []).filter(w => ![...ya].some(t => t.includes(w.folio))).map(w => ({ id: "web:" + w.folio, web: true, titulo: "Pedido web " + w.folio, fecha: w.pagado_en || w.creado, origen: "web", piezas: w.piezas, total: w.total, estado: w.estado === "pagado" ? "preparando" : w.estado, guia: w.guia || "", items: w.items || [], entrega: w.entrega || {} }));
     } catch (x) { S.pedidosWeb = []; }
+    S.activo = S.pedidos.length + S.pedidosWeb.length > 0;
     calcular();
   }
 
-  function calcular() { // inventario por pieza: comprado, vendido, costo promedio, precio de venta
+  function calcular() { // inventario por pieza: comprado, vendido, costo promedio, precios de venta
     const m = {};
     for (const p of S.pedidos) for (const it of (p.items || [])) { const c = it.codigo; if (!c) continue; const r = m[c] || (m[c] = { codigo: c, nombre: it.nombre, foto: it.foto, categoria: it.categoria, material: it.material, comprado: 0, costoTotal: 0, vendido: 0, ingresos: 0 }); r.comprado += Number(it.cant) || 0; r.costoTotal += (Number(it.cant) || 0) * (Number(it.precio) || 0); if (!r.foto && it.foto) r.foto = it.foto; }
     for (const v of S.ventas) { const r = m[v.codigo]; if (!r) continue; r.vendido += Number(v.cant) || 0; r.ingresos += (Number(v.cant) || 0) * (Number(v.precio_venta) || 0); }
-    S.inv = Object.values(m).map(r => { r.costo = r.comprado ? r.costoTotal / r.comprado : 0; const pr = S.precios[r.codigo]; r.precioVenta = pr && pr.precio_venta != null ? Number(pr.precio_venta) : null; r.visible = pr ? pr.visible !== false : true; r.disponibles = Math.max(0, r.comprado - r.vendido); r.ganancia = r.ingresos - r.vendido * r.costo; return r; }).sort((a, b) => (a.categoria || "").localeCompare(b.categoria || "") || (a.nombre || "").localeCompare(b.nombre || ""));
+    S.inv = Object.values(m).map(r => { r.costo = r.comprado ? r.costoTotal / r.comprado : 0; const pr = S.precios[r.codigo]; r.precioVenta = pr && pr.precio_venta != null ? Number(pr.precio_venta) : null; r.precioMayoreo = pr && pr.precio_mayoreo != null ? Number(pr.precio_mayoreo) : null; r.minMayoreo = pr && pr.min_mayoreo ? Number(pr.min_mayoreo) : Number($("#minMayoreo").value) || 3; r.visible = pr ? pr.visible !== false : true; r.disponibles = Math.max(0, r.comprado - r.vendido); r.ganancia = r.ingresos - r.vendido * r.costo; return r; }).sort((a, b) => (a.categoria || "").localeCompare(b.categoria || "") || (a.nombre || "").localeCompare(b.nombre || ""));
   }
 
   /* ---------- pestañas ---------- */
-  const ir = p => { if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); if (p === "calculadora") { const f = $("#calcFrame"); if (f && !f.src) f.src = "calculadora.html?embed=1"; } $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const ir = p => { if (!S.activo && ["pedidos", "negocio", "catalogo"].includes(p)) { toast("Se activa con tu primera compra"); p = "inicio"; } if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); if (p === "calculadora") { const f = $("#calcFrame"); if (f && !f.src) f.src = "calculadora.html?embed=1"; } $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
   $$("#tabs button").forEach(b => b.addEventListener("click", () => ir(b.dataset.p)));
   $$("[data-ir]").forEach(b => b.addEventListener("click", () => ir(b.dataset.ir)));
 
-  function pintarTodo() { pintarCabecera(); pintarInicio(); pintarPedidos(); pintarNegocio(); pintarCatalogo(); pintarPerfil(); }
+  function pintarTodo() { pintarCabecera(); $$("#tabs button[data-activo]").forEach(b => b.classList.toggle("off", !S.activo)); $("#bloqueado").style.display = S.activo ? "none" : ""; $("#inicioActivo").style.display = S.activo ? "" : "none"; pintarInicio(); pintarPedidos(); pintarNegocio(); pintarCatalogo(); pintarPerfil(); }
 
   function pintarCabecera() { const n = S.yo.nombre || "clienta"; $("#avatar").textContent = n.trim().charAt(0).toUpperCase() || "M"; $("#hola").textContent = "Hola, " + n.split(" ")[0]; $("#subtitulo").textContent = (S.yo.catalogo.nombre || S.yo.negocio || "Marvea Business Club") + (S.yo.ciudad ? " · " + S.yo.ciudad : ""); }
 
@@ -141,14 +138,15 @@
   function piezaHTML(it) { return '<div class="pz">' + (it.foto ? '<img src="' + esc(it.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div class="t"><b>' + esc(it.nombre || it.codigo) + '</b><span>' + (Number(it.cant) || 0) + ' pza' + (Number(it.cant) === 1 ? "" : "s") + ' · ' + mxn(it.precio) + ' c/u</span></div></div>'; }
 
   function pintarInicio() {
-    const piezas = S.pedidos.reduce((s, p) => s + (Number(p.piezas) || 0), 0), inv = S.pedidos.reduce((s, p) => s + (Number(p.total) || 0), 0);
+    const todos = [...(S.pedidosWeb || []), ...S.pedidos];
+    const piezas = todos.reduce((s, p) => s + (Number(p.piezas) || 0), 0), inv = todos.reduce((s, p) => s + (Number(p.total) || 0), 0);
     const vend = S.inv.reduce((s, r) => s + r.vendido, 0), disp = S.inv.reduce((s, r) => s + r.disponibles, 0), ing = S.inv.reduce((s, r) => s + r.ingresos, 0), gan = S.inv.reduce((s, r) => s + r.ganancia, 0);
-    $("#kPiezas").textContent = piezas; $("#kPedidos").textContent = S.pedidos.length + (S.pedidos.length === 1 ? " pedido" : " pedidos");
+    $("#kPiezas").textContent = piezas; $("#kPedidos").textContent = todos.length + (todos.length === 1 ? " pedido" : " pedidos");
     $("#kInvertido").innerHTML = mxn(inv) + " <em>MXN</em>"; $("#kVendidas").textContent = vend; $("#kDisponibles").textContent = disp + " disponibles para vender";
     $("#kGanancia").innerHTML = mxn(gan) + " <em>MXN</em>"; $("#kIngresos").textContent = mxn(ing) + " en ventas registradas";
-    const u = S.pedidos[0];
+    const u = todos[0];
     if (u) { $("#uDesc").textContent = (u.titulo || "Pedido") + " · " + fecha(u.fecha) + " · " + (u.piezas || 0) + " piezas · " + mxn(u.total) + " MXN"; $("#uEstado").innerHTML = estadoChip(u); $("#uPiezas").innerHTML = (u.items || []).slice(0, 4).map(piezaHTML).join(""); }
-    else { $("#uDesc").textContent = "Todavía no tienes pedidos finalizados. Cuando cerremos tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
+    else { $("#uDesc").textContent = "Todavía no tienes pedidos. Cuando pagues tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
     pintarMiniCat();
   }
   const abrirDHL = g => { g = String(g || "").replace(/\s+/g, ""); if (!g) return toast("Escribe tu número de guía", true); window.open("https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1", "_blank", "noopener"); medir("club_rastrear"); };
@@ -163,37 +161,41 @@
     const todos = [...(S.pedidosWeb || []), ...S.pedidos];
     if (!todos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto pagues tu primera compra en la tienda en línea (o te la confirmemos por WhatsApp), la verás aquí con sus fotos, su estado y su guía DHL.</div>'; return; }
     for (const p of todos) {
-      if (p.web) { const el = document.createElement("div"); el.className = "glass ped"; const guia = (p.guia || "").trim(); const track = rastreoDe(guia); const ent = p.entrega || {};
+      if (p.web) { const el = document.createElement("div"); el.className = "vidrio suave ped"; const guia = (p.guia || "").trim(); const track = rastreoDe(guia); const ent = p.entrega || {};
         el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo) + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN · pagado con tarjeta</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
           + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
           + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> ' + (ent.tipo === "recoger" ? "Recoges en Monterrey" : ent.resguardar ? "En resguardo (sale cuando tú lo pidas)" : "Envío DHL Express") + '</label>'
-          + (guia ? '<input value="' + esc(guia) + '" disabled>' + (track ? '<a class="btn claro sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') : '<span style="font-size:13px;opacity:.85">' + (p.estado === "preparando" ? "Estamos preparando tu paquete; aquí aparecerá tu guía." : "") + '</span>') + '</div>';
+          + (guia ? '<input value="' + esc(guia) + '" disabled>' + (track ? '<a class="btn sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') : '<span style="font-size:13px;opacity:.85">' + (p.estado === "preparando" ? "Estamos preparando tu paquete; aquí aparecerá tu guía." : "") + '</span>') + '</div>';
         box.append(el); continue; }
-      const el = document.createElement("div"); el.className = "glass ped";
+      const el = document.createElement("div"); el.className = "vidrio suave ped";
       const guia = (p.guia || "").trim(); const track = rastreoDe(guia);
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
         + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
         + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> Guía de envío</label><input value="' + esc(guia) + '" placeholder="Pega aquí tu número de guía" maxlength="30">'
-        + (track ? '<a class="btn claro sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') + '<button class="btn vidrio sm guardar">Guardar guía</button>'
-        + (p.estado !== "entregado" ? '<button class="btn vidrio sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>';
+        + (track ? '<a class="btn sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') + '<button class="btn cristal sm guardar">Guardar guía</button>'
+        + (p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>';
       $(".guardar", el).addEventListener("click", async () => { const g = $(".guia input", el).value.trim(); const { error } = await sb.from("pedidos").update({ guia: g, estado: g && p.estado === "preparando" ? "enviado" : p.estado }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.guia = g; if (g && p.estado === "preparando") p.estado = "enviado"; toast("Guía guardada"); pintarPedidos(); pintarInicio(); });
       const r = $(".recibido", el); r && r.addEventListener("click", async () => { const { error } = await sb.from("pedidos").update({ estado: "entregado" }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.estado = "entregado"; toast("¡Qué bien! Pedido entregado"); pintarPedidos(); pintarInicio(); });
       box.append(el);
     }
   }
 
-  function ganDe(r, pv) { // ganancia por pieza, si vende lo que le queda, y lo que ya ganó
-    const pp = pv == null || isNaN(pv) ? null : pv - r.costo;
-    return { pp, potencial: pp == null ? 0 : pp * r.disponibles };
-  }
-  function ganHTML(r, pv) { const g = ganDe(r, pv);
+  /* ---------- Mis precios y ventas: menudeo, mayoreo (desde N piezas), ventas registradas ---------- */
+  function ganDe(r, pv) { const pp = pv == null || isNaN(pv) ? null : pv - r.costo; return { pp, potencial: pp == null ? 0 : pp * r.disponibles }; }
+  function ganHTML(r, pv, pm) { const g = ganDe(r, pv);
     if (g.pp == null) return '<span class="gsin">Pon tu precio</span>' + (r.vendido ? '<small>Ya ganaste ' + mxn(r.ganancia) + '</small>' : '');
-    return '<b class="' + (g.pp < 0 ? "neg" : "") + '">' + mxn(g.pp) + ' <i>c/u</i></b>' + (r.disponibles ? '<small>Si vendes ' + (r.disponibles === 1 ? "la que queda" : "las " + r.disponibles) + ': <b>' + mxn(g.potencial) + '</b></small>' : '') + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : ''); }
+    const gm = pm != null && !isNaN(pm) ? pm - r.costo : null;
+    return '<b class="' + (g.pp < 0 ? "neg" : "") + '">' + mxn(g.pp) + ' <i>c/u menudeo</i></b>' + (gm != null ? '<small>' + mxn(gm) + ' c/u en mayoreo</small>' : '') + (r.disponibles ? '<small>Si vendes ' + (r.disponibles === 1 ? "la que queda" : "las " + r.disponibles) + ': <b style="display:inline">' + mxn(g.potencial) + '</b></small>' : '') + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : ''); }
   function pintarResumenNegocio() {
     const disp = S.inv.reduce((s, r) => s + r.disponibles, 0), gan = S.inv.reduce((s, r) => s + r.ganancia, 0), ing = S.inv.reduce((s, r) => s + r.ingresos, 0);
     const pot = S.inv.reduce((s, r) => s + ganDe(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta).potencial, 0);
     const sinPrecio = S.inv.filter(r => (r.precioTmp !== undefined ? r.precioTmp : r.precioVenta) == null && r.disponibles > 0).length;
-    $("#resumenNegocio").innerHTML = '<span class="chip vidrio"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip vidrio"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(ing) + ' vendidos</span><span class="chip prep"><i class="fa-solid fa-arrow-trend-up"></i> ' + mxn(gan) + ' de ganancia ya hecha</span><span class="chip ent"><i class="fa-solid fa-coins"></i> ' + mxn(pot) + ' más si vendes lo que te queda</span><span class="chip total"><i class="fa-solid fa-star"></i> Ganancia total: ' + mxn(gan + pot) + '</span>' + (sinPrecio ? '<span class="chip vidrio"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio de venta</span>' : "");
+    $("#resumenNegocio").innerHTML = '<span class="chip"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(ing) + ' vendidos</span><span class="chip prep"><i class="fa-solid fa-arrow-trend-up"></i> ' + mxn(gan) + ' de ganancia ya hecha</span><span class="chip ent"><i class="fa-solid fa-coins"></i> ' + mxn(pot) + ' más si vendes lo que te queda</span><span class="chip total"><i class="fa-solid fa-star"></i> Ganancia total: ' + mxn(gan + pot) + '</span>' + (sinPrecio ? '<span class="chip"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio de venta</span>' : "");
+  }
+  async function guardarPrecio(r, cambios) {
+    const fila = Object.assign({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: r.precioVenta, precio_mayoreo: r.precioMayoreo, min_mayoreo: r.minMayoreo, visible: r.visible }, cambios);
+    const { error } = await sb.from("precios").upsert(fila); if (error) { toast("No se guardó: " + error.message, true); return false; }
+    S.precios[r.codigo] = fila; r.precioVenta = fila.precio_venta; r.precioMayoreo = fila.precio_mayoreo; r.minMayoreo = fila.min_mayoreo; r.visible = fila.visible !== false; return true;
   }
   async function cancelarVenta(v) {
     const r = S.inv.find(x => x.codigo === v.codigo) || {}; if (!confirm("¿Cancelar esta venta?\n" + (r.nombre || v.codigo) + " · " + v.cant + " × " + mxn(v.precio_venta) + "\nLa pieza vuelve a tu inventario.")) return;
@@ -201,43 +203,56 @@
     S.ventas = S.ventas.filter(x => x.id !== v.id); calcular(); pintarNegocio(); pintarInicio(); toast("Venta cancelada · la pieza regresó a tu inventario");
   }
   function pintarVentasHechas() {
-    let box = $("#ventasHechas"); if (!box) { box = document.createElement("div"); box.id = "ventasHechas"; box.className = "ventas-hechas"; const w = $("#tablaInv").closest(".tabla-wrap"); w.parentNode.insertBefore(box, $("#invVacio").nextSibling); }
+    let box = $("#ventasHechas"); if (!box) { box = document.createElement("div"); box.id = "ventasHechas"; box.className = "ventas-hechas"; $("#invVacio").parentNode.insertBefore(box, $("#invVacio").nextSibling); }
     const vs = S.ventas.slice(0, 40); if (!vs.length) { box.innerHTML = ""; return; }
     const nom = c => { const r = S.inv.find(x => x.codigo === c); return r ? (r.nombre || c) : c; };
     box.innerHTML = '<h3>Ventas que registraste</h3><p>¿Te equivocaste? Cancela la venta y la pieza regresa a tu inventario.</p><div class="vh-lista"></div>';
     const lista = $(".vh-lista", box);
     for (const v of vs) { const el = document.createElement("div"); el.className = "vh";
-      el.innerHTML = '<div><b>' + esc(nom(v.codigo)) + '</b><span>' + fecha(v.fecha || v.creado) + ' · ' + v.cant + ' × ' + mxn(v.precio_venta) + '</span></div><b>' + mxn((Number(v.cant) || 0) * (Number(v.precio_venta) || 0)) + '</b><button class="btn vidrio sm cancelar"><i class="fa-solid fa-rotate-left"></i> Cancelar</button>';
+      el.innerHTML = '<div><b>' + esc(nom(v.codigo)) + '</b><span>' + fecha(v.fecha || v.creado) + ' · ' + v.cant + ' × ' + mxn(v.precio_venta) + '</span></div><b>' + mxn((Number(v.cant) || 0) * (Number(v.precio_venta) || 0)) + '</b><button class="btn cristal sm cancelar"><i class="fa-solid fa-rotate-left"></i> Cancelar</button>';
       $(".cancelar", el).addEventListener("click", () => cancelarVenta(v)); lista.append(el); }
   }
   function pintarNegocio() {
-    const tb = $("#tablaInv tbody"); tb.innerHTML = ""; $("#invVacio").style.display = S.inv.length ? "none" : "block"; $("#tablaInv").style.display = S.inv.length ? "" : "none";
+    const tb = $("#tablaInv tbody"); tb.innerHTML = ""; $("#invVacio").style.display = S.inv.length ? "none" : "block"; $("#tablaInv").closest(".tabla-wrap").style.display = S.inv.length ? "" : "none"; $("#rapidos").style.display = S.inv.length ? "" : "none";
     for (const r of S.inv) delete r.precioTmp;
     pintarResumenNegocio();
     for (const r of S.inv) {
       const tr = document.createElement("tr"); if (!r.disponibles) tr.className = "agotado";
       const ultima = S.ventas.find(v => v.codigo === r.codigo);
-      tr.innerHTML = '<td><div class="pcell">' + (r.foto ? '<img src="' + esc(r.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div><b>' + esc(r.nombre || r.codigo) + '</b><span>' + esc(r.codigo) + (r.material ? ' · ' + esc(r.material) : '') + '</span></div></div></td>'
-        + '<td>' + r.comprado + '</td><td>' + r.vendido + (ultima ? ' <button class="ico deshacer" title="Cancelar la última venta de esta pieza"><i class="fa-solid fa-rotate-left"></i></button>' : '') + '</td><td><b>' + r.disponibles + '</b></td><td>' + mxn(r.costo) + '</td>'
+      tr.innerHTML = '<td><div class="pcell">' + (r.foto ? '<img src="' + esc(r.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div><b>' + esc(r.nombre || r.codigo) + '</b><span>' + esc(r.codigo) + (r.material ? ' · ' + esc(r.material) : '') + ' · compraste ' + r.comprado + ', vendiste ' + r.vendido + '</span></div></div></td>'
+        + '<td><b>' + r.disponibles + '</b></td><td>' + mxn(r.costo) + '</td>'
         + '<td><span class="inp">$<input type="number" min="0" step="1" class="precio" value="' + (r.precioVenta == null ? "" : Math.round(r.precioVenta)) + '" placeholder="' + Math.round(r.costo * 2) + '"></span></td>'
-        + '<td class="gan">' + ganHTML(r, r.precioVenta) + '</td>'
-        + '<td><span class="inp"><input type="number" min="1" max="' + (r.disponibles || 1) + '" step="1" class="cant" value="1" style="width:40px"></span> <button class="ico vender" title="Registrar venta"' + (r.disponibles ? "" : " disabled") + '><i class="fa-solid fa-plus"></i></button></td>'
+        + '<td><span class="inp">$<input type="number" min="0" step="1" class="mayoreo" value="' + (r.precioMayoreo == null ? "" : Math.round(r.precioMayoreo)) + '" placeholder="' + Math.round(r.costo * 1.5) + '"></span><span class="inp min"><small>desde</small><input type="number" min="2" max="99" class="minm" value="' + r.minMayoreo + '"><small>pzas</small></span></td>'
+        + '<td class="gan">' + ganHTML(r, r.precioVenta, r.precioMayoreo) + '</td>'
+        + '<td><span class="inp"><input type="number" min="1" max="' + (r.disponibles || 1) + '" step="1" class="cant" value="1" style="width:40px"></span> <button class="ico vender" title="Registrar venta"' + (r.disponibles ? "" : " disabled") + '><i class="fa-solid fa-plus"></i></button>' + (ultima ? ' <button class="ico deshacer" title="Cancelar la última venta de esta pieza"><i class="fa-solid fa-rotate-left"></i></button>' : '') + '</td>'
         + '<td><button class="ico visible' + (r.visible ? "" : " off") + '" title="' + (r.visible ? "Visible en tu catálogo" : "Oculta en tu catálogo") + '"><i class="fa-regular ' + (r.visible ? "fa-eye" : "fa-eye-slash") + '"></i></button></td>';
-      const precioIn = $(".precio", tr);
-      precioIn.addEventListener("input", () => { r.precioTmp = precioIn.value === "" ? null : Number(precioIn.value); $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp); pintarResumenNegocio(); });
-      precioIn.addEventListener("change", async () => { const v = precioIn.value === "" ? null : Number(precioIn.value); const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: v, visible: r.visible }); if (error) return toast("No se guardó el precio: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: v, visible: r.visible }; r.precioVenta = v; delete r.precioTmp; $(".gan", tr).innerHTML = ganHTML(r, v); pintarResumenNegocio(); toast("Precio guardado"); });
-      $(".visible", tr).addEventListener("click", async () => { const nv = !r.visible; const { error } = await sb.from("precios").upsert({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }); if (error) return toast("No se guardó: " + error.message, true); S.precios[r.codigo] = { codigo: r.codigo, precio_venta: r.precioVenta, visible: nv }; calcular(); pintarNegocio(); pintarMiniCat(); });
+      const precioIn = $(".precio", tr), mayIn = $(".mayoreo", tr), minIn = $(".minm", tr);
+      const num = i => i.value === "" ? null : Number(i.value);
+      precioIn.addEventListener("input", () => { r.precioTmp = num(precioIn); $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp, num(mayIn)); pintarResumenNegocio(); });
+      precioIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_venta: num(precioIn) })) { delete r.precioTmp; $(".gan", tr).innerHTML = ganHTML(r, r.precioVenta, r.precioMayoreo); pintarResumenNegocio(); toast("Precio de menudeo guardado"); } });
+      mayIn.addEventListener("input", () => { $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta, num(mayIn)); });
+      mayIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_mayoreo: num(mayIn) })) toast("Precio de mayoreo guardado"); });
+      minIn.addEventListener("change", async () => { const v = Math.max(2, Math.min(99, Number(minIn.value) || 3)); minIn.value = v; if (await guardarPrecio(r, { min_mayoreo: v })) toast("Mayoreo desde " + v + " piezas"); });
+      $(".visible", tr).addEventListener("click", async () => { if (await guardarPrecio(r, { visible: !r.visible })) { calcular(); pintarNegocio(); pintarMiniCat(); } });
       const dz = $(".deshacer", tr); if (dz) dz.addEventListener("click", () => cancelarVenta(ultima));
       $(".vender", tr).addEventListener("click", async () => {
-        const cant = Math.max(1, Math.min(r.disponibles, Number($(".cant", tr).value) || 1)); let pv = precioIn.value === "" ? null : Number(precioIn.value);
+        const cant = Math.max(1, Math.min(r.disponibles, Number($(".cant", tr).value) || 1)); let pv = num(precioIn);
+        if (pv != null && r.precioMayoreo != null && cant >= r.minMayoreo) pv = r.precioMayoreo; // venta por mayoreo
         if (pv == null) { const s = prompt("¿A cuánto vendiste cada pieza?", Math.round(r.costo * 2)); if (s == null) return; pv = Number(s) || 0; precioIn.value = pv; precioIn.dispatchEvent(new Event("change")); }
         const { data, error } = await sb.from("ventas").insert({ clienta_id: S.yo.id, codigo: r.codigo, cant, precio_venta: pv }).select().single(); if (error) return toast("No se registró: " + error.message, true);
-        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
+        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + (cant >= r.minMayoreo && r.precioMayoreo != null ? " (precio de mayoreo)" : "") + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
       });
       tb.append(tr);
     }
     pintarVentasHechas();
   }
+  // rellenar todos los precios de un golpe (solo los que estén vacíos, para no pisar lo que ya puso)
+  $$("#rapidos [data-mult],#rapidos [data-multm]").forEach(b => b.addEventListener("click", async () => {
+    const m = Number(b.dataset.mult || b.dataset.multm), esMay = !!b.dataset.multm; let n = 0;
+    for (const r of S.inv) { if (!r.disponibles) continue; if (esMay ? r.precioMayoreo != null : r.precioVenta != null) continue; const v = Math.round(r.costo * m); if (await guardarPrecio(r, esMay ? { precio_mayoreo: v } : { precio_venta: v })) n++; }
+    calcular(); pintarNegocio(); pintarInicio(); toast(n ? "Listo: " + n + " precios de " + (esMay ? "mayoreo" : "menudeo") + " puestos (×" + m + "). Puedes ajustar cada uno." : "Todas las piezas ya tenían precio; cámbialo pieza por pieza.");
+  }));
+  $("#minMayoreo").addEventListener("change", async () => { const v = Math.max(2, Math.min(99, Number($("#minMayoreo").value) || 3)); $("#minMayoreo").value = v; let n = 0; for (const r of S.inv) { if (r.minMayoreo !== v && await guardarPrecio(r, { min_mayoreo: v })) n++; } pintarNegocio(); toast("Mayoreo desde " + v + " piezas en todas tus piezas"); });
 
   /* ---------- Mi catálogo: PDF con su nombre, logo y precios (sin links ni datos del proveedor) ---------- */
   const COLORES = ["#2B2B2B", "#5A2748", "#B76E79", "#1F4E5A", "#8C6A3F", "#C2185B", "#3C5A40", "#1D3557"];
@@ -249,12 +264,12 @@
   function pintarCatalogo() {
     const c = S.yo.catalogo || {};
     $("#cNombre").value = c.nombre || S.yo.negocio || ""; $("#cWhats").value = c.whatsapp || S.yo.whatsapp || ""; $("#cFrase").value = c.frase || ""; $("#cRedes").value = c.redes || "";
-    colorSel = c.color || COLORES[0];
+    colorSel = c.color || COLORES[1];
     $("#cColores").innerHTML = COLORES.map(x => '<button type="button" style="background:' + x + '" data-c="' + x + '" class="' + (x === colorSel ? "on" : "") + '" aria-label="Color ' + x + '"></button>').join("");
     $$("#cColores button").forEach(b => b.onclick = () => { colorSel = b.dataset.c; $$("#cColores button").forEach(x => x.classList.toggle("on", x === b)); });
     pintarLogo(); pintarMiniCat();
     const p = piezasCat(), sinPrecio = p.filter(r => r.precioVenta == null).length;
-    $("#cResumen").innerHTML = '<span class="chip vidrio"><i class="fa-solid fa-gem"></i> ' + p.length + ' piezas entrarán al PDF</span>' + (sinPrecio ? '<span class="chip prep"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio: saldrán como "Pregunta por precio" (ponlo en Mi negocio)</span>' : "");
+    $("#cResumen").innerHTML = '<span class="chip"><i class="fa-solid fa-gem"></i> ' + p.length + ' piezas entrarán al PDF</span>' + (sinPrecio ? '<span class="chip prep"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio: saldrán como "Pregunta por precio" (ponlo en Mis precios)</span>' : "");
   }
   async function guardarCat(extra, silencioso) {
     const cat = Object.assign({}, S.yo.catalogo, { nombre: $("#cNombre").value.trim(), whatsapp: digitos($("#cWhats").value), frase: $("#cFrase").value.trim(), redes: $("#cRedes").value.trim(), color: colorSel }, extra || {});
@@ -265,7 +280,6 @@
     return true;
   }
   $("#cGuardar").addEventListener("click", () => guardarCat());
-  // logo: se reduce en el navegador (máx. 500 px) y se guarda con su perfil
   $("#logoFile").addEventListener("change", async e => {
     const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
     if (!/^image\//.test(f.type)) return toast("Sube una imagen PNG o JPG", true);
@@ -279,7 +293,7 @@
   });
   $("#logoQuitar").addEventListener("click", async () => { if (await guardarCat({ logo: "" }, true)) toast("Logo quitado"); });
   const cargarImg = src => new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = src; });
-  async function fotoCuadrada(src, lado) { // recorta al centro en cuadrado con fondo blanco → JPEG
+  async function fotoCuadrada(src, lado) {
     try { const i = await cargarImg(src); const cv = document.createElement("canvas"); cv.width = cv.height = lado; const g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, lado, lado);
       const s2 = Math.min(i.width, i.height); g.drawImage(i, (i.width - s2) / 2, (i.height - s2) / 2, s2, s2, 0, 0, lado, lado); return cv.toDataURL("image/jpeg", .82); } catch (e) { return null; }
   }
@@ -289,15 +303,15 @@
     if (!window.jspdf) return toast("No se pudo cargar el generador de PDF. Recarga la página.", true);
     if (document.querySelector("#p-catalogo.on")) { if (!(await guardarCat(null, true))) return; }
     const piezas = piezasCat(); if (!piezas.length) return toast("No tienes piezas disponibles para el catálogo", true);
-    const c = S.yo.catalogo || {}, conPrecio = (document.querySelector('input[name=pm]:checked') || {}).value !== "sin";
+    const c = S.yo.catalogo || {}, modo = (document.querySelector('input[name=pm]:checked') || {}).value || "mios", conPrecio = modo !== "sin", conMayoreo = modo === "mios";
     const txt = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Armando tu PDF…';
     try {
       const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" }); const W = 210, H = 297, M = 12;
-      const col = hexRgb(c.color || COLORES[0]); const neg = c.nombre || S.yo.negocio || S.yo.nombre || "Mi catálogo";
+      const col = hexRgb(c.color || COLORES[1]); const neg = c.nombre || S.yo.negocio || S.yo.nombre || "Mi catálogo";
       const wa = telFmt(digitos(c.whatsapp || S.yo.whatsapp || "")); const pie = [wa ? "Pedidos por WhatsApp: " + wa : "", c.redes || ""].filter(Boolean).join("   ·   ");
       const fotos = await Promise.all(piezas.map(p => p.foto ? fotoCuadrada(p.foto, 520) : Promise.resolve(null)));
       let logo = null, lw = 0, lh = 0; if (c.logo) { try { const pr = doc.getImageProperties(c.logo); const k = Math.min(30 / pr.width, 30 / pr.height); lw = pr.width * k; lh = pr.height * k; logo = c.logo; } catch (e) {} }
-      const cols = 3, gap = 6, cw = (W - 2 * M - gap * (cols - 1)) / cols, ch = cw + 24, top0 = 56, topN = 18, piso = H - 18;
+      const cols = 3, gap = 6, cw = (W - 2 * M - gap * (cols - 1)) / cols, ch = cw + (conMayoreo ? 29 : 24), top0 = 56, topN = 18, piso = H - 18;
       const encabezado = primera => {
         if (primera) {
           doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 46, "F");
@@ -316,7 +330,10 @@
         if (fotos[idx]) doc.addImage(fotos[idx], "JPEG", x + .6, y + .6, cw - 1.2, cw - 1.2); else { doc.setFillColor(245, 242, 240); doc.rect(x + .6, y + .6, cw - 1.2, cw - 1.2, "F"); }
         doc.setTextColor(40, 40, 40); doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.text(doc.splitTextToSize(p.nombre || p.codigo, cw - 6)[0], x + 3, y + cw + 6);
         doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(120, 120, 120); doc.text(doc.splitTextToSize([p.categoria, p.material].filter(Boolean).join(" · "), cw - 6)[0] || "", x + 3, y + cw + 11);
-        if (conPrecio) { doc.setTextColor(col[0], col[1], col[2]); doc.setFont("helvetica", "bold"); if (p.precioVenta != null) { doc.setFontSize(13); doc.text("$" + Math.round(p.precioVenta).toLocaleString("es-MX"), x + 3, y + cw + 19); } else { doc.setFontSize(9); doc.text("Pregunta por precio", x + 3, y + cw + 19); } }
+        if (conPrecio) { doc.setTextColor(col[0], col[1], col[2]); doc.setFont("helvetica", "bold");
+          if (p.precioVenta != null) { doc.setFontSize(13); doc.text("$" + Math.round(p.precioVenta).toLocaleString("es-MX"), x + 3, y + cw + 19);
+            if (conMayoreo && p.precioMayoreo != null) { doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(90, 90, 90); doc.text("Mayoreo desde " + p.minMayoreo + " pzas: $" + Math.round(p.precioMayoreo).toLocaleString("es-MX"), x + 3, y + cw + 24.5); } }
+          else { doc.setFontSize(9); doc.text("Pregunta por precio", x + 3, y + cw + 19); } }
         if (p.disponibles <= 1) { doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255); doc.setFillColor(col[0], col[1], col[2]); doc.roundedRect(x + 3, y + 3, 22, 5.5, 2.7, 2.7, "F"); doc.text("ÚLTIMA PIEZA", x + 14, y + 6.8, { align: "center" }); }
         n++; x0++; if (x0 === cols) { x0 = 0; y += ch + gap; }
       });
@@ -329,15 +346,23 @@
   $("#cPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
   $("#iPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
 
+  /* ---------- perfil ---------- */
   const TEL_ACTIVO = false; // true cuando Twilio Verify esté configurado (Secrets TWILIO_*)
-  async function telAccion(accion, extra) { const { data: ses } = await sb.auth.getSession(); const tok = ses && ses.session ? ses.session.access_token : SB_KEY; const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ accion }, extra || {})) }); let j = {}; try { j = await r.json(); } catch (x) {} if (!r.ok) throw new Error(j.error || ("error " + r.status)); return j; }
-  function pintarVerif() { const v = !!S.yo.tel_verificado; $("#pVerif").textContent = v ? "· verificado ✓" : ""; const box = $("#pVerifBox"); box.style.display = (!v && TEL_ACTIVO) ? "flex" : "none"; }
+  async function telAccion(accion, extra) { const { data: ses } = await sb.auth.getSession(); const tok = ses && ses.session ? ses.session.access_token : SB_KEY; return cuentaApi(Object.assign({ accion }, extra || {}), tok); }
+  function pintarVerif() { const v = !!S.yo.tel_verificado; $("#pVerif").textContent = v ? "· WhatsApp verificado ✓" : ""; const box = $("#pVerifBox"); box.style.display = (!v && TEL_ACTIVO && S.yo.whatsapp) ? "flex" : "none"; }
   $("#pVerifEnviar").addEventListener("click", async () => { try { const j = await telAccion("tel-enviar", { canal: "whatsapp" }); toast(j.mensaje || "Código enviado"); $("#pVerifCodigo").style.display = ""; $("#pVerifOk").style.display = ""; $("#pVerifCodigo").focus(); } catch (x) { toast(String(x.message || x), true); } });
   $("#pVerifOk").addEventListener("click", async () => { try { const j = await telAccion("tel-verificar", { codigo: $("#pVerifCodigo").value }); toast(j.mensaje || "Verificado"); S.yo.tel_verificado = true; pintarVerif(); } catch (x) { toast(String(x.message || x), true); } });
-  function pintarPerfil() { pintarVerif(); $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; $("#pMail").value = S.yo.correo || ""; $("#pDir").value = S.yo.direccion || ""; $("#pEstado").value = S.yo.estado || ""; $("#pCp").value = S.yo.cp || ""; $("#pRef").value = S.yo.referencias || ""; }
-  $("#pGuardar").addEventListener("click", async () => { const v = id => $("#" + id).value.trim(); const cambios = { nombre: v("pNombre"), ciudad: v("pCiudad"), correo: v("pMail"), direccion: v("pDir"), estado: v("pEstado"), cp: v("pCp"), referencias: v("pRef"), actualizado: new Date().toISOString() }; const { error } = await sb.from("clientas").update(cambios).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); Object.assign(S.yo, cambios); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); });
+  async function pintarPerfil() {
+    pintarVerif(); $("#pNombre").value = S.yo.nombre || ""; $("#pWa").value = S.yo.whatsapp || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pMail").value = S.yo.correo || ""; $("#pNegocio").value = S.yo.negocio || ""; $("#pDir").value = S.yo.direccion || ""; $("#pEstado").value = S.yo.estado || ""; $("#pCp").value = S.yo.cp || ""; $("#pRef").value = S.yo.referencias || "";
+    try { const { data } = await sb.auth.getUser(); const u = data && data.user; const provs = (u && u.app_metadata && u.app_metadata.providers) || []; const login = u && u.email ? (u.email.endsWith("@" + DOMINIO) ? u.email.split("@")[0] + " (WhatsApp)" : u.email) : S.yo.whatsapp;
+      $("#pUsuario").value = login || ""; const g = provs.includes("google"); $("#gEstado").textContent = g ? "Tu Google ya está ligado: puedes entrar con él o con tu contraseña." : "Liga tu Google para entrar con un clic, además de tu contraseña."; $("#gLigar").style.display = g ? "none" : ""; } catch (x) {}
+  }
+  $("#gLigar").addEventListener("click", async () => { try { const { error } = await sb.auth.linkIdentity({ provider: "google", options: { redirectTo: BASE + "club.html" } }); if (error) throw error; } catch (x) { toast("Para ligar Google, sal y entra con el botón 'Continuar con Google' usando este mismo WhatsApp.", true); } });
+  $("#pGuardar").addEventListener("click", async () => { const v = id => $("#" + id).value.trim(); const wa = digitos(v("pWa")); if (v("pWa") && wa.length !== 10) return toast("Tu WhatsApp debe tener 10 dígitos", true); if (v("pMail") && !esCorreo(v("pMail"))) return toast("Revisa tu correo", true);
+    const cambios = { nombre: v("pNombre"), whatsapp: wa, ciudad: v("pCiudad"), correo: v("pMail").toLowerCase(), negocio: v("pNegocio"), direccion: v("pDir"), estado: v("pEstado"), cp: v("pCp"), referencias: v("pRef"), actualizado: new Date().toISOString() };
+    const { error } = await sb.from("clientas").update(cambios).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); Object.assign(S.yo, cambios); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); toast("Datos guardados"); });
   $("#nGuardar").addEventListener("click", async () => { const a = $("#n1").value, b = $("#n2").value; if (a.length < 8) return toast("Mínimo 8 caracteres", true); if (a !== b) return toast("Las contraseñas no coinciden", true); const { error } = await sb.auth.updateUser({ password: a }); if (error) return toast("No se cambió: " + error.message, true); $("#n1").value = $("#n2").value = ""; $("#nOk").classList.add("on"); setTimeout(() => $("#nOk").classList.remove("on"), 4000); toast("Contraseña cambiada"); });
 
-  // sesión guardada → entrar directo
+  // sesión guardada (o recién abierta con Google) → entrar directo
   sb.auth.getSession().then(({ data }) => { if (data && data.session) abrir(); });
 })();
