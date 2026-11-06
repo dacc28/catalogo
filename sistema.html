@@ -501,7 +501,13 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     await ready; delta = Number(delta) || 0;
     const c = store.productos || {}; const cur = Math.max(0, Number(c[codigo] && c[codigo].existencia) || 0);
     if (!delta) return { existencia: cur, aplicado: 0 };
-    const r = await enCola("productos", codigo, async () => exige(await sb.rpc("marvea_stock", { p_codigo: codigo, p_delta: delta })));
+    const info = window.__mvMov || {}; const op = "w" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+    const r = await enCola("productos", codigo, async () => { /* mvInv: número de operación; si se corta el internet se reintenta sin aplicar dos veces */
+      let ultimo; for (let n = 0; n < 3; n++) { try {
+        if (!window.__mvSinMov) { const x = await sb.rpc("marvea_stock_mov", { p_codigo: codigo, p_delta: delta, p_op: op, p_motivo: String(info.motivo || "").slice(0, 40), p_ref: String(info.ref || "").slice(0, 160), p_origen: "sistema" });
+          if (x.error && (x.error.code === "PGRST202" || x.error.code === "42883")) window.__mvSinMov = true; else return exige(x); }
+        return exige(await sb.rpc("marvea_stock", { p_codigo: codigo, p_delta: delta }));
+      } catch (e) { ultimo = e; if (window.__mvSinMov || !N.esRed(e)) throw e; await new Promise(ok => setTimeout(ok, 800 * (n + 1))); } } throw ultimo; });
     if (c[codigo]) { c[codigo] = Object.assign({}, c[codigo], { existencia: r.existencia }); notify("productos"); }
     return { existencia: Number(r.existencia) || 0, aplicado: Number(r.aplicado) || 0 };
   }
@@ -2458,7 +2464,8 @@ form.addEventListener("submit",async(ev)=>{
     const now=new Date().toISOString();
     let palabra=normaliza($("#palabra").value)||palabraDelProducto(nombre,$("#material").value,codigo); if(palabrasUsadas(codigo).has(palabra)){ const otro=porPalabra(palabra); toast(`La palabra "${palabra}" ya la usa ${otro?otro.codigo:"otro producto"}; se asignó otra`,true); palabra=palabraAleatoria(codigo); }
     const data={codigo,nombre,palabra,categoria:cat,material:materialNormalizado($("#material").value),costo:Math.round((parseFloat($("#costo").value)||0)*100)/100,precio:Math.round(precio*100)/100,existencia:Math.max(0,parseInt($("#existencia").value,10)||0),minimo:Math.max(0,parseInt($("#minimo").value,10)||0),notas:$("#notas").value.trim(),etiquetaCat:$("#etiquetaCat").value.trim().slice(0,24),fotoId,creado:prev?prev.creado||now:now,actualizado:now};
-    await state.db.doc("productos/"+codigo).set(data);
+    if(prev&&state.db&&typeof state.db.stock==="function"){ /* mvInv: solo la diferencia */ const vivo=state.products.get(codigo)||prev; const ex0=(state.__mvEx0&&state.__mvEx0.codigo===codigo)?state.__mvEx0.ex:Math.max(0,Number(prev.existencia)||0); const quiere=data.existencia; data.existencia=Math.max(0,Number(vivo.existencia)||0); await state.db.doc("productos/"+codigo).set(data); const dif=quiere-ex0; if(dif){ const pv=window.__mvMov; window.__mvMov={motivo:"ajuste",ref:"ficha del producto"}; try{ const r=await state.db.stock(codigo,dif); data.existencia=Number(r.existencia)||0; if(Number(r.aplicado)!==dif) toast(`Existencia: pediste ${dif>0?"+":""}${dif} y solo se pudo ${r.aplicado}; ahora hay ${data.existencia}`,true); }finally{ window.__mvMov=pv||null; } } state.__mvEx0=null; }
+    else await state.db.doc("productos/"+codigo).set(data);
     state.products.set(codigo,data); renderAll();
     const wasEdit=!!state.editing;
     resetForm();
@@ -4997,6 +5004,33 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   #ajustesHost .ajx-sec:not(.ajx-inicio) .ajpanel>*:not(.ajtitle){grid-column:2}
 }
 @media (max-width:720px){#ajustesHost .ajx-sec{grid-template-columns:1fr}#ajustesHost .ajx-cab h2{font-size:24px}#ajustesHost .ajx-tabs{width:auto}}
+
+/* ===== Inventario · Revisar piezas (7-nov-2026) ===== */
+.drawer.mvr{width:min(660px,100%)}
+.mvr .dg-res{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.mvr-nota{margin:0 0 10px;font-size:13px;color:var(--muted);background:var(--surface-2,#F4F1EC);border-radius:12px;padding:9px 12px}
+.mvr-nota.ok{color:#1E7A34;background:#EAF6EC}
+.mvr-nota.warn{color:#8A4B0F;background:#FFF4E2}
+.mvr-ok{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:28px 16px;background:#EAF6EC;border-radius:16px;color:#1E7A34}
+.mvr-ok b{font-size:20px}.mvr-ok span{font-size:14px;color:#2F6B3B}
+button.dg-f.mvr-a{cursor:pointer}
+.dg-f.mvr-a{border-left:4px solid transparent}
+.dg-f.mvr-a.alta{border-left-color:#C8323C}.dg-f.mvr-a.media{border-left-color:#D98B1C}.dg-f.mvr-a.baja{border-left-color:#9AA0A6}
+.dg-f.mvr-a small{white-space:normal}
+.mvr-niv{font-style:normal;font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.mvr-niv.alta{background:#FDE7E8;color:#B5262F}.mvr-niv.media{background:#FFF1DC;color:#9A5A0E}.mvr-niv.baja{background:#EEF0F2;color:#5F6368}
+.mvr-mod{display:flex;flex-direction:column;gap:2px;margin:0 0 10px}
+.mvr-mod .btn{align-self:flex-start;margin-bottom:6px}
+.mvr-mod h3{margin:0;font-size:20px}.mvr-mod small{color:var(--muted);font-size:13px}
+.mvr-h{margin:16px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.dg-f.mvr-m .dg-d b{font-variant-numeric:tabular-nums}
+.dg-f.mvr-m .dg-d b.mas{color:#1E7A34}.dg-f.mvr-m .dg-d b.menos{color:#B5262F}
+.dg-f.mvr-m.corto{background:#FFF8EC}.dg-f.mvr-m.bl{background:#F6F6F7}
+.dg-f.mvr-m small{white-space:normal}
+.mvr-fwrap{margin:0 0 10px}
+@media (max-width:600px){.mvr .dg-res{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dg-f.mvr-a .dg-n b{white-space:normal}
+.mvr .dg-r span{white-space:normal;overflow:visible;line-height:1.25}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -5397,6 +5431,157 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   let tmr=null; const obs=new MutationObserver(()=>{ clearTimeout(tmr); tmr=setTimeout(organizar,40); });
   function vigilar(){ const host=document.getElementById("ajustesHost"); if(!host) return false; obs.observe(host,{childList:true,subtree:true}); organizar(); return true; }
   if(!vigilar()) document.addEventListener("DOMContentLoaded",vigilar);
+})();
+
+/* ===== Marvea · piezas rastreadas y revisión de inventario (7-nov-2026) =====
+   1) Cada +/− de existencia lleva su motivo (carrito, quitar, cancelar, borrar, ajuste…) y el carrito: así queda en el
+      historial de la nube (marvea_movimientos, stripe/inventario_seguro.sql).
+   2) Editar la ficha de un producto ya no puede regresar piezas: solo se aplica la diferencia que tú escribiste.
+   3) Inventario › «Revisar piezas»: lo que no cuadra + rastrear un modelo (dónde está cada pieza y su historial). */
+(function(){
+  const W=window;
+  const money=x=>"$"+fmtMoney(x);
+  const cref=c=>c?(String(c.id||"")+(c.cliente?" · "+String(c.cliente).slice(0,40):"")):"";
+  /* ---------- 1) motivo de cada movimiento ---------- */
+  function envolver(nombre,info){ const f=W[nombre]; if(typeof f!=="function"||f.__mvMov) return;
+    const g=function(){ const prev=W.__mvMov; let r; try{ W.__mvMov=info.apply(null,arguments)||null; }catch(e){ W.__mvMov=null; }
+      try{ r=f.apply(this,arguments); }catch(e){ W.__mvMov=prev||null; throw e; }
+      if(r&&typeof r.then==="function") return r.finally(()=>{ W.__mvMov=prev||null; });
+      W.__mvMov=prev||null; return r; };
+    g.__mvMov=true; Object.assign(g,f); W[nombre]=g; }
+  envolver("addToCart",c=>({motivo:"carrito",ref:cref(c)}));
+  envolver("changeItem",(c,code,d)=>({motivo:d>0?"carrito":"quitar",ref:cref(c)}));
+  envolver("setCartState",(c,e)=>({motivo:e==="cancelado"?"cancelar":e==="abierto"?"reabrir":"estado",ref:cref(c)}));
+  envolver("cancelarVenta",c=>({motivo:"cancelar",ref:cref(c)}));
+  envolver("reabrirVenta",c=>({motivo:"reabrir",ref:cref(c)}));
+  envolver("deleteCart",c=>({motivo:"borrar",ref:cref(c)}));
+  envolver("eliminarVenta",c=>({motivo:"borrar",ref:cref(c)}));
+  envolver("deleteLive",l=>({motivo:"borrar-live",ref:l?String(l.id||"")+" · "+String(l.nombre||""):""}));
+  envolver("changeStock",()=>({motivo:"ajuste",ref:"inventario +/-"}));
+  envolver("restoreTrash",t=>({motivo:"restaurar",ref:t?String(t.tipo||"")+" · "+String(t.nombre||""):""}));
+  /* ---------- 2) la ficha recuerda con cuántas piezas se abrió ---------- */
+  (function(){ const f=W.startEdit; if(typeof f!=="function"||f.__mvEx) return;
+    const g=function(p){ try{ const x=typeof p==="string"?state.products.get(p):p; state.__mvEx0=x?{codigo:x.codigo,ex:Math.max(0,Number(x.existencia)||0)}:null; }catch(e){} return f.apply(this,arguments); };
+    g.__mvEx=true; Object.assign(g,f); W.startEdit=g; })();
+
+  /* ---------- 3) Revisar piezas ---------- */
+  const R={q:"",codigo:null,srv:null,srvErr:"",web:null,mov:{},cargando:false,tab:"alertas"};
+  const sb=()=>W.MarveaNube&&W.MarveaNube.sb;
+  const esEnvio=i=>/^env[ií]o\b/i.test(String(i&&i.nombre||""))||/^ENV/i.test(String(i&&i.codigo||""));
+  const fCorta=f=>{ const d=new Date(f); return isNaN(d)?"":d.toLocaleString("es-MX",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); };
+  const MOT={carrito:"Agregada a un carrito",quitar:"Quitada de un carrito",cancelar:"Carrito cancelado",reabrir:"Carrito reabierto",borrar:"Carrito borrado",
+    "borrar-live":"Live borrado",ajuste:"Ajuste de existencia",restaurar:"Restaurado de la papelera",alta:"Producto dado de alta",baja:"Producto eliminado",inicio:"Punto de partida del historial",
+    bloqueado:"Cambio bloqueado (ficha vieja)","web-apartar":"Apartada en la tienda en línea","web-quitar":"Quitada del carrito en línea","web-vencio":"Apartado en línea venció","web-liberar":"Clienta vació su carrito en línea",
+    "web-no-pago":"Pago en línea no se completó","web-no-pedido":"Apartada en línea pero no estaba en el pedido","web-pago-tarde":"Pagó tarde: se volvió a descontar",estado:"Cambio de estado"};
+  const ORIG={mac:"Mac",sistema:"iPhone/iPad o web",tienda:"Tienda en línea",nube:"Nube"};
+  const activo=c=>c&&c.estado!=="cancelado";
+  function enCarritos(){ const m=new Map(); for(const c of (state.allCarts||[])){ if(!activo(c)) continue; for(const it of c.items||[]){ if(esEnvio(it)) continue; const cant=Number(it.cant)||0; if(cant<=0) continue;
+      let r=m.get(it.codigo); if(!r) m.set(it.codigo,r={apartadas:0,vendidas:0,carts:[]}); if(c.estado==="final") r.vendidas+=cant; else r.apartadas+=cant; r.carts.push({c,cant,emp:Number(it.emp)||0}); } } return m; }
+  async function cargarNube(){ const s=sb(); if(!s){ R.web=R.web||{}; R.srvErr=R.srvErr||"sin-nube"; pintar(); return; } if(R.cargando) return; R.cargando=true; pintar();
+    try{ const [a,b]=await Promise.all([s.rpc("marvea_inventario_revision"),s.from("apartados_web").select("codigo,cant,estado").in("estado",["activo","pago"])]);
+      if(a.error){ R.srv=null; R.srvErr=/marvea_inventario_revision/.test(a.error.message||"")&&/find|exist/i.test(a.error.message||"")?"falta":String(a.error.message||a.error.code||"error"); } else { R.srv=a.data; R.srvErr=""; }
+      if(!b.error){ const w={}; for(const r of b.data||[]){ const x=w[r.codigo]||(w[r.codigo]={activo:0,pago:0}); x[r.estado]=(x[r.estado]||0)+(Number(r.cant)||0); } R.web=w; }
+    }catch(e){ R.srvErr=String(e.message||e); }
+    finally{ R.cargando=false; pintar(); } }
+  async function cargarMov(codigo){ const s=sb(); if(!s){ R.mov[codigo]={error:"sin-nube"}; pintar(); return; } try{ const {data,error}=await s.from("marvea_movimientos").select("*").eq("codigo",codigo).order("id",{ascending:false}).limit(120); R.mov[codigo]=error?{error:error.message||"error"}:data||[]; }catch(e){ R.mov[codigo]={error:String(e.message||e)}; } pintar(); }
+
+  function revisar(){
+    const A=[]; const prods=[...state.products.values()]; const add=(nivel,t,d,acc)=>A.push({nivel,t,d,acc});
+    // existencias raras
+    for(const p of prods){ const e=Number(p.existencia); if(!Number.isFinite(e)||e<0||Math.floor(e)!==e) add("alta","Existencia inválida en "+p.codigo,p.nombre+" tiene «"+p.existencia+"». Debe ser un número entero de 0 o más.",()=>abrirModelo(p.codigo)); }
+    // códigos repetidos (mayúsculas/espacios)
+    const porCod=new Map(); for(const p of prods){ const k=String(p.codigo).trim().toUpperCase(); porCod.set(k,(porCod.get(k)||[]).concat(p)); }
+    for(const [k,l] of porCod) if(l.length>1) add("alta","Código repetido: "+k,l.map(p=>"«"+p.codigo+"» "+p.nombre).join(" · ")+". Deja solo uno y pasa sus piezas.");
+    // posibles productos duplicados (mismo nombre, material y precio)
+    const porNom=new Map(); for(const p of prods){ const k=normaliza(p.nombre)+"|"+normaliza(p.material||"")+"|"+(Number(p.precio)||0); if(normaliza(p.nombre).length<3) continue; porNom.set(k,(porNom.get(k)||[]).concat(p)); }
+    for(const l of porNom.values()) if(l.length>1) add("media","¿Producto registrado dos veces?",l.map(p=>p.codigo+" ("+(Number(p.existencia)||0)+" pzas)").join(" y ")+" se llaman igual: "+l[0].nombre+", mismo material y precio. Si es la misma pieza, junta las existencias en uno.",()=>abrirModelo(l[0].codigo));
+    // palabra clave repetida
+    const porPal=new Map(); for(const p of prods){ const w=normaliza(p.palabra||""); if(!w) continue; porPal.set(w,(porPal.get(w)||[]).concat(p)); }
+    for(const [w,l] of porPal) if(l.length>1) add("media","Palabra clave repetida: «"+w+"»",l.map(p=>p.codigo).join(", ")+" usan la misma palabra; en un live se podría cobrar la pieza equivocada.");
+    // carritos
+    const porFolio=new Map();
+    for(const c of (state.allCarts||[])){ if(!activo(c)) continue; const vistos=new Set();
+      for(const it of c.items||[]){ if(esEnvio(it)) continue; const cant=Number(it.cant);
+        if(!Number.isFinite(cant)||cant<=0||Math.floor(cant)!==cant) add("alta","Cantidad rara en el carrito de "+(c.cliente||"sin nombre"),it.codigo+" tiene cantidad «"+it.cant+"».",()=>irACarrito(c));
+        if((Number(it.emp)||0)>cant) add("baja","Más piezas puestas que pedidas · "+(c.cliente||""),it.codigo+": "+it.emp+" en la bolsa de "+cant+".",()=>irACarrito(c));
+        if(!state.products.has(it.codigo)) add("media","Pieza de un modelo que ya no existe · "+(c.cliente||""),cant+" × "+(it.nombre||it.codigo)+" ("+it.codigo+"). Si quitas esa pieza del carrito no regresa a ningún inventario.",()=>irACarrito(c));
+        if(vistos.has(it.codigo)) add("media","Modelo repetido en un mismo carrito · "+(c.cliente||""),it.codigo+" aparece en dos renglones.",()=>irACarrito(c)); vistos.add(it.codigo); }
+      if(c.origen==="web"&&c.referencia){ const k=String(c.referencia); porFolio.set(k,(porFolio.get(k)||[]).concat(c)); }
+      if(/REVISAR/.test(c.nota||"")&&c.estado!=="final") add("alta","Pedido para revisar · "+(c.cliente||""),String(c.nota).split("REVISAR:")[1]||c.nota,()=>irACarrito(c)); }
+    for(const [k,l] of porFolio) if(l.length>1) add("alta","Pedido web MV-"+k+" está "+l.length+" veces",l.map(c=>(c.cliente||"")+" ("+c.estado+")").join(" · ")+". Cancela el repetido para que sus piezas regresen.",()=>irACarrito(l[1]));
+    // ventas sin internet que ya no tenían pieza (Mac)
+    for(const x of (typeof W.__mvConflictos==="function"?W.__mvConflictos():[])) if(x.faltan>0) add("alta","Faltaron "+x.faltan+" pza de "+x.codigo+" (venta sin internet)",(x.nombre||"")+" · "+fCorta(x.fecha)+(x.ref?" · carrito "+x.ref:"")+". Esas piezas ya se habían vendido en otro dispositivo: quítalas del carrito o consigue la pieza.",()=>abrirModelo(x.codigo));
+    // lo que ve la nube
+    const S=R.srv;
+    if(S){ for(const x of S.no_cuadran||[]) add("alta","No cuadra con su historial: "+x.codigo,(x.nombre||"")+" tiene "+x.existencia+" pzas pero su último movimiento dejó "+x.historial+". Alguien cambió la existencia por fuera.",()=>abrirModelo(x.codigo));
+      for(const x of S.pedidos_faltan||[]) add("alta","Pedido web "+x.folio+" pagado sin pieza",(x.cliente||"")+": "+(x.faltan||[]).map(f=>f.faltan+" × "+f.codigo).join(", ")+". Pagó cuando su apartado ya había vencido y alguien más se llevó la pieza: reembolsa o cambia.");
+      for(const x of S.cortos||[]) add("media","Se pidieron "+(-x.pedido)+" de "+x.codigo+" y solo había "+(-x.aplicado),fCorta(x.fecha)+" · "+(MOT[x.motivo]||x.motivo||"")+(x.ref?" · "+x.ref:"")+". El carrito quedó con lo que sí había.",()=>abrirModelo(x.codigo));
+      for(const x of S.bloqueados||[]) add("baja","Se evitó un cambio de existencia en "+x.codigo,fCorta(x.fecha)+(x.usuario?" · "+x.usuario:"")+": "+(x.ref||"")+". La existencia real se conservó ("+x.antes+").",()=>abrirModelo(x.codigo)); }
+    const orden={alta:0,media:1,baja:2}; A.sort((a,b)=>orden[a.nivel]-orden[b.nivel]); return A;
+  }
+
+  function resumen(){ const m=enCarritos(); let disp=0,apart=0,vend=0; for(const p of state.products.values()) disp+=Math.max(0,Number(p.existencia)||0); for(const r of m.values()){ apart+=r.apartadas; vend+=r.vendidas; }
+    let web=0; for(const x of Object.values(R.web||{})) web+=(x.activo||0)+(x.pago||0);
+    return h("div",{class:"dg-res"},
+      h("div",{class:"dg-r"},h("span",null,"Disponibles"),h("b",null,disp.toLocaleString("es-MX"))),
+      h("div",{class:"dg-r warn"},h("span",null,"En carritos por entregar"),h("b",null,apart.toLocaleString("es-MX"))),
+      h("div",{class:"dg-r"},h("span",null,"Apartadas en la tienda en línea"),h("b",null,R.web?web.toLocaleString("es-MX"):"…")),
+      h("div",{class:"dg-r ok"},h("span",null,"Vendidas (en carritos)"),h("b",null,vend.toLocaleString("es-MX")))); }
+
+  function vistaAlertas(){ const A=revisar();
+    const estado=R.srvErr==="falta"?h("p",{class:"mvr-nota warn"},"Falta activar el historial en la nube: corre una vez stripe/inventario_seguro.sql en Supabase › SQL Editor. Mientras, esta revisión solo usa lo que hay en este equipo.")
+      :R.srvErr==="sin-nube"?h("p",{class:"mvr-nota"},"Sin conexión con la nube: se revisó lo que hay en este equipo."):R.srvErr?h("p",{class:"mvr-nota"},"No se pudo leer la nube ("+R.srvErr+"). Se revisó lo que hay en este equipo.")
+      :R.cargando?h("p",{class:"mvr-nota"},"Revisando la nube…"):R.srv?h("p",{class:"mvr-nota ok"},"✓ Revisado con la nube · "+fCorta(R.srv.fecha)):null;
+    if(!A.length) return [estado,h("div",{class:"mvr-ok"},h("b",null,"✓ Todo cuadra"),h("span",null,"Ninguna pieza duplicada, sin existencias raras, sin pedidos repetidos y sin ventas de más."))];
+    return [estado,h("div",{class:"dg-lista"},...A.map(a=>h(a.acc?"button":"div",{type:a.acc?"button":null,class:"dg-f mvr-a "+a.nivel,onclick:a.acc?()=>a.acc():null},
+      h("span",{class:"dg-n"},h("b",null,a.t),h("small",null,a.d)),h("span",{class:"dg-d"},h("em",{class:"mvr-niv "+a.nivel},a.nivel==="alta"?"Importante":a.nivel==="media"?"Revisar":"Aviso")))))];
+  }
+  function vistaRastrear(){
+    const bus=h("input",{type:"search",class:"dg-q",placeholder:"Código, nombre o palabra clave",value:R.q,autocomplete:"off"});
+    bus.addEventListener("input",()=>{ R.q=bus.value; R.codigo=null; pintar(); const i=document.querySelector("#drawerHost .mvr .dg-q"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
+    const out=[bus];
+    if(R.codigo){ out.push(fichaModelo(R.codigo)); return out; }
+    const q=normaliza(R.q); if(!q){ out.push(h("p",{class:"dg-sub"},"Escribe un modelo para ver dónde está cada pieza: disponibles, en qué carritos, apartadas en línea y todo su historial.")); return out; }
+    const l=[...state.products.values()].filter(p=>normaliza(p.codigo+" "+p.nombre+" "+(p.palabra||"")).includes(q)).slice(0,40);
+    out.push(l.length?h("div",{class:"dg-lista"},...l.map(p=>h("button",{type:"button",class:"dg-f",onclick:()=>abrirModelo(p.codigo)},h("span",{class:"dg-n"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:""))),h("span",{class:"dg-d"},h("b",null,(Number(p.existencia)||0)+" disp."))))):h("div",{class:"dg-vacio"},"No hay modelos con «"+R.q+"»."));
+    return out;
+  }
+  function fichaModelo(codigo){ const p=state.products.get(codigo); const r=enCarritos().get(codigo)||{apartadas:0,vendidas:0,carts:[]}; const w=(R.web||{})[codigo]||{activo:0,pago:0};
+    if(!(codigo in R.mov)) { R.mov[codigo]=null; setTimeout(()=>cargarMov(codigo),0); }
+    const mv=R.mov[codigo];
+    const cab=h("div",{class:"mvr-mod"},h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.codigo=null; pintar(); }},"‹ Otro modelo"),h("h3",null,p?p.nombre:codigo),h("small",null,codigo+(p&&p.palabra?" · "+p.palabra:"")+(p?" · "+money(p.precio):" · ya no está en el inventario")));
+    const tot=h("div",{class:"dg-res"},
+      h("div",{class:"dg-r"},h("span",null,"Disponibles"),h("b",null,String(p?Number(p.existencia)||0:0))),
+      h("div",{class:"dg-r warn"},h("span",null,"En carritos por entregar"),h("b",null,String(r.apartadas))),
+      h("div",{class:"dg-r"},h("span",null,"Apartadas en línea"),h("b",null,R.web?String(w.activo+w.pago):"…")),
+      h("div",{class:"dg-r ok"},h("span",null,"Vendidas"),h("b",null,String(r.vendidas))));
+    const carts=r.carts.length?h("div",{class:"dg-lista"},...r.carts.sort((a,b)=>String(b.c.creado).localeCompare(String(a.c.creado))).map(x=>h("button",{type:"button",class:"dg-f",onclick:()=>irACarrito(x.c)},h("span",{class:"dg-n"},h("b",null,x.c.cliente||"Sin nombre"),h("small",null,["#"+numPedido(x.c),x.c.estado==="final"?"Vendido":x.c.estado==="cerrado"?"Cerrado":"Abierto",x.c.origen==="web"?"Tienda en línea":"",x.emp>=x.cant?"✓ en bolsa":x.emp?x.emp+"/"+x.cant+" en bolsa":"por poner"].filter(Boolean).join(" · "))),h("span",{class:"dg-d"},h("b",null,x.cant+" pza"+(x.cant===1?"":"s")))))):h("div",{class:"dg-vacio"},"No está en ningún carrito.");
+    const hist=mv===null?h("div",{class:"dg-vacio"},"Cargando historial…"):mv&&mv.error?h("div",{class:"dg-vacio"},mv.error==="sin-nube"?"El historial vive en la nube; conéctate a internet para verlo.":/marvea_movimientos/.test(mv.error)?"Falta activar el historial en la nube (stripe/inventario_seguro.sql).":"No se pudo leer el historial: "+mv.error)
+      :!mv.length?h("div",{class:"dg-vacio"},"Sin movimientos todavía."):h("div",{class:"dg-lista"},...mv.map(m=>{ const ap=Number(m.aplicado)||0, pe=Number(m.pedido)||0;
+        return h("div",{class:"dg-f mvr-m"+(m.motivo==="bloqueado"?" bl":ap!==pe?" corto":"")},h("span",{class:"dg-n"},h("b",null,MOT[m.motivo]||m.motivo||"Movimiento"),h("small",null,[fCorta(m.fecha),ORIG[m.origen]||m.origen,m.usuario,m.ref].filter(Boolean).join(" · ")+(ap!==pe&&m.motivo!=="bloqueado"&&m.motivo!=="inicio"?" · se pidieron "+pe+", solo se aplicaron "+ap:""))),
+          h("span",{class:"dg-d"},h("b",{class:ap>0?"mas":ap<0?"menos":""},m.motivo==="inicio"?String(m.despues):(ap>0?"+":"")+ap),h("small",null,m.motivo==="inicio"?"pzas":"quedan "+m.despues))); }));
+    return h("div",null,cab,tot,h("h4",{class:"mvr-h"},"¿En qué carritos está?"),carts,h("h4",{class:"mvr-h"},"Historial de piezas"),hist);
+  }
+  function pintar(){ const dr=document.querySelector("#drawerHost .drawer.mvr"); if(!dr) return; const st=dr.scrollTop;
+    const tabs=h("div",{class:"dg-chips"},...[["alertas","Lo que no cuadra"],["rastrear","Rastrear un modelo"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(R.tab===v?" on":""),onclick:()=>{ R.tab=v; if(v==="alertas") R.codigo=null; pintar(); }},t)));
+    dr.replaceChildren(h("div",{class:"head"},h("span",{class:"pill on"},"Inventario"),h("div",{style:"display:flex;gap:6px"},h("button",{class:"btn sm",onclick:()=>{ state.allCartsAt=0; R.mov={}; loadAllCarts().then(pintar); cargarNube(); }},"Volver a revisar"),h("button",{class:"btn sm",onclick:cerrar},"Cerrar"))),
+      h("h2",{class:"dg-t"},"Revisar piezas"),h("p",{class:"dg-sub"},"Cada pieza se rastrea: disponibles, en carritos, apartadas en la tienda en línea y vendidas. Aquí aparece lo que no cuadre."),
+      resumen(),tabs,...[].concat(R.tab==="alertas"?vistaAlertas():vistaRastrear()).filter(Boolean));
+    dr.scrollTop=st; }
+  function cerrar(){ closeDrawer(); }
+  function abrirModelo(codigo){ R.tab="rastrear"; R.codigo=codigo; const p=state.products.get(codigo); R.q=p?p.codigo:codigo; delete R.mov[codigo]; pintar(); const dr=document.querySelector("#drawerHost .drawer.mvr"); if(dr) dr.scrollTop=0; }
+  W.abrirRevisionPiezas=function(codigo){ const host=document.getElementById("drawerHost"); if(!host) return;
+    host.replaceChildren(h("div",{class:"scrim",onclick:cerrar}),h("aside",{class:"drawer dg mvr",role:"dialog","aria-label":"Revisar piezas"})); document.addEventListener("keydown",escClose);
+    R.tab=codigo?"rastrear":"alertas"; R.codigo=codigo||null; R.mov={}; pintar();
+    loadAllCarts().then(pintar); cargarNube(); };
+  /* botón en Inventario */
+  function boton(){ const tb=document.querySelector("#view-inv .toolbar"); if(!tb||tb.querySelector(".mvr-btn")) return;
+    tb.append(h("button",{class:"btn mvr-btn",type:"button",title:"Revisa que ninguna pieza esté duplicada, de más o vendida dos veces, y rastrea cada modelo",onclick:()=>W.abrirRevisionPiezas()},"Revisar piezas")); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boton); else boton();
+  /* en la ficha del producto: acceso directo a su historial */
+  const od=W.openDrawer; if(typeof od==="function"&&!od.__mvr){ const g=function(code){ const r=od.apply(this,arguments); try{ const dr=document.querySelector("#drawerHost .drawer:not(.dg)"); const p=state.products.get(code);
+      if(dr&&p&&!dr.querySelector(".mvr-fbtn")){ const b=h("button",{class:"btn sm mvr-fbtn",type:"button",onclick:()=>W.abrirRevisionPiezas(code)},"Rastrear piezas e historial"); const hd=dr.querySelector(".head"); if(hd&&hd.nextSibling) hd.parentNode.insertBefore(h("div",{class:"mvr-fwrap"},b),hd.nextSibling); else dr.prepend(b); } }catch(e){} return r; };
+    g.__mvr=true; Object.assign(g,od); W.openDrawer=g; }
 })();
 </script>
 <!-- ===== Marvea · navegación sencilla (5 pestañas + sub-pestañas) · 4-nov-2026 ===== -->
