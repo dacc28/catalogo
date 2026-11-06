@@ -652,5 +652,12 @@ body.mega-on::after{content:"";position:fixed;inset:0;background:rgba(35,26,32,.
 .mega-promo u{font-weight:800;color:#ffd6a8;text-decoration:none;margin-top:4px}
 @media(max-width:1100px){.mega-in{grid-template-columns:260px minmax(0,1fr)}.mega-lado{grid-column:1/-1;grid-template-columns:repeat(3,1fr)}.mega-lado h5,.mega-promo{grid-column:1/-1}}
 @media(max-width:820px){.mega-in{grid-template-columns:1fr;padding:14px 0 90px!important}.mega-prev{display:none}.mega-cats{grid-template-columns:1fr 1fr}.mega-cats button{flex-direction:column;align-items:flex-start;background:var(--fondo)}.mega-cats button>i{display:none}.mega-cats button .ph{width:100%;height:auto;aspect-ratio:1.6}.mega-cats button.todo{grid-column:1/-1;flex-direction:row}.mega-cats button.todo .ph{width:44px;aspect-ratio:1}.mega-lado{grid-template-columns:1fr 1fr}}
-@media(max-width:820px){body[data-vista=catalogo] .b-cats{display:none}body[data-vista=catalogo] .b-arma{margin-left:auto}body[data-vista=catalogo] .b-todo span,body[data-vista=catalogo] .b-arma span{display:inline}}
 .cats-bar .b-cat{font-weight:700;font-size:14px}.cats-bar .b-arma{font-weight:800;font-size:14px}.cats-bar .b-todo{font-weight:800;font-size:14.5px}
+/* barra: accesos de ayuda en lugar de categorías (las categorías viven en el menú y en las pestañas del catálogo) */
+.b-info .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#fdf0eb;color:var(--coral);font-size:13px;flex:none;transition:transform .2s,background .2s,color .2s}
+.b-info:hover .ic{transform:scale(1.1) rotate(-6deg)}
+.b-info.on .ic{background:var(--coral);color:#fff}
+.cats-bar .b-info{font-weight:700;font-size:13.5px;color:var(--tinta-2)}
+.cats-bar .b-info:hover,.cats-bar .b-info.on{color:var(--ciruela)}
+.b-info .fa-whatsapp{font-size:15px}
+.b-info:last-child .ic{background:#e7f8ee;color:#1fa855}.b-info:last-child.on .ic{background:#25D366;color:#fff}

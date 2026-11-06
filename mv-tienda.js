@@ -641,7 +641,7 @@ function pintarAyuda(t){ if(!document.getElementById('ay-'+t)) t='comprar'; S._a
   document.querySelectorAll('#tabsAy button').forEach(b=>b.classList.toggle('on',b.dataset.ay===t));
   document.querySelectorAll('.ay-panel').forEach(x=>x.classList.toggle('on',x.id==='ay-'+t));
   const b=document.querySelector('#tabsAy button.on'); if(b) b.scrollIntoView({block:'nearest',inline:'center'}); }
-document.querySelectorAll('#tabsAy button').forEach(b=>b.addEventListener('click',()=>{ pintarAyuda(b.dataset.ay); const h='#/ayuda/'+b.dataset.ay; if(location.hash!==h) history.replaceState(null,'',location.pathname+h); medir('ayuda',{tema:b.dataset.ay}); }));
+document.querySelectorAll('#tabsAy button').forEach(b=>b.addEventListener('click',()=>{ pintarAyuda(b.dataset.ay); renderFiltros(); const h='#/ayuda/'+b.dataset.ay; if(location.hash!==h) history.replaceState(null,'',location.pathname+h); medir('ayuda',{tema:b.dataset.ay}); }));
 (function(){ const f=document.getElementById('rastreoAy'); if(f) f.addEventListener('submit',()=>{ const g=document.getElementById('guiaAy'); g.value=(g.value||'').replace(/[^0-9A-Za-z]/g,''); medir('rastreo_dhl'); }); })();
 /* alto de la barra superior (para las pestañas pegadas) */
 function medirTop(){ const t=document.querySelector('header.top'); if(t) document.documentElement.style.setProperty('--top-h',t.offsetHeight+'px'); }
@@ -651,12 +651,12 @@ window.addEventListener('resize',medirTop); setTimeout(medirTop,50);
 function pintarBarra(cnt,foto,cats){
   const enCat=S.vista==='catalogo', f=document.getElementById('filtros');
   f.innerHTML=`<button class="b-todo ${MEGA.abierto?'abierto':''}" id="btnMega" onclick="toggleMega()" aria-expanded="${MEGA.abierto}"><i class="fa-solid fa-bars-staggered"></i><span>Todo el catálogo</span><i class="fa-solid fa-chevron-down fl"></i></button>`
-    +`<div class="b-cats">`+cats.map(c=>`<button class="b-cat ${enCat&&S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')" title="${cnt[c]} modelos">${foto[c]?`<img src="${esc(foto[c])}" alt="" loading="lazy">`:''}<span>${esc(c)}</span></button>`).join('')+`</div>`
-    +`<button class="b-arma" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Arma mi paquete</span></button>`
-    +`<div class="b-ayuda">`+[['envios','fa-solid fa-truck-fast','Envíos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Ayuda']].map(([t,i,n])=>`<button class="${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')" title="${n}"><i class="${i}"></i><span>${n}</span></button>`).join('')+`</div>`;
+    +`<div class="b-cats">`+AYUDA_BARRA.map(([t,ic,n])=>`<button class="b-cat b-info ${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')"><span class="ic"><i class="${ic}"></i></span><span>${n}</span></button>`).join('')+`</div>`
+    +`<button class="b-arma" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Arma mi paquete</span></button>`;
   const on=f.querySelector('.b-cat.on'); if(on) on.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 const MEGA={abierto:false,cat:null};
+const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['cambios','fa-solid fa-shield-heart','Garantía'],['contacto','fa-brands fa-whatsapp','Contacto']];
 function toggleMega(v){ MEGA.abierto=v===undefined?!MEGA.abierto:!!v; const m=document.getElementById('mega'); if(!m) return;
   if(MEGA.abierto){ pintarMega(); m.classList.add('on'); document.body.classList.add('mega-on'); medir('menu_catalogo'); } else { m.classList.remove('on'); document.body.classList.remove('mega-on'); }
   const b=document.getElementById('btnMega'); if(b){ b.classList.toggle('abierto',MEGA.abierto); b.setAttribute('aria-expanded',MEGA.abierto); } }
