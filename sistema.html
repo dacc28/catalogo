@@ -4155,10 +4155,10 @@ function renderVenta(keepFocus){
     h("button",{class:"btn primary vd-nueva",type:"button",onclick:()=>{ if(ventaLiveActual()&&ventaLiveActual().dia!==hoyKey()){ const lh=ventaLiveHoy(); ventaSubscribe(lh?lh.id:null); } state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"));
   const main=h("div",{class:"cartpanel vd-main"},cab,paso1,paso2,paso3);
   host.replaceChildren(h("div",{class:"venta vd"},main,lado));
-  if(keepFocus||focused==="ventaInput"){ const i=$("#ventaInput"); if(i&&!i.disabled){ i.focus(); if(focusVal) i.dispatchEvent(new Event("input")); } }
+  if(keepFocus||focused==="ventaInput"){ const i=$("#ventaInput"); if(i&&!i.disabled){ i.focus({preventScroll:true}); if(focusVal) i.dispatchEvent(new Event("input")); } }
   else if(focused==="ventaCli"){ const i=$("#ventaCli"); if(i&&!i.disabled){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } }
   else if(focused==="ventaMonto"){ const m=$("#ventaMonto"); if(m) m.focus(); }
-  else if(!c&&esHoy&&!focused){ const i=$("#ventaCli"); if(i) i.focus(); }
+  else if(!c&&esHoy&&!focused&&!(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches)){ const i=$("#ventaCli"); if(i) i.focus({preventScroll:true}); }
 }
 
 /* ============ Búsqueda global (⌘K / Ctrl+K) ============ */
@@ -4831,6 +4831,26 @@ nav.tabs #tab-ajustes{width:42px;justify-content:center;padding:0!important}
   body{padding-bottom:calc(84px + env(safe-area-inset-bottom))!important}
   .subtabs{margin-top:4px!important}
 }
+/* ===== iPhone / iPad: sin brincos (7-nov-2026) ===== */
+/* el scroll vuelve a ser de la página (antes el cuerpo era una caja con scroll propio: en iPhone los menús fijos brincaban y la barra de Safari no se escondía) */
+html,body{height:auto!important}
+html{overflow-x:hidden}
+body{overflow-x:clip!important;min-height:100%}
+/* la barra de pestañas ya no se puede arrastrar de lado en el iPad (su brillo decorativo la hacía más ancha que la pantalla) */
+nav.tabs::before,nav.tabs::after{display:none!important}
+nav.tabs{overscroll-behavior-x:contain;touch-action:pan-y}
+@media (max-width:1180px){nav.tabs{touch-action:pan-x pan-y}}
+/* iPhone/iPad: al tocar un campo ya no se hace zoom (Safari hace zoom con letra menor a 16 px) */
+@media (pointer:coarse){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px!important}}
+/* sin resaltado gris al tocar y sin seleccionar texto por accidente en botones */
+@media (pointer:coarse){button,.btn,[role=tab],.mvl-b,.mvl-chip{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation}}
+.toolbar{flex-wrap:wrap;min-width:0}
+.toolbar>*{min-width:0}
+/* aviso de conexión arriba de la barra de abajo en iPhone */
+@media (max-width:720px){.mvbadge{bottom:calc(84px + env(safe-area-inset-bottom))!important}}
+/* ventanas y menús de lado: el fondo no se mueve mientras están abiertos */
+.drawer{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -4849,9 +4869,15 @@ nav.tabs #tab-ajustes{width:42px;justify-content:center;padding:0!important}
   try{ const b=document.getElementById("tab-web"); if(b&&!b.querySelector(".lbl-l")){ [...b.childNodes].filter(n=>n.nodeType===3&&n.textContent.trim()).forEach(n=>n.remove()); b.append(h("span",{class:"lbl-l"},"Tienda en línea"),h("span",{class:"lbl-c"},"Tienda")); } }catch(e){}
   const icon=(k,cls)=>{ const s=h("span",{class:"mvl-ic"+(cls?" "+cls:""),"aria-hidden":"true"}); s.innerHTML=ico[k]; return s; };
 
+  /* al redibujar (llegan cambios de la nube cada pocos segundos) la página se queda donde estaba */
+  const quieto=(nombre)=>{ const f=window[nombre]; if(typeof f!=="function"||f.__quieto) return; const g=function(){ const y=window.scrollY; const r=f.apply(this,arguments); if(Math.abs(window.scrollY-y)>2&&!state.__navegando) window.scrollTo(0,y); return r; }; g.__quieto=true; window[nombre]=g; };
+  ["renderAll","renderVenta","renderDash","renderGrid","renderLive","renderEnvios","renderWeb","renderRapido"].forEach(quieto);
+  { const sv=window.setView; if(typeof sv==="function"&&!sv.__nav){ const w=function(){ state.__navegando=true; try{ return sv.apply(this,arguments); } finally { state.__navegando=false; } }; Object.assign(w,sv); w.__nav=true; window.setView=w; } }
+
   /* ---------------- CLIENTAS: lista ---------------- */
   function statsClientas(){ const m=new Map(); for(const c of (state.logiFinal||new Map()).values()){ if(!c.clienteId||!c.items.length) continue; const r=m.get(c.clienteId)||{n:0,tot:0,ult:"",debe:0}; r.n++; r.tot+=cartGrand(c); const f=String(c.finalizado||c.creado||""); if(f>r.ult) r.ult=f; const s=cartSaldo(c); if(s>0.005) r.debe+=s; m.set(c.clienteId,r); } return m; }
-  window.renderClientas=function(){
+  window.renderClientas=function(){ const __y=window.scrollY; try{ return __rc.apply(this,arguments); } finally { if(Math.abs(window.scrollY-__y)>2&&!state.__navegando) window.scrollTo(0,__y); } };
+  function __rc(){
     const host=$("#cliHost"); if(!host) return;
     if(!state.db){ host.replaceChildren(h("div",{class:"notice bad"},"Sin conexión con el almacén de datos.")); return; }
     try{ logiSub(); }catch(e){}
@@ -4937,7 +4963,8 @@ nav.tabs #tab-ajustes{width:42px;justify-content:center;padding:0!important}
       cobrando?h("div",{class:"mvl-cobro"},h("span",null,"Registrar pago de "+(c.cliente||"")+":"),logiCobroForm(c)):null,
       abierto?detalle(c,opts.extra):null);
   }
-  window.renderLogistica=function(){
+  window.renderLogistica=function(){ const __y=window.scrollY; try{ return __rl.apply(this,arguments); } finally { if(Math.abs(window.scrollY-__y)>2&&!state.__navegando) window.scrollTo(0,__y); } };
+  function __rl(){
     const host=(state.logiHostEl&&document.body.contains(state.logiHostEl))?state.logiHostEl:$("#logiHost"); if(!host) return;
     if(!state.db){ host.replaceChildren(h("div",{class:"notice"},"Conectando…")); return; }
     { const a=document.activeElement; if(a&&host.contains(a)&&a.id!=="logiQ"&&/INPUT|TEXTAREA/.test(a.tagName)){ if(!host.__mvlPend){ host.__mvlPend=true; a.addEventListener("blur",()=>{ host.__mvlPend=false; setTimeout(()=>window.renderLogistica(),50); },{once:true}); } return; } }
