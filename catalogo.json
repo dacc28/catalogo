@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T08:45:47.936Z",
+ "actualizado": "2026-11-06T08:51:32.569Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 725,
+ "piezas": 710,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -215,22 +215,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Inspo Ferragamo",
    "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
    "creado": "2026-10-19T01:46:11.478Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00004",
-   "nombre": "Aretes Verde Manzana",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
-   "creado": "2026-10-19T01:50:35.213Z",
    "disponible": true
   },
   {
@@ -263,22 +251,10 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/08d6b9c371127b6cb8f688eb4e91e996.jpg",
    "creado": "2026-10-19T02:08:54.968Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00013",
-   "nombre": "Arracadas Bicolor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
-   "creado": "2026-10-19T02:09:50.151Z",
    "disponible": true
   },
   {
