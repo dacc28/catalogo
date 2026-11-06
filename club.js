@@ -35,6 +35,29 @@
     medir("club_login"); abrir();
   });
   const salir = async () => { try { await sb.auth.signOut(); } catch (e) {} medir("club_logout"); location.replace("club.html"); };
+
+  /* ---------- crear cuenta (la misma de la tienda): la contraseña la elige la clienta ---------- */
+  const FN_CUENTA = "https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/cuenta";
+  const verRegistro = v => { $("#formRegistro").style.display = v ? "" : "none"; $("#formLogin").style.display = v ? "none" : ""; };
+  $("#irRegistro").addEventListener("click", e => { e.preventDefault(); verRegistro(true); $("#rNombre").focus(); });
+  $("#irLogin").addEventListener("click", e => { e.preventDefault(); verRegistro(false); });
+  $("#formRegistro").addEventListener("submit", async e => {
+    e.preventDefault(); const err = $("#regError"); err.classList.remove("on");
+    const v = id => ($("#" + id).value || "").trim();
+    const d = { accion: "registrar", nombre: v("rNombre"), wa: digitos(v("rWa")), correo: v("rMail").toLowerCase(), negocio: v("rNegocio"), password: $("#rPass").value, dir: v("rDir"), ciudad: v("rCiudad"), estado: v("rEstado"), cp: v("rCp"), ref: v("rRef") };
+    const falla = t => { err.textContent = t; err.classList.add("on"); };
+    if (d.nombre.length < 2) return falla("Escribe tu nombre."); if (d.wa.length !== 10) return falla("Tu WhatsApp debe tener 10 dígitos (sin +52)."); if (!d.correo.includes("@")) return falla("Escribe tu correo.");
+    if (d.password.length < 8) return falla("La contraseña debe tener al menos 8 caracteres."); if (d.password !== $("#rPass2").value) return falla("Las contraseñas no coinciden.");
+    const b = $("#btnRegistrar"); b.disabled = true; b.textContent = "Creando tu cuenta…";
+    try {
+      const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }, body: JSON.stringify(d) });
+      let j = {}; try { j = await r.json(); } catch (x) {}
+      if (!r.ok || !j.ok) throw new Error(j.error || ("no se pudo crear la cuenta (" + r.status + ")"));
+      const { error } = await sb.auth.signInWithPassword({ email: d.wa + "@" + DOMINIO, password: d.password }); if (error) throw error;
+      medir("club_registro"); abrir();
+    } catch (x) { falla(String(x.message || x)); }
+    finally { b.disabled = false; b.innerHTML = 'Crear mi cuenta <span class="fl">→</span>'; }
+  });
   $("#salir").addEventListener("click", salir); $("#salirTop").addEventListener("click", salir);
 
   async function abrir() {
@@ -52,6 +75,12 @@
       sb.from("precios").select("*")]);
     if (e2 || e3 || e4) throw (e2 || e3 || e4);
     S.yo = yo; S.yo.catalogo = yo.catalogo || {}; S.pedidos = ped || []; S.ventas = ven || []; S.precios = {}; (pre || []).forEach(p => S.precios[p.codigo] = p);
+    // pedidos de la tienda en línea (pagados) que todavía no pasan por la app: se muestran en Mis pedidos con su estado real
+    try {
+      const { data: web } = await sb.from("pedidos_web").select("folio,estado,total,piezas,items,entrega,guia,pagado_en,creado,enviado_en,entregado_en").in("estado", ["pagado", "preparando", "enviado", "entregado"]).order("creado", { ascending: false });
+      const ya = new Set(S.pedidos.map(p => String(p.titulo || "")));
+      S.pedidosWeb = (web || []).filter(w => ![...ya].some(t => t.includes(w.folio))).map(w => ({ id: "web:" + w.folio, web: true, titulo: "Pedido web " + w.folio, fecha: w.pagado_en || w.creado, origen: "web", piezas: w.piezas, total: w.total, estado: w.estado === "pagado" ? "preparando" : w.estado, guia: w.guia || "", items: w.items || [], entrega: w.entrega || {} }));
+    } catch (x) { S.pedidosWeb = []; }
     calcular();
   }
 
@@ -63,7 +92,7 @@
   }
 
   /* ---------- pestañas ---------- */
-  const ir = p => { if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const ir = p => { if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); if (p === "calculadora") { const f = $("#calcFrame"); if (f && !f.src) f.src = "calculadora.html?embed=1"; } $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); window.scrollTo({ top: 0, behavior: "smooth" }); };
   $$("#tabs button").forEach(b => b.addEventListener("click", () => ir(b.dataset.p)));
   $$("[data-ir]").forEach(b => b.addEventListener("click", () => ir(b.dataset.ir)));
 
@@ -72,7 +101,7 @@
   function pintarCabecera() { const n = S.yo.nombre || "clienta"; $("#avatar").textContent = n.trim().charAt(0).toUpperCase() || "M"; $("#hola").textContent = "Hola, " + n.split(" ")[0]; $("#subtitulo").textContent = (S.yo.catalogo.nombre || S.yo.negocio || "Marvea Business Club") + (S.yo.ciudad ? " · " + S.yo.ciudad : ""); }
 
   function estadoChip(p) { const e = p.estado || "preparando"; return e === "entregado" ? '<span class="chip ent"><i class="fa-solid fa-check"></i> Entregado</span>' : e === "enviado" ? '<span class="chip env"><i class="fa-solid fa-truck-fast"></i> En camino</span>' : '<span class="chip prep"><i class="fa-solid fa-box"></i> Preparando</span>'; }
-  function origenChip(p) { return p.origen === "whatsapp" ? '<span class="chip wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>' : '<span class="chip live"><i class="fa-solid fa-video"></i> Live</span>'; }
+  function origenChip(p) { if (p.origen === "web") return '<span class="chip wa"><i class="fa-solid fa-bag-shopping"></i> Tienda en línea</span>'; return p.origen === "whatsapp" ? '<span class="chip wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>' : '<span class="chip live"><i class="fa-solid fa-video"></i> Live</span>'; }
   function piezaHTML(it) { return '<div class="pz">' + (it.foto ? '<img src="' + esc(it.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div class="t"><b>' + esc(it.nombre || it.codigo) + '</b><span>' + (Number(it.cant) || 0) + ' pza' + (Number(it.cant) === 1 ? "" : "s") + ' · ' + mxn(it.precio) + ' c/u</span></div></div>'; }
 
   function pintarInicio() {
@@ -95,8 +124,15 @@
     return ""; }
   function pintarPedidos() {
     const box = $("#listaPedidos"); box.innerHTML = "";
-    if (!S.pedidos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto finalicemos tu primera compra en un live o por WhatsApp, la verás aquí con sus fotos y su propio campo de guía DHL. Mientras, puedes rastrear cualquier envío arriba.</div>'; return; }
-    for (const p of S.pedidos) {
+    const todos = [...(S.pedidosWeb || []), ...S.pedidos];
+    if (!todos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto pagues tu primera compra en la tienda en línea (o te la confirmemos por WhatsApp), la verás aquí con sus fotos, su estado y su guía DHL.</div>'; return; }
+    for (const p of todos) {
+      if (p.web) { const el = document.createElement("div"); el.className = "glass ped"; const guia = (p.guia || "").trim(); const track = rastreoDe(guia); const ent = p.entrega || {};
+        el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo) + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN · pagado con tarjeta</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
+          + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
+          + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> ' + (ent.tipo === "recoger" ? "Recoges en Monterrey" : ent.resguardar ? "En resguardo (sale cuando tú lo pidas)" : "Envío DHL Express") + '</label>'
+          + (guia ? '<input value="' + esc(guia) + '" disabled>' + (track ? '<a class="btn claro sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') : '<span style="font-size:13px;opacity:.85">' + (p.estado === "preparando" ? "Estamos preparando tu paquete; aquí aparecerá tu guía." : "") + '</span>') + '</div>';
+        box.append(el); continue; }
       const el = document.createElement("div"); el.className = "glass ped";
       const guia = (p.guia || "").trim(); const track = rastreoDe(guia);
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
@@ -257,8 +293,8 @@
   $("#cPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
   $("#iPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
 
-  function pintarPerfil() { $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; }
-  $("#pGuardar").addEventListener("click", async () => { const { error } = await sb.from("clientas").update({ nombre: $("#pNombre").value.trim(), ciudad: $("#pCiudad").value.trim(), actualizado: new Date().toISOString() }).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); S.yo.nombre = $("#pNombre").value.trim(); S.yo.ciudad = $("#pCiudad").value.trim(); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); });
+  function pintarPerfil() { $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; $("#pMail").value = S.yo.correo || ""; $("#pDir").value = S.yo.direccion || ""; $("#pEstado").value = S.yo.estado || ""; $("#pCp").value = S.yo.cp || ""; $("#pRef").value = S.yo.referencias || ""; }
+  $("#pGuardar").addEventListener("click", async () => { const v = id => $("#" + id).value.trim(); const cambios = { nombre: v("pNombre"), ciudad: v("pCiudad"), correo: v("pMail"), direccion: v("pDir"), estado: v("pEstado"), cp: v("pCp"), referencias: v("pRef"), actualizado: new Date().toISOString() }; const { error } = await sb.from("clientas").update(cambios).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); Object.assign(S.yo, cambios); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); });
   $("#nGuardar").addEventListener("click", async () => { const a = $("#n1").value, b = $("#n2").value; if (a.length < 8) return toast("Mínimo 8 caracteres", true); if (a !== b) return toast("Las contraseñas no coinciden", true); const { error } = await sb.auth.updateUser({ password: a }); if (error) return toast("No se cambió: " + error.message, true); $("#n1").value = $("#n2").value = ""; $("#nOk").classList.add("on"); setTimeout(() => $("#nOk").classList.remove("on"), 4000); toast("Contraseña cambiada"); });
 
   // sesión guardada → entrar directo

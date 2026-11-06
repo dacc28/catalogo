@@ -667,6 +667,8 @@ body{background:linear-gradient(180deg,#FFF9F0 0%,#FBF6EC 45%,#FDF1F5 100%);min-
 .gate-box input:focus{border-color:var(--coral)!important;box-shadow:0 0 0 4px rgba(242,101,63,.15)}
 .gvolver{display:inline-block;margin-top:14px;font-size:13px;color:var(--gris);text-decoration:none;font-weight:600}
 .gvolver:hover{color:var(--ciruela)}
+/* calculadora de ganancias: vive en el Business Club (una sola); aquí se oculta para no duplicar */
+.subnav a.calc,#calculadora,.calc-ic,.ganancia button{display:none!important}
 </style>
 </head>
 <body>
@@ -745,6 +747,7 @@ body{background:linear-gradient(180deg,#FFF9F0 0%,#FBF6EC 45%,#FDF1F5 100%);min-
 <div class="modal" id="modal"></div>
 <div class="toasts" id="toasts"></div>
 
+<script src="supabase-2.45.4.js"></script>
 <script>
 /* ============================================================ DATOS (simulados; vendrían del sistema) */
 const ICONOS = {
@@ -776,8 +779,9 @@ async function cargarCatalogo(){
   });
   return true;
 }
-const CLIENTA_DEMO={cuenta:true,nombre:'Lucía Pérez',negocio:'Accesorios Luna',mail:'lucia@correo.com',dir:'Av. Vasconcelos 100',ciudad:'San Pedro Garza García',cp:'N.L. · 66220',ref:'Casa blanca con portón negro, entre Gómez Morín y Río Mississippi',
-  ultimo:{folio:'MV-20418',items:{}},paquete:{piezas:10,kg:0.6,tarifa:'2kg',folios:['MV-20418']}};
+/* ---------- Cuenta de clienta (Supabase Auth, la misma del Business Club). Usuario = WhatsApp a 10 dígitos; contraseña elegida por la clienta. */
+const CUENTA={ url:'https://kuuewntjxtjjktxbgxfk.supabase.co', anon:'sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8', dominio:'club.marveamayoreo.com', fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/cuenta' };
+const sbc=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(CUENTA.url,CUENTA.anon,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'marvea.club.auth'}}):null;
 const CLIENTAS={};
 
 /* ============================================================ ESTADO */
@@ -1004,28 +1008,85 @@ function cerrarModal(){document.getElementById('modal').classList.remove('on');d
 
 /* entrar a mi cuenta: WhatsApp (código), correo + contraseña, o Google */
 function abrirEntrar(para){
-  S._para=para||null; S._modo=S._modo||'wa';
+  S._para=para||null;
   abrirModal(`<div class="m-cab"><h3>Entra a <i>tu cuenta</i></h3><button class="x-btn" onclick="cerrarModal()">✕</button></div>
-   <div class="m-body"><div class="tabs"><button class="${S._modo==='wa'?'on':''}" onclick="S._modo='wa';abrirEntrar(S._para)">📱 WhatsApp</button><button class="${S._modo==='mail'?'on':''}" onclick="S._modo='mail';abrirEntrar(S._para)">✉️ Correo</button></div>
-   ${S._modo==='wa'?`<p class="sub" style="margin:0 0 10px;font-size:13.5px">Te mandamos un código por WhatsApp; no necesitas contraseña.</p>
-   <div class="campo"><label>WhatsApp (10 dígitos)</label><input id="waEntrar" inputmode="numeric" maxlength="10" placeholder="81 0000 0000" onkeydown="if(event.key==='Enter')entrar()"><div class="ay">Prueba: un número terminado en 77 simula una cuenta que ya existe.</div></div>`
-   :`<div class="campo"><label>Correo</label><input id="mailEntrar" type="email" placeholder="tu@correo.com"></div><div class="campo" style="margin-top:8px"><label>Contraseña</label><input id="passEntrar" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')entrar()"><div class="ay">¿La olvidaste? <u style="cursor:pointer" onclick="toast('Te enviamos un enlace para crear una nueva contraseña (automático).','ok')">Recuperar</u> · Prueba: lucia@correo.com / cualquier contraseña.</div></div>`}
-   <div class="acc"><button class="p" onclick="entrar()">Continuar</button></div>
-   <button class="b-google" onclick="entrarGoogle()"><span class="g">G</span> Continuar con Google</button>
-   <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">¿Sin cuenta? Puedes comprar sin registrarte; al terminar te creamos tu acceso en automático.</p></div>`,true);
-  setTimeout(()=>document.getElementById(S._modo==='wa'?'waEntrar':'mailEntrar')?.focus(),200);
+   <div class="m-body"><p class="sub" style="margin:0 0 10px;font-size:13.5px">Es la misma cuenta del Marvea Business Club.</p>
+   <div class="campo"><label>WhatsApp (10 dígitos)</label><input id="waEntrar" inputmode="numeric" maxlength="10" value="${(S.form.wa||'').replace(/\D/g,'')}" placeholder="81 0000 0000"></div>
+   <div class="campo" style="margin-top:8px"><label>Contraseña</label><input id="passEntrar" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')entrar()"><div class="ay">¿La olvidaste? <u style="cursor:pointer" onclick="recuperar()">Recuperar</u></div></div>
+   <div class="acc"><button class="p" id="btnEntrarOk" onclick="entrar()">Entrar</button><button class="s" onclick="abrirRegistro()">Crear mi cuenta</button></div>
+   <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">También puedes comprar sin cuenta y crearla al pagar.</p></div>`,true);
+  setTimeout(()=>document.getElementById((S.form.wa||'').replace(/\D/g,'').length===10?'passEntrar':'waEntrar')?.focus(),200);
 }
-function entrarGoogle(){ const c=buscarClienta('8100000077'); c.mail='lucia@gmail.com'; cerrarModal(); setCliente(c); toast('Cuenta ligada con Google ✓ (simulado)','ok'); }
-function buscarClienta(wa){ if(CLIENTAS[wa]) return CLIENTAS[wa]; if(wa.endsWith('77')){CLIENTAS[wa]=JSON.parse(JSON.stringify({...CLIENTA_DEMO,wa}));return CLIENTAS[wa];} return null; }
-function entrar(){
-  let c=null;
-  if(S._modo==='mail'){ const m=(document.getElementById('mailEntrar').value||'').trim().toLowerCase(); if(!m.includes('@')){toast('Escribe tu correo.','alerta');return;}
-    c=Object.values(CLIENTAS).find(x=>x.mail===m)||(m===CLIENTA_DEMO.mail?buscarClienta('8112345677'):null);
-    if(!c){toast('No encontramos una cuenta con ese correo. Puedes comprar sin cuenta y te la creamos al terminar.','alerta');return;} }
-  else { const wa=(document.getElementById('waEntrar').value||'').replace(/\D/g,''); if(wa.length!==10){toast('Escribe tu WhatsApp a 10 dígitos.','alerta');return;}
-    c=buscarClienta(wa); if(!c){ cerrarModal(); S.form.wa=wa; toast('Aún no tienes cuenta: compra sin registrarte y al terminar te la creamos en automático.'); return; } }
-  cerrarModal(); setCliente(c); toast(`Hola ${c.nombre.split(' ')[0]} 👋`,'ok');
+function recuperar(){ const wa=(document.getElementById('waEntrar')?.value||'').replace(/\D/g,''); window.open('https://wa.me/528132380573?text='+encodeURIComponent('Hola Marvea, olvidé la contraseña de mi cuenta'+(wa?' ('+wa+')':'')+'. ¿Me ayudan a restablecerla?'),'_blank'); toast('Atención al cliente te ayuda a restablecerla por WhatsApp.','ok'); }
+function buscarClienta(wa){ return CLIENTAS[wa]||null; }
+async function cargarClienta(user){
+  if(!sbc||!user) return null;
+  const { data:cl } = await sbc.from('clientas').select('*').eq('user_id',user.id).limit(1).maybeSingle();
+  const md=user.user_metadata||{}; const wa=String((cl&&cl.whatsapp)||md.whatsapp||String(user.email||'').split('@')[0]||'').replace(/\D/g,'');
+  const c={ cuenta:true, id:cl?cl.id:null, user_id:user.id, wa, nombre:(cl&&cl.nombre)||md.nombre||'', negocio:(cl&&cl.negocio)||'', mail:(cl&&cl.correo)||md.correo||'', dir:(cl&&cl.direccion)||'', ciudad:(cl&&cl.ciudad)||'', estado:(cl&&cl.estado)||'', cp:(cl&&cl.cp)||'', ref:(cl&&cl.referencias)||'' };
+  // pedidos web de la clienta: último pedido (para repetir) y paquetes en resguardo
+  try{ const { data:peds } = await sbc.from('pedidos_web').select('folio,estado,items,piezas,entrega,pagado_en,creado').eq('user_id',user.id).in('estado',['pagado','preparando','enviado','entregado']).order('creado',{ascending:false}).limit(20);
+    if(peds&&peds.length){ const u=peds[0]; c.ultimo={folio:u.folio,items:Object.fromEntries((u.items||[]).filter(i=>prod(i.codigo)).map(i=>[i.codigo,Number(i.cant)||0]))};
+      const resg=peds.filter(p=>p.entrega&&p.entrega.resguardar&&(p.estado==='pagado'||p.estado==='preparando'));
+      if(resg.length){ const piezas=resg.reduce((a,p)=>a+(Number(p.piezas)||0),0); const kgR=piezas*PESO_G/1000; const t=resg[resg.length-1].entrega.tipo; c.paquete={piezas,kg:kgR,tarifa:(t==='5kg'?'5kg':'2kg'),folios:resg.map(p=>p.folio)}; } }
+  }catch(_){}
+  CLIENTAS[wa]=c; return c;
 }
+async function entrar(){
+  if(!sbc){ toast('No se pudo cargar el acceso a cuentas. Recarga la página.','alerta'); return; }
+  const wa=(document.getElementById('waEntrar').value||'').replace(/\D/g,''), pass=document.getElementById('passEntrar').value||'';
+  if(wa.length!==10){toast('Escribe tu WhatsApp a 10 dígitos.','alerta');return;} if(!pass){toast('Escribe tu contraseña.','alerta');return;}
+  const b=document.getElementById('btnEntrarOk'); b.disabled=true; b.textContent='Entrando…';
+  const { data, error } = await sbc.auth.signInWithPassword({ email: wa+'@'+CUENTA.dominio, password: pass });
+  if(error||!data.user){ b.disabled=false; b.textContent='Entrar'; toast(/invalid/i.test(error&&error.message||'')?'WhatsApp o contraseña incorrectos.':'No se pudo entrar: '+(error&&error.message||''),'alerta'); return; }
+  const c=await cargarClienta(data.user); cerrarModal(); if(c){ setCliente(c); if(document.getElementById('coBody')) renderCheckout(); toast(`Hola ${(c.nombre||'').split(' ')[0]} 👋`,'ok'); }
+}
+function abrirRegistro(){
+  const f=S.form||{};
+  abrirModal(`<div class="m-cab"><h3>Crea <i>tu cuenta</i></h3><button class="x-btn" onclick="cerrarModal()">✕</button></div>
+   <div class="m-body"><p class="sub" style="margin:0 0 10px;font-size:13.5px">Una sola cuenta para la tienda y el Marvea Business Club. Tú eliges tu contraseña; nadie más la conoce.</p>
+   <div class="form">
+    <div class="campo"><label>Nombre completo</label><input id="r_nombre" value="${f.nombre||''}" autocomplete="name"></div>
+    <div class="campo"><label>WhatsApp (10 dígitos)</label><input id="r_wa" inputmode="numeric" maxlength="10" value="${(f.wa||'').replace(/\D/g,'')}" autocomplete="tel-national"></div>
+    <div class="campo"><label>Correo</label><input id="r_mail" type="email" value="${f.mail||''}" autocomplete="email"></div>
+    <div class="campo"><label>Negocio (opcional)</label><input id="r_negocio" value="${f.negocio||''}"></div>
+    <div class="campo"><label>Contraseña (mínimo 8)</label><input id="r_pass" type="password" autocomplete="new-password"></div>
+    <div class="campo"><label>Repite tu contraseña</label><input id="r_pass2" type="password" autocomplete="new-password"></div>
+    <div class="campo full"><label>Domicilio de entrega</label><input id="r_dir" value="${f.dir||''}" placeholder="Calle, número, colonia" autocomplete="street-address"></div>
+    <div class="campo"><label>Ciudad</label><input id="r_ciudad" value="${f.ciudad||''}"></div>
+    <div class="campo"><label>Estado</label><input id="r_estado" value="${f.estado||''}"></div>
+    <div class="campo"><label>Código postal</label><input id="r_cp" inputmode="numeric" maxlength="5" value="${f.cp||''}"></div>
+    <div class="campo"><label>Referencias (opcional)</label><input id="r_ref" value="${f.ref||''}" placeholder="Entre calles, color de casa…"></div>
+   </div>
+   <div class="ay" id="r_msg" style="min-height:18px;margin-top:8px"></div>
+   <div class="acc"><button class="p" id="r_btn" onclick="registrar()">Crear mi cuenta</button><button class="s" onclick="abrirEntrar()">Ya tengo cuenta</button></div></div>`);
+  setTimeout(()=>document.getElementById('r_nombre')?.focus(),200);
+}
+async function registrar(){
+  const g=id=>(document.getElementById(id)?.value||'').trim(); const msg=document.getElementById('r_msg');
+  const d={ nombre:g('r_nombre'), wa:g('r_wa').replace(/\D/g,''), correo:g('r_mail').toLowerCase(), negocio:g('r_negocio'), password:document.getElementById('r_pass').value, dir:g('r_dir'), ciudad:g('r_ciudad'), estado:g('r_estado'), cp:g('r_cp'), ref:g('r_ref') };
+  if(d.nombre.length<2) return msg.textContent='Escribe tu nombre.'; if(d.wa.length!==10) return msg.textContent='Tu WhatsApp debe tener 10 dígitos.';
+  if(!d.correo.includes('@')) return msg.textContent='Escribe tu correo.'; if(d.password.length<8) return msg.textContent='La contraseña debe tener al menos 8 caracteres.';
+  if(d.password!==document.getElementById('r_pass2').value) return msg.textContent='Las contraseñas no coinciden.';
+  if(!d.dir||!d.ciudad||!d.estado) return msg.textContent='Completa tu domicilio, ciudad y estado.';
+  const b=document.getElementById('r_btn'); b.disabled=true; b.textContent='Creando tu cuenta…'; msg.textContent='';
+  const r=await crearCuenta(d); b.disabled=false; b.textContent='Crear mi cuenta';
+  if(!r.ok){ msg.textContent=r.error; return; }
+  Object.assign(S.form,{nombre:d.nombre,wa:d.wa,mail:d.correo,negocio:d.negocio,dir:d.dir,ciudad:d.ciudad,estado:d.estado,cp:d.cp,ref:d.ref});
+  cerrarModal(); if(r.cliente) setCliente(r.cliente); if(document.getElementById('coBody')) renderCheckout(); toast('Tu cuenta quedó creada ✓ Ya puedes entrar con tu WhatsApp y tu contraseña, aquí y en el Business Club.','ok');
+}
+async function crearCuenta(d){ // alta en el servidor + entrar
+  try{
+    const r=await fetch(CUENTA.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':CUENTA.anon,'Authorization':'Bearer '+CUENTA.anon},body:JSON.stringify(Object.assign({accion:'registrar'},d))});
+    let j={}; try{ j=await r.json(); }catch(_){}
+    if(!r.ok||!j.ok) return {ok:false,error:j.error||('No se pudo crear la cuenta ('+r.status+')')};
+    if(!sbc) return {ok:true};
+    const { data, error } = await sbc.auth.signInWithPassword({ email:d.wa+'@'+CUENTA.dominio, password:d.password });
+    if(error||!data.user) return {ok:true};
+    return {ok:true,cliente:await cargarClienta(data.user)};
+  }catch(e){ return {ok:false,error:'Sin conexión; inténtalo de nuevo.'}; }
+}
+async function sesionActual(){ if(!sbc) return null; try{ const { data } = await sbc.auth.getSession(); return data&&data.session?data.session:null; }catch(_){ return null; } }
 function setCliente(c){
   S.cliente=c; const h=document.getElementById('hola'), pq=c.paquete; h.classList.add('on');
   h.innerHTML=`Hola <b>${c.nombre.split(' ')[0]}</b> · ${c.negocio}
@@ -1033,7 +1094,7 @@ function setCliente(c){
     ${pq?`<span>🗃 Paquete en resguardo: ${pq.piezas} piezas · ${pq.kg.toFixed(2)} kg</span>`:''}<button class="x" onclick="salir()">No soy yo</button>`;
   document.getElementById('btnEntrar').innerHTML='👤 <span class="txt">'+c.nombre.split(' ')[0]+'</span>';
 }
-function salir(){S.cliente=null;S.sumar=false;document.getElementById('hola').classList.remove('on');document.getElementById('btnEntrar').innerHTML='👤 <span class="txt">Entrar a mi cuenta</span>';}
+function salir(){S.cliente=null;S.sumar=false;document.getElementById('hola').classList.remove('on');document.getElementById('btnEntrar').innerHTML='👤 <span class="txt">Entrar a mi cuenta</span>'; try{ if(sbc) sbc.auth.signOut(); }catch(_){} if(document.getElementById('coBody')) renderCheckout(); }
 function repetir(){let f=0;Object.entries(S.cliente.ultimo.items).forEach(([c,q])=>{f+=q-add(c,q,true);});bump();toast(f?`Repetimos tu pedido; ${f} piezas ya no tenían existencia.`:`Repetimos tu pedido ${S.cliente.ultimo.folio} ✓`,f?'alerta':'ok');}
 function avisame(c){
   if(S.avisos.has(c)) return; const cl=S.cliente||{};
@@ -1111,9 +1172,7 @@ function mostrarProp(otra){
 function aceptar(pagar){ Object.entries(A.prop.out).forEach(([c,q])=>add(c,q,true)); bump(); document.getElementById('propuesta').innerHTML=''; toast(`Agregamos ${A.prop.pz} piezas a tu pedido ✓`,'ok'); if(pagar) setTimeout(abrirCheckout,350); }
 function aceptarCalc(){ Object.entries(A.prop.out).forEach(([c,q])=>{S.calc[c]={q,pv:Math.round(prod(c).p*S.mult)};patch(c);}); renderCalc(); sec('calculadora'); }
 
-function crearCuentaDespues(wa){ const c=CLIENTAS[wa]; if(!c) return; c.cuenta=true; c.pass='marvea-sol-'+Math.floor(1000+Math.random()*9000);
-  const el=document.querySelector('#coBody .club'); if(el) el.innerHTML=`<span class="kicker" style="color:var(--ciruela)">Tu perfil en el Marvea Business Club</span><div class="cred"><span>Usuario</span><b>${c.wa}</b></div><div class="cred" style="border:0"><span>Contraseña</span><b>${c.pass}</b></div><div style="margin-top:8px"><span class="enviado">✉️ Enviado a ${c.mail||'tu correo'}</span><span class="enviado">📱 Enviado por WhatsApp</span></div>`;
-  toast('Cuenta creada y acceso enviado en automático ✓','ok'); }
+function crearCuentaDespues(wa){ abrirRegistro(); }
 /* ============================================================ COMPRA EXPRÉS */
 function abrirCheckout(){
   if(pzs()<MIN) return; toggleCarritoM(false);
@@ -1122,11 +1181,11 @@ function abrirCheckout(){
   renderCheckout();
 }
 function campo(id,l,ph,full,extra=''){return `<div class="campo ${full?'full':''}"><label>${l}</label><input id="c_${id}" value="${S.form[id]||''}" placeholder="${ph}" oninput="S.form['${id}']=this.value${id==='wa'?';checarWa(this.value)':''}" ${extra}></div>`;}
-function checarWa(v){const wa=v.replace(/\D/g,'');if(wa.length===10){const c=buscarClienta(wa);if(c){setCliente(c);renderCheckout();toast(`Hola ${c.nombre.split(' ')[0]}, recuperamos tus datos ✓`,'ok');}}}
+function checarWa(v){ /* sin cuenta no se rellenan datos ajenos: la clienta entra con su contraseña */ }
 function renderCheckout(){
   const c=S.cliente,e=envio(),k=kg(),pq=c&&c.paquete;
   const quien=c?`<div class="yo"><span class="av">${c.nombre[0]}</span><div><b>${c.nombre}</b> · ${c.negocio}<br>${S.recoger?'Recoges en Monterrey':'Enviamos a '+c.dir+', '+c.ciudad}${c.ref&&!S.recoger?'<br><small style="color:var(--gris)">Ref.: '+c.ref+'</small>':''} · ${c.wa}</div><button onclick="salir();renderCheckout()">Cambiar</button></div>`
-   :`<div class="tabs"><button class="on">🛍 Comprar sin cuenta</button><button onclick="abrirEntrar()">👤 Ya tengo cuenta</button></div><div class="form">${campo('wa','WhatsApp (10 dígitos)','81 0000 0000',false,'inputmode="numeric" maxlength="10"')}${campo('nombre','Nombre','Tu nombre')}${campo('mail','Correo (para tu ticket)','tu@correo.com')}${campo('negocio','Negocio (opcional)','Ej. Accesorios Luna')}${campo('dir','Dirección','Calle, número, colonia',true)}${campo('ref','Referencias','Entre calles, color de casa, portón…',true)}${campo('ciudad','Ciudad','Ciudad')}${campo('cp','Estado / C.P.','N.L. · 66220')}</div><label class="check" style="margin-top:12px"><input type="checkbox" ${S.crearCuenta?'checked':''} onchange="S.crearCuenta=this.checked"><div><b>Crear mi cuenta del Business Club con este pedido</b><small>Sin pasos extra: al confirmar te enviamos tu usuario y contraseña en automático por correo y WhatsApp. Si prefieres, desmarca y compra solo como invitada.</small></div></label><div class="campo"><div class="ay" style="margin-top:8px">Si ya compraste antes, al escribir tu WhatsApp llenamos lo demás (prueba: termina en 77).</div></div>`;
+   :`<div class="tabs"><button class="on">🛍 Comprar sin cuenta</button><button onclick="abrirEntrar()">👤 Ya tengo cuenta</button></div><div class="form">${campo('wa','WhatsApp (10 dígitos)','81 0000 0000',false,'inputmode="numeric" maxlength="10"')}${campo('nombre','Nombre','Tu nombre')}${campo('mail','Correo (para tu ticket)','tu@correo.com')}${campo('negocio','Negocio (opcional)','Ej. Accesorios Luna')}${campo('dir','Dirección','Calle, número, colonia',true)}${campo('ref','Referencias','Entre calles, color de casa, portón…',true)}${campo('ciudad','Ciudad','Ciudad')}${campo('estado','Estado','Nuevo León')}${campo('cp','Código postal','66220',false,'inputmode="numeric" maxlength="5"')}</div><label class="check" style="margin-top:12px"><input type="checkbox" ${S.crearCuenta?'checked':''} onchange="S.crearCuenta=this.checked;renderCheckout()"><div><b>Crear mi cuenta con este pedido</b><small>Una sola cuenta para la tienda y el Business Club: ahí ves tus pedidos, tu guía DHL y tu catálogo. Tú eliges tu contraseña.</small></div></label>${S.crearCuenta?`<div class="form" style="margin-top:8px">${campo('pass','Contraseña (mínimo 8)','••••••••',false,'type="password" autocomplete="new-password"')}${campo('pass2','Repite tu contraseña','••••••••',false,'type="password" autocomplete="new-password"')}</div>`:''}`;
   const tar=TARIFAS.map(t=>{const cabe=k<=t.max,on=!S.sumar&&!S.recoger&&S.tarifa===t.id&&cabe;return `<button class="${on?'on':''}" ${cabe?'':'disabled'} onclick="S.sumar=false;S.recoger=false;S.tarifa='${t.id}';renderCheckout();renderCarrito()"><b>DHL ${t.nombre}</b><em>${fmt(t.costo)}</em><small>${cabe?(tarifaPeso(k).id===t.id?'Tu pedido pesa '+k.toFixed(2)+' kg':'Útil si vas a resguardar y sumar'):'No cabe tu pedido'}</small></button>`;}).join('');
   let sb=''; if(pq){const kt=pq.kg+k,nt=tarifaPeso(kt),pag=TARIFAS.find(x=>x.id===pq.tarifa).costo,dif=nt?Math.max(0,nt.costo-pag):null;
     const lleno=(pq.folios||[]).length>=3; if(lleno&&S.sumar){S.sumar=false;}
@@ -1144,29 +1203,34 @@ function renderCheckout(){
       <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia</b><small>Te mandamos tu carrito a WhatsApp Ventas/Pedidos con los datos bancarios. Apartado 12 h.</small></button></div></div>`;
 }
 function validar(){ if(S.cliente) return true; let ok=true;
-  (S.recoger?['wa','nombre']:['wa','nombre','dir','ciudad']).forEach(k=>{const el=document.getElementById('c_'+k),v=(S.form[k]||'').trim(),bad=!v||(k==='wa'&&v.replace(/\D/g,'').length!==10);el.classList.toggle('err',bad);if(bad)ok=false;});
-  if(!ok) toast('Completa tus datos de envío.','alerta'); return ok; }
+  const req=S.recoger?['wa','nombre']:['wa','nombre','dir','ciudad','estado']; if(S.crearCuenta) req.push('mail','pass','pass2');
+  req.forEach(k=>{const el=document.getElementById('c_'+k),v=(S.form[k]||'').trim(),bad=!v||(k==='wa'&&v.replace(/\D/g,'').length!==10)||(k==='mail'&&!v.includes('@'))||(k==='pass'&&v.length<8)||(k==='pass2'&&v!==(S.form.pass||''));if(el)el.classList.toggle('err',bad);if(bad)ok=false;});
+  if(!ok) toast(S.crearCuenta?'Completa tus datos; la contraseña debe tener 8 caracteres y coincidir.':'Completa tus datos de envío.','alerta'); return ok; }
 function mensajeWA(folio){ const c=S.cliente||S.form,e=envio();
   return `Hola Marvea 👋 Pedido web *${folio}*\n\n`+Object.entries(S.cart).map(([k,q])=>`• ${q} × ${prod(k).n}${prod(k).pv?' (preventa)':''} — ${fmt(prod(k).p*q)}`).join('\n')+
   `\n\nPiezas: ${pzs()}\nSubtotal: ${fmt(sub())}${S.factura?`\nIVA 16%: ${fmt(iva())}`:''}\n${S.recoger?'Recojo gratis en Monterrey':(S.sumar?'Agregar a mis resguardos · diferencia':S.resguardar?'Resguardar paquete · envío DHL':'Envío DHL')+': '+(e.costo===null?'a cotizar':fmt(e.costo))}\n*Total: ${fmt(total())} MXN*\n\nPago por transferencia · ${c.nombre}${S.recoger?'':`\n${c.dir}, ${c.ciudad}${c.ref?`\nReferencias: ${c.ref}`:''}`}`; }
-function pagar(m){ if(!validar()) return; const folio='MV-'+Math.floor(10000+Math.random()*90000);
+async function pagar(m){ if(!validar()) return;
+  if(!S.cliente&&S.crearCuenta){ const f=S.form; const r=await crearCuenta({nombre:f.nombre,wa:String(f.wa||'').replace(/\D/g,''),correo:f.mail||'',negocio:f.negocio||'',password:f.pass||'',dir:f.dir||'',ciudad:f.ciudad||'',estado:f.estado||'',cp:f.cp||'',ref:f.ref||''});
+    if(!r.ok){ toast(r.error+' Si ya tienes cuenta, entra con tu contraseña.','alerta'); return; } if(r.cliente) setCliente(r.cliente); toast('Tu cuenta quedó creada ✓','ok'); }
+  const folio='MV-'+Math.floor(10000+Math.random()*90000);
   if(m==='transfer'){window.open('https://wa.me/528132660673?text='+encodeURIComponent(mensajeWA(folio)),'_blank');finalizar(m,folio);return;}
   const b=document.getElementById('btnTarjeta');b.disabled=true;b.innerHTML='<b><span class="cargando"></span>Conectando con Stripe…</b><small>Te llevamos a la página segura de pago.</small>';
   pagarStripe(folio).catch(err=>{ b.disabled=false; b.innerHTML='<b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · MC · Amex</span></div>';
     if(err.faltan){ cerrarModal(); toast(err.message+(err.faltan.length?' ('+err.faltan.map(f=>`${f.nombre}: ${f.apartadas} de ${f.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<980) toggleCarritoM(true); return; }
     if(STRIPE.simularSiFalla){ toast('Stripe aún no responde ('+err.message+'). Se simula el pago para la prueba.','alerta'); setTimeout(()=>finalizar(m,folio),900); } else toast('No se pudo iniciar el pago: '+err.message,'alerta'); }); }
 /* ---------- Stripe Checkout (real) */
-const STRIPE={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/crear-pago', anon:'sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8', simularSiFalla:true };
+const STRIPE={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/crear-pago', anon:'sb_publishable_o9LoacKHt5UBgIcJPJZa4g_QCbRM2U8', simularSiFalla:false };
 function snapshotPedido(folio){ return {folio,cart:S.cart,form:S.form,cliente:S.cliente,tarifa:S.tarifa,recoger:S.recoger,sumar:S.sumar,resguardar:S.resguardar,factura:S.factura,crearCuenta:S.crearCuenta,t:Date.now()}; }
 async function pagarStripe(folio){
   const c=S.cliente||S.form, e=envio();
   if(SRV.pend.size||SRV.enviando){ await new Promise(r=>setTimeout(r,700)); } // que termine de apartar lo último
   const payload={ folio, sesion:SESION, items:Object.entries(S.cart).map(([codigo,cant])=>({codigo,cant})), factura:S.factura, resguardar:S.resguardar, sumar:S.sumar,
     envio:{ tipo:S.recoger?'recoger':(e.t?e.t.id:'2kg'), costo:e.costo===null?0:e.costo, nombre:S.recoger?'Recoger en Monterrey':(e.modo==='sumar'?'Diferencia de envío DHL (agregado a resguardos)':undefined) },
-    cliente:{ nombre:c.nombre, wa:String(c.wa||'').replace(/\D/g,''), mail:c.mail||'', negocio:c.negocio||'', dir:c.dir||'', ciudad:c.ciudad||'', cp:c.cp||'', ref:c.ref||'', crearCuenta:S.crearCuenta } };
+    cliente:{ nombre:c.nombre, wa:String(c.wa||'').replace(/\D/g,''), mail:c.mail||'', negocio:c.negocio||'', dir:c.dir||'', ciudad:c.ciudad||'', estado:c.estado||'', cp:c.cp||'', ref:c.ref||'', crearCuenta:!!S.cliente } };
+  const ses=await sesionActual(); const tokenAuth=ses&&ses.access_token?ses.access_token:STRIPE.anon;
   try{ localStorage.setItem('marvea.pedido',JSON.stringify(snapshotPedido(folio))); }catch(_){}
   const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),15000);
-  let r; try{ r=await fetch(STRIPE.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':STRIPE.anon,'Authorization':'Bearer '+STRIPE.anon},body:JSON.stringify(payload),signal:ctrl.signal}); }
+  let r; try{ r=await fetch(STRIPE.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':STRIPE.anon,'Authorization':'Bearer '+tokenAuth},body:JSON.stringify(payload),signal:ctrl.signal}); }
   catch(err){ clearTimeout(tm); throw new Error('sin conexión con la función de pago'); }
   clearTimeout(tm);
   let d={}; try{ d=await r.json(); }catch(_){}
@@ -1182,7 +1246,7 @@ function regresoStripe(){
   const cart={}; Object.entries(sn.cart||{}).forEach(([c,q])=>{ if(prod(c)) cart[c]=q; });
   Object.assign(S,{cart,form:sn.form||{},tarifa:sn.tarifa,recoger:!!sn.recoger,sumar:!!sn.sumar,resguardar:!!sn.resguardar,factura:!!sn.factura,crearCuenta:sn.crearCuenta!==false});
   S.timerFin=Date.now()+15*60000;
-  if(sn.cliente){ const c=buscarClienta(sn.cliente.wa)||sn.cliente; CLIENTAS[c.wa]=c; setCliente(c); }
+  if(sn.cliente){ CLIENTAS[sn.cliente.wa]=sn.cliente; setCliente(sn.cliente); }
   Object.keys(cart).forEach(patch); actualizar();
   if(pago==='ok'){ try{localStorage.removeItem('marvea.pedido');}catch(_){} if(pzs()>=MIN){ abrirCheckout(); finalizar('tarjeta',sn.folio); } else toast('Pago recibido ✓','ok'); }
   else { toast('El pago se canceló. Tus piezas siguen en tu carrito.','alerta'); if(innerWidth<980) toggleCarritoM(true);
@@ -1190,38 +1254,37 @@ function regresoStripe(){
 }
 function finalizar(metodo,folio){
   let c=S.cliente; const nueva=!c;
-  if(!c){const wa=S.form.wa.replace(/\D/g,'');c=CLIENTAS[wa]={wa,nombre:S.form.nombre,negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',cp:S.form.cp||'',ref:S.form.ref||''};}
+  if(!c){const wa=S.form.wa.replace(/\D/g,'');c=CLIENTAS[wa]={wa,nombre:S.form.nombre,negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',estado:S.form.estado||'',cp:S.form.cp||'',ref:S.form.ref||''};}
   const e=envio(),items={...S.cart},n=pzs(),sub0=sub(),tot=total(),k=kg(),pv=hayPV(),fac=S.factura,ivaV=iva();
   const gan=Object.entries(items).reduce((a,[cd,q])=>a+(pVenta(cd)-prod(cd).p)*q,0);
   Object.entries(items).forEach(([cd,q])=>{ prod(cd).v+=q; });
   if(S.sumar&&c.paquete){c.paquete.piezas+=n;c.paquete.kg+=k;c.paquete.folios.push(folio);if(e.t)c.paquete.tarifa=e.t.id;}
   else if(S.resguardar){c.paquete={piezas:n,kg:k,tarifa:(e.t||TARIFAS[1]).id,folios:[folio]};}
   c.ultimo={folio,items}; const resg=S.sumar||S.resguardar;
-  S.cart={}; SRV.cart={}; SRV.pend.clear(); guardarCarritoLocal(); Object.keys(items).forEach(patch); actualizar(); if(!nueva||S.crearCuenta) setCliente(c); renderTop();
+  S.cart={}; SRV.cart={}; SRV.pend.clear(); guardarCarritoLocal(); Object.keys(items).forEach(patch); actualizar(); if(!nueva) setCliente(c); renderTop();
   if(metodo==='transfer') stockApi('liberar').catch(()=>{}); // por transferencia Marvea aparta a mano al recibir el WhatsApp
   setTimeout(refrescarEstado,1500);
-  const nom=c.nombre.split(' ')[0], pwd='marvea-'+['sol','luna','mar','flor'][Math.floor(Math.random()*4)]+'-'+Math.floor(1000+Math.random()*9000);
-  if(nueva&&S.crearCuenta){ c.pass=pwd; c.cuenta=true; }
+  const nom=(c.nombre||'').split(' ')[0];
   document.getElementById('coBody').innerHTML=`
     <div class="exito"><h3>${metodo==='tarjeta'?`¡Listo, ${nom}! <i>${resg?'Tu paquete queda en resguardo.':pv?'Tus piezas quedan apartadas.':'Ya estamos preparando tu pedido.'}</i>`:`Ya casi, ${nom}. <i>Envíanos tu comprobante.</i>`}</h3>
       <p>Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 12 h; ya se abrió tu chat de WhatsApp)'}.</p>
       <div class="chips"><span class="chip">📦 ${n} piezas · ${k.toFixed(2)} kg</span><span class="chip">${S.recoger?'📍 Recoges gratis en Monterrey':resg?'🗃 En resguardo':'✈️ DHL Express'}</span>${pv?'<span class="chip">⏳ Con preventa</span>':''}${fac?'<span class="chip">🧾 Factura</span>':''}</div>
     </div>
-    ${(nueva&&!S.crearCuenta)?`<div class="club"><span class="kicker" style="color:var(--ciruela)">Compraste sin cuenta</span>
+    ${nueva?`<div class="club"><span class="kicker" style="color:var(--ciruela)">Compraste sin cuenta</span>
       <h3 style="font-size:22px;color:var(--ciruela);margin:6px 0">Con este pedido puedes ganar <span class="aprox">entre <b>${fmt(sub0)}</b> y <b>${fmt(sub0*2)}</b></span></h3>
       <p style="font-size:13px;color:var(--ciruela);margin:6px 0 0">Tu ticket y tu guía DHL te llegan por correo y WhatsApp. Si quieres seguir tus ventas y tener tu catálogo con tu marca, crea tu cuenta cuando gustes.</p>
       <div class="acc"><button class="p" onclick="crearCuentaDespues('${c.wa}')">Crear mi cuenta ahora</button></div></div>`
     :`<div class="club"><span class="kicker" style="color:var(--ciruela)">Tu perfil en el Marvea Business Club</span>
       <h3 style="font-size:24px;color:var(--ciruela);margin:6px 0">Con este pedido puedes ganar <span class="aprox">entre <b>${fmt(sub0)}</b> y <b>${fmt(sub0*2)}</b></span></h3>
-      <div class="cred"><span>Usuario</span><b>${c.wa}</b></div><div class="cred" style="border:0"><span>Contraseña</span><b>${nueva?pwd:'la de siempre'}</b></div>
-      ${nueva?`<div style="margin-top:8px"><span class="enviado">✉️ Enviado a ${c.mail||'tu correo'}</span><span class="enviado">📱 Enviado por WhatsApp</span></div><p style="font-size:12.5px;color:var(--ciruela);margin:8px 0 0">Tu acceso se creó y se envió en automático. Puedes cambiar la contraseña desde Mi perfil. Ahí sigues tu guía DHL, registras lo que vendes y compartes tu catálogo con el nombre de tu negocio.</p>`:'<p style="font-size:12.5px;color:var(--ciruela);margin:6px 0 0">El pedido ya está en Mis pedidos y sus piezas en Mi catálogo.</p>'}</div>`}
+      <div class="cred"><span>Usuario</span><b>${c.wa}</b></div><div class="cred" style="border:0"><span>Contraseña</span><b>la que tú elegiste</b></div>
+      <p style="font-size:12.5px;color:var(--ciruela);margin:6px 0 0">El pedido ya aparece en Mis pedidos del Business Club; ahí sigues tu guía DHL, registras lo que vendes y compartes tu catálogo con el nombre de tu negocio.</p></div>`}
     <div class="bloq tk"><div class="tt"><span>✓</span>Ticket</div>
       ${Object.entries(items).map(([cd,q])=>`<div class="r"><span>${q} × ${prod(cd).n}</span><b>${fmt(prod(cd).p*q)}</b></div>`).join('')}
       <div class="r"><span>${S.recoger?'Recoger en Monterrey':S.sumar?'Diferencia de envío DHL':'Envío DHL'}</span><b>${S.recoger?'Gratis':e.costo===null?'a cotizar':fmt(e.costo)}</b></div>${fac?`<div class="r"><span>IVA 16%</span><b>${fmt(ivaV)}</b></div>`:''}
       <div class="tt2"><span>Total</span><span>${fmt(tot)} MXN</span></div>
       <p class="sub" style="font-size:12.5px;margin:10px 0 0">📧 ${c.mail?`Te enviamos este ticket en PDF a <b>${c.mail}</b>.`:'Sin correo capturado: el ticket queda en tu Business Club.'}</p></div>
     ${c.paquete&&resg?`<div class="nota cielo">🗃 Paquete en resguardo: <b>${c.paquete.piezas} piezas · ${c.paquete.kg.toFixed(2)} kg</b> (${c.paquete.folios.join(', ')}). Cuando quieras que salga, pídelo desde tu Business Club o por WhatsApp.</div>`:''}
-    <div class="acc"><button class="s" onclick="cerrarModal()">Seguir comprando</button><button class="p" onclick="toast('Abre el Business Club (club.html) en el sitio real')">Ir a mi perfil</button></div>`;
+    <div class="acc"><button class="s" onclick="cerrarModal()">Seguir comprando</button><a class="p" href="club.html" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Ir a mi Business Club</a></div>`;
   S.sumar=false;S.resguardar=false;S.recoger=false;S.tarifa=null;S.factura=false;S.crearCuenta=true;
   toast(metodo==='tarjeta'?'Pago aprobado ✓':'Pedido registrado, te esperamos en WhatsApp','ok');
 }
@@ -1240,7 +1303,6 @@ try{ if(localStorage.getItem('marvea.tienda')===ACCESO_HASH) document.getElement
   const ok=await cargarCatalogo();
   if(!ok){ document.getElementById('grid').innerHTML='<div class="vacio" style="grid-column:1/-1">No se pudo cargar el catálogo (catalogo.json). Si abriste el archivo desde tu computadora, ábrelo desde www.marveamayoreo.com.</div>'; document.getElementById('nModelos').textContent='0'; return; }
   P.forEach(x=>{S.stock[x.c]={ex:x.ex};});
-  const top=topList(); CLIENTA_DEMO.ultimo.items=Object.fromEntries(top.slice(0,3).map((x,i)=>[x.c,[6,4,4][i]]));
   document.getElementById('nModelos').textContent=P.length;
   renderPreg(); renderTop(); renderFiltros(); renderGrid(true); renderCalcSel(); renderCalc(); actualizar();
   // carrito guardado (si recargó la página) + disponibilidad real del inventario
@@ -1248,6 +1310,7 @@ try{ if(localStorage.getItem('marvea.tienda')===ACCESO_HASH) document.getElement
   const esRegreso=!!new URLSearchParams(location.search).get('pago');
   try{ const d=await stockApi('estado'); aplicarDisp(d.disponibilidad); if(!esRegreso) sincronizarCarrito(d.carrito,d.expira); }
   catch(_){ if(local&&local.fin>Date.now()&&!esRegreso){ Object.entries(local.cart||{}).forEach(([c,q])=>{ if(prod(c)) S.cart[c]=q; }); S.timerFin=local.fin; Object.keys(S.cart).forEach(patch); actualizar(); } }
+  try{ const ses=await sesionActual(); if(ses&&ses.user){ const c=await cargarClienta(ses.user); if(c) setCliente(c); } }catch(_){}
   regresoStripe();
 })();
 </script>

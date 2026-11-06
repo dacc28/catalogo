@@ -214,6 +214,8 @@ section.corta{padding:36px 0}
 .simulador .fila{display:flex;align-items:center;gap:16px;margin-top:14px}
 .simulador label{display:block;font-size:13px;font-weight:700;color:var(--tinta-2);margin-bottom:4px}
 .simulador input[type=range]{width:100%;accent-color:var(--coral)}
+.cs-sel,.cs-in{width:100%;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.75);border-radius:999px;padding:13px 18px;font:inherit;font-size:16px;font-weight:600;color:var(--ciruela);outline:none;box-shadow:inset 0 2px 6px rgba(90,39,72,.06)}
+.cs-sel:focus,.cs-in:focus{border-color:var(--coral);box-shadow:0 0 0 4px rgba(242,101,63,.15)}
 .simulador .val{min-width:84px;text-align:right;font-family:var(--display);font-size:22px;color:var(--ciruela)}
 .simulador .res{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
 .simulador .res .caja{padding:16px 10px;border-radius:20px;text-align:center}

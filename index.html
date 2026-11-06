@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&family=Homemade+Apple&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="glass.css?v=4">
+<link rel="stylesheet" href="glass.css?v=5">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
     <a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a>
     <ul>
       <li><a href="tienda.html" class="tienda"><i class="fa-solid fa-bag-shopping"></i> Tienda en línea <small>🔒</small></a></li>
-      <li><a href="calculadora.html">Calculadora</a></li>
+      <li><a href="index.html#ganar">Calculadora</a></li>
       <li><a href="index.html#como-comprar">Cómo comprar</a></li>
       <li><a href="index.html#rastreo">Envíos</a></li>
       <li><a href="club.html">Business Club</a></li>
@@ -52,7 +52,7 @@
       <p class="lead">Joyería de acero inoxidable, oro laminado y chapa de oro, seleccionada para vender y con el mejor precio de mayoreo. Desde 12 piezas surtidas a tu gusto, sin monto mínimo, y ahora en nuestra tienda en línea: paga con tarjeta de crédito, débito o transferencia.</p>
       <div class="cta">
         <a class="btn coral lg" href="tienda.html">Entrar a la tienda en línea <span class="cand">🔒</span></a>
-        <a class="btn cristal lg" href="calculadora.html">Ver cuánto ganarías <span class="fl">→</span></a>
+        <a class="btn cristal lg" href="index.html#ganar">Calcula tu compra <span class="fl">→</span></a>
       </div>
       <div class="lema">Mira. Elige. Emprende.</div>
     </div>
@@ -110,7 +110,7 @@
       </div>
       <div class="herr tres" data-stagger>
         <a href="tienda.html" class="vidrio suave"><div class="ic e"><i class="fa-solid fa-bag-shopping"></i></div><h3>Tienda en línea</h3><p>Arma tu pedido, paga con tarjeta de débito/crédito o transferencia y recíbelo por DHL. Te armamos un paquete con 3 preguntas y tu presupuesto.</p><span class="link">Entrar con tu acceso 🔒 →</span></a>
-        <a href="calculadora.html" class="vidrio suave"><div class="ic b">$</div><h3>Calcula antes de comprar</h3><p>Elige tus piezas, pon cuántas comprarías y a cuánto las venderías; te decimos cuánto ganas.</p><span class="link">Hacer cuentas →</span></a>
+        <a href="club.html" class="vidrio suave"><div class="ic b">$</div><h3>Calcula antes de comprar</h3><p>En tu Business Club: elige tus piezas, pon cuántas comprarías y a cuánto las venderías; te decimos cuánto ganas.</p><span class="link">Hacer cuentas →</span></a>
         <a href="https://wa.me/528132380573" target="_blank" rel="noopener" class="vidrio suave"><div class="ic d"><i class="fa-brands fa-whatsapp"></i></div><h3>Asesoría personal</h3><p>Por WhatsApp te ayudamos en todo tu proceso y resolvemos dudas antes de que pagues.</p><span class="link">Escribir a Atención al cliente →</span></a>
       </div>
     </div>
@@ -120,24 +120,18 @@
 <section class="ganar" id="ganar">
   <div class="wrap">
     <div class="rev">
-      <span class="eyebrow">Haz cuentas</span>
-      <h2 style="margin-top:14px">Mira tu ganancia <i>antes de invertir</i></h2>
-      <p class="lead" style="margin-top:14px">Muchas de nuestras piezas se venden al doble o al triple. Por ejemplo, con un collar de $35 de mayoreo:</p>
-      <div class="ejemplo">
-        <div class="vidrio caja"><b>$35</b><span>Te cuesta</span></div><div class="op">→</div>
-        <div class="vidrio caja"><b>$70</b><span>Lo vendes en</span></div><div class="op">=</div>
-        <div class="vidrio caja dest"><b>$35</b><span>Te quedan por pieza</span></div>
-      </div>
-      <p class="lead" style="margin-top:22px;font-size:15.5px">Con 12 collares inviertes $420 y recuperas $840. Mueve los controles para probar con tus números, o haz cuentas con piezas reales de la tienda.</p>
-      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn coral" href="calculadora.html">Calcular con piezas reales</a><a class="btn cristal" href="tienda.html">Ver precios de mayoreo 🔒</a></div>
+      <span class="eyebrow">Calculadora de precios</span>
+      <h2 style="margin-top:14px">Haz tu cuenta <i>en segundos</i></h2>
+      <p class="lead" style="margin-top:14px">Elige un modelo, pon cuántas piezas quieres y te decimos el total a precio de mayoreo. Así de simple.</p>
+      <p class="lead" style="margin-top:14px;font-size:15.5px">¿Quieres calcular tu ganancia con varios modelos y tus propios precios de venta? Esa calculadora completa vive en tu <a href="club.html" style="color:var(--coral);font-weight:800">Business Club</a>.</p>
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn coral" href="tienda.html">Comprar en la tienda <span class="cand">🔒</span></a><a class="btn cristal" href="club.html">Calculadora de ganancias</a></div>
     </div>
-    <div class="vidrio simulador rev" id="sim">
-      <span class="eyebrow coral">Simulador rápido</span>
-      <div class="fila"><div style="flex:1"><label>Piezas que compras</label><input type="range" id="simN" min="12" max="60" step="1" value="12"></div><div class="val" id="simNv">12 pzas</div></div>
-      <div class="fila"><div style="flex:1"><label>Precio mayoreo promedio</label><input type="range" id="simP" min="20" max="90" step="5" value="35"></div><div class="val" id="simPv">$35</div></div>
-      <div class="fila"><div style="flex:1"><label>Lo vendes a</label><input type="range" id="simM" min="13" max="30" step="1" value="20"></div><div class="val" id="simMv">×2.0</div></div>
-      <div class="res"><div class="vidrio caja"><b id="simInv">$420</b><span>Inviertes</span></div><div class="vidrio caja"><b id="simVen">$840</b><span>Vendes</span></div><div class="vidrio caja dest"><b id="simGan">$420</b><span>Ganas</span></div></div>
-      <div class="nota">Cifras de ejemplo. Tu ganancia depende de tus precios de venta.</div>
+    <div class="vidrio simulador rev" id="calcSimple">
+      <span class="eyebrow coral">Precio de catálogo</span>
+      <div class="fila" style="margin-top:16px"><div style="flex:1"><label for="csModelo">Modelo</label><select id="csModelo" class="cs-sel"><option value="">Cargando modelos…</option></select></div></div>
+      <div class="fila"><div style="flex:1"><label for="csCant">Cantidad de piezas</label><input id="csCant" class="cs-in" type="number" min="1" max="999" value="12" inputmode="numeric"></div></div>
+      <div class="res"><div class="vidrio caja"><b id="csUnit">$0</b><span>Precio unitario</span></div><div class="vidrio caja"><b id="csPz">12</b><span>Piezas</span></div><div class="vidrio caja dest"><b id="csTot">$0</b><span>Total</span></div></div>
+      <div class="nota" id="csNota">Precios de mayoreo en pesos mexicanos (MXN). Mínimo de compra: 12 piezas surtidas.</div>
     </div>
   </div>
 </section>
@@ -295,7 +289,7 @@
     <div class="vidrio">
       <div><a class="logo" href="index.html"><img src="logo-m.png" alt="">Marvea</a><p style="margin:12px 0 0;max-width:320px">Mayoreo de joyería para quienes emprenden. Acero inoxidable, oro laminado y chapa de oro en tendencia, seleccionados para vender y con el mejor precio de mayoreo. Donde emprendes tu negocio.</p></div>
       <div><h4>Compra</h4><a href="tienda.html">Tienda en línea 🔒</a><a href="index.html#destacadas">Lo que más se mueve</a><a href="index.html#nuevo">Novedades</a><a href="index.html#como-comprar">Cómo comprar</a><a href="index.html#rastreo">Envíos y rastreo</a></div>
-      <div><h4>Para tu negocio</h4><a href="calculadora.html">Calculadora de ganancias</a><a href="club.html">Business Club</a><a href="index.html#preguntas">Preguntas frecuentes</a><a href="index.html#cuidados">Cuidados de tus piezas</a></div>
+      <div><h4>Para tu negocio</h4><a href="club.html">Calculadora de ganancias (Business Club)</a><a href="club.html">Business Club</a><a href="index.html#preguntas">Preguntas frecuentes</a><a href="index.html#cuidados">Cuidados de tus piezas</a></div>
       <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Atención al Cliente · 81 3238 0573</a><a href="mailto:contacto@marvea.com"><i class="fa-solid fa-envelope"></i> contacto@marvea.com</a><a href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> @marveamayoreo</a><a href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> @marveamayoreo</a><a href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Marvea</a><a>Monterrey, Nuevo León · envíos a todo México</a></div>
       <div class="copy"><span>© 2026 Marvea · Empresa hermana de VJ Joyería</span><span>Mira. Elige. Emprende.</span></div>
     </div>
@@ -304,6 +298,6 @@
 
 <a class="whatsapp-flot" href="https://wa.me/528132660673" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
 <button class="ir-arriba" id="irArriba" aria-label="Ir al inicio" title="Ir al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg><span>Inicio</span></button>
-<script src="glass.js?v=3"></script>
+<script src="glass.js?v=4"></script>
 </body>
 </html>

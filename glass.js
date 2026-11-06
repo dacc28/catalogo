@@ -96,6 +96,17 @@
   const rf = $("#rastreoForm");
   if (rf) rf.addEventListener("submit", () => { const g = $("#guia"); g.value = (g.value || "").replace(/[^0-9A-Za-z]/g, ""); });
 
+  /* calculadora simple de precios de catálogo (modelo × cantidad) */
+  function calcSimple(prods, cats) {
+    const sel = $("#csModelo"), cant = $("#csCant"); if (!sel || !cant) return;
+    const porCat = {}; prods.forEach(p => { (porCat[cats[p.categoria] || p.categoria || "Otros"] = porCat[cats[p.categoria] || p.categoria || "Otros"] || []).push(p); });
+    sel.innerHTML = '<option value="">Elige un modelo…</option>' + Object.keys(porCat).sort().map(k => '<optgroup label="' + esc(k) + '">' + porCat[k].map(p => '<option value="' + esc(p.codigo) + '">' + esc(p.nombre) + ' · ' + money(p.precio) + '</option>').join("") + '</optgroup>').join("");
+    const pintar = () => { const p = prods.find(x => x.codigo === sel.value); const n = Math.max(1, Math.min(999, parseInt(cant.value) || 1)); const u = p ? Number(p.precio) || 0 : 0;
+      $("#csUnit").textContent = money(u); $("#csPz").textContent = String(n); $("#csTot").textContent = money(u * n);
+      $("#csNota").textContent = p ? (n < 12 ? "Recuerda: el mínimo de compra es de 12 piezas surtidas (puedes combinar modelos)." : "Véndelo entre " + money(u * 2) + " y " + money(u * 3) + " por pieza: ganarías entre " + money(u * n) + " y " + money(u * n * 2) + ".") : "Precios de mayoreo en pesos mexicanos (MXN). Mínimo de compra: 12 piezas surtidas."; };
+    sel.addEventListener("change", pintar); cant.addEventListener("input", pintar); pintar();
+  }
+
   /* simulador rápido de ganancia */
   const sim = $("#sim");
   if (sim) {
@@ -125,6 +136,7 @@
       if (g2) g2.innerHTML = nuevo.length ? nuevo.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas nuevas.</div>';
       const total = $("#totalPiezas"); if (total) { const piezas = Number(d.piezas) > 0 ? Number(d.piezas) : prods.length * 12; total.dataset.contar = String(piezas); if (total.textContent !== "0") contador(total); }
       /* maqueta del Business Club: catálogo de ejemplo de una clienta, con nuestras fotos y sus precios (×2) */
+      calcSimple(prods, cats);
       const demo = $("#catDemo"); if (demo) { const l = prods.filter(p => p.foto).slice(0, 6); if (l.length >= 3) demo.innerHTML = l.map(p => `<div class="p"><div class="im"><img loading="lazy" src="${esc(p.foto)}" alt=""></div><b>${esc(p.nombre)}</b><span>${money(Number(p.precio) * 2)}</span></div>`).join(""); }
       if (location.hash) setTimeout(irAlHash, 100);
       const fecha = $("#fechaCat"); if (fecha && d.actualizado) fecha.textContent = new Date(d.actualizado).toLocaleDateString("es-MX", { day: "numeric", month: "long" });
