@@ -4853,7 +4853,7 @@ nav.tabs{overscroll-behavior-x:contain;touch-action:pan-y}
 html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 
 /* ===== Resumen: cuadros que se tocan + desglose ===== */
-.tiles .tile .v{white-space:nowrap!important;overflow-wrap:normal!important;overflow:hidden;text-overflow:ellipsis;font-size:clamp(20px,2.05vw,32px)!important}
+
 .tile.dg-clic{cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s}
 .tile.dg-clic:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.10)!important}
 .tile.dg-clic:focus-visible{outline:3px solid rgba(242,101,63,.5);outline-offset:2px}
@@ -4892,6 +4892,52 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 .dg-b.on{background:#E8F5EC;color:#1E7A34;border-color:#CFEBD8}.dg-b.wa{color:#1a8f4a}
 .dg-vacio{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
 @media (max-width:720px){.dg-total{font-size:28px}.dg-d small{max-width:150px}.dg-res{grid-template-columns:1fr 1fr}}
+
+/* ===== Resumen: cuadros grandes y legibles ===== */
+#dashHost .tiles.sales{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+#dashHost .tiles.inv{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))!important;gap:14px!important}
+#dashHost .tile{padding:18px 20px!important;display:flex;flex-direction:column;min-height:132px}
+#dashHost .tile .k{font-size:12px;letter-spacing:.12em;font-weight:800;display:flex;align-items:center;gap:8px}
+#dashHost .tile .k::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55;flex:none}
+#dashHost .tile .v{font-size:34px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:normal!important;letter-spacing:-.02em;margin-top:6px!important;line-height:1.1}
+#dashHost .tile .s{font-size:13px;margin-top:4px;line-height:1.4}
+#dashHost .tile .dg-ver{margin-top:auto;padding-top:10px}
+#dashHost .tile.hero{grid-row:span 1}
+@media (max-width:1000px){#dashHost .tiles.sales{grid-template-columns:repeat(2,minmax(0,1fr))!important}#dashHost .tile .v{font-size:30px!important}}
+@media (max-width:720px){#dashHost .tiles.sales,#dashHost .tiles.inv{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  #dashHost .tile{padding:14px!important;min-height:118px}#dashHost .tile .v{font-size:23px!important}#dashHost .tile .k{font-size:10.5px;letter-spacing:.08em}#dashHost .tile .s{font-size:12px}}
+
+/* ===== Ajustes con pestañas ===== */
+#ajustesHost .ajx-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:0 0 14px}
+#ajustesHost .ajx-cab h2{margin:0;font-size:28px}
+#ajustesHost .ajx-cab p{margin:4px 0 0;color:var(--muted);font-size:13px}
+#ajustesHost .ajx-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 16px;padding:4px;background:rgba(0,0,0,.04);border-radius:16px;width:max-content;max-width:100%}
+#ajustesHost .ajx-tabs::-webkit-scrollbar{display:none}
+#ajustesHost .ajx-tabs button{flex:none;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:0;border-radius:12px;background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+#ajustesHost .ajx-tabs button .i{width:17px;height:17px;display:inline-flex}#ajustesHost .ajx-tabs button .i svg{width:100%;height:100%}
+#ajustesHost .ajx-tabs button em{font-style:normal;font-size:11px;min-width:18px;height:18px;border-radius:999px;background:rgba(0,0,0,.07);display:inline-grid;place-items:center;padding:0 5px}
+#ajustesHost .ajx-tabs button.on{background:#fff;color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#ajustesHost .ajx-tabs button.on .i{color:var(--mv-coral,#F2653F)}
+#ajustesHost .ajx-sec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#ajustesHost .ajx-sec[hidden]{display:none!important}
+#ajustesHost .ajx-sec.ajx-cuenta,#ajustesHost .ajx-sec.ajx-avanzado,#ajustesHost .ajx-sec.ajx-impresoras{grid-template-columns:1fr}
+#ajustesHost .ajx .ajpanel{min-height:0!important;padding:18px 20px!important;gap:10px!important;border-radius:18px!important}
+#ajustesHost .ajx .ajtitle{gap:12px!important;align-items:center}
+#ajustesHost .ajx .ajicon{width:40px!important;height:40px!important;border-radius:12px!important}
+#ajustesHost .ajx-tt{display:flex;flex-direction:column;min-width:0}
+#ajustesHost .ajx-tt h3{margin:0!important;font-size:16px!important;font-family:inherit!important;font-weight:800!important}
+#ajustesHost .ajx-d{font-size:12.5px;color:var(--muted)}
+#ajustesHost .ajx .ajstatus{font-size:13px!important;line-height:1.5!important;padding:10px 12px;background:rgba(0,0,0,.03);border-radius:12px;flex:none!important}
+#ajustesHost .ajx .ajstatus small{color:var(--muted)}
+#ajustesHost .ajx .ajrow{margin-top:2px!important;gap:6px!important}
+#ajustesHost .ajx .ajrow .btn{height:36px}
+/* en las pestañas de lista, el panel va en renglón: título a la izquierda, botones a la derecha */
+@media (min-width:900px){
+  #ajustesHost .ajx-sec.ajx-cuenta .ajpanel,#ajustesHost .ajx-sec.ajx-avanzado .ajpanel,#ajustesHost .ajx-sec.ajx-impresoras .ajpanel{display:grid!important;grid-template-columns:minmax(220px,300px) minmax(0,1fr);grid-template-areas:"t s" "t r";column-gap:22px;align-items:start}
+  #ajustesHost .ajx-sec.ajx-cuenta .ajtitle,#ajustesHost .ajx-sec.ajx-avanzado .ajtitle,#ajustesHost .ajx-sec.ajx-impresoras .ajtitle{grid-area:t}
+  #ajustesHost .ajx-sec:not(.ajx-inicio) .ajpanel>*:not(.ajtitle){grid-column:2}
+}
+@media (max-width:720px){#ajustesHost .ajx-sec{grid-template-columns:1fr}#ajustesHost .ajx-cab h2{font-size:24px}#ajustesHost .ajx-tabs{width:auto}}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -5058,7 +5104,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   const esWebC=c=>c.origen==="web"||(typeof window.__esPedidoWeb==="function"&&window.__esPedidoWeb(c));
   const origen=c=>esWebC(c)?"Tienda en línea":lugarDe(c);
   const pagadoCompleto=c=>!!c.pago||(cartGrand(c)>0&&cartPagado(c)>=cartGrand(c)-0.005);
-  const costoDe=c=>(c.items||[]).reduce((s,i)=>s+(Number(i.costo)||0)*(Number(i.cant)||0),0);
+  const costoDe=c=>(c.items||[]).filter(i=>!/^env[ií]o\b/i.test(String(i.nombre||""))&&!/^ENV/i.test(String(i.codigo||""))).reduce((s,i)=>s+(Number(i.costo)||0)*(Number(i.cant)||0),0);
   const waDe=c=>{ const k=clienteDe(c); const d=String(k&&k.whatsapp||"").replace(/\D/g,"").replace(/^52(?=\d{10}$)/,""); return d.length===10?"https://wa.me/52"+d:""; };
   const envioEstado=c=>c.entregado?"ent":c.enviado?"cam":"por";
   const ENV_TXT={por:"Por enviar",cam:"En camino",ent:"Entregado"};
@@ -5070,7 +5116,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   function medios(c){ const m=[]; for(const a of c.anticipos||[]) m.push([a.medio||"Abono",a.monto,a.fecha]); if(c.pago&&c.pago.monto) m.push([c.pago.medio||"Pago",c.pago.monto,c.pago.fecha]); if(cartDeposito(c)) m.push(["Depósito",cartDeposito(c),c.creado]); return m; }
 
   const TIPOS={
-    ganancia:{t:"Ganancia",sub:"Lo vendido menos lo que te costó, carrito por carrito"},
+    ganancia:{t:"Ganancia",sub:"Piezas vendidas menos su costo, carrito por carrito. Los envíos y el IVA no cuentan como ganancia."},
     vendido:{t:"Vendido",sub:"Todos los carritos (lives, ventas directas y tienda en línea)"},
     cobrado:{t:"Cobrado",sub:"Lo que ya entró, por forma de pago"},
     porcobrar:{t:"Por cobrar",sub:"Carritos con saldo pendiente"},
@@ -5090,10 +5136,10 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 
   function cuerpo(){
     const all=carts(); const tipo=D.tipo;
-    if(tipo==="ganancia"){ const l=[...all].sort((a,b)=>cartProfit(b)-cartProfit(a)); const g=l.reduce((s,c)=>s+cartProfit(c),0), v=l.reduce((s,c)=>s+cartGrand(c),0), co=l.reduce((s,c)=>s+costoDe(c),0);
+    if(tipo==="ganancia"){ const pz=c=>(c.items||[]).filter(i=>!/^env[ií]o\b/i.test(String(i.nombre||""))&&!/^ENV/i.test(String(i.codigo||""))).reduce((s,i)=>s+(Number(i.precio)||0)*(Number(i.cant)||0),0); const l=[...all].sort((a,b)=>cartProfit(b)-cartProfit(a)); const g=l.reduce((s,c)=>s+cartProfit(c),0), v=l.reduce((s,c)=>s+pz(c),0), co=l.reduce((s,c)=>s+costoDe(c),0), env=l.reduce((s,c)=>s+cartShip(c),0);
       const por={}; for(const c of l){ const k=esWebC(c)?"Tienda en línea":(state.lives.find(x=>x.id===c.liveId)||{}).tipo==="mostrador"?"Venta directa":"Lives"; por[k]=(por[k]||0)+cartProfit(c); }
-      return {total:money(g),resumen:chipsResumen([["Vendido",money(v)],["Costo",money(co)],["Margen",v?Math.round(g/v*100)+"%":"—","ok"],...Object.entries(por).map(([k,x])=>[k,money(x)])]),
-        filas:l.map(c=>fila(c,[h("b",{class:"ok"},money(cartProfit(c))),h("small",null,"vendido "+money(cartGrand(c))+" · costo "+money(costoDe(c)))]))}; }
+      return {total:money(g),resumen:chipsResumen([["Piezas vendidas",money(v)],["Costo",money(co)],["Margen",v?Math.round(g/v*100)+"%":"—","ok"],["Envíos (no cuentan)",money(env)],...Object.entries(por).map(([k,x])=>[k,money(x)])]),
+        filas:l.map(c=>fila(c,[h("b",{class:"ok"},money(cartProfit(c))),h("small",null,"piezas "+money(pz(c))+" − costo "+money(costoDe(c)))]))}; }
     if(tipo==="vendido"){ const l=[...all].sort((a,b)=>fechaDe(b).localeCompare(fechaDe(a))); const v=l.reduce((s,c)=>s+cartGrand(c),0);
       return {total:money(v),resumen:chipsResumen([["Carritos",String(l.length)],["Piezas",String(l.reduce((s,c)=>s+cartPieces(c),0))],["Pagados",String(l.filter(pagadoCompleto).length),"ok"],["Con saldo",String(l.filter(c=>cartPorPagar(c)>0.005).length),"warn"]]),
         filas:l.map(c=>fila(c,[h("b",null,money(cartGrand(c))),pagadoCompleto(c)?h("small",{class:"ok"},"Pagado"):h("small",{class:"warn"},"Debe "+money(cartPorPagar(c)))]))}; }
@@ -5158,6 +5204,57 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   if(typeof rd==="function"&&!rd.__dg){ const w=function(){ const r=rd.apply(this,arguments); try{ marcarCuadros(); const a=document.activeElement; if(D.tipo&&!(a&&a.classList&&a.classList.contains('dg-q'))) pintar(); }catch(e){ console.warn(e); } return r; }; w.__dg=true; Object.assign(w,rd); window.renderDash=w; }
   /* al marcar entregado o enviado en Logística, el Resumen se actualiza */
   ["marcarEntregado","marcarEnviado","yaSalio","setPagoVenta","agregarAnticipo"].forEach(n=>{ const f=window[n]; if(typeof f!=="function"||f.__dg) return; const w=async function(){ const r=await f.apply(this,arguments); state.allCartsAt=0; if(state.view==="dash"||D.tipo){ try{ loadAllCarts(); }catch(e){} } return r; }; w.__dg=true; window[n]=w; });
+})();
+
+/* ===== Marvea · Ajustes con pestañas y Resumen legible (7-nov-2026) ===== */
+(function(){
+  /* --- Ganancia: solo piezas (precio − costo); nunca envíos ni IVA, aunque el envío se haya capturado como renglón --- */
+  const esEnvio=i=>/^env[ií]o\b/i.test(String(i&&i.nombre||""))||/^ENV/i.test(String(i&&i.codigo||""));
+  if(typeof window.cartProfit==="function"&&!window.cartProfit.__sinEnvio){ const g=function(c){ return (c&&c.items||[]).filter(i=>!esEnvio(i)).reduce((s,i)=>s+((Number(i.precio)||0)-(Number(i.costo)||0))*(Number(i.cant)||0),0); }; g.__sinEnvio=true; window.cartProfit=g; }
+
+  /* --- Resumen: que los montos se lean completos --- */
+  function ajustarMontos(){ document.querySelectorAll("#dashHost .tile .v").forEach(v=>{ v.style.fontSize=""; let n=0; const base=parseFloat(getComputedStyle(v).fontSize)||28; let f=base; while(v.scrollWidth>v.clientWidth+1&&f>16&&n<14){ f-=1.5; v.style.fontSize=f+"px"; n++; } }); }
+  const rd=window.renderDash;
+  if(typeof rd==="function"&&!rd.__montos){ const w=function(){ const r=rd.apply(this,arguments); try{ const k=document.querySelector("#dashHost .tile.hero .s"); if(k&&/menos lo que/.test(k.textContent)) k.textContent="Piezas vendidas menos su costo · sin envíos ni IVA"; requestAnimationFrame(ajustarMontos); }catch(e){} return r; }; w.__montos=true; Object.assign(w,rd); window.renderDash=w; }
+  window.addEventListener("resize",()=>{ if(state.view==="dash") ajustarMontos(); });
+
+  /* --- Ajustes: lo importante primero y lo demás en pestañas --- */
+  const SECC=[
+    {id:"inicio",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',t:"Lo importante",ico:"★",p:["Página web","Catálogo","Business Club","Respaldo externo"]},
+    {id:"cuenta",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',t:"Cuenta y usuarios",ico:"👤",p:["Mi usuario","Nube · sistema en internet","Usuarios"]},
+    {id:"impresoras",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>',t:"Impresoras",ico:"🖨",p:["Impresora de etiquetas","Impresora de tickets"]},
+    {id:"avanzado",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>',t:"Avanzado",ico:"⚙",p:["Carpeta de datos","Aplicación"]}
+  ];
+  const DESC={"Página web":"Sube los cambios de la página.","Catálogo":"Piezas nuevas o con cambios para la página.","Business Club":"Cuentas y pedidos de tus clientas.","Respaldo externo":"Copia de seguridad en un disco.","Mi usuario":"Tu contraseña y sesión.","Nube · sistema en internet":"iPhone, iPad y la Mac con los mismos datos.","Usuarios":"Quién entra y qué puede hacer.","Impresora de etiquetas":"NIIMBOT · etiquetas 50 × 30 mm.","Impresora de tickets":"Tickets de 80 mm.","Carpeta de datos":"Dónde se guarda todo en esta Mac.","Aplicación":"Buscar versión nueva de Marvea."};
+  let tab=(()=>{ try{ return localStorage.getItem("marvea.ajx")||"inicio"; }catch(e){ return "inicio"; } })();
+  function seccionDe(titulo){ for(const s of SECC) if(s.p.includes(titulo)) return s.id; return "avanzado"; }
+  function organizar(){
+    const host=document.getElementById("ajustesHost"); if(!host) return;
+    const panels=[...host.querySelectorAll(".ajpanel")]; if(!panels.length) return;
+    let shell=host.querySelector(".ajx");
+    if(!shell){
+      shell=h("div",{class:"ajx"},
+        h("div",{class:"ajx-cab"},h("div",null,h("h2",null,"Ajustes"),h("p",null,"Lo que más usas está en «Lo importante». Lo demás, en sus pestañas."))),
+        h("nav",{class:"ajx-tabs",role:"tablist"},...SECC.map(s=>h("button",{type:"button",role:"tab","data-t":s.id,onclick:()=>{ tab=s.id; try{ localStorage.setItem("marvea.ajx",tab); }catch(e){} pintar(); }},(()=>{ const x=h("span",{class:"i","aria-hidden":"true"}); x.innerHTML=s.svg; return x; })(),s.t,h("em",null,"")))),
+        ...SECC.map(s=>h("section",{class:"ajx-sec ajx-"+s.id,"data-t":s.id})));
+      host.prepend(shell);
+    }
+    for(const p of panels){ if(p.closest(".ajx-sec")&&p.dataset.ajx) continue; const t=((p.querySelector("h3")||{}).textContent||"").trim(); const sid=seccionDe(t); p.dataset.ajx=sid;
+      const tt=p.querySelector(".ajtitle"); if(tt&&DESC[t]&&!tt.querySelector(".ajx-d")){ const h3=tt.querySelector("h3"); const wrap=h("div",{class:"ajx-tt"}); h3.replaceWith(wrap); wrap.append(h3,h("small",{class:"ajx-d"},DESC[t])); }
+      const sec=shell.querySelector('.ajx-sec[data-t="'+sid+'"]'); const orden=(SECC.find(s=>s.id===sid)||{p:[]}).p; const i=orden.indexOf(t);
+      const sig=[...sec.children].find(x=>{ const tx=((x.querySelector("h3")||{}).textContent||"").trim(); const j=orden.indexOf(tx); return i>=0&&(j<0||j>i); });
+      sec.insertBefore(p,sig||null); }
+    host.querySelectorAll(":scope > .ajhead, :scope > .ajsep").forEach(x=>x.remove());
+    host.querySelectorAll(":scope > .ajgrid").forEach(g=>{ if(!g.querySelector(".ajpanel")) g.remove(); });
+    pintar();
+  }
+  function pintar(){ const host=document.getElementById("ajustesHost"); const shell=host&&host.querySelector(".ajx"); if(!shell) return;
+    if(!shell.querySelector('.ajx-sec[data-t="'+tab+'"] .ajpanel')) tab="inicio";
+    shell.querySelectorAll(".ajx-tabs button").forEach(b=>{ const n=shell.querySelectorAll('.ajx-sec[data-t="'+b.dataset.t+'"] .ajpanel').length; b.hidden=!n; b.setAttribute("aria-selected",String(b.dataset.t===tab)); b.classList.toggle("on",b.dataset.t===tab); const em=b.querySelector("em"); const tx=n?String(n):""; if(em&&em.textContent!==tx) em.textContent=tx; });
+    shell.querySelectorAll(".ajx-sec").forEach(s=>{ s.hidden=s.dataset.t!==tab; }); }
+  let tmr=null; const obs=new MutationObserver(()=>{ clearTimeout(tmr); tmr=setTimeout(organizar,40); });
+  function vigilar(){ const host=document.getElementById("ajustesHost"); if(!host) return false; obs.observe(host,{childList:true,subtree:true}); organizar(); return true; }
+  if(!vigilar()) document.addEventListener("DOMContentLoaded",vigilar);
 })();
 </script>
 <!-- ===== Marvea · navegación sencilla (5 pestañas + sub-pestañas) · 4-nov-2026 ===== -->
