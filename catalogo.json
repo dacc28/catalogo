@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T15:33:42.584Z",
+ "actualizado": "2026-11-06T15:44:28.738Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 713,
+ "piezas": 725,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1002,6 +1002,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00015",
+   "nombre": "Collar de Cuentas",
+   "categoria": "COL",
+   "material": "Chapa de Oro",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
+   "creado": "2026-10-19T01:37:56.830Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00019",
    "nombre": "Collar Zirconia Oval",
    "categoria": "COL",
@@ -1035,6 +1047,18 @@
    "notas": "",
    "foto": "fotos/1b83eb89749f39681e838e1c6d91f56c.jpg",
    "creado": "2026-10-19T02:21:15.687Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00022",
+   "nombre": "Collar Piedra Flotante",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 60,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
+   "creado": "2026-10-19T02:22:32.186Z",
    "disponible": true
   },
   {
@@ -1091,7 +1115,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
