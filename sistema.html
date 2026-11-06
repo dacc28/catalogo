@@ -4818,18 +4818,24 @@ nav.tabs #tab-ajustes{width:42px;justify-content:center;padding:0!important}
   nav.tabs button{padding:0 12px!important}
 }
 .mvl-nom small.solo-m{display:none}@media (max-width:720px){.mvl-nom small.solo-m{display:block}}
-/* iPhone: barra principal abajo, como app (5 secciones siempre visibles) */
+/* iPhone: barra principal abajo, como app (fija al borde, opaca, estilo iOS) */
 @media (max-width:720px){
-  nav.tabs{position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;top:auto!important;margin:0!important;z-index:80!important;
-    padding:6px!important;gap:2px!important;border-radius:22px!important;justify-content:space-between;overflow:clip!important}
+  nav.tabs{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;margin:0!important;z-index:80!important;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom))!important;gap:0!important;border-radius:0!important;justify-content:space-around;overflow:clip!important;
+    background:#fff!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:0!important;border-top:1px solid rgba(0,0,0,.08)!important;box-shadow:0 -6px 20px rgba(0,0,0,.05)!important}
   nav.tabs::before,nav.tabs::after{display:none!important}
-  nav.tabs button{flex:1 1 0!important;min-width:0;height:54px!important;flex-direction:column!important;justify-content:center!important;gap:4px!important;padding:0 2px!important;
-    font-size:10.5px!important;letter-spacing:-.01em;border-radius:16px!important;overflow:hidden;text-overflow:ellipsis}
-  nav.tabs button>span[aria-hidden]{width:20px;height:20px}nav.tabs button svg{width:20px!important;height:20px!important}
+  nav.tabs button{flex:1 1 0!important;min-width:0;height:50px!important;flex-direction:column!important;justify-content:center!important;gap:3px!important;padding:0 2px!important;
+    font-size:10.5px!important;font-weight:600!important;letter-spacing:-.01em;border-radius:12px!important;overflow:hidden;text-overflow:ellipsis;background:transparent!important;box-shadow:none!important;color:#8E8E93!important;border:0!important}
+  nav.tabs button svg{color:#8E8E93!important}
+  nav.tabs button[aria-selected="true"],nav.tabs button[data-grupo-on="1"]{background:transparent!important;color:#5A2748!important;box-shadow:none!important;font-weight:800!important}
+  nav.tabs button[aria-selected="true"] svg,nav.tabs button[data-grupo-on="1"] svg{color:#F2653F!important}
+  nav.tabs button[aria-selected="true"]::before,nav.tabs button[data-grupo-on="1"]::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:#F2653F}
+  nav.tabs button>span[aria-hidden]{width:22px;height:22px}nav.tabs button svg{width:22px!important;height:22px!important}
   nav.tabs .lbl-l{display:none}nav.tabs .lbl-c{display:inline}
   nav.tabs #tab-ajustes{display:none!important}
-  body{padding-bottom:calc(84px + env(safe-area-inset-bottom))!important}
+  body{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
   .subtabs{margin-top:4px!important}
+}
 }
 /* ===== iPhone / iPad: sin brincos (7-nov-2026) ===== */
 /* el scroll vuelve a ser de la página (antes el cuerpo era una caja con scroll propio: en iPhone los menús fijos brincaban y la barra de Safari no se escondía) */
@@ -4895,7 +4901,8 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 
 /* ===== Resumen: cuadros grandes y legibles ===== */
 #dashHost .tiles.sales{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
-#dashHost .tiles.inv{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))!important;gap:14px!important}
+#dashHost .tiles.inv{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))!important;gap:14px!important}
+#dashHost .tiles.inv .tile .v{font-size:30px!important}
 #dashHost .tile{padding:18px 20px!important;display:flex;flex-direction:column;min-height:132px}
 #dashHost .tile .k{font-size:12px;letter-spacing:.12em;font-weight:800;display:flex;align-items:center;gap:8px}
 #dashHost .tile .k::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55;flex:none}
@@ -4905,7 +4912,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 #dashHost .tile.hero{grid-row:span 1}
 @media (max-width:1000px){#dashHost .tiles.sales{grid-template-columns:repeat(2,minmax(0,1fr))!important}#dashHost .tile .v{font-size:30px!important}}
 @media (max-width:720px){#dashHost .tiles.sales,#dashHost .tiles.inv{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  #dashHost .tile{padding:14px!important;min-height:118px}#dashHost .tile .v{font-size:23px!important}#dashHost .tile .k{font-size:10.5px;letter-spacing:.08em}#dashHost .tile .s{font-size:12px}}
+  #dashHost .tile{padding:14px!important;min-height:118px}#dashHost .tile .v,#dashHost .tiles.inv .tile .v{font-size:23px!important}#dashHost .tile .k{font-size:10.5px;letter-spacing:.08em}#dashHost .tile .s{font-size:12px}}
 
 /* ===== Ajustes con pestañas ===== */
 #ajustesHost .ajx-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:0 0 14px}
@@ -5213,10 +5220,17 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   if(typeof window.cartProfit==="function"&&!window.cartProfit.__sinEnvio){ const g=function(c){ return (c&&c.items||[]).filter(i=>!esEnvio(i)).reduce((s,i)=>s+((Number(i.precio)||0)-(Number(i.costo)||0))*(Number(i.cant)||0),0); }; g.__sinEnvio=true; window.cartProfit=g; }
 
   /* --- Resumen: que los montos se lean completos --- */
-  function ajustarMontos(){ document.querySelectorAll("#dashHost .tile .v").forEach(v=>{ v.style.fontSize=""; let n=0; const base=parseFloat(getComputedStyle(v).fontSize)||28; let f=base; while(v.scrollWidth>v.clientWidth+1&&f>16&&n<14){ f-=1.5; v.style.fontSize=f+"px"; n++; } }); }
+  function ajustarMontos(){ const vs=[...document.querySelectorAll("#dashHost .tile .v")]; vs.forEach(v=>v.style.removeProperty("font-size"));
+    // misma letra en cada fila de cuadros: la que quepa en el más justo
+    const filas=new Map(); vs.forEach(v=>{ const g=v.closest(".tiles"); if(!filas.has(g)) filas.set(g,[]); filas.get(g).push(v); });
+    for(const grupo of filas.values()){ if(!grupo.length||!grupo[0].clientWidth) continue; let f=parseFloat(getComputedStyle(grupo[0]).fontSize)||30; let n=0;
+      const sobra=()=>grupo.some(v=>v.scrollWidth>v.clientWidth+1);
+      while(sobra()&&f>14&&n<30){ f-=1; grupo.forEach(v=>v.style.setProperty("font-size",f+"px","important")); n++; } } }
   const rd=window.renderDash;
   if(typeof rd==="function"&&!rd.__montos){ const w=function(){ const r=rd.apply(this,arguments); try{ const k=document.querySelector("#dashHost .tile.hero .s"); if(k&&/menos lo que/.test(k.textContent)) k.textContent="Piezas vendidas menos su costo · sin envíos ni IVA"; requestAnimationFrame(ajustarMontos); }catch(e){} return r; }; w.__montos=true; Object.assign(w,rd); window.renderDash=w; }
   window.addEventListener("resize",()=>{ if(state.view==="dash") ajustarMontos(); });
+  try{ document.fonts&&document.fonts.ready.then(()=>{ if(state.view==="dash") ajustarMontos(); }); }catch(e){}
+  try{ const ro=new ResizeObserver(()=>{ if(state.view==="dash") ajustarMontos(); }); const dh=document.getElementById("dashHost"); if(dh) ro.observe(dh); }catch(e){}
 
   /* --- Ajustes: lo importante primero y lo demás en pestañas --- */
   const SECC=[
