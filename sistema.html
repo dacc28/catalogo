@@ -4851,6 +4851,47 @@ nav.tabs{overscroll-behavior-x:contain;touch-action:pan-y}
 /* ventanas y menús de lado: el fondo no se mueve mientras están abiertos */
 .drawer{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
+
+/* ===== Resumen: cuadros que se tocan + desglose ===== */
+.tiles .tile .v{white-space:nowrap!important;overflow-wrap:normal!important;overflow:hidden;text-overflow:ellipsis;font-size:clamp(20px,2.05vw,32px)!important}
+.tile.dg-clic{cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s}
+.tile.dg-clic:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.10)!important}
+.tile.dg-clic:focus-visible{outline:3px solid rgba(242,101,63,.5);outline-offset:2px}
+.tile .dg-ver{display:block;margin-top:8px;font-size:12px;font-weight:700;color:var(--muted);opacity:.85}
+.tile.hero .dg-ver{color:rgba(255,255,255,.75)}
+@media (pointer:coarse){.tile.dg-clic:hover{transform:none}}
+.drawer.dg{width:min(620px,100%)}
+.dg-t{margin:6px 0 0;font-size:26px}
+.dg-total{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-top:2px}
+.dg-sub{margin:2px 0 12px;color:var(--muted);font-size:13px}
+.dg-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px;padding-bottom:2px}
+.dg-chips::-webkit-scrollbar{display:none}
+.dg-chip{flex:none;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(0,0,0,.1);background:#fff;font:inherit;font-size:13px;font-weight:700;color:var(--fg);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.dg-chip span{min-width:20px;height:20px;border-radius:999px;background:var(--surface-2);display:inline-grid;place-items:center;font-size:11.5px;padding:0 5px}
+.dg-chip.on{background:#1D1D1F;color:#fff;border-color:transparent}.dg-chip.on span{background:rgba(255,255,255,.2);color:#fff}
+.dg-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:0 0 12px}
+.dg-r{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.dg-r span{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dg-r b{display:block;font-size:17px;font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
+.dg-r.ok b{color:#1E7A34}.dg-r.warn b{color:#B0601B}
+.dg-q{width:100%;height:40px;border-radius:12px;padding:0 12px;margin:0 0 10px;box-sizing:border-box}
+.dg-lista{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.dg-f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);width:100%;box-sizing:border-box;background:none;border-left:0;border-right:0;border-top:0;text-align:left;font:inherit;color:inherit}
+.dg-f:last-child{border-bottom:0}
+.dg-p{grid-template-columns:auto minmax(0,1fr) auto;cursor:pointer}.dg-p .th{width:40px;height:40px;border-radius:9px;overflow:hidden}.dg-p .th img{width:100%;height:100%;object-fit:cover}
+.dg-n{display:flex;flex-direction:column;min-width:0;border:0;background:none;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.dg-n b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dg-n small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dg-d{display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0}
+.dg-d b{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dg-d small{font-size:11.5px;color:var(--muted);max-width:240px}
+.dg-d .ok{color:#1E7A34}.dg-d .warn{color:#B0601B}
+.dg-d .e-por{color:#B0601B;font-weight:700}.dg-d .e-cam{color:#2D5BD8;font-weight:700}.dg-d .e-ent{color:#1E7A34;font-weight:700}
+.dg-x{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.dg-b{height:30px;padding:0 12px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font:inherit;font-size:12.5px;font-weight:700;color:var(--fg);cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
+.dg-b.on{background:#E8F5EC;color:#1E7A34;border-color:#CFEBD8}.dg-b.wa{color:#1a8f4a}
+.dg-vacio{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+@media (max-width:720px){.dg-total{font-size:28px}.dg-d small{max-width:150px}.dg-res{grid-template-columns:1fr 1fr}}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -5007,6 +5048,116 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
       cuerpo.length?h("div",{class:"mvl-tabla lg"},...cuerpo):h("div",{class:"mvl-vacio"},q?"Nadie coincide con «"+(state.logiQ||"")+"».":F==="debe"?"Nadie debe. 🎉":"Nada por aquí."),
       h("p",{class:"mvl-ayuda"},"Toca una fila para ver su carrito, palomear piezas, dirección y guía. «Mover a…» cambia el estatus (envío, entrega en Monterrey, resguardo, ya salió o entregado)."));
   };
+})();
+
+/* ===== Marvea · Resumen: desglose de cada cuadro (7-nov-2026) ===== */
+(function(){
+  const money=x=>"$"+fmtMoney(x);
+  const fechaDe=c=>String(c.finalizado||c.creado||"");
+  const fCorta=f=>f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"2-digit"}):"";
+  const esWebC=c=>c.origen==="web"||(typeof window.__esPedidoWeb==="function"&&window.__esPedidoWeb(c));
+  const origen=c=>esWebC(c)?"Tienda en línea":lugarDe(c);
+  const pagadoCompleto=c=>!!c.pago||(cartGrand(c)>0&&cartPagado(c)>=cartGrand(c)-0.005);
+  const costoDe=c=>(c.items||[]).reduce((s,i)=>s+(Number(i.costo)||0)*(Number(i.cant)||0),0);
+  const waDe=c=>{ const k=clienteDe(c); const d=String(k&&k.whatsapp||"").replace(/\D/g,"").replace(/^52(?=\d{10}$)/,""); return d.length===10?"https://wa.me/52"+d:""; };
+  const envioEstado=c=>c.entregado?"ent":c.enviado?"cam":"por";
+  const ENV_TXT={por:"Por enviar",cam:"En camino",ent:"Entregado"};
+  const D={tipo:null,periodo:"todo",q:"",envF:"todos"};
+
+  function enPeriodo(c){ if(D.periodo==="todo") return true; const f=new Date(fechaDe(c)); if(isNaN(f)) return false; const hoy=new Date(); const ini=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+    if(D.periodo==="hoy") return f>=ini; if(D.periodo==="semana"){ const d=new Date(ini); d.setDate(d.getDate()-((d.getDay()+6)%7)); return f>=d; } if(D.periodo==="mes") return f>=new Date(hoy.getFullYear(),hoy.getMonth(),1); return true; }
+  function carts(){ const q=normaliza(D.q); return (state.allCarts||[]).filter(c=>c.estado!=="cancelado"&&c.items.length&&enPeriodo(c)&&(!q||normaliza(c.cliente+" "+numPedido(c)+" "+origen(c)).includes(q))); }
+  function medios(c){ const m=[]; for(const a of c.anticipos||[]) m.push([a.medio||"Abono",a.monto,a.fecha]); if(c.pago&&c.pago.monto) m.push([c.pago.medio||"Pago",c.pago.monto,c.pago.fecha]); if(cartDeposito(c)) m.push(["Depósito",cartDeposito(c),c.creado]); return m; }
+
+  const TIPOS={
+    ganancia:{t:"Ganancia",sub:"Lo vendido menos lo que te costó, carrito por carrito"},
+    vendido:{t:"Vendido",sub:"Todos los carritos (lives, ventas directas y tienda en línea)"},
+    cobrado:{t:"Cobrado",sub:"Lo que ya entró, por forma de pago"},
+    porcobrar:{t:"Por cobrar",sub:"Carritos con saldo pendiente"},
+    envios:{t:"Envíos cobrados",sub:"Envíos de pedidos pagados · márcalos como entregados"},
+    web:{t:"Tienda en línea",sub:"Pedidos de www.marveamayoreo.com"},
+    inventario:{t:"Inventario",sub:"Por categoría: piezas, valor a mayoreo, costo y ganancia"},
+    reponer:{t:"Por reponer",sub:"Piezas agotadas y piezas en mínimo"}
+  };
+
+  function fila(c,der,extra){ const wa=(D.tipo==="porcobrar"||D.tipo==="envios")?waDe(c):"";
+    return h("div",{class:"dg-f"},
+      h("button",{type:"button",class:"dg-n",onclick:()=>irACarrito(c)},h("b",null,c.cliente||"Sin nombre"),h("small",null,["#"+numPedido(c),fCorta(fechaDe(c)),origen(c),cartPieces(c)+" pzas"].filter(Boolean).join(" · "))),
+      h("div",{class:"dg-d"},...[].concat(der)),
+      extra||wa?h("div",{class:"dg-x"},extra||null,wa?h("a",{class:"dg-b wa",href:wa,target:"_blank",rel:"noopener"},"WhatsApp"):null):null);
+  }
+  const chipsResumen=pares=>h("div",{class:"dg-res"},...pares.filter(Boolean).map(([k,v,cls])=>h("div",{class:"dg-r "+(cls||"")},h("span",null,k),h("b",null,v))));
+
+  function cuerpo(){
+    const all=carts(); const tipo=D.tipo;
+    if(tipo==="ganancia"){ const l=[...all].sort((a,b)=>cartProfit(b)-cartProfit(a)); const g=l.reduce((s,c)=>s+cartProfit(c),0), v=l.reduce((s,c)=>s+cartGrand(c),0), co=l.reduce((s,c)=>s+costoDe(c),0);
+      const por={}; for(const c of l){ const k=esWebC(c)?"Tienda en línea":(state.lives.find(x=>x.id===c.liveId)||{}).tipo==="mostrador"?"Venta directa":"Lives"; por[k]=(por[k]||0)+cartProfit(c); }
+      return {total:money(g),resumen:chipsResumen([["Vendido",money(v)],["Costo",money(co)],["Margen",v?Math.round(g/v*100)+"%":"—","ok"],...Object.entries(por).map(([k,x])=>[k,money(x)])]),
+        filas:l.map(c=>fila(c,[h("b",{class:"ok"},money(cartProfit(c))),h("small",null,"vendido "+money(cartGrand(c))+" · costo "+money(costoDe(c)))]))}; }
+    if(tipo==="vendido"){ const l=[...all].sort((a,b)=>fechaDe(b).localeCompare(fechaDe(a))); const v=l.reduce((s,c)=>s+cartGrand(c),0);
+      return {total:money(v),resumen:chipsResumen([["Carritos",String(l.length)],["Piezas",String(l.reduce((s,c)=>s+cartPieces(c),0))],["Pagados",String(l.filter(pagadoCompleto).length),"ok"],["Con saldo",String(l.filter(c=>cartPorPagar(c)>0.005).length),"warn"]]),
+        filas:l.map(c=>fila(c,[h("b",null,money(cartGrand(c))),pagadoCompleto(c)?h("small",{class:"ok"},"Pagado"):h("small",{class:"warn"},"Debe "+money(cartPorPagar(c)))]))}; }
+    if(tipo==="cobrado"){ const pm={}; const l=all.filter(c=>cartPagado(c)>0.005).sort((a,b)=>fechaDe(b).localeCompare(fechaDe(a))); for(const c of l) for(const [m,x] of medios(c)) pm[m]=(pm[m]||0)+Number(x||0);
+      return {total:money(l.reduce((s,c)=>s+cartPagado(c),0)),resumen:chipsResumen(Object.entries(pm).sort((a,b)=>b[1]-a[1]).map(([k,x])=>[k,money(x)])),
+        filas:l.map(c=>fila(c,[h("b",{class:"ok"},money(cartPagado(c))),h("small",null,medios(c).map(([m,x])=>m+" "+money(x)).join(" · "))]))}; }
+    if(tipo==="porcobrar"){ const l=all.filter(c=>cartPorPagar(c)>0.005).sort((a,b)=>fechaDe(a).localeCompare(fechaDe(b)));
+      return {total:money(l.reduce((s,c)=>s+cartPorPagar(c),0)),resumen:chipsResumen([["Carritos",String(l.length),"warn"],["Abiertos",String(l.filter(c=>c.estado==="abierto").length)],["Cerrados sin pagar",String(l.filter(c=>c.estado==="final").length)]]),
+        filas:l.map(c=>{ const dias=Math.max(0,Math.floor((Date.now()-new Date(fechaDe(c)))/864e5)); return fila(c,[h("b",{class:"warn"},money(cartPorPagar(c))),h("small",null,"de "+money(cartGrand(c))+(dias?" · hace "+dias+(dias===1?" día":" días"):" · hoy"))]); })}; }
+    if(tipo==="envios"){ const base=all.filter(c=>pagadoCompleto(c)&&c.envio&&Number(c.envio.precio)>0).sort((a,b)=>fechaDe(b).localeCompare(fechaDe(a)));
+      const n={por:0,cam:0,ent:0}, m={por:0,cam:0,ent:0}; for(const c of base){ const e=envioEstado(c); n[e]++; m[e]+=Number(c.envio.precio)||0; }
+      const l=D.envF==="todos"?base:base.filter(c=>envioEstado(c)===D.envF);
+      const filtro=h("div",{class:"dg-chips"},...[["todos","Todos",base.length],["por","Por enviar",n.por],["cam","En camino",n.cam],["ent","Entregados",n.ent]].map(([v,t,k])=>h("button",{type:"button",class:"dg-chip"+(D.envF===v?" on":""),onclick:()=>{ D.envF=v; pintar(); }},t+" ",h("span",null,String(k)))));
+      return {total:money(base.reduce((s,c)=>s+(Number(c.envio.precio)||0),0)),resumen:h("div",null,chipsResumen([["Por enviar",n.por+" · "+money(m.por),"warn"],["En camino",n.cam+" · "+money(m.cam)],["Entregados",n.ent+" · "+money(m.ent),"ok"]]),filtro),
+        filas:l.map(c=>{ const e=envioEstado(c); const b=h("button",{type:"button",class:"dg-b"+(e==="ent"?" on":""),onclick:async()=>{ b.disabled=true; await marcarEntregado(c,!c.entregado); state.allCartsAt=0; try{ await loadAllCarts(); }catch(x){} pintar(); }},e==="ent"?"✓ Entregado":"Marcar entregado");
+          return fila(c,[h("b",null,money(Number(c.envio.precio)||0)),h("small",{class:"e-"+e},ENV_TXT[e]+(c.guia?" · "+(c.paqueteria||"DHL")+" "+c.guia:"")+(c.entregado?" · "+fCorta(c.entregado):""))],b); })}; }
+    if(tipo==="web"){ const l=all.filter(esWebC).sort((a,b)=>fechaDe(b).localeCompare(fechaDe(a)));
+      return {total:money(l.reduce((s,c)=>s+cartGrand(c),0)),resumen:chipsResumen([["Pedidos",String(l.length)],["Piezas",String(l.reduce((s,c)=>s+cartPieces(c),0))],["Enviados",String(l.filter(c=>c.enviado).length),"ok"],["Por armar/enviar",String(l.filter(c=>!c.enviado).length),"warn"]]),
+        filas:l.map(c=>{ const e=empCuenta(c); return fila(c,[h("b",null,money(cartGrand(c))),h("small",null,c.entregado?"Entregado":c.enviado?"Enviado":(e.t&&e.o>=e.t?"Listo para salir":"Armado "+e.o+"/"+e.t))]); })}; }
+    if(tipo==="inventario"||tipo==="reponer"){ const prods=[...state.products.values()];
+      if(tipo==="reponer"){ const ag=prods.filter(p=>(Number(p.existencia)||0)<=0), ba=prods.filter(p=>{ const n=Number(p.existencia)||0; return n>0&&n<=(Number(p.minimo)||0); });
+        const pf=(p,txt,cls)=>h("button",{type:"button",class:"dg-f dg-p",onclick:()=>{ closeDrawer(); openDrawer(p.codigo); }},thumb(p),h("span",{class:"dg-n"},h("b",null,p.nombre),h("small",null,(p.palabra||p.codigo)+" · "+catName(p.categoria)+" · "+money(p.precio))),h("span",{class:"dg-d"},h("b",{class:cls},txt)));
+        return {total:String(ag.length),resumen:chipsResumen([["Agotadas",String(ag.length),"warn"],["En mínimo",String(ba.length)]]),filas:[...ag.map(p=>pf(p,"Agotado","warn")),...ba.map(p=>pf(p,(Number(p.existencia)||0)+" pzas",""))]}; }
+      const cats=new Map(); for(const p of prods){ const r=cats.get(p.categoria)||{n:catName(p.categoria),mod:0,pz:0,val:0,cos:0}; const e=Number(p.existencia)||0; r.mod++; r.pz+=e; r.val+=e*(Number(p.precio)||0); r.cos+=e*(Number(p.costo)||0); cats.set(p.categoria,r); }
+      const l=[...cats.values()].sort((a,b)=>b.val-a.val); const T=l.reduce((s,r)=>({pz:s.pz+r.pz,val:s.val+r.val,cos:s.cos+r.cos}),{pz:0,val:0,cos:0});
+      return {total:T.pz.toLocaleString("es-MX")+" pzas",resumen:chipsResumen([["Si vendes todo",money(T.val)],["Te costó",money(T.cos)],["Ganarías",money(T.val-T.cos),"ok"]]),
+        filas:l.map(r=>h("div",{class:"dg-f"},h("span",{class:"dg-n"},h("b",null,r.n),h("small",null,r.mod+" modelos · "+r.pz+" piezas")),h("div",{class:"dg-d"},h("b",null,money(r.val)),h("small",null,"costo "+money(r.cos)+" · ganarías "+money(r.val-r.cos)))))}; }
+    return {total:"",resumen:null,filas:[]};
+  }
+
+  function pintar(){
+    const host=$("#drawerHost"); const dr=host&&host.querySelector(".drawer.dg"); if(!dr||!D.tipo) return;
+    const st=dr.scrollTop; const info=TIPOS[D.tipo]; const r=cuerpo(); const conPeriodo=!["inventario","reponer"].includes(D.tipo);
+    const per=conPeriodo?h("div",{class:"dg-chips"},...[["todo","Todo"],["mes","Este mes"],["semana","Esta semana"],["hoy","Hoy"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(D.periodo===v?" on":""),onclick:()=>{ D.periodo=v; pintar(); }},t))):null;
+    const bus=conPeriodo?h("input",{type:"search",class:"dg-q",placeholder:"Buscar clienta o # pedido",value:D.q}):null;
+    if(bus) bus.addEventListener("input",()=>{ D.q=bus.value; pintar(); const i=$("#drawerHost .dg-q"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
+    dr.replaceChildren(
+      h("div",{class:"head"},h("span",{class:"pill on"},"Resumen"),h("button",{class:"btn sm",onclick:cerrar},"Cerrar")),
+      h("h2",{class:"dg-t"},info.t),h("div",{class:"dg-total"},r.total),h("p",{class:"dg-sub"},info.sub),
+      per,r.resumen,bus,
+      r.filas.length?h("div",{class:"dg-lista"},...r.filas):h("div",{class:"dg-vacio"},"No hay nada en este periodo."));
+    dr.scrollTop=st;
+  }
+  function cerrar(){ D.tipo=null; closeDrawer(); }
+  window.abrirDesglose=function(tipo){ if(!TIPOS[tipo]) return; D.tipo=tipo; D.q=""; D.envF="todos";
+    const host=$("#drawerHost"); host.replaceChildren(h("div",{class:"scrim",onclick:cerrar}),h("aside",{class:"drawer dg",role:"dialog","aria-label":TIPOS[tipo].t})); document.addEventListener("keydown",escClose);
+    pintar(); if(!state.allCarts||!state.allCartsAt||Date.now()-state.allCartsAt>4000) loadAllCarts(); };
+
+  /* los cuadros del Resumen se pueden tocar */
+  const CLAVES={"ganancia":"ganancia","vendido":"vendido","cobrado":"cobrado","por cobrar":"porcobrar","envios cobrados":"envios","tienda en linea":"web","piezas":"inventario","si vendes todo":"inventario","te costo":"inventario","ganarias":"inventario","por reponer":"reponer"};
+  function marcarCuadros(){
+    const host=$("#dashHost"); if(!host) return;
+    host.querySelectorAll(".tile").forEach(t=>{ const k=t.querySelector(".k"); if(!k) return; const tipo=CLAVES[normaliza(k.textContent)]; if(!tipo) return;
+      t.classList.add("dg-clic"); t.setAttribute("role","button"); t.tabIndex=0; t.title="Ver desglose";
+      if(!t.querySelector(".dg-ver")) t.append(h("span",{class:"dg-ver","aria-hidden":"true"},"Ver desglose ›"));
+      t.onclick=()=>window.abrirDesglose(tipo); t.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); window.abrirDesglose(tipo); } };
+      if(tipo==="envios"){ const all=(state.allCarts||[]).filter(c=>c.estado!=="cancelado"&&pagadoCompleto(c)&&c.envio&&Number(c.envio.precio)>0); const n={por:0,cam:0,ent:0}; for(const c of all) n[envioEstado(c)]++;
+        const s=t.querySelector(".s"); if(s&&all.length) s.textContent=all.length+" envíos · "+n.ent+" entregado"+(n.ent===1?"":"s")+" · "+(n.por+n.cam)+" por entregar"; }
+    });
+  }
+  const rd=window.renderDash;
+  if(typeof rd==="function"&&!rd.__dg){ const w=function(){ const r=rd.apply(this,arguments); try{ marcarCuadros(); const a=document.activeElement; if(D.tipo&&!(a&&a.classList&&a.classList.contains('dg-q'))) pintar(); }catch(e){ console.warn(e); } return r; }; w.__dg=true; Object.assign(w,rd); window.renderDash=w; }
+  /* al marcar entregado o enviado en Logística, el Resumen se actualiza */
+  ["marcarEntregado","marcarEnviado","yaSalio","setPagoVenta","agregarAnticipo"].forEach(n=>{ const f=window[n]; if(typeof f!=="function"||f.__dg) return; const w=async function(){ const r=await f.apply(this,arguments); state.allCartsAt=0; if(state.view==="dash"||D.tipo){ try{ loadAllCarts(); }catch(e){} } return r; }; w.__dg=true; window[n]=w; });
 })();
 </script>
 <!-- ===== Marvea · navegación sencilla (5 pestañas + sub-pestañas) · 4-nov-2026 ===== -->
