@@ -4898,6 +4898,8 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 .mvl-pago.ab{background:#EDEDF0;color:#55555C}
 .mvl-paq-acc{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 6px;justify-content:flex-start}
 @media (max-width:720px){.mvl-sp-cab{flex-direction:column;align-items:flex-start;gap:2px}.mvl-det.paquete>.mvl-partes{padding:10px 8px 4px}}
+.mvl-nl{display:flex;align-items:center;gap:8px;min-width:0}.mvl-nl b{min-width:0}
+.mvl-web{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radius:999px;background:#F3E8EF;color:#5A2748;white-space:nowrap}
 
 /* ===== Resumen: cuadros que se tocan + desglose ===== */
 
@@ -5035,7 +5037,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
       const r=st.get(k.id)||{n:0,tot:0,ult:"",debe:0,carts:[]}; const wa=waLink(k.whatsapp); const multi=r.n>=2, abierta=multi&&state.cliAbierta===k.id;
       const menu=(e)=>{ e.preventDefault(); showMenu(e.clientX,e.clientY,k.nombre,[{label:"Ver ficha",run:()=>openClienta(k.id)},{label:"Abrir carrito en el live",run:()=>abrirCarritoDe(k)},"-",{label:"Eliminar clienta…",danger:true,confirm:`¿Eliminar a ${k.nombre}? Sus carritos anteriores se conservan.`,options:[{label:"Sí, eliminar",run:()=>deleteClienta(k)}]}]); };
       filas.push(h("div",{class:"mvl-fila"+(r.debe>0.005?" debe":"")+(multi?" multi":"")+(abierta?" abierta":""),oncontextmenu:menu},
-        h("button",{type:"button",class:"mvl-quien",onclick:()=>openClienta(k.id)},h("span",{class:"mvl-av"},(k.nombre||"?").trim().charAt(0).toUpperCase()),h("span",{class:"mvl-nom"},h("b",null,k.nombre),k.facebook?h("small",null,"FB: "+k.facebook):(k.ciudad?h("small",{class:"solo-m"},k.ciudad):null))),
+        h("button",{type:"button",class:"mvl-quien",onclick:()=>openClienta(k.id)},h("span",{class:"mvl-av"},(k.nombre||"?").trim().charAt(0).toUpperCase()),h("span",{class:"mvl-nom"},h("span",{class:"mvl-nl"},h("b",null,k.nombre),(k.origen==="web"||/^web-/.test(String(k.id)))?h("span",{class:"mvl-web",title:"Creó su cuenta en la página"},"Cuenta web"):null),k.facebook?h("small",null,"FB: "+k.facebook):(k.ciudad?h("small",{class:"solo-m"},k.ciudad):null))),
         wa?h("a",{class:"mvl-wa",href:wa,target:"_blank",rel:"noopener",title:"Abrir WhatsApp"},icon("wa"),telFmt(k.whatsapp)):h("span",{class:"mvl-wa vacio"},k.whatsapp?telFmt(k.whatsapp):"—"),
         h("span",{class:"mvl-ciudad"},k.ciudad||"—"),
         multi?h("button",{type:"button",class:"mvl-num mvl-ped2"+(abierta?" on":""),title:"Ver sus "+r.n+" pedidos","aria-expanded":abierta?"true":"false",onclick:()=>{ state.cliAbierta=abierta?null:k.id; window.renderClientas(); }},h("b",null,String(r.n)),h("span",null," pedidos"),icon("flecha","mvl-chev")):r.n===1?h("button",{type:"button",class:"mvl-num mvl-ped1",title:"Abrir su pedido",onclick:()=>verPedido(r.carts[0])},"1",h("small",null," pedido")):h("span",{class:"mvl-num"},"—"),
