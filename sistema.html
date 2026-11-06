@@ -4890,6 +4890,14 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 }
 .mvl-tabla.cli .mvl-th,.mvl-fila{grid-template-columns:minmax(200px,2.2fr) 150px minmax(90px,1fr) 118px 100px 90px 120px 120px}
 @media (max-width:1100px){.mvl-tabla.cli .mvl-th,.mvl-fila{grid-template-columns:minmax(170px,2fr) 140px 112px 100px 110px 110px}}
+/* paquete en resguardo: sus pedidos en lista, arriba y a todo lo ancho (6-nov-2026) */
+.mvl-det.paquete>.mvl-partes{margin:14px 0 2px;padding:12px 12px 6px;border-radius:14px;background:#FFF9E6;border:1px solid #F2E2A8}
+.mvl-det.paquete .mvl-sp-cab b{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mvl-det.paquete .mvl-sp.sel{border-color:#5A2748;box-shadow:0 0 0 2px rgba(90,39,72,.15)}
+.mvl-det.paquete .mvl-sp.sel .mvl-sp-n small{color:#5A2748;font-weight:600}
+.mvl-pago.ab{background:#EDEDF0;color:#55555C}
+.mvl-paq-acc{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 6px;justify-content:flex-start}
+@media (max-width:720px){.mvl-sp-cab{flex-direction:column;align-items:flex-start;gap:2px}.mvl-det.paquete>.mvl-partes{padding:10px 8px 4px}}
 
 /* ===== Resumen: cuadros que se tocan + desglose ===== */
 
@@ -5081,23 +5089,24 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   function selEstado(c,actual){ const s=h("select",{class:"mvl-sel mvl-mover","aria-label":"Cambiar estatus",title:"Cambiar estatus"},
       h("option",{value:""},"Mover a…"),...[["envio","Envío por paquetería"],["mty","Entrega en Monterrey"],["resguardo","Resguardo"],["enviado","Ya salió (enviado)"],["entregado","Entregado"]].filter(([v])=>v!==actual).map(([v,t])=>h("option",{value:v},t)));
     s.addEventListener("change",async()=>{ const v=s.value; if(!v) return; s.disabled=true; await moverA(c,v); }); s.addEventListener("click",e=>e.stopPropagation()); return s; }
-  function detalle(c,extra){
-    const k=clienteDe(c); const wa=waLink(k&&k.whatsapp);
-    const items=h("div",{class:"mvl-items"},...c.items.filter(i=>i.cant>0).map(it=>{ const p=state.products.get(it.codigo); return h("div",{class:"mvl-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{class:"mvl-itx"},h("b",null,it.nombre||it.codigo),h("small",null,it.cant+" × "+money(it.precio)+" · "+it.codigo)),h("span",{class:"mvl-itt"},money(it.cant*it.precio))); }));
-    const e=empCuenta(c);
+  function detalle(c,extra,cv){ cv=cv||c; // c: el pedido (clienta, guía) · cv: el carrito que se muestra
+    const k=clienteDe(c); const wa=waLink(k&&k.whatsapp); const enPaquete=!!(extra&&extra.classList&&extra.classList.contains("mvl-partes"));
+    const items=h("div",{class:"mvl-items"},...cv.items.filter(i=>i.cant>0).map(it=>{ const p=state.products.get(it.codigo); return h("div",{class:"mvl-it"+(empOk(it)?" ok":"")},conCheck(cv,it,thumb(p||{nombre:it.nombre})),h("div",{class:"mvl-itx"},h("b",null,it.nombre||it.codigo),h("small",null,it.cant+" × "+money(it.precio)+" · "+it.codigo)),h("span",{class:"mvl-itt"},money(it.cant*it.precio))); }));
+    const e=empCuenta(cv);
     const guiaIn=h("input",{type:"text",class:"mvl-in",placeholder:"Número de guía",value:c.guia||"",maxlength:"40"}); const paq=h("select",{class:"mvl-sel"},...PAQUETERIAS.map(p=>h("option",{value:p},p))); paq.value=c.paqueteria||"DHL";
     const link=guiaLink(c.paqueteria,c.guia);
-    return h("div",{class:"mvl-det"},
+    return h("div",{class:"mvl-det"+(enPaquete?" paquete":"")},
+      enPaquete?extra:null,
       h("div",{class:"mvl-det-g"},
-        h("div",null,h("h4",null,"Carrito · "+cartPieces(c)+" piezas"+(e.t?" · armado "+e.o+"/"+e.t:"")),items,
-          h("div",{class:"mvl-tots"},h("span",null,"Total ",h("b",null,money(cartGrand(c)))),h("span",null,"Pagado ",h("b",null,money(cartPagado(c)))),cartSaldo(c)>0.005?h("span",{class:"debe"},"Debe ",h("b",null,money(cartSaldo(c)))):h("span",{class:"ok"},"✓ Pagado"))),
+        h("div",null,h("h4",null,(enPaquete?"Carrito del pedido #"+numPedido(cv):"Carrito")+" · "+cartPieces(cv)+" piezas"+(e.t?" · armado "+e.o+"/"+e.t:"")),items,
+          h("div",{class:"mvl-tots"},h("span",null,"Total ",h("b",null,money(cartGrand(cv)))),h("span",null,"Pagado ",h("b",null,money(cartPagado(cv)))),cartSaldo(cv)>0.005?h("span",{class:"debe"},"Debe ",h("b",null,money(cartSaldo(cv)))):h("span",{class:"ok"},"✓ Pagado"))),
         h("div",{class:"mvl-det-l"},
           h("h4",null,"Clienta"),
           h("div",{class:"mvl-kv"},h("span",null,c.cliente||"Sin nombre"),k&&k.whatsapp?(wa?h("a",{href:wa,target:"_blank",rel:"noopener"},icon("wa")," "+telFmt(k.whatsapp)):h("span",null,k.whatsapp)):null,k&&k.direccion?h("span",null,k.direccion):null,k&&k.ciudad?h("span",null,k.ciudad):null,c.envio?h("span",null,"Envío: "+c.envio.nombre):h("span",null,"Sin envío cobrado"),c.nota?h("span",{class:"nota"},c.nota):null),
           h("h4",null,"Guía de envío"),
           h("div",{class:"mvl-guia"},paq,guiaIn,h("button",{type:"button",class:"mvl-b primary",onclick:async()=>{ await guardarGuia(c,guiaIn.value,paq.value); window.renderLogistica(); }},"Guardar")),
           link?h("a",{class:"mvl-rastrear",href:link,target:"_blank",rel:"noopener"},"Rastrear "+(c.paqueteria||"DHL")+" "+c.guia):null,
-          extra||null)));
+          enPaquete?null:(extra||null))));
   }
   function fila(c,opts){ opts=opts||{}; const est=opts.estado||estadoDe(c); const [et,ecl]=ESTADOS_LG[est]; const saldo=cartSaldo(c); const abierto=state.lgAbierto===c.id; const cobrando=state.logiCobro===c.id; const k=clienteDe(c);
     const info=[ "#"+numPedido(c), cartPieces(c)+" pzas", c.estado==="final"?fechaC(c.finalizado):"abierta", c.envio?c.envio.nombre.replace(/^Envío\s*/i,""):"sin envío", k&&k.ciudad?k.ciudad:"", c.items.some(i=>Number(i.live)>0)?"Live":"", c.guia?(c.paqueteria||"DHL")+" "+c.guia:"" ].filter(Boolean).join(" · ");
@@ -5114,7 +5123,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
           opts.sinMover?null:selEstado(c,est),
           h("button",{type:"button",class:"mvl-b mvl-abre",title:abierto?"Cerrar detalle":"Ver detalle",onclick:toggle},icon("flecha")))),
       cobrando?h("div",{class:"mvl-cobro"},h("span",null,"Registrar pago de "+(c.cliente||"")+":"),logiCobroForm(c)):null,
-      abierto?detalle(c,opts.extra):null);
+      abierto?detalle(c,opts.extra,opts.ver):null);
   }
   let lgCuenta=new Map();
   window.renderLogistica=function(){ const __y=window.scrollY; try{ return __rl.apply(this,arguments); } finally { if(Math.abs(window.scrollY-__y)>2&&!state.__navegando) window.scrollTo(0,__y); } };
@@ -5146,10 +5155,17 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     const chips=h("div",{class:"mvl-chips"},...filtros.map(([v,t,n])=>h("button",{type:"button",class:"mvl-chip"+(F===v?" on":"")+(v==="debe"&&n?" rojo":""),onclick:()=>{ state.lgF=v; window.renderLogistica(); }},t,h("span",null,String(n)))));
     const buscar=h("input",{type:"search",id:"logiQ",class:"mvl-buscar",placeholder:"Buscar clienta, # pedido, WhatsApp o guía",value:state.logiQ||""});
     buscar.addEventListener("input",()=>{ state.logiQ=buscar.value; window.renderLogistica(); const i=host.querySelector("#logiQ"); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } });
-    const filaGrupo=g=>{ const c0=g.pagados[0]; const listo=!g.nuevos.length; const tot=[...g.pagados,...g.nuevos].reduce((s,c)=>s+cartGrand(c),0);
-      const partes=h("div",{class:"mvl-partes"},h("h4",null,"Pedidos en este paquete"),...[...g.pagados,...g.nuevos].map(c=>h("div",{class:"mvl-parte"+(deuda(c)?" debe":"")},h("span",{class:"mvl-pill "+(deuda(c)?"debe":"ok")},deuda(c)?"Debe "+money(cartSaldo(c)):(c.estado==="final"?"Pagado":"Abierto")),h("span",{class:"mvl-lg-n"},h("b",null,c.estado==="final"?"#"+numPedido(c):"Nuevo (abierto)"),h("small",null,cartPieces(c)+" pzas"+(c.envio?" · "+c.envio.nombre.replace(/^Envío\s*/i,""):""))),h("b",null,money(cartGrand(c))),h("span",{class:"mvl-acc"},h("button",{type:"button",class:"mvl-b",onclick:()=>irACarrito(c)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket"))))),
-        h("div",{class:"mvl-acc izq"},h("button",{type:"button",class:"mvl-b",onclick:()=>agregarMercancia(g)},"+ Mercancía"),h("button",{type:"button",class:"mvl-b",onclick:()=>quitarResguardoPaquete(g)},"Quitar resguardo"),listo?h("button",{type:"button",class:"mvl-b primary",onclick:()=>yaSalio(g.pagados)},"✓ Ya salió el paquete"):h("span",{class:"mvl-muted"},"Sale cuando lo nuevo esté pagado")));
-      return fila(c0,{estado:"resguardo",total:tot,info:g.pagados.length+(g.pagados.length===1?" pedido pagado":" pedidos pagados")+(g.nuevos.length?" · "+g.nuevos.length+" nuevo por pagar":" · listo para salir")+" · "+[...g.pagados,...g.nuevos].reduce((s,c)=>s+cartPieces(c),0)+" pzas",extra:partes}); };
+    const filaGrupo=g=>{ const c0=g.pagados[0]; const listo=!g.nuevos.length; const todos=[...g.pagados,...g.nuevos]; const tot=todos.reduce((s,c)=>s+cartGrand(c),0);
+      state.lgParte=state.lgParte||{}; const sel=todos.find(c=>c.id===state.lgParte[c0.id])||c0;
+      const partes=h("div",{class:"mvl-partes"},
+        h("div",{class:"mvl-sp-cab"},h("b",null,"Pedidos en este paquete · "+todos.length),h("span",null,money(tot)+" · "+todos.reduce((s,c)=>s+cartPieces(c),0)+" pzas · toca uno para ver su carrito")),
+        ...todos.map(c=>h("div",{class:"mvl-sp"+(deuda(c)?" debe":" pagado")+(c.id===sel.id?" sel":""),onclick:()=>{ state.lgParte[c0.id]=c.id; window.renderLogistica(); }},
+          c.estado==="final"?pagoPill(c):h("span",{class:"mvl-pago ab"},"Abierto"),
+          h("span",{class:"mvl-sp-n"},h("b",null,c.estado==="final"?"#"+numPedido(c)+" · "+fechaC(c.finalizado||c.creado):"Nuevo (abierto)"),h("small",null,cartPieces(c)+" pzas"+(c.envio?" · "+c.envio.nombre.replace(/^Envío\s*/i,""):" · sin envío")+(c.id===sel.id?" · viendo su carrito":""))),
+          h("b",{class:"mvl-sp-t"},money(cartGrand(c))),
+          h("span",{class:"mvl-acc",onclick:e=>e.stopPropagation()},h("button",{type:"button",class:"mvl-b",title:"Ver el carrito en Venta",onclick:()=>irACarrito(c)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",title:"Descargar ticket",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket"))))),
+        h("div",{class:"mvl-acc izq mvl-paq-acc"},h("button",{type:"button",class:"mvl-b",onclick:()=>agregarMercancia(g)},"+ Mercancía"),h("button",{type:"button",class:"mvl-b",onclick:()=>quitarResguardoPaquete(g)},"Quitar resguardo"),listo?h("button",{type:"button",class:"mvl-b primary",onclick:()=>yaSalio(g.pagados)},"✓ Ya salió el paquete"):h("span",{class:"mvl-muted"},"Sale cuando lo nuevo esté pagado")));
+      return fila(c0,{estado:"resguardo",total:tot,ver:sel,info:g.pagados.length+(g.pagados.length===1?" pedido pagado":" pedidos pagados")+(g.nuevos.length?" · "+g.nuevos.length+" nuevo por pagar":" · listo para salir")+" · "+[...g.pagados,...g.nuevos].reduce((s,c)=>s+cartPieces(c),0)+" pzas",extra:partes}); };
     const sec=(t,cls,arr)=>arr.length?[h("div",{class:"mvl-sec "+cls},h("span",null,t),h("b",null,String(arr.length))),...arr]:[];
     let cuerpo=[];
     if(F==="activos") cuerpo=[...sec("Pendiente de pago","debe",pendientes.map(c=>fila(c))),...sec("Por enviar","env",envio.map(c=>fila(c))),...sec("Entrega en Monterrey","mty",mty.map(c=>fila(c))),...sec("Resguardo","res",gs.map(filaGrupo))];
