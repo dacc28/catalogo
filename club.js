@@ -38,7 +38,7 @@
 
   /* ---------- crear cuenta (la misma de la tienda): la contraseña la elige la clienta ---------- */
   const FN_CUENTA = "https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/cuenta";
-  const GOOGLE_ACTIVO = false; // se pone en true cuando el proveedor Google esté configurado en Supabase (Auth › Providers)
+  const GOOGLE_ACTIVO = true; // proveedor Google configurado en Supabase (Auth › Providers) el 6-nov-2026
   if (GOOGLE_ACTIVO) { $("#btnGoogle").style.display = ""; $("#btnGoogle").addEventListener("click", async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: BASE + "club.html?google=1" } }); if (error) toast("No se pudo abrir Google: " + error.message, true); }); }
   /* Google: la sesión existe pero todavía no está ligada a una clienta → completar WhatsApp (y, si ya había cuenta, fusionar con contraseña) */
   async function completarGoogle(user) {
