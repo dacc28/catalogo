@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T17:28:17.200Z",
+ "actualizado": "2026-11-06T17:40:26.474Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 725,
+ "piezas": 730,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1103,7 +1103,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/5942efcb03bf096723cb137b86e8c9f8.jpg",
    "creado": "2026-10-19T02:30:54.417Z",
@@ -1362,6 +1362,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00056",
+   "nombre": "Collar Vanc Lila",
+   "categoria": "COL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/fb51e6c7cc5ba4abfb7453b8f1c3678e.jpg",
+   "creado": "2026-11-01T20:23:14.478Z",
+   "disponible": true
+  },
+  {
    "codigo": "DIJ-00001",
    "nombre": "Dije de Oval Turquesa",
    "categoria": "DIJ",
@@ -1578,6 +1590,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00001",
+   "nombre": "Pulsera de Acero con Piedras Multicolor",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/eb63e97b63ad32d3166f4119372b658c.jpg",
+   "creado": "2026-10-19T01:17:13.969Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00002",
    "nombre": "Pulsera Colorida",
    "categoria": "PUL",
@@ -1731,6 +1755,18 @@
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00017",
+   "nombre": "Pulsera Tennis de colores con cartier",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/713ff3a379847b1d694399ea96dedfaf.jpg",
+   "creado": "2026-10-20T18:06:43.453Z",
    "disponible": true
   },
   {
