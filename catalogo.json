@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T18:03:00.074Z",
+ "actualizado": "2026-11-06T18:06:59.766Z",
  "categorias": [
   {
    "p": "ANI",
@@ -42,6 +42,18 @@
  "piezas": 729,
  "productos": [
   {
+   "codigo": "ANI-00001",
+   "nombre": "Anillo Ajustable de Líneas",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/76b22a59776f6b1ad645d0d36ced9dbc.jpg",
+   "creado": "2026-10-19T01:12:42.851Z",
+   "disponible": true
+  },
+  {
    "codigo": "ANI-00002",
    "nombre": "Anillo Ajustable Chunky",
    "categoria": "ANI",
@@ -63,6 +75,18 @@
    "notas": "",
    "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
    "creado": "2026-10-19T02:47:25.972Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00008",
+   "nombre": "Anillo Triple Dupe Talla 8",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/701ddae51aea00707ae22fae9814a8a4.jpg",
+   "creado": "2026-10-20T17:15:43.616Z",
    "disponible": true
   },
   {
