@@ -599,7 +599,7 @@ window.MV_SB=sbc; window.MV_S=S; window.mvFoto=c=>((prod(c)||{}).foto||"");
 S.vista='inicio'; S._panel='inicio';
 function irVista(v,sub,sinHash){
   if(!['inicio','catalogo','cuenta','ayuda'].includes(v)) v='inicio';
-  S.vista=v; document.body.dataset.vista=v; document.querySelectorAll('.vista').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  S.vista=v; document.body.dataset.vista=v; if(typeof MEGA!=='undefined'&&MEGA.abierto) toggleMega(false); document.querySelectorAll('.vista').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
   if(v==='catalogo'){ renderGrid(true); }
   if(v==='cuenta'){ S._panel=sub||S._panel||'inicio'; if(S.cliente&&window.MVCuenta){ document.getElementById('cuentaEntrar').classList.remove('on'); window.MVCuenta.abrir(S._panel); } else renderCuentaEntrar(); }
   if(v==='ayuda'){ S._ay=sub||S._ay||'comprar'; pintarAyuda(S._ay); }
@@ -647,15 +647,55 @@ document.querySelectorAll('#tabsAy button').forEach(b=>b.addEventListener('click
 function medirTop(){ const t=document.querySelector('header.top'); if(t) document.documentElement.style.setProperty('--top-h',t.offsetHeight+'px'); }
 window.addEventListener('resize',medirTop); setTimeout(medirTop,50);
 
+/* ============================================================ BARRA DE CATEGORÍAS + MENÚ "Todo el catálogo" */
+function pintarBarra(cnt,foto,cats){
+  const enCat=S.vista==='catalogo', f=document.getElementById('filtros');
+  f.innerHTML=`<button class="b-todo ${MEGA.abierto?'abierto':''}" id="btnMega" onclick="toggleMega()" aria-expanded="${MEGA.abierto}"><i class="fa-solid fa-bars-staggered"></i><span>Todo el catálogo</span><i class="fa-solid fa-chevron-down fl"></i></button>`
+    +`<div class="b-cats">`+cats.map(c=>`<button class="b-cat ${enCat&&S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')" title="${cnt[c]} modelos">${foto[c]?`<img src="${esc(foto[c])}" alt="" loading="lazy">`:''}<span>${esc(c)}</span></button>`).join('')+`</div>`
+    +`<button class="b-arma" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Arma mi paquete</span></button>`
+    +`<div class="b-ayuda">`+[['envios','fa-solid fa-truck-fast','Envíos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Ayuda']].map(([t,i,n])=>`<button class="${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')" title="${n}"><i class="${i}"></i><span>${n}</span></button>`).join('')+`</div>`;
+  const on=f.querySelector('.b-cat.on'); if(on) on.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+const MEGA={abierto:false,cat:null};
+function toggleMega(v){ MEGA.abierto=v===undefined?!MEGA.abierto:!!v; const m=document.getElementById('mega'); if(!m) return;
+  if(MEGA.abierto){ pintarMega(); m.classList.add('on'); document.body.classList.add('mega-on'); medir('menu_catalogo'); } else { m.classList.remove('on'); document.body.classList.remove('mega-on'); }
+  const b=document.getElementById('btnMega'); if(b){ b.classList.toggle('abierto',MEGA.abierto); b.setAttribute('aria-expanded',MEGA.abierto); } }
+function pintarMega(){
+  const {cnt,foto,min,cats}=infoCats(); if(!MEGA.cat||!cnt[MEGA.cat]) MEGA.cat=cats[0];
+  let nuevos=P.filter(x=>Date.now()-new Date(x.creado||0)<14*864e5).length; if(nuevos>P.length*.4) nuevos=0;
+  document.getElementById('mega').innerHTML=`<div class="wrap mega-in">
+    <nav class="mega-cats">${cats.map(c=>`<button class="${MEGA.cat===c?'on':''}" onmouseenter="megaVer('${esc(c)}')" onfocus="megaVer('${esc(c)}')" onclick="toggleMega(false);setFiltro('${esc(c)}')"><span class="ph">${foto[c]?`<img src="${esc(foto[c])}" alt="" loading="lazy">`:''}</span><span class="tx"><b>${esc(c)}</b><small>${cnt[c]} modelos · desde ${fmt(min[c])}</small></span><i class="fa-solid fa-chevron-right"></i></button>`).join('')}
+      <button class="todo" onclick="toggleMega(false);setFiltro('Todos')"><span class="ph"><i class="fa-solid fa-table-cells-large"></i></span><span class="tx"><b>Ver todo el catálogo</b><small>${P.length} modelos</small></span><i class="fa-solid fa-arrow-right"></i></button></nav>
+    <div class="mega-prev" id="megaPrev"></div>
+    <aside class="mega-lado">
+      <h5>Atajos</h5>
+      <button onclick="toggleMega(false);megaOrden('pop')"><i class="fa-solid fa-fire"></i> Lo más vendido</button>
+      <button onclick="toggleMega(false);megaOrden('nuevo')"><i class="fa-solid fa-bolt"></i> Acaban de llegar${nuevos?` <em>${nuevos}</em>`:''}</button>
+      <button onclick="toggleMega(false);megaOrden('menor')"><i class="fa-solid fa-tag"></i> Precio más bajo</button>
+      <h5>Por material</h5>
+      <button onclick="toggleMega(false);megaMaterial('acero')"><span class="dot acero"></span> Acero inoxidable</button>
+      <button onclick="toggleMega(false);megaMaterial('laminado')"><span class="dot oro"></span> Oro laminado</button>
+      <button onclick="toggleMega(false);megaMaterial('chapa')"><span class="dot chapa"></span> Chapa de oro</button>
+      <div class="mega-promo" onclick="toggleMega(false);abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><b>¿No sabes qué elegir?</b><span>3 preguntas y te armamos tu paquete con tu presupuesto.</span><u>Armar mi paquete →</u></div>
+    </aside></div>`;
+  megaVer(MEGA.cat);
+}
+function megaVer(c){ MEGA.cat=c; document.querySelectorAll('#mega .mega-cats button').forEach(b=>b.classList.toggle('on',b.textContent.trim().startsWith(c)&&!b.classList.contains('todo')));
+  const l=P.filter(x=>x.cat===c&&x.foto).sort((a,b)=>(disp(b.c)>0)-(disp(a.c)>0)||b.v-a.v).slice(0,6), n=P.filter(x=>x.cat===c).length;
+  const box=document.getElementById('megaPrev'); if(!box) return;
+  box.innerHTML=`<div class="mp-cab"><h4>${esc(c)}</h4><button class="link" onclick="toggleMega(false);setFiltro('${esc(c)}')">Ver los ${n} <i class="fa-solid fa-arrow-right"></i></button></div>
+    <div class="mp-grid">${l.map(x=>`<button onclick="toggleMega(false);irVista('catalogo');abrirFicha('${x.c}')"><span class="ph"><img src="${esc(x.foto)}" alt="" loading="lazy">${/vendido/i.test(x.et)?'<em>Más vendido</em>':''}</span><b>${esc(x.n)}</b><span class="pr">${fmt(x.p)} <small>· véndela en ${fmt(x.p*2)}</small></span></button>`).join('')}</div>`; }
+function megaOrden(o){ S.orden=o; S.filtro='Todos'; const s=document.getElementById('orden'); if(s) s.value=o; irVista('catalogo'); }
+function megaMaterial(m){ S.material=m; S.filtro='Todos'; document.querySelectorAll('#materiales input').forEach(r=>{ r.checked=r.value===m; }); irVista('catalogo'); }
+document.addEventListener('click',e=>{ if(!MEGA.abierto) return; if(e.target.closest('#mega')||e.target.closest('#btnMega')) return; toggleMega(false); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&MEGA.abierto) toggleMega(false); });
+
 /* ============================================================ CATÁLOGO con pestañas por categoría */
 const ICONO_CAT={'Aretes':'fa-solid fa-star','Pulseras':'fa-solid fa-ring','Collares':'fa-solid fa-gem','Anillos':'fa-solid fa-ring','Juegos':'fa-solid fa-gift','Cadenas':'fa-solid fa-link','Dijes':'fa-solid fa-heart'};
 function infoCats(){ const cnt={},foto={},min={}; P.forEach(x=>{ cnt[x.cat]=(cnt[x.cat]||0)+1; if(x.foto&&(!foto[x.cat]||/vendido|tendencia/i.test(x.et))) foto[x.cat]=x.foto; min[x.cat]=Math.min(min[x.cat]||9999,x.p); }); return {cnt,foto,min,cats:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])}; }
 function renderFiltros(){
   const {cnt,foto,min,cats}=infoCats(), todas=['Todos',...cats], enCat=S.vista==='catalogo';
-  document.getElementById('filtros').innerHTML=`<button class="${S.vista==='inicio'?'on':''}" onclick="irVista('inicio')"><i class="fa-solid fa-house"></i> Inicio</button>`
-    +todas.map(c=>`<button class="${enCat&&S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')">${c==='Todos'?'Todo el catálogo':esc(c)}<small>${c==='Todos'?P.length:cnt[c]}</small></button>`).join('')
-    +`<button onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button><span class="sep"></span>`
-    +[['envios','fa-solid fa-truck-fast','Envíos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Ayuda']].map(([t,i,n])=>`<button class="ay ${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')"><i class="${i}"></i> ${n}</button>`).join('');
+  pintarBarra(cnt,foto,cats);
   const lat=document.getElementById('catsLat'); if(lat) lat.innerHTML=todas.map(c=>`<label><input type="radio" name="catl" ${S.filtro===c?'checked':''} onchange="setFiltro('${esc(c)}')"> ${c==='Todos'?'Todas':esc(c)}<small>${c==='Todos'?P.length:cnt[c]}</small></label>`).join('');
   const tb=document.getElementById('tabsCat'); if(tb){ tb.innerHTML=todas.map(c=>{ const f=c==='Todos'?null:foto[c]; return `<button class="${S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')"><span class="ph">${f?`<img src="${esc(f)}" alt="" loading="lazy">`:`<i class="${c==='Todos'?'fa-solid fa-table-cells-large':(ICONO_CAT[c]||'fa-solid fa-gem')}"></i>`}</span><span><b>${c==='Todos'?'Todo':esc(c)}</b><small>${c==='Todos'?P.length+' modelos':cnt[c]+' · desde '+fmt(min[c])}</small></span></button>`; }).join('');
     const on=tb.querySelector('button.on'); if(on&&enCat) on.scrollIntoView({block:'nearest',inline:'center'}); }
