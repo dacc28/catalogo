@@ -4858,6 +4858,39 @@ nav.tabs{overscroll-behavior-x:contain;touch-action:pan-y}
 .drawer{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 
+/* ===== clientas con 2 o más pedidos: sus pedidos en lista (6-nov-2026) ===== */
+.mvl-ped1,.mvl-ped2{border:0;background:none;font:inherit;cursor:pointer;color:inherit;text-align:left;padding:0}
+.mvl-ped1{text-decoration:underline;text-decoration-color:rgba(0,0,0,.25);text-underline-offset:3px}
+.mvl-ped2{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px 0 9px;border-radius:999px;background:#5A2748;color:#fff;font-size:12.5px;font-weight:700;justify-self:start;box-shadow:0 1px 3px rgba(90,39,72,.25)}
+.mvl-ped2 b{font-size:14px}.mvl-ped2 span:not(.mvl-ic){font-weight:600}
+.mvl-ped2 .mvl-ic{width:14px;height:14px;display:inline-grid;transition:transform .18s}.mvl-ped2 .mvl-ic svg{width:14px;height:14px}
+.mvl-ped2.on .mvl-ic{transform:rotate(90deg)}
+.mvl-fila.multi{background:linear-gradient(90deg,rgba(90,39,72,.045),transparent 40%);box-shadow:inset 3px 0 0 #5A2748}
+.mvl-fila.multi.abierta{border-bottom-color:transparent;background:rgba(90,39,72,.06)}
+.mvl-subped{padding:4px 14px 14px 58px;background:rgba(90,39,72,.06);border-bottom:1px solid var(--line);box-shadow:inset 3px 0 0 #5A2748}
+.mvl-sp-cab{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:12.5px;color:var(--muted);padding:2px 2px 8px}.mvl-sp-cab b{color:var(--fg);font-size:13px}
+.mvl-sp{display:grid;grid-template-columns:118px minmax(0,1fr) 96px auto;gap:10px;align-items:center;padding:8px 10px;background:#fff;border:1px solid var(--line);border-left:4px solid #E5B53A;border-radius:12px;margin-bottom:6px;cursor:pointer;transition:box-shadow .15s}
+.mvl-sp:hover{box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.mvl-sp.debe{border-left-color:#D93A3A}
+.mvl-sp-n{min-width:0;display:flex;flex-direction:column}.mvl-sp-n b{font-size:14px}.mvl-sp-n small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvl-sp-t{text-align:right;font-variant-numeric:tabular-nums}
+.mvl-pago{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;border-radius:999px;font-size:11.5px;font-weight:800;white-space:nowrap}
+.mvl-pago.si{background:#FFE27A;color:#5C4300}.mvl-pago.no{background:#FDE2E2;color:#B42323}
+.mvl-mas{margin-left:8px;vertical-align:2px;border:0;height:20px;padding:0 8px;border-radius:999px;background:#5A2748;color:#fff;font:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.mvl-mas.on{background:#fff;color:#5A2748;box-shadow:inset 0 0 0 1.5px #5A2748}
+.mvl-lg[data-id]{scroll-margin:90px}
+@media (max-width:1100px){.mvl-subped{padding-left:14px}.mvl-sp-abrir{display:none}}
+@media (max-width:720px){
+  .mvl-fila.multi{grid-template-areas:"quien est" "wa num" "ped ped"}
+  .mvl-fila.multi>.mvl-ped2:nth-child(4){display:inline-flex!important;grid-area:ped;justify-self:stretch;justify-content:center;height:36px;margin-top:4px;font-size:13.5px}
+  .mvl-subped{padding:2px 10px 12px}
+  .mvl-sp{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n t" "p a";gap:6px 8px}
+  .mvl-sp .mvl-pago{grid-area:p;justify-self:start}.mvl-sp-n{grid-area:n}.mvl-sp-t{grid-area:t}.mvl-sp .mvl-acc{grid-area:a;display:flex!important;justify-content:flex-end;gap:4px}
+  .mvl-mas{height:22px;font-size:11.5px}
+}
+.mvl-tabla.cli .mvl-th,.mvl-fila{grid-template-columns:minmax(200px,2.2fr) 150px minmax(90px,1fr) 118px 100px 90px 120px 120px}
+@media (max-width:1100px){.mvl-tabla.cli .mvl-th,.mvl-fila{grid-template-columns:minmax(170px,2fr) 140px 112px 100px 110px 110px}}
+
 /* ===== Resumen: cuadros que se tocan + desglose ===== */
 
 .tile.dg-clic{cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s}
@@ -4969,7 +5002,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   { const sv=window.setView; if(typeof sv==="function"&&!sv.__nav){ const w=function(){ state.__navegando=true; try{ return sv.apply(this,arguments); } finally { state.__navegando=false; } }; Object.assign(w,sv); w.__nav=true; window.setView=w; } }
 
   /* ---------------- CLIENTAS: lista ---------------- */
-  function statsClientas(){ const m=new Map(); for(const c of (state.logiFinal||new Map()).values()){ if(!c.clienteId||!c.items.length) continue; const r=m.get(c.clienteId)||{n:0,tot:0,ult:"",debe:0}; r.n++; r.tot+=cartGrand(c); const f=String(c.finalizado||c.creado||""); if(f>r.ult) r.ult=f; const s=cartSaldo(c); if(s>0.005) r.debe+=s; m.set(c.clienteId,r); } return m; }
+  function statsClientas(){ const m=new Map(); for(const c of (state.logiFinal||new Map()).values()){ if(!c.clienteId||!c.items.length) continue; const r=m.get(c.clienteId)||{n:0,tot:0,ult:"",debe:0,carts:[]}; r.n++; r.carts.push(c); r.tot+=cartGrand(c); const f=String(c.finalizado||c.creado||""); if(f>r.ult) r.ult=f; const s=cartSaldo(c); if(s>0.005) r.debe+=s; m.set(c.clienteId,r); } return m; }
   window.renderClientas=function(){ const __y=window.scrollY; try{ return __rc.apply(this,arguments); } finally { if(Math.abs(window.scrollY-__y)>2&&!state.__navegando) window.scrollTo(0,__y); } };
   function __rc(){
     const host=$("#cliHost"); if(!host) return;
@@ -4991,21 +5024,47 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     if(!list.length){ host.replaceChildren(cab,formHost,h("div",{class:"empty"},h("p",{style:"margin:0"},"Ninguna clienta coincide."))); return; }
     const filas=[]; let letra="";
     for(const k of list){
-      const r=st.get(k.id)||{n:0,tot:0,ult:"",debe:0}; const wa=waLink(k.whatsapp);
+      const r=st.get(k.id)||{n:0,tot:0,ult:"",debe:0,carts:[]}; const wa=waLink(k.whatsapp); const multi=r.n>=2, abierta=multi&&state.cliAbierta===k.id;
       const menu=(e)=>{ e.preventDefault(); showMenu(e.clientX,e.clientY,k.nombre,[{label:"Ver ficha",run:()=>openClienta(k.id)},{label:"Abrir carrito en el live",run:()=>abrirCarritoDe(k)},"-",{label:"Eliminar clienta…",danger:true,confirm:`¿Eliminar a ${k.nombre}? Sus carritos anteriores se conservan.`,options:[{label:"Sí, eliminar",run:()=>deleteClienta(k)}]}]); };
-      filas.push(h("div",{class:"mvl-fila"+(r.debe>0.005?" debe":""),oncontextmenu:menu},
+      filas.push(h("div",{class:"mvl-fila"+(r.debe>0.005?" debe":"")+(multi?" multi":"")+(abierta?" abierta":""),oncontextmenu:menu},
         h("button",{type:"button",class:"mvl-quien",onclick:()=>openClienta(k.id)},h("span",{class:"mvl-av"},(k.nombre||"?").trim().charAt(0).toUpperCase()),h("span",{class:"mvl-nom"},h("b",null,k.nombre),k.facebook?h("small",null,"FB: "+k.facebook):(k.ciudad?h("small",{class:"solo-m"},k.ciudad):null))),
         wa?h("a",{class:"mvl-wa",href:wa,target:"_blank",rel:"noopener",title:"Abrir WhatsApp"},icon("wa"),telFmt(k.whatsapp)):h("span",{class:"mvl-wa vacio"},k.whatsapp?telFmt(k.whatsapp):"—"),
         h("span",{class:"mvl-ciudad"},k.ciudad||"—"),
-        h("span",{class:"mvl-num"},r.n?String(r.n):"—",h("small",null,r.n===1?" pedido":" pedidos")),
+        multi?h("button",{type:"button",class:"mvl-num mvl-ped2"+(abierta?" on":""),title:"Ver sus "+r.n+" pedidos","aria-expanded":abierta?"true":"false",onclick:()=>{ state.cliAbierta=abierta?null:k.id; window.renderClientas(); }},h("b",null,String(r.n)),h("span",null," pedidos"),icon("flecha","mvl-chev")):r.n===1?h("button",{type:"button",class:"mvl-num mvl-ped1",title:"Abrir su pedido",onclick:()=>verPedido(r.carts[0])},"1",h("small",null," pedido")):h("span",{class:"mvl-num"},"—"),
         h("span",{class:"mvl-num"},r.tot?money(r.tot):"—"),
         h("span",{class:"mvl-ult"},r.ult?fechaC(r.ult):"—"),
         r.debe>0.005?h("span",{class:"mvl-est debe"},"Debe "+money(r.debe)):h("span",{class:"mvl-est "+(r.n?"ok":"nada")},r.n?"Al corriente":"Sin compras"),
         h("span",{class:"mvl-acc"},h("button",{type:"button",class:"mvl-b",title:"Abrir su carrito en el live",onclick:()=>abrirCarritoDe(k)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",title:"Ver ficha",onclick:()=>openClienta(k.id)},icon("flecha")))));
+      if(abierta) filas.push(subPedidos(k,r));
     }
     host.replaceChildren(cab,formHost,h("div",{class:"mvl-tabla cli"},h("div",{class:"mvl-th"},...["Clienta","WhatsApp","Ciudad","Pedidos","Comprado","Última","Estado",""].map(t=>h("span",null,t))),...filas));
     if(!state.logiFinal&&!state.__cliReintento){ state.__cliReintento=true; setTimeout(()=>{ state.__cliReintento=false; if(state.view==="cli") window.renderClientas(); },1500); }
   };
+
+  /* clientas con 2 o más pedidos: sus pedidos en lista, cada uno se abre con un toque */
+  const pagoPill=c=>{ const s=cartSaldo(c); return s>0.005?h("span",{class:"mvl-pago no"},"Debe "+money(s)):h("span",{class:"mvl-pago si"},"✓ Pagado"); };
+  const ESTADO_TX={envio:"Por enviar",mty:"Entrega en Monterrey",resguardo:"En resguardo",debe:"Por cobrar",enviado:"Enviado",entregado:"Entregado"};
+  function subPedidos(k,r){
+    const cs=[...r.carts].sort((a,b)=>String(b.finalizado||b.creado).localeCompare(String(a.finalizado||a.creado)));
+    return h("div",{class:"mvl-subped"},
+      h("div",{class:"mvl-sp-cab"},h("b",null,(k.nombre||"").split(" ")[0]+" tiene "+r.n+" pedidos"),h("span",null,money(r.tot)+(r.debe>0.005?" · debe "+money(r.debe):" · todo pagado"))),
+      ...cs.map(c=>{ const est=estadoDe(c); return h("div",{class:"mvl-sp"+(cartSaldo(c)>0.005?" debe":" pagado"),onclick:()=>verPedido(c)},
+        pagoPill(c),
+        h("span",{class:"mvl-sp-n"},h("b",null,"#"+numPedido(c)+" · "+fechaC(c.finalizado||c.creado)),h("small",null,cartPieces(c)+" pzas · "+ESTADO_TX[est]+(c.guia?" · "+(c.paqueteria||"DHL")+" "+c.guia:""))),
+        h("b",{class:"mvl-sp-t"},money(cartGrand(c))),
+        h("span",{class:"mvl-acc",onclick:e=>e.stopPropagation()},
+          h("button",{type:"button",class:"mvl-b",title:"Ver el carrito",onclick:()=>irACarrito(c)},icon("carrito"),h("span",null,"Carrito")),
+          h("button",{type:"button",class:"mvl-b",title:"Descargar ticket",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket")),
+          h("button",{type:"button",class:"mvl-b primary",title:"Abrir en Logística",onclick:()=>verPedido(c)},h("span",{class:"mvl-sp-abrir"},"Abrir"),icon("flecha")))); }));
+  }
+  // abre un pedido en Logística (con su detalle abierto), en la Mac, en el sistema web y en Marvea Vende
+  function verPedido(c){ if(!c) return;
+    state.lgF=c.enviado?"enviados":"activos"; state.logiQ=c.cliente||""; state.lgAbierto=c.id; state.lgIr=c.id; state.logiModo="";
+    try{ closeDrawer(); }catch(e){}
+    const V=window.__vende; if(V&&typeof window.__vxRender==="function"){ V.tab="logi"; V.clienta=null; window.__vxRender(); return; }
+    try{ setView("logi"); }catch(e){} setTimeout(()=>{ try{ window.renderLogistica(); }catch(e){} },0);
+  }
+  window.mvVerPedido=verPedido;
 
   /* ---------------- LOGÍSTICA: lista con filtros ---------------- */
   const ESTADOS_LG={envio:["Por enviar","env"],mty:["Entrega Mty","mty"],resguardo:["Resguardo","res"],debe:["Debe","debe"],enviado:["Enviado","envd"],entregado:["Entregado","ent"]};
@@ -5043,10 +5102,10 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   function fila(c,opts){ opts=opts||{}; const est=opts.estado||estadoDe(c); const [et,ecl]=ESTADOS_LG[est]; const saldo=cartSaldo(c); const abierto=state.lgAbierto===c.id; const cobrando=state.logiCobro===c.id; const k=clienteDe(c);
     const info=[ "#"+numPedido(c), cartPieces(c)+" pzas", c.estado==="final"?fechaC(c.finalizado):"abierta", c.envio?c.envio.nombre.replace(/^Envío\s*/i,""):"sin envío", k&&k.ciudad?k.ciudad:"", c.items.some(i=>Number(i.live)>0)?"Live":"", c.guia?(c.paqueteria||"DHL")+" "+c.guia:"" ].filter(Boolean).join(" · ");
     const toggle=()=>{ state.lgAbierto=abierto?null:c.id; window.renderLogistica(); };
-    return h("div",{class:"mvl-lg"+(abierto?" abierto":"")+" e-"+ecl},
+    return h("div",{class:"mvl-lg"+(abierto?" abierto":"")+" e-"+ecl,"data-id":c.id},
       h("div",{class:"mvl-lg-f",onclick:toggle},
         h("span",{class:"mvl-pill "+ecl},est==="debe"?"Debe "+money(saldo):et),
-        h("span",{class:"mvl-lg-n"},h("b",null,c.cliente||"Sin nombre"),h("small",null,opts.info||info)),
+        h("span",{class:"mvl-lg-n"},h("b",null,c.cliente||"Sin nombre",(()=>{ const n=lgCuenta.get(logiClave(c))||0; if(n<2||opts.sinMas) return null; const filtrada=normaliza(state.logiQ||"")===normaliza(c.cliente||""); return h("button",{type:"button",class:"mvl-mas"+(filtrada?" on":""),title:filtrada?"Ver todas las clientas":"Ver solo sus "+n+" pedidos",onclick:e=>{ e.stopPropagation(); state.logiQ=filtrada?"":(c.cliente||""); window.renderLogistica(); }},filtrada?"✕ "+n+" pedidos":n+" pedidos"); })()),h("small",null,opts.info||info)),
         h("b",{class:"mvl-lg-t"},money(opts.total!=null?opts.total:cartGrand(c))),
         h("span",{class:"mvl-acc",onclick:e=>e.stopPropagation()},
           saldo>0.005&&!cobrando?h("button",{type:"button",class:"mvl-b cobrar",onclick:()=>{ state.logiCobro=c.id; state.lgAbierto=c.id; window.renderLogistica(); }},"$ Cobrar"):null,
@@ -5057,6 +5116,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
       cobrando?h("div",{class:"mvl-cobro"},h("span",null,"Registrar pago de "+(c.cliente||"")+":"),logiCobroForm(c)):null,
       abierto?detalle(c,opts.extra):null);
   }
+  let lgCuenta=new Map();
   window.renderLogistica=function(){ const __y=window.scrollY; try{ return __rl.apply(this,arguments); } finally { if(Math.abs(window.scrollY-__y)>2&&!state.__navegando) window.scrollTo(0,__y); } };
   function __rl(){
     const host=(state.logiHostEl&&document.body.contains(state.logiHostEl))?state.logiHostEl:$("#logiHost"); if(!host) return;
@@ -5069,6 +5129,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     const todosFinal=[...(state.logiFinal||new Map()).values()];
     const cerr=todosFinal.filter(c=>visible(c)&&!c.enviado);
     const abiertos=[...(state.cartsAbiertos||new Map()).values()].filter(c=>c.estado==="abierto"&&c.items.length);
+    lgCuenta=new Map(); for(const c of todosFinal) if(!c.enviado&&c.items.length){ const k=logiClave(c); if(k) lgCuenta.set(k,(lgCuenta.get(k)||0)+1); }
     const deuda=c=>cartSaldo(c)>0.005; const porFecha=(a,b)=>String(a.finalizado).localeCompare(String(b.finalizado));
     const pendientes=cerr.filter(deuda).sort(porFecha);
     const envioTodos=cerr.filter(c=>!deuda(c)&&!c.resguardo).sort(porFecha);
@@ -5077,6 +5138,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     for(const g of grupos.values()){ const k=logiClave(g.pagados[0]); g.pagados.sort((a,b)=>String(a.creado).localeCompare(String(b.creado)));
       g.nuevos=[...abiertos.filter(c=>logiClave(c)===k),...todosFinal.filter(c=>!c.enviado&&c.items.length&&deuda(c)&&logiClave(c)===k)].sort((a,b)=>String(a.creado).localeCompare(String(b.creado))); }
     const gs=[...grupos.values()].sort((a,b)=>String(a.pagados[0].cliente).localeCompare(String(b.pagados[0].cliente)));
+    for(const g of gs){ const c0=g.pagados[0]; if(state.lgAbierto&&state.lgAbierto!==c0.id&&[...g.pagados,...g.nuevos].some(c=>c.id===state.lgAbierto)){ if(state.lgIr===state.lgAbierto) state.lgIr=c0.id; state.lgAbierto=c0.id; } } // un pedido dentro de un paquete en resguardo: se abre el paquete
     const hace=new Date(Date.now()-45*864e5).toISOString();
     const enviados=todosFinal.filter(c=>c.enviado&&c.items.length&&visible(c)&&String(c.enviado)>=hace).sort((a,b)=>String(b.enviado).localeCompare(String(a.enviado)));
     const F=state.lgF||"activos";
@@ -5099,7 +5161,8 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
       h("div",{class:"mvl-cab"},h("div",null,h("h2",null,"Logística"),h("div",{class:"mvl-muted"},pendientes.length+" pendientes de pago · "+envio.length+" por enviar · "+mty.length+" entrega en Monterrey · "+gs.length+" en resguardo"+(abiertosSin?" · "+abiertosSin+" ventas abiertas en Venta":""))),h("div",{class:"mvl-herr"},modos,buscar)),
       chips,
       cuerpo.length?h("div",{class:"mvl-tabla lg"},...cuerpo):h("div",{class:"mvl-vacio"},q?"Nadie coincide con «"+(state.logiQ||"")+"».":F==="debe"?"Nadie debe. 🎉":"Nada por aquí."),
-      h("p",{class:"mvl-ayuda"},"Toca una fila para ver su carrito, palomear piezas, dirección y guía. «Mover a…» cambia el estatus (envío, entrega en Monterrey, resguardo, ya salió o entregado)."));
+      h("p",{class:"mvl-ayuda"},"Toca una fila para ver su carrito, palomear piezas, dirección y guía. «Mover a…» cambia el estatus (envío, entrega en Monterrey, resguardo, ya salió o entregado). «2 pedidos» junto al nombre muestra solo los pedidos de esa clienta."));
+    if(state.lgIr){ const id=state.lgIr; state.lgIr=null; setTimeout(()=>{ const e=host.querySelector('[data-id="'+id+'"]'); if(e) try{ e.scrollIntoView({block:"start",behavior:"smooth"}); }catch(x){} },80); }
   };
 })();
 
