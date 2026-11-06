@@ -38,6 +38,31 @@
 
   /* ---------- crear cuenta (la misma de la tienda): la contraseña la elige la clienta ---------- */
   const FN_CUENTA = "https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/cuenta";
+  const GOOGLE_ACTIVO = false; // se pone en true cuando el proveedor Google esté configurado en Supabase (Auth › Providers)
+  if (GOOGLE_ACTIVO) { $("#btnGoogle").style.display = ""; $("#btnGoogle").addEventListener("click", async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: BASE + "club.html?google=1" } }); if (error) toast("No se pudo abrir Google: " + error.message, true); }); }
+  /* Google: la sesión existe pero todavía no está ligada a una clienta → completar WhatsApp (y, si ya había cuenta, fusionar con contraseña) */
+  async function completarGoogle(user) {
+    $("#login").style.display = "none"; $("#cargando").style.display = "none"; const f = $("#formGoogle"); f.style.display = "";
+    const md = user.user_metadata || {}; $("#gNombre").value = md.full_name || md.name || ""; $("#gFusion").style.display = "none";
+    $("#gSalir").onclick = async e => { e.preventDefault(); await sb.auth.signOut(); location.replace("club.html"); };
+    f.onsubmit = async e => {
+      e.preventDefault(); const err = $("#gError"); err.classList.remove("on"); const v = id => ($("#" + id).value || "").trim();
+      const wa = digitos(v("gWa")); if (wa.length !== 10) { err.textContent = "Tu WhatsApp debe tener 10 dígitos."; err.classList.add("on"); return; }
+      const { data: ses } = await sb.auth.getSession(); const tok = ses && ses.session ? ses.session.access_token : "";
+      const b = $("#btnGoogleOk"); b.disabled = true; b.textContent = "Guardando…";
+      try {
+        const fus = $("#gFusion").style.display !== "none";
+        const body = fus ? { accion: "google-fusionar", wa, password: $("#gPassVieja").value } : { accion: "google-completar", wa, nombre: v("gNombre"), password: $("#gPass").value, correo: user.email || "", dir: v("gDir"), ciudad: v("gCiudad"), estado: v("gEstado"), cp: v("gCp") };
+        const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + tok }, body: JSON.stringify(body) });
+        let j = {}; try { j = await r.json(); } catch (x) {}
+        if (!r.ok) throw new Error(j.error || ("error " + r.status));
+        if (j.existe) { $("#gFusion").style.display = ""; $("#gPassVieja").focus(); err.textContent = "Ese WhatsApp ya tiene cuenta: escribe su contraseña para ligar tu Google."; err.classList.add("on"); return; }
+        if (fus) { toast("Google quedó ligado a tu cuenta. Vuelve a entrar."); await sb.auth.signOut(); setTimeout(() => location.replace("club.html"), 1200); return; }
+        medir("club_google_completar"); f.style.display = "none"; abrir();
+      } catch (x) { err.textContent = String(x.message || x); err.classList.add("on"); }
+      finally { b.disabled = false; b.innerHTML = 'Guardar y entrar <span class="fl">→</span>'; }
+    };
+  }
   const verRegistro = v => { $("#formRegistro").style.display = v ? "" : "none"; $("#formLogin").style.display = v ? "none" : ""; };
   $("#irRegistro").addEventListener("click", e => { e.preventDefault(); verRegistro(true); $("#rNombre").focus(); });
   $("#irLogin").addEventListener("click", e => { e.preventDefault(); verRegistro(false); });
@@ -71,7 +96,9 @@
 
   async function abrir() {
     $("#login").style.display = "none"; $("#cargando").style.display = "block";
-    try { await cargar(); } catch (e) { $("#cargando").style.display = "none"; $("#login").style.display = ""; const err = $("#loginError"); err.textContent = "No pudimos abrir tu espacio: " + (e.message || e); err.classList.add("on"); await sb.auth.signOut(); return; }
+    try { await cargar(); } catch (e) {
+      try { const { data } = await sb.auth.getUser(); const u = data && data.user; const esGoogle = u && ((u.app_metadata || {}).provider === "google" || ((u.app_metadata || {}).providers || []).includes("google")); if (u && esGoogle && /no está vinculado/.test(String(e.message || e))) { return completarGoogle(u); } } catch (x) {}
+      $("#cargando").style.display = "none"; $("#login").style.display = ""; const err = $("#loginError"); err.textContent = "No pudimos abrir tu espacio: " + (e.message || e); err.classList.add("on"); await sb.auth.signOut(); return; }
     $("#cargando").style.display = "none"; $("#app").classList.add("on"); pintarTodo();
   }
 
@@ -302,7 +329,12 @@
   $("#cPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
   $("#iPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
 
-  function pintarPerfil() { $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; $("#pMail").value = S.yo.correo || ""; $("#pDir").value = S.yo.direccion || ""; $("#pEstado").value = S.yo.estado || ""; $("#pCp").value = S.yo.cp || ""; $("#pRef").value = S.yo.referencias || ""; }
+  const TEL_ACTIVO = false; // true cuando Twilio Verify esté configurado (Secrets TWILIO_*)
+  async function telAccion(accion, extra) { const { data: ses } = await sb.auth.getSession(); const tok = ses && ses.session ? ses.session.access_token : SB_KEY; const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ accion }, extra || {})) }); let j = {}; try { j = await r.json(); } catch (x) {} if (!r.ok) throw new Error(j.error || ("error " + r.status)); return j; }
+  function pintarVerif() { const v = !!S.yo.tel_verificado; $("#pVerif").textContent = v ? "· verificado ✓" : ""; const box = $("#pVerifBox"); box.style.display = (!v && TEL_ACTIVO) ? "flex" : "none"; }
+  $("#pVerifEnviar").addEventListener("click", async () => { try { const j = await telAccion("tel-enviar", { canal: "whatsapp" }); toast(j.mensaje || "Código enviado"); $("#pVerifCodigo").style.display = ""; $("#pVerifOk").style.display = ""; $("#pVerifCodigo").focus(); } catch (x) { toast(String(x.message || x), true); } });
+  $("#pVerifOk").addEventListener("click", async () => { try { const j = await telAccion("tel-verificar", { codigo: $("#pVerifCodigo").value }); toast(j.mensaje || "Verificado"); S.yo.tel_verificado = true; pintarVerif(); } catch (x) { toast(String(x.message || x), true); } });
+  function pintarPerfil() { pintarVerif(); $("#pNombre").value = S.yo.nombre || ""; $("#pCiudad").value = S.yo.ciudad || ""; $("#pUsuario").value = S.yo.whatsapp || ""; $("#pMail").value = S.yo.correo || ""; $("#pDir").value = S.yo.direccion || ""; $("#pEstado").value = S.yo.estado || ""; $("#pCp").value = S.yo.cp || ""; $("#pRef").value = S.yo.referencias || ""; }
   $("#pGuardar").addEventListener("click", async () => { const v = id => $("#" + id).value.trim(); const cambios = { nombre: v("pNombre"), ciudad: v("pCiudad"), correo: v("pMail"), direccion: v("pDir"), estado: v("pEstado"), cp: v("pCp"), referencias: v("pRef"), actualizado: new Date().toISOString() }; const { error } = await sb.from("clientas").update(cambios).eq("id", S.yo.id); if (error) return toast("No se guardó: " + error.message, true); Object.assign(S.yo, cambios); pintarCabecera(); $("#pOk").classList.add("on"); setTimeout(() => $("#pOk").classList.remove("on"), 3000); });
   $("#nGuardar").addEventListener("click", async () => { const a = $("#n1").value, b = $("#n2").value; if (a.length < 8) return toast("Mínimo 8 caracteres", true); if (a !== b) return toast("Las contraseñas no coinciden", true); const { error } = await sb.auth.updateUser({ password: a }); if (error) return toast("No se cambió: " + error.message, true); $("#n1").value = $("#n2").value = ""; $("#nOk").classList.add("on"); setTimeout(() => $("#nOk").classList.remove("on"), 4000); toast("Contraseña cambiada"); });
 

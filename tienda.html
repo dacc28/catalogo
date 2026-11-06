@@ -1017,7 +1017,10 @@ function abrirEntrar(para){
    <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">También puedes comprar sin cuenta y crearla al pagar.</p></div>`,true);
   setTimeout(()=>document.getElementById((S.form.wa||'').replace(/\D/g,'').length===10?'passEntrar':'waEntrar')?.focus(),200);
 }
-function recuperar(){ const wa=(document.getElementById('waEntrar')?.value||'').replace(/\D/g,''); window.open('https://wa.me/528132380573?text='+encodeURIComponent('Hola Marvea, olvidé la contraseña de mi cuenta'+(wa?' ('+wa+')':'')+'. ¿Me ayudan a restablecerla?'),'_blank'); toast('Atención al cliente te ayuda a restablecerla por WhatsApp.','ok'); }
+async function recuperar(){ const wa=(document.getElementById('waEntrar')?.value||'').replace(/\D/g,''); if(wa.length!==10){ toast('Escribe tu WhatsApp a 10 dígitos y vuelve a tocar Recuperar.','alerta'); return; }
+  let j={}; try{ const r=await fetch(CUENTA.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':CUENTA.anon,'Authorization':'Bearer '+CUENTA.anon},body:JSON.stringify({accion:'recuperar',wa})}); j=await r.json(); }catch(_){}
+  if(j.ok){ toast(j.mensaje||'Te enviamos un correo para crear tu contraseña nueva.','ok'); return; }
+  window.open('https://wa.me/528132380573?text='+encodeURIComponent('Hola Marvea, olvidé la contraseña de mi cuenta ('+wa+'). ¿Me ayudan a restablecerla?'),'_blank'); toast(j.mensaje||'Atención al cliente te ayuda a restablecerla por WhatsApp.','ok'); }
 function buscarClienta(wa){ return CLIENTAS[wa]||null; }
 async function cargarClienta(user){
   if(!sbc||!user) return null;
