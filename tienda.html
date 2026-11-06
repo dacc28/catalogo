@@ -1314,6 +1314,11 @@ try{ if(localStorage.getItem('marvea.tienda')===ACCESO_HASH) document.getElement
   try{ const d=await stockApi('estado'); aplicarDisp(d.disponibilidad); if(!esRegreso) sincronizarCarrito(d.carrito,d.expira); }
   catch(_){ if(local&&local.fin>Date.now()&&!esRegreso){ Object.entries(local.cart||{}).forEach(([c,q])=>{ if(prod(c)) S.cart[c]=q; }); S.timerFin=local.fin; Object.keys(S.cart).forEach(patch); actualizar(); } }
   try{ const ses=await sesionActual(); if(ses&&ses.user){ const c=await cargarClienta(ses.user); if(c) setCliente(c); } }catch(_){}
+  // piezas mandadas desde la calculadora / ficha / Business Club ("Añadir a mi carrito")
+  try{ const ag=JSON.parse(localStorage.getItem('marvea.agregar')||'null'); localStorage.removeItem('marvea.agregar');
+    if(ag&&Array.isArray(ag.items)&&ag.items.length&&(Date.now()-(ag.t||0))<30*60000){ let tot=0,faltan=[]; ag.items.forEach(i=>{ if(!prod(i.codigo)) return; const h=add(i.codigo,Number(i.cant)||1,true); tot+=h; if(h<(Number(i.cant)||1)) faltan.push(prod(i.codigo).n); });
+      if(tot>0){ toast(`Agregamos <b>${tot} pieza${tot===1?'':'s'}</b> a tu carrito${faltan.length?` (de <b>${faltan.join(', ')}</b> ya no había suficientes)`:''}.`,'ok'); if(window.innerWidth<=900) toggleCarritoM(true); else { const c=document.getElementById('carrito'); c&&c.scrollIntoView({behavior:'smooth',block:'start'}); } }
+      else toast('Esas piezas ya no están disponibles.','alerta'); history.replaceState(null,'',location.pathname); } }catch(_){}
   regresoStripe();
 })();
 </script>

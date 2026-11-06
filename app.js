@@ -86,9 +86,10 @@
         <div class="disp"><i></i>Disponible · en exhibición</div>
         ${p.notas ? `<div class="notas">${esc(p.notas)}</div>` : ""}
         <div class="gana-m">Si la vendes en <b>${money(p.precio * mult())}</b> ganas <b>${money(p.precio * mult() - p.precio)}</b> por pieza.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><a class="btn coral" target="_blank" rel="noopener" href="https://wa.me/${waNum()}?text=${msg}">Preguntar por WhatsApp</a><a class="btn ghost" href="${window.self !== window.top ? "https://www.marveamayoreo.com/calculadora" : "calculadora.html?pieza=" + encodeURIComponent(p.codigo)}" target="_top">Calcular mi ganancia</a></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn coral" type="button" data-carrito="${esc(p.codigo)}">Añadir a mi carrito</button><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/${waNum()}?text=${msg}">Preguntar por WhatsApp</a><a class="btn ghost" href="${window.self !== window.top ? "https://www.marveamayoreo.com/calculadora" : "calculadora.html?pieza=" + encodeURIComponent(p.codigo)}" target="_top">Calcular mi ganancia</a></div>
       </div></div>`;
     $(".cerrar", m).addEventListener("click", () => m.classList.remove("abierto"));
+    const bc = $("[data-carrito]", m); bc && bc.addEventListener("click", () => irAlCarrito([{ codigo: p.codigo, cant: 1 }], "ficha"));
     m.classList.add("abierto");
   }
 
@@ -144,6 +145,15 @@
     const gEl = $("#tGan"); if (gEl) gEl.classList.toggle("neg", g < 0);
     const min = (DATA && DATA.minimo_piezas) || 12; const mi = $("#minimo"); if (mi) { const falta = Math.max(0, min - n); mi.classList.toggle("ok", !falta && n > 0); mi.textContent = falta ? `Recuerda: el pedido mínimo es de ${min} piezas surtidas (te faltarían ${falta}).` : `✓ Este pedido cubre el mínimo de ${min} piezas surtidas.`; }
   }
+  /* Manda piezas al carrito de la tienda en línea: se guardan en el navegador y tienda.html las agrega (con apartado real) al abrir */
+  function irAlCarrito(items, desde) {
+    const lista = (items || []).filter(i => i && byCode[i.codigo] && i.cant > 0).map(i => ({ codigo: i.codigo, cant: Math.round(i.cant) }));
+    if (!lista.length) return;
+    try { localStorage.setItem("marvea.agregar", JSON.stringify({ items: lista, t: Date.now() })); } catch (e) {}
+    medir("ir_al_carrito", { desde: desde || "", piezas: lista.reduce((a, i) => a + i.cant, 0) });
+    const dest = (window.self !== window.top ? "https://www.marveamayoreo.com/" : "") + "tienda.html?agregar=1";
+    try { window.top.location.href = dest; } catch (e) { location.href = dest; }
+  }
   function mensajeWA() {
     const act = filas.filter(f => f.cant > 0 && f.costo > 0);
     const lines = act.map(f => { const p = byCode[f.codigo]; return `• ${f.cant} × ${p ? p.codigo + " " + p.nombre : "pieza"} (${money(f.costo)} MXN c/u)`; });
@@ -166,6 +176,7 @@
       $("#addFila") && $("#addFila").addEventListener("click", () => { filas.push(nuevaFila("")); pintarFilas(); const last = $$(".fila").pop(); last && last.scrollIntoView({ behavior: "smooth", block: "center" }); });
       $("#btnLimpiar") && $("#btnLimpiar").addEventListener("click", () => { filas = [nuevaFila("")]; pintarFilas(); });
       $("#btnWA") && $("#btnWA").addEventListener("click", () => { medir("calculadora_whatsapp", { piezas: (filas || []).length }); window.open("https://wa.me/" + waNum() + "?text=" + encodeURIComponent(mensajeWA()), "_blank"); });
+      $("#btnCarrito") && $("#btnCarrito").addEventListener("click", () => { const act = filas.filter(f => f.cant > 0 && byCode[f.codigo]); if (!act.length) { alert("Elige al menos una pieza del catálogo."); return; } irAlCarrito(act.map(f => ({ codigo: f.codigo, cant: f.cant })), "calculadora"); });
       pintarFilas();
     }
   }
