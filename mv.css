@@ -701,85 +701,48 @@ html.bloq,html.bloq body{overscroll-behavior:none}
   .nav-m .nm-cart.lleno span{color:var(--ciruela);font-weight:800}
   .ay-cab{padding:18px 16px;margin-top:0}.ay-cab h1{font-size:26px;margin:8px 0 0}.ay-cab p{display:none}
 }
-
-/* ===== ajustes 6-nov-2026: Mis precios (más sencillo), "¿Qué precios poner?", Mis pedidos, carrito, logo ===== */
-.rapidos{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:6px 0 12px;padding:12px 14px;border-radius:16px;background:var(--fondo)}
-.rapidos .rap-g{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.rapidos .rap-t{font-size:13px;font-weight:800;color:var(--ciruela);display:inline-flex;align-items:center;gap:6px;margin-right:2px}
-.rapidos .rap-t i{color:var(--coral)}
-.rapidos .minm{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--linea);border-radius:999px;padding:5px 6px 5px 14px;color:var(--ciruela);font-weight:800;font-size:13px}
-.stepper{display:inline-flex;align-items:center;background:var(--fondo);border-radius:999px;padding:2px}
-.stepper button{width:30px;height:30px;border:0;border-radius:50%;background:#fff;color:var(--ciruela);font:inherit;font-size:17px;font-weight:800;line-height:1;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.stepper button:hover{background:var(--ciruela);color:#fff}
-.rapidos .minm .stepper input{width:40px;border:0;background:transparent;padding:0;font:inherit;font-size:15px;font-weight:800;color:var(--ciruela);text-align:center;outline:none;-moz-appearance:textfield}
-.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.desde-hint{display:block;margin-top:4px;font-size:11px;font-weight:700;color:var(--tinta-2)}.desde-hint b{color:var(--ciruela)}
-.tabla td.gan small.gmay{color:var(--ciruela);font-weight:700}.tabla td.gan small.gmay span{font-weight:600;color:var(--tinta-2)}
-.vender-box{display:inline-flex;align-items:center;gap:6px}
-@media(max-width:700px){.rapidos{padding:12px}.rapidos .minm{flex-wrap:wrap;border-radius:16px;padding:8px 10px}}
-
-/* ¿Qué precios poner? (tarjetas) */
-.pm-grupo{border:0;margin:16px 0 0;padding:0;min-width:0}
-.pm-grupo legend{font-size:12.5px;font-weight:800;color:var(--tinta-2);padding:0;margin-bottom:8px}
-.pm-ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pm-op{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#fff;border:1.5px solid var(--linea);cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;min-width:0}
-.pm-op:hover{border-color:var(--coral)}
-.pm-op input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
-.pm-i{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--coral-3);color:var(--coral);font-size:16px}
-.pm-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
-.pm-tx b{font-size:14.5px;color:var(--ciruela);line-height:1.2}
-.pm-tx small{font-size:12px;color:var(--tinta-2);font-weight:600;line-height:1.3}
-.pm-ok{margin-left:auto;flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--linea);display:grid;place-items:center;font-size:11px;color:transparent;transition:all .15s}
-.pm-op:has(input:checked){border-color:var(--ciruela);background:#FBF6F9;box-shadow:0 0 0 3px rgba(90,39,72,.08)}
-.pm-op:has(input:checked) .pm-i{background:var(--ciruela);color:#fff}
-.pm-op:has(input:checked) .pm-ok{background:var(--ciruela);border-color:var(--ciruela);color:#fff}
-.pm-op:has(input:focus-visible){outline:2px solid var(--coral);outline-offset:2px}
-@media(max-width:760px){.pm-ops{grid-template-columns:1fr}}
-
-/* Mis pedidos: una sola barra para rastrear */
-.rastreo-uno{margin:4px 0 14px;padding:14px;border-radius:18px;background:var(--fondo)}
-.rastreo-uno form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.rastreo-uno label{font-size:14px;font-weight:800;color:var(--ciruela);display:flex;align-items:center;gap:7px}
-.rastreo-uno label i{color:var(--coral)}
-.rastreo-uno input{flex:1;min-width:180px;border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:11px 16px;font:inherit;font-size:15px;outline:none}
-.rastreo-uno input:focus{border-color:var(--coral)}
-.guias-rap{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.guias-rap:not(:empty){margin-top:10px}
-.guias-rap .gr-t{font-size:12px;font-weight:800;color:var(--tinta-2);margin-right:2px}
-.g-chip{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--linea);background:#fff;border-radius:14px;padding:7px 12px;font:inherit;cursor:pointer;text-align:left;color:var(--ciruela)}
-.g-chip:hover{border-color:var(--coral)}
-.g-chip span{display:flex;flex-direction:column;line-height:1.2}.g-chip b{font-size:13px}.g-chip small{font-size:11.5px;color:var(--tinta-2);font-weight:600}
-.g-chip>i:first-child{color:var(--verde)}.g-chip.camino>i:first-child{color:var(--coral)}.g-chip>i:last-child{font-size:11px;color:var(--tinta-2)}
-.ped-pie{display:flex;gap:8px 14px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--linea);font-size:13px}
-.ped-pie .tipo{font-weight:800;color:var(--ciruela);display:inline-flex;align-items:center;gap:6px}.ped-pie .tipo i{color:var(--coral)}
-.ped-pie .g-link{border:0;background:var(--coral-3);color:#B5401E;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
-.ped-pie .g-link:hover{background:var(--coral);color:#fff}.ped-pie .g-link i{font-size:10.5px}
-.ped-pie .g-sin{color:var(--tinta-2);font-weight:600}
-.ped-pie .recibido{margin-left:auto}
-
-/* portada con las fotos en movimiento (video), sin deformar */
-.banner-img{overflow:hidden;background:#F3EEEA}
-.banner-img video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity .6s ease}
-.banner-img video.on{opacity:1}
-@media(max-width:820px){.banner-img{min-height:0;aspect-ratio:16/9}}
-
-/* carrito: la entrega se elige aquí mismo */
-.ent-cart{margin:0 0 8px}
-.ent-cart .ec-t{font-size:12px;font-weight:800;color:var(--ciruela);margin-bottom:6px}
-.ec-ops{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
-.ec-ops button{display:flex;align-items:center;gap:8px;text-align:left;border:1.5px solid var(--linea);background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer;font:inherit;color:var(--tinta);min-width:0}
-.ec-ops button i{color:var(--tinta-2);font-size:14px;flex:none}
-.ec-ops button span{display:flex;flex-direction:column;min-width:0;line-height:1.2}
-.ec-ops button b{font-size:12.5px;color:var(--ciruela)}.ec-ops button small{font-size:11.5px;color:var(--tinta-2);font-weight:600}
-.ec-ops button.on{border-color:var(--coral);background:var(--coral-3)}.ec-ops button.on i{color:var(--coral)}
-/* pago: resumen de la entrega elegida */
-.ent-res{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:2px solid var(--coral);background:var(--coral-3)}
-.ent-res .ic{width:38px;height:38px;border-radius:12px;background:#fff;color:var(--coral);display:grid;place-items:center;flex:none}
-.ent-res .tx{flex:1;min-width:0;display:flex;flex-direction:column}.ent-res b{color:var(--ciruela);font-size:14.5px}.ent-res small{font-size:12px;color:var(--tinta-2)}
-.ent-res em{font-style:normal;font-weight:800;font-size:17px;color:var(--coral);white-space:nowrap}
-.ent-res button{border:0;background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:800;color:var(--ciruela);cursor:pointer;box-shadow:inset 0 0 0 1.5px var(--linea)}
-@media(max-width:480px){.ent-res{flex-wrap:wrap}.ent-res .tx{flex:1 1 60%}}
-
-/* logo: el monograma M completo, en su proporción original (sin recortar ni aplastar) */
-.logo img{width:auto;height:34px;border-radius:0;object-fit:contain;flex:none}
-@media(max-width:820px){.logo img{width:auto;height:30px}}
+/* ---------- entrega: 3 opciones ---------- */
+.ent-cab{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-2);margin:0 0 8px}
+.ent-ops{display:grid;gap:8px}
+.ent-op{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;border:2px solid var(--linea);background:#fff;border-radius:16px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--tinta);transition:border-color .15s,background .15s}
+.ent-op:hover{border-color:#e3c9d6}
+.ent-op.on{border-color:var(--ciruela);background:#faf3f7}
+.ent-op:disabled{opacity:.5;cursor:not-allowed}
+.ent-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--fondo);color:var(--ciruela);font-size:17px}
+.ent-op.on .ent-i{background:var(--ciruela);color:#fff}
+.ent-t{min-width:0;display:flex;flex-direction:column}
+.ent-t b{font-size:15px}.ent-t small{font-size:12.5px;color:var(--tinta-2);line-height:1.35;margin-top:2px}
+.ent-op em{font-style:normal;font-weight:800;color:var(--ciruela);white-space:nowrap;font-size:14px}
+.ent-ops.compacto{gap:6px}
+.ent-ops.compacto .ent-op{grid-template-columns:32px minmax(0,1fr) auto;padding:8px 10px;border-radius:12px;gap:10px}
+.ent-ops.compacto .ent-i{width:32px;height:32px;border-radius:10px;font-size:14px}
+.ent-ops.compacto .ent-t b{font-size:13.5px}.ent-ops.compacto em{font-size:13px}
+.ent-nota{font-size:12px;color:var(--tinta-2);margin:8px 2px 12px;line-height:1.4}.ent-nota i{color:var(--coral);margin-right:4px}
+/* ayuda: las 3 formas de recibir */
+.ay-ent{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.ay-ent>div{background:var(--fondo);border-radius:16px;padding:18px}
+.ay-ent>div.dest{background:linear-gradient(135deg,#faf3f7,#fff3ec);border:2px solid #f0d5e2}
+.ay-ent i{font-size:22px;color:var(--coral)}.ay-ent h4{margin:10px 0 2px;color:var(--ciruela);font-size:16px}.ay-ent b.p{display:block;font-size:13px;color:var(--ciruela);margin-bottom:6px}
+.ay-ent p{margin:0;font-size:13.5px;color:var(--tinta-2)}
+.ay-pasos-r{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 0}
+.ay-pasos-r div{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:12px;font-size:13px;color:var(--tinta-2)}
+.ay-pasos-r b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--ciruela);color:#fff;font-size:12px;margin-right:6px}
+@media(max-width:820px){.ay-ent,.ay-pasos-r{grid-template-columns:1fr}}
+.tarifas{grid-template-columns:repeat(4,minmax(0,1fr))!important}.tarifas .resg{background:linear-gradient(135deg,#faf3f7,#fff3ec)!important;border:1.5px solid #f0d5e2}@media(max-width:560px){.tarifas{grid-template-columns:1fr 1fr!important}}
+/* carrito: las 3 opciones lado a lado (ocupan poco) */
+.ent-ops.compacto{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ent-ops.compacto .ent-op{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:9px 6px}
+.ent-ops.compacto .ent-i{width:30px;height:30px}
+.ent-ops.compacto .ent-t b{font-size:12.5px;line-height:1.15}
+.ent-ops.compacto em{font-size:12px}
+/* carrito: todo se desplaza junto (piezas, entrega y total), el encabezado se queda arriba */
+.carrito{overflow-y:auto;overscroll-behavior:contain}
+.carrito>header{position:sticky;top:0;z-index:2;background:#fff}
+.carrito .lista{flex:1 0 auto!important;overflow:visible!important}
+.carrito .tot{flex:none}
+.cart-pie{position:sticky;bottom:0;z-index:3;display:flex;align-items:center;gap:12px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--linea);box-shadow:0 -8px 20px rgba(35,26,32,.06);transition:transform .2s,opacity .2s}
+.cart-pie>div{flex:1;line-height:1.15}.cart-pie b{display:block;font-size:19px;color:var(--ciruela)}.cart-pie small{font-size:12px;color:var(--tinta-2)}
+.cart-pie button{border:0;border-radius:999px;padding:12px 22px;font:inherit;font-weight:800;font-size:15px;color:#fff;background:var(--coral);cursor:pointer}
+.cart-pie button:disabled{background:#d9cfd4}
+.cart-pie.oculto{opacity:0;pointer-events:none;transform:translateY(100%)}
+.cart-pie[hidden]{display:none}
