@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T17:40:26.474Z",
+ "actualizado": "2026-11-06T17:48:35.105Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 730,
+ "piezas": 724,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1211,7 +1211,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Dupe Messika",
    "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
    "creado": "2026-10-20T16:09:00.792Z",
@@ -1283,10 +1283,22 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/74172cd89992fac3727fcb63a9ad2564.jpg",
    "creado": "2026-10-20T17:24:28.236Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00047",
+   "nombre": "Collar Eslabon Bicolor",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/f00dfda5ee12a80f157ee39513df8793.jpg",
+   "creado": "2026-10-20T17:26:38.885Z",
    "disponible": true
   },
   {
