@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T17:16:38.811Z",
+ "actualizado": "2026-11-06T17:20:00.716Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 711,
+ "piezas": 725,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -222,12 +222,24 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00004",
+   "nombre": "Aretes Verde Manzana",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
+   "creado": "2026-10-19T01:50:35.213Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00006",
    "nombre": "Par Xuping Brillante",
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Más Vendido",
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
@@ -263,7 +275,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
