@@ -41,6 +41,15 @@
   const verRegistro = v => { $("#formRegistro").style.display = v ? "" : "none"; $("#formLogin").style.display = v ? "none" : ""; };
   $("#irRegistro").addEventListener("click", e => { e.preventDefault(); verRegistro(true); $("#rNombre").focus(); });
   $("#irLogin").addEventListener("click", e => { e.preventDefault(); verRegistro(false); });
+  $("#olvide").addEventListener("click", async e => { // enlace por correo (Resend); si aún no hay correo configurado, WhatsApp
+    e.preventDefault(); const err = $("#loginError"); err.classList.remove("on"); const d = digitos($("#usuario").value);
+    if (d.length !== 10) { err.textContent = "Escribe tu WhatsApp arriba y vuelve a tocar Recupérala."; err.classList.add("on"); return; }
+    let j = {}; try { const r = await fetch(FN_CUENTA, { method: "POST", headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }, body: JSON.stringify({ accion: "recuperar", wa: d }) }); j = await r.json(); } catch (x) {}
+    if (j.ok) { toast(j.mensaje || "Te enviamos un correo para crear tu contraseña nueva."); return; }
+    window.open("https://wa.me/528132380573?text=" + encodeURIComponent("Hola Marvea, olvidé la contraseña de mi cuenta (" + d + "). ¿Me ayudan a restablecerla?"), "_blank"); toast(j.mensaje || "Atención al cliente te ayuda por WhatsApp.");
+  });
+  // llegó desde el correo "crear contraseña nueva": Supabase abre la sesión y la mandamos directo a cambiarla
+  sb.auth.onAuthStateChange((ev) => { if (ev === "PASSWORD_RECOVERY" || (/[?&]nueva=1/.test(location.search) && ev === "SIGNED_IN")) { setTimeout(() => { try { ir("perfil"); $("#n1").focus(); toast("Escribe tu contraseña nueva y guárdala."); } catch (x) {} }, 1500); } });
   $("#formRegistro").addEventListener("submit", async e => {
     e.preventDefault(); const err = $("#regError"); err.classList.remove("on");
     const v = id => ($("#" + id).value || "").trim();
