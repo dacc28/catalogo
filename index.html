@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="mv.css?v=1">
+<link rel="stylesheet" href="mv.css?v=2">
 </head>
 <body>
 
@@ -107,15 +107,15 @@
     </section>
 
     <section class="bloque" id="preguntas">
-      <div class="fila-t"><h2>Preguntas <i>frecuentes</i></h2></div>
+      <div class="fila-t"><h2>Preguntas <i>frecuentes</i></h2><button class="link" onclick="irAyuda('preguntas')">Ver todas <i class="fa-solid fa-chevron-right"></i></button></div>
       <div class="faq">
         <details><summary>¿Hay monto mínimo de compra?</summary><p>No. El mínimo es de 12 piezas surtidas a tu gusto, sin monto mínimo en pesos.</p></details>
         <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio. Con cuenta (Google, correo o WhatsApp) guardamos tu domicilio y se activa tu Business Club: pedidos, precios y catálogo en un solo lugar.</p></details>
         <details><summary>¿Cómo pago?</summary><p>Tarjeta de crédito o débito, Apple Pay o Google Pay (se confirma al instante y tu ticket llega por correo) o transferencia bancaria: tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></details>
         <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, por DHL Express aéreo: hasta 2 kg $240 y hasta 5 kg $305 MXN; el peso final lo determina DHL. En Monterrey recoges gratis. Internacional, a cotizar.</p></details>
         <details><summary>¿Puedo juntar varios pedidos en un envío?</summary><p>Sí. Al pagar elige resguardar: guardamos tu paquete y lo juntamos con tus siguientes pedidos (máximo 3 en resguardo); solo se cobra la diferencia si cambia la tarifa.</p></details>
-        <details><summary>¿Qué materiales manejan y cómo los cuido?</summary><p>Acero inoxidable, oro laminado y chapa de oro. Mantenlas secas, ponte perfume y cremas antes, nada de cloro ni detergentes, límpialas con paño seco y guárdalas separadas. El desgaste por uso no es defecto de fabricación.</p></details>
-        <details><summary>¿Hacen cambios o devoluciones?</summary><p>Por ser mayoreo elegido por ti, no hacemos cambios por elección o cambio de opinión. Sí respondemos por defectos de fabricación o errores de surtido reportados con evidencia en las 24 h siguientes. <a href="legal.html#terminos">Términos y condiciones</a>.</p></details>
+        <details><summary>¿Qué materiales manejan y cómo los cuido?</summary><p>Acero inoxidable, oro laminado y chapa de oro. Mantenlas secas, ponte perfume y cremas antes, nada de cloro ni detergentes, límpialas con paño seco y guárdalas separadas. <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Ver todos los cuidados</a>.</p></details>
+        <details><summary>¿Hacen cambios o devoluciones?</summary><p>Por ser mayoreo elegido por ti, no hacemos cambios por elección o cambio de opinión. Si una pieza llega con defecto, escríbenos por WhatsApp con evidencia dentro de los 2 días posteriores a la recepción. <a href="legal.html#terminos">Términos y condiciones</a>.</p></details>
         <details><summary>¿Quiénes son?</summary><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mayoreo. Tienda en línea en Monterrey, Nuevo León, con envíos a todo México.</p></details>
       </div>
     </section>
@@ -135,8 +135,119 @@
       <div class="lat-ayuda"><b>¿No sabes qué elegir?</b><p>Te armamos un paquete con tu presupuesto.</p><button class="btn sm coral" onclick="abrirArmar()">Arma mi paquete</button></div>
     </aside>
     <div class="cat-main">
+      <div class="tabs-cat" id="tabsCat"></div>
       <div class="sec-t"><div><h2 id="tituloGrid">Todos los modelos</h2><span class="cuenta" id="cuentaGrid"></span></div><button class="btn blanco sm solo-movil" onclick="document.getElementById('filtrosLat').classList.toggle('abierto')"><i class="fa-solid fa-sliders"></i> Filtrar</button></div>
       <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AYUDA (info: cómo comprar, envíos, cuidados, preguntas…) ===================== -->
+<section class="vista" id="v-ayuda">
+  <div class="wrap">
+    <div class="ay-cab"><span class="tag-coral">Centro de ayuda</span><h1>¿En qué te <i>ayudamos</i>?</h1><p>Todo lo que necesitas saber para comprar, recibir y cuidar tus piezas.</p></div>
+    <nav class="tabs-ay" id="tabsAy">
+      <button data-ay="comprar"><i class="fa-solid fa-bag-shopping"></i> Cómo comprar</button>
+      <button data-ay="envios"><i class="fa-solid fa-truck-fast"></i> Envíos y rastreo</button>
+      <button data-ay="pagos"><i class="fa-regular fa-credit-card"></i> Pagos</button>
+      <button data-ay="cuidados"><i class="fa-solid fa-gem"></i> Cuidados</button>
+      <button data-ay="preguntas"><i class="fa-regular fa-circle-question"></i> Preguntas frecuentes</button>
+      <button data-ay="cambios"><i class="fa-solid fa-rotate"></i> Cambios y garantía</button>
+      <button data-ay="contacto"><i class="fa-brands fa-whatsapp"></i> Contacto</button>
+    </nav>
+
+    <div class="ay-panel" id="ay-comprar">
+      <h2>Tu primer pedido en <i>5 pasos</i></h2><p class="sub">Sin complicarte: así se arma un pedido en nuestra tienda en línea.</p>
+      <div class="ay-pasos">
+        <div><b>1</b><h4>Descubre</h4><p>Entra al catálogo y mira las novedades de la semana con su precio de mayoreo.</p></div>
+        <div><b>2</b><h4>Elige</h4><p>Agrega tus piezas favoritas al carrito, o contesta 3 preguntas y te armamos un paquete con tu presupuesto.</p></div>
+        <div><b>3</b><h4>Surte</h4><p>Compra desde 12 piezas surtidas a tu gusto; muchas se venden al doble o al triple.</p></div>
+        <div><b>4</b><h4>Paga</h4><p>Con tarjeta de crédito o débito, Apple Pay, Google Pay o transferencia. El pago con tarjeta se confirma al instante.</p></div>
+        <div><b>5</b><h4>Recibe</h4><p>Sale por DHL Express y llega mañana; en Monterrey también puedes recoger gratis.</p></div>
+      </div>
+      <div class="ay-acc"><button class="btn coral" onclick="irVista('catalogo')">Ver el catálogo <i class="fa-solid fa-arrow-right"></i></button><button class="btn blanco" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button></div>
+    </div>
+
+    <div class="ay-panel" id="ay-envios">
+      <h2>Envíos <i>DHL Express</i> aéreo</h2><p class="sub">Sale hoy, llega mañana si hay oficina de DHL en tu localidad.</p>
+      <div class="ay-g2">
+        <ul class="ay-lista">
+          <li><i class="fa-solid fa-bolt"></i><div><b>Sale hoy, llega mañana</b>Si hay oficina de DHL en tu localidad. Zonas extendidas: 2 a 3 días hábiles.</div></li>
+          <li><i class="fa-regular fa-calendar"></i><div><b>Días de salida</b>Salidas de lunes a jueves llegan al día siguiente. Viernes, sábado y días festivos: 2 a 3 días hábiles.</div></li>
+          <li><i class="fa-solid fa-scale-balanced"></i><div><b>Tarifas</b>Hasta 2 kg $240 MXN · hasta 5 kg $305 MXN · internacional a cotizar. El peso final lo determina DHL.</div></li>
+          <li><i class="fa-solid fa-location-dot"></i><div><b>Recoger en Monterrey</b>Si estás en Monterrey, puedes recoger tu pedido gratis.</div></li>
+          <li><i class="fa-solid fa-box-archive"></i><div><b>Juntar pedidos</b>Al pagar puedes pedir resguardo: guardamos tu paquete y lo juntamos con tus siguientes pedidos (máximo 3 en resguardo).</div></li>
+        </ul>
+        <form class="rastreo" id="rastreoAy" action="https://www.dhl.com/mx-es/home/tracking.html" method="get" target="_blank" rel="noopener" autocomplete="off">
+          <label for="guiaAy"><i class="fa-solid fa-truck-fast"></i> Rastrea tu pedido</label>
+          <p class="sub" style="margin:0">Cuando tu pedido sale, te mandamos por WhatsApp tu número de guía. Pégalo aquí y mira en DHL dónde va tu paquete.</p>
+          <input id="guiaAy" name="tracking-id" inputmode="numeric" placeholder="Número de guía DHL" required><input type="hidden" name="submit" value="1">
+          <button class="btn coral" type="submit">Rastrear en DHL</button>
+          <small>Se abre la página oficial de DHL. ¿No tienes tu guía? Está en <a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a> o <a href="https://wa.me/528132380573" target="_blank" rel="noopener">pídela por WhatsApp</a>.</small>
+        </form>
+      </div>
+    </div>
+
+    <div class="ay-panel" id="ay-pagos">
+      <h2>Formas de <i>pago</i></h2><p class="sub">Todos los precios son de mayoreo, en pesos mexicanos (MXN).</p>
+      <div class="ay-g3">
+        <div class="ay-card"><i class="fa-regular fa-credit-card"></i><h4>Tarjeta de crédito o débito</h4><p>También Apple Pay y Google Pay. El pago se confirma al instante y tu ticket llega a tu correo.</p></div>
+        <div class="ay-card"><i class="fa-solid fa-building-columns"></i><h4>Transferencia bancaria</h4><p>Tu pedido queda apartado 12 horas mientras nos mandas tu comprobante; si no llega, las piezas regresan a la venta.</p></div>
+        <div class="ay-card"><i class="fa-regular fa-clock"></i><h4>Piezas apartadas</h4><p>Mientras armas tu carrito, tus piezas quedan apartadas por un tiempo para que nadie más se las lleve.</p></div>
+      </div>
+    </div>
+
+    <div class="ay-panel" id="ay-cuidados">
+      <h2>Para que tus piezas <i>duren más</i></h2><p class="sub">Acero inoxidable, oro laminado y chapa de oro: con estos cuidados conservan su acabado.</p>
+      <div class="ay-cuid">
+        <div><b>01</b><h4>Mantén tus piezas secas</h4><p>Evita bañarte, nadar o hacer ejercicio con ellas; el agua y la humedad afectan su acabado.</p></div>
+        <div><b>02</b><h4>Perfume y skincare, antes</h4><p>Aplica perfume, crema y otros productos antes de colocarte la joyería.</p></div>
+        <div><b>03</b><h4>Químicos, no</h4><p>Retira tus piezas antes de limpiar, lavar o usar cloro y detergentes.</p></div>
+        <div><b>04</b><h4>Después de usarlas</h4><p>Límpialas suavemente con un paño seco para retirar sudor, grasa o productos.</p></div>
+        <div><b>05</b><h4>Guárdalas bien</h4><p>En un lugar seco y, de preferencia, separadas para evitar rayones y enredos.</p></div>
+      </div>
+      <p class="ay-nota"><i class="fa-solid fa-circle-info"></i> El desgaste puede variar según el uso y las características de cada persona (pH de la piel, sudor, perfumes, químicos). Esto no corresponde a un defecto de fabricación. Tip: comparte estos cuidados con tus clientas.</p>
+    </div>
+
+    <div class="ay-panel" id="ay-preguntas">
+      <h2>Preguntas <i>frecuentes</i></h2><p class="sub">Resolvemos tus dudas.</p>
+      <div class="faq">
+        <details open><summary>¿Hay monto mínimo de compra?</summary><p>No manejamos monto mínimo monetario. El mínimo de compra es de 12 piezas surtidas a tu gusto. Tú eliges tu capital de inversión.</p></details>
+        <details><summary>¿Cómo puedo hacer mi pedido?</summary><p>Directo en nuestra tienda en línea: agregas tus piezas al carrito (o contestas 3 preguntas y te armamos un paquete), pagas y listo. Si tienes dudas, escríbenos a <a href="https://wa.me/528132660673" target="_blank" rel="noopener">Pedidos (81 3266 0673)</a> y te ayudamos.</p></details>
+        <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio. Con cuenta (Google, correo o WhatsApp) guardamos tu domicilio y se activa tu Business Club: pedidos, precios y catálogo en un solo lugar.</p></details>
+        <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, a todo México por DHL Express aéreo: si tu pedido sale hoy, llega mañana, siempre que haya oficina de DHL en tu localidad; en zonas extendidas tarda de 2 a 3 días hábiles. Costo: hasta 2 kg por $240 MXN y hasta 5 kg por $305 MXN; el peso final lo determina DHL. Para envíos internacionales, el costo es a cotizar.</p></details>
+        <details><summary>¿Qué día sale y cuándo llega mi pedido?</summary><p>Los envíos salen de lunes a jueves y llegan al día siguiente (si hay oficina de DHL cerca de ti). Los que salen viernes o sábado, o en días festivos, llegan en 2 a 3 días hábiles.</p></details>
+        <details><summary>¿Puedo recoger mi pedido?</summary><p>Sí. Si estás en Monterrey, puedes recoger tu pedido sin costo de envío; al confirmar te decimos dónde y cuándo.</p></details>
+        <details><summary>¿Puedo juntar varios pedidos en un envío?</summary><p>Sí. Al pagar elige resguardar: guardamos tu paquete y lo juntamos con tus siguientes pedidos (máximo 3 en resguardo).</p></details>
+        <details><summary>¿Qué materiales manejan?</summary><p>Acero inoxidable, oro laminado y chapa de oro. El material se especifica en cada pieza de la tienda. Revisa los <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">cuidados de las piezas</a>.</p></details>
+        <details><summary>¿Los precios son de mayoreo?</summary><p>Sí, todos los precios de la tienda son precios de mayoreo. Nuestras clientas suelen venderlas al doble o al triple.</p></details>
+        <details><summary>¿Cómo pago?</summary><p>Con tarjeta de débito o crédito, Apple Pay, Google Pay o por transferencia bancaria. El pago con tarjeta se confirma al instante; con transferencia, tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></details>
+        <details><summary>¿Cada cuánto llegan modelos nuevos?</summary><p>Cada semana entran modelos nuevos a la tienda. Las novedades se mueven rápido: si algo te gusta, pídelo antes de que se agote.</p></details>
+        <details><summary>¿Qué es el Business Club?</summary><p>Viene incluido en tu cuenta: tus pedidos y tu guía DHL, tus precios de menudeo y mayoreo, lo que vendes y cuánto ganas, y tu catálogo en PDF con nuestras fotos, tu logo y tu WhatsApp. Se activa con tu primera compra.</p></details>
+        <details><summary>¿Hacen cambios o devoluciones?</summary><p>Por tratarse de piezas de mayoreo, no realizamos cambios ni devoluciones por elección incorrecta, cambio de opinión o desgaste natural. Revisa los <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">cuidados de las piezas</a> para procurar una mayor durabilidad y nuestros <a href="legal.html#terminos">términos y condiciones</a>.</p></details>
+        <details><summary>¿Qué pasa si recibo una pieza con algún defecto?</summary><p>Escríbenos por WhatsApp con evidencia dentro de los 2 días posteriores a la recepción y lo revisamos acorde a nuestras políticas de garantía.</p></details>
+        <details><summary>¿Son un proveedor nuevo? ¿Dónde se ubican?</summary><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mercado mayorista. Somos tienda en línea en Monterrey, Nuevo León.</p></details>
+      </div>
+    </div>
+
+    <div class="ay-panel" id="ay-cambios">
+      <h2>Cambios y <i>garantía</i></h2><p class="sub">Así cuidamos tu compra.</p>
+      <div class="ay-g3">
+        <div class="ay-card"><i class="fa-solid fa-ban"></i><h4>Sin cambios por elección</h4><p>Por tratarse de piezas de mayoreo, no realizamos cambios ni devoluciones por elección incorrecta, cambio de opinión o desgaste natural.</p></div>
+        <div class="ay-card"><i class="fa-solid fa-camera"></i><h4>¿Llegó con defecto?</h4><p>Escríbenos por WhatsApp con evidencia dentro de los 2 días posteriores a la recepción y lo revisamos acorde a nuestras políticas de garantía.</p></div>
+        <div class="ay-card"><i class="fa-solid fa-box-open"></i><h4>Revisa tu paquete</h4><p>Al recibirlo, revisa tus piezas. Graba la apertura de tu paquete: nos ayuda a resolver más rápido cualquier faltante.</p></div>
+      </div>
+      <div class="ay-acc"><a class="btn blanco" href="legal.html#terminos">Términos y condiciones</a><a class="btn blanco" href="legal.html#privacidad">Aviso de privacidad</a></div>
+    </div>
+
+    <div class="ay-panel" id="ay-contacto">
+      <h2>Estamos para <i>ayudarte</i></h2><p class="sub">Te respondemos por WhatsApp.</p>
+      <div class="ay-g3">
+        <a class="ay-card link" href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><h4>Ventas · 81 3266 0673</h4><p>Pedidos: manda tus referencias y cantidad de piezas.</p></a>
+        <a class="ay-card link" href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><h4>Atención al cliente · 81 3238 0573</h4><p>Dudas, asesoría y ayuda con tu cuenta.</p></a>
+        <a class="ay-card link" href="mailto:contacto@marveamayoreo.com"><i class="fa-regular fa-envelope"></i><h4>contacto@marveamayoreo.com</h4><p>Escríbenos por correo.</p></a>
+      </div>
+      <p class="ay-nota"><i class="fa-solid fa-location-dot"></i> Monterrey, Nuevo León · envíos a todo México · Empresa hermana de VJ Joyería · Instagram, TikTok y Facebook: @marveamayoreo</p>
     </div>
   </div>
 </section>
@@ -282,7 +393,8 @@
     <div class="pie-g">
       <div><a class="logo" href="#/" onclick="irVista('inicio');return false"><img src="logo-m.png" alt="">Marvea</a><p>Mayoreo de joyería para quienes emprenden. Donde emprendes tu negocio. Empresa hermana de VJ Joyería · Monterrey, N.L.</p></div>
       <div><h4>Compra</h4><a href="#/catalogo" onclick="irVista('catalogo');return false">Catálogo completo</a><a href="#" onclick="abrirArmar();return false">Arma mi paquete</a><a href="#calculadora" onclick="irSeccion('calculadora');return false">Calculadora</a><a href="#envios" onclick="irSeccion('envios');return false">Envíos y rastreo</a></div>
-      <div><h4>Mi cuenta</h4><a href="#/cuenta" onclick="abrirCuenta();return false">Entrar / crear cuenta</a><a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a><a href="#/cuenta/negocio" onclick="abrirCuenta('negocio');return false">Business Club</a><a href="#preguntas" onclick="irSeccion('preguntas');return false">Preguntas frecuentes</a></div>
+      <div><h4>Mi cuenta</h4><a href="#/cuenta" onclick="abrirCuenta();return false">Entrar / crear cuenta</a><a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a><a href="#/cuenta/negocio" onclick="abrirCuenta('negocio');return false">Business Club</a></div>
+      <div><h4>Ayuda</h4><a href="#/ayuda/comprar" onclick="irAyuda('comprar');return false">Cómo comprar</a><a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Envíos y rastreo</a><a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Cuidados de tus piezas</a><a href="#/ayuda/preguntas" onclick="irAyuda('preguntas');return false">Preguntas frecuentes</a><a href="#/ayuda/cambios" onclick="irAyuda('cambios');return false">Cambios y garantía</a></div>
       <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Atención al cliente · 81 3238 0573</a><a href="mailto:contacto@marveamayoreo.com"><i class="fa-regular fa-envelope"></i> contacto@marveamayoreo.com</a>
         <div class="redes"><a href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a><a href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a></div></div>
     </div>
@@ -309,7 +421,7 @@
 
 <script src="supabase-2.45.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="mv-tienda.js?v=1"></script>
+<script src="mv-tienda.js?v=2"></script>
 <script src="mv-cuenta.js?v=1"></script>
 </body>
 </html>

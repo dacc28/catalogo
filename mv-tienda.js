@@ -598,12 +598,13 @@ async function activarCuenta(){ // compró como invitada → crea su cuenta con 
 window.MV_SB=sbc; window.MV_S=S; window.mvFoto=c=>((prod(c)||{}).foto||"");
 S.vista='inicio'; S._panel='inicio';
 function irVista(v,sub,sinHash){
-  if(!['inicio','catalogo','cuenta'].includes(v)) v='inicio';
-  S.vista=v; document.querySelectorAll('.vista').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  if(!['inicio','catalogo','cuenta','ayuda'].includes(v)) v='inicio';
+  S.vista=v; document.body.dataset.vista=v; document.querySelectorAll('.vista').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
   if(v==='catalogo'){ renderGrid(true); }
   if(v==='cuenta'){ S._panel=sub||S._panel||'inicio'; if(S.cliente&&window.MVCuenta){ document.getElementById('cuentaEntrar').classList.remove('on'); window.MVCuenta.abrir(S._panel); } else renderCuentaEntrar(); }
+  if(v==='ayuda'){ S._ay=sub||S._ay||'comprar'; pintarAyuda(S._ay); }
   renderFiltros(); toggleCarritoM(false);
-  if(!sinHash){ const h='#/'+(v==='inicio'?'':v)+(v==='cuenta'&&sub&&sub!=='inicio'?'/'+sub:''); if(location.hash!==h) history.pushState(null,'',location.pathname+h); }
+  if(!sinHash){ const h='#/'+(v==='inicio'?'':v)+((v==='cuenta'&&sub&&sub!=='inicio')||(v==='ayuda'&&sub)?'/'+sub:''); if(location.hash!==h) history.pushState(null,'',location.pathname+h); }
   window.scrollTo({top:0}); medir('vista',{vista:v,sub:sub||''});
 }
 function irSeccion(id){ if(S.vista!=='inicio') irVista('inicio'); setTimeout(()=>{ const el=document.getElementById(id); if(el){ const y=el.getBoundingClientRect().top+window.scrollY-140; window.scrollTo({top:y,behavior:'smooth'}); } },60); }
@@ -612,6 +613,8 @@ function leerHash(){
   const h=decodeURIComponent((location.hash||'').slice(1)); if(/access_token|error_description|type=recovery/.test(h)) return false;
   if(document.getElementById('modal').classList.contains('on')) cerrarModal();
   if(h.startsWith('/catalogo')){ if(h.split('/')[2]) S.filtro=h.split('/')[2]; irVista('catalogo',null,true); return true; }
+  if(h.startsWith('/ayuda')){ irVista('ayuda',h.split('/')[2]||'comprar',true); return true; }
+  if(h==='cuidados'||h==='como-comprar'){ irVista('ayuda',h==='cuidados'?'cuidados':'comprar',true); return true; }
   if(h.startsWith('/cuenta')){ irVista('cuenta',h.split('/')[2]||'inicio',true); return true; }
   if(h.startsWith('/p/')){ const c=h.slice(3); irVista('catalogo',null,true); if(prod(c)) setTimeout(()=>abrirFicha(c),200); return true; }
   if(h.startsWith('cat=')){ const c=h.slice(4); if(P.some(x=>x.cat===c)) S.filtro=c; irVista('catalogo',null,true); return true; }
@@ -631,6 +634,46 @@ window.addEventListener('popstate',()=>leerHash());
   document.getElementById('orden').addEventListener('change',e=>{ S.orden=e.target.value; renderGrid(true); });
   document.querySelectorAll('#materiales input').forEach(r=>r.addEventListener('change',()=>{ S.material=r.value; renderGrid(true); }));
 })();
+
+/* ============================================================ CENTRO DE AYUDA */
+function irAyuda(t){ irVista('ayuda',t||'comprar'); }
+function pintarAyuda(t){ if(!document.getElementById('ay-'+t)) t='comprar'; S._ay=t;
+  document.querySelectorAll('#tabsAy button').forEach(b=>b.classList.toggle('on',b.dataset.ay===t));
+  document.querySelectorAll('.ay-panel').forEach(x=>x.classList.toggle('on',x.id==='ay-'+t));
+  const b=document.querySelector('#tabsAy button.on'); if(b) b.scrollIntoView({block:'nearest',inline:'center'}); }
+document.querySelectorAll('#tabsAy button').forEach(b=>b.addEventListener('click',()=>{ pintarAyuda(b.dataset.ay); const h='#/ayuda/'+b.dataset.ay; if(location.hash!==h) history.replaceState(null,'',location.pathname+h); medir('ayuda',{tema:b.dataset.ay}); }));
+(function(){ const f=document.getElementById('rastreoAy'); if(f) f.addEventListener('submit',()=>{ const g=document.getElementById('guiaAy'); g.value=(g.value||'').replace(/[^0-9A-Za-z]/g,''); medir('rastreo_dhl'); }); })();
+/* alto de la barra superior (para las pestañas pegadas) */
+function medirTop(){ const t=document.querySelector('header.top'); if(t) document.documentElement.style.setProperty('--top-h',t.offsetHeight+'px'); }
+window.addEventListener('resize',medirTop); setTimeout(medirTop,50);
+
+/* ============================================================ CATÁLOGO con pestañas por categoría */
+const ICONO_CAT={'Aretes':'fa-solid fa-star','Pulseras':'fa-solid fa-ring','Collares':'fa-solid fa-gem','Anillos':'fa-solid fa-ring','Juegos':'fa-solid fa-gift','Cadenas':'fa-solid fa-link','Dijes':'fa-solid fa-heart'};
+function infoCats(){ const cnt={},foto={},min={}; P.forEach(x=>{ cnt[x.cat]=(cnt[x.cat]||0)+1; if(x.foto&&(!foto[x.cat]||/vendido|tendencia/i.test(x.et))) foto[x.cat]=x.foto; min[x.cat]=Math.min(min[x.cat]||9999,x.p); }); return {cnt,foto,min,cats:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])}; }
+function renderFiltros(){
+  const {cnt,foto,min,cats}=infoCats(), todas=['Todos',...cats], enCat=S.vista==='catalogo';
+  document.getElementById('filtros').innerHTML=`<button class="${S.vista==='inicio'?'on':''}" onclick="irVista('inicio')"><i class="fa-solid fa-house"></i> Inicio</button>`
+    +todas.map(c=>`<button class="${enCat&&S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')">${c==='Todos'?'Todo el catálogo':esc(c)}<small>${c==='Todos'?P.length:cnt[c]}</small></button>`).join('')
+    +`<button onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button><span class="sep"></span>`
+    +[['envios','fa-solid fa-truck-fast','Envíos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Ayuda']].map(([t,i,n])=>`<button class="ay ${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')"><i class="${i}"></i> ${n}</button>`).join('');
+  const lat=document.getElementById('catsLat'); if(lat) lat.innerHTML=todas.map(c=>`<label><input type="radio" name="catl" ${S.filtro===c?'checked':''} onchange="setFiltro('${esc(c)}')"> ${c==='Todos'?'Todas':esc(c)}<small>${c==='Todos'?P.length:cnt[c]}</small></label>`).join('');
+  const tb=document.getElementById('tabsCat'); if(tb){ tb.innerHTML=todas.map(c=>{ const f=c==='Todos'?null:foto[c]; return `<button class="${S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')"><span class="ph">${f?`<img src="${esc(f)}" alt="" loading="lazy">`:`<i class="${c==='Todos'?'fa-solid fa-table-cells-large':(ICONO_CAT[c]||'fa-solid fa-gem')}"></i>`}</span><span><b>${c==='Todos'?'Todo':esc(c)}</b><small>${c==='Todos'?P.length+' modelos':cnt[c]+' · desde '+fmt(min[c])}</small></span></button>`; }).join('');
+    const on=tb.querySelector('button.on'); if(on&&enCat) on.scrollIntoView({block:'nearest',inline:'center'}); }
+}
+function renderGrid(anim){
+  const g=document.getElementById('grid'),b=norm(S.busca);
+  const x=document.getElementById('buscarX'); if(x) x.style.display=b?'block':'none';
+  let l=P.filter(x=>(S.filtro==='Todos'||x.cat===S.filtro)&&matOkSel(x)&&(!b||norm(x.n+' '+x.m+' '+x.cat+' '+x.c+' '+x.et).includes(b)||(b==='dorado'&&norm(x.m).includes('oro'))));
+  if(S.orden==='pop') l.sort((a,b)=>(disp(b.c)>0)-(disp(a.c)>0)||b.v-a.v); else if(S.orden==='nuevo') l.sort((a,b)=>(b.creado||'').localeCompare(a.creado||'')); else if(S.orden==='menor') l.sort((a,b)=>a.p-b.p); else l.sort((a,b)=>b.p-a.p);
+  document.getElementById('tituloGrid').innerHTML=b?`Resultados para <i>“${esc(S.busca)}”</i>`:S.filtro==='Todos'?(S.orden==='nuevo'?'Lo más <i>nuevo</i>':'Todo el <i>catálogo</i>'):`${esc(S.filtro)}`;
+  document.getElementById('cuentaGrid').textContent=l.length+(l.length===1?' modelo':' modelos');
+  const agrupar=S.filtro==='Todos'&&!b&&l.length>0;
+  g.classList.toggle('agrupado',agrupar); g.classList.toggle('anim',!!anim);
+  if(!l.length) g.innerHTML='<div class="vacio">No encontramos ese modelo. Prueba con otra palabra o <a href="https://wa.me/528132660673" target="_blank" rel="noopener" style="color:var(--coral);font-weight:800">pregúntanos por WhatsApp</a>.</div>';
+  else if(agrupar){ const {cats,min}=infoCats(); g.innerHTML=cats.map(c=>{ const lc=l.filter(x=>x.cat===c); if(!lc.length) return ''; return `<section class="grupo"><div class="g-cab"><h3>${esc(c)}<small>${lc.length} modelos · desde ${fmt(min[c])}</small></h3><button class="link" onclick="setFiltro('${esc(c)}')">Ver solo ${esc(c.toLowerCase())} <i class="fa-solid fa-chevron-right"></i></button></div><div class="grid">${lc.map(card).join('')}</div></section>`; }).join(''); }
+  else g.innerHTML=l.map(card).join('');
+  l.forEach(x=>patch(x.c)); if(anim) setTimeout(()=>g.classList.remove('anim'),600);
+}
 
 /* ============================================================ INICIO */
 function renderInicio(){
