@@ -746,3 +746,5 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 .cart-pie button:disabled{background:#d9cfd4}
 .cart-pie.oculto{opacity:0;pointer-events:none;transform:translateY(100%)}
 .cart-pie[hidden]{display:none}
+.ent-aviso{margin:8px 0 4px;padding:10px 12px;border-radius:12px;background:#FFF6E5;border:1px solid #F5D9A8;font-size:12.5px;line-height:1.45;color:#6b4a12}
+.ent-aviso i{color:#D98B1C;margin-right:2px}

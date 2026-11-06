@@ -17,8 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script>/* auto-actualización: si hay versión nueva publicada, la página se recarga sola */
-window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
-<link rel="stylesheet" href="mv.css?v=20261107g">
+window.MV_VER="20261107h";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<link rel="stylesheet" href="mv.css?v=20261107h">
 </head>
 <body>
 
@@ -116,7 +116,7 @@ window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio. Con cuenta (Google, correo o WhatsApp) guardamos tu domicilio y se activa tu Business Club: pedidos, precios y catálogo en un solo lugar.</p></details>
         <details><summary>¿Cómo pago?</summary><p>Tarjeta de crédito o débito, Apple Pay o Google Pay (se confirma al instante y tu ticket llega por correo) o transferencia bancaria: tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></details>
         <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, por DHL Express aéreo: hasta 2 kg $240 y hasta 5 kg $305 MXN; el peso final lo determina DHL. En Monterrey recoges gratis. Internacional, a cotizar.</p></details>
-        <details><summary>¿Puedo juntar varios pedidos en un envío? (Resguardo)</summary><p>Sí. Al pagar elige <b>Resguardo</b>: guardamos tu pedido ya pagado y en tus siguientes compras eliges <b>Agregar a mi resguardo</b>. Juntas hasta 3 pedidos y salen en una sola caja: el envío se paga una sola vez (solo la diferencia si pasa de peso). Es aparte de recoger en Monterrey. <a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Cómo funciona</a></p></details>
+        <details><summary>¿Puedo juntar varios pedidos en un envío? (Resguardo)</summary><p>Sí. Al pagar elige <b>Resguardo</b>: guardamos tu pedido ya pagado y en tus siguientes compras eliges <b>Agregar a mi resguardo</b>. Juntas hasta 3 pedidos y salen en una sola caja: pagas el envío una sola vez. Si al juntarse la caja pasa de 2 kg, el envío podría subir: te avisamos por WhatsApp antes de enviarlo. Es aparte de recoger en Monterrey. <a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Cómo funciona</a></p></details>
         <details><summary>¿Qué materiales manejan y cómo los cuido?</summary><p>Acero inoxidable, oro laminado y chapa de oro. Mantenlas secas, ponte perfume y cremas antes, nada de cloro ni detergentes, límpialas con paño seco y guárdalas separadas. <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Ver todos los cuidados</a>.</p></details>
         <details><summary>¿Hacen cambios o devoluciones?</summary><p>Por ser mayoreo elegido por ti, no hacemos cambios por elección o cambio de opinión. Si una pieza llega con defecto, escríbenos por WhatsApp con evidencia dentro de los 2 días posteriores a la recepción. <a href="legal.html#terminos">Términos y condiciones</a>.</p></details>
         <details><summary>¿Quiénes son?</summary><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mayoreo. Tienda en línea en Monterrey, Nuevo León, con envíos a todo México.</p></details>
@@ -179,7 +179,8 @@ window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <div class="dest"><i class="fa-solid fa-box-archive"></i><h4>Resguardo</h4><b class="p">Junta hasta 3 pedidos · un solo envío</b><p>¿Vas a volver a comprar pronto? Guardamos tus pedidos ya pagados y los mandamos juntos en una caja: pagas el envío <b>una sola vez</b>.</p></div>
       </div>
       <h3 style="margin:6px 0 4px;color:var(--ciruela)">Así funciona el resguardo</h3>
-      <div class="ay-pasos-r"><div><b>1</b>Compras y eliges <b>Resguardo</b>. Pagas tus piezas y el envío de ese paquete.</div><div><b>2</b>Guardamos tu caja. En tu próximo pedido eliges <b>Agregar a mi resguardo</b>: se junta y no pagas envío otra vez (solo la diferencia si pasa de peso).</div><div><b>3</b>Puedes juntar hasta <b>3 pedidos</b>.</div><div><b>4</b>Cuando quieras (o al completar 3), nos avisas y sale todo junto por DHL.</div></div>
+      <div class="ay-pasos-r"><div><b>1</b>Compras y eliges <b>Resguardo</b>. Pagas tus piezas y el envío más barato ($240) una sola vez.</div><div><b>2</b>Guardamos tu caja. En tu próximo pedido eliges <b>Agregar a mi resguardo</b>: se junta y hoy no pagas envío.</div><div><b>3</b>Puedes juntar hasta <b>3 pedidos</b>.</div><div><b>4</b>Cuando quieras (o al completar 3), nos avisas y sale todo junto por DHL.</div></div>
+      <p class="ay-nota" style="background:#FFF6E5"><i class="fa-solid fa-triangle-exclamation" style="color:#D98B1C"></i> <b>Importante:</b> al juntar tu 2º o 3er pedido, si la caja pasa de 2 kg el envío podría subir (DHL cobra por peso; hasta 5 kg $305). Marvea revisa el peso final y <b>te avisa por WhatsApp antes de enviarlo</b>; solo pagas la diferencia.</p>
       <p class="ay-nota"><i class="fa-solid fa-circle-info"></i> El resguardo es aparte de recoger en Monterrey y necesita tu cuenta Marvea (se crea al pagar) para ver tu paquete guardado en Mi cuenta.</p>
       <h3 style="margin:22px 0 10px;color:var(--ciruela)">Envíos DHL Express aéreo</h3>
       <div class="ay-g2">
@@ -188,7 +189,7 @@ window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{ca
           <li><i class="fa-regular fa-calendar"></i><div><b>Días de salida</b>Salidas de lunes a jueves llegan al día siguiente. Viernes, sábado y días festivos: 2 a 3 días hábiles.</div></li>
           <li><i class="fa-solid fa-scale-balanced"></i><div><b>Tarifas</b>Hasta 2 kg $240 MXN · hasta 5 kg $305 MXN · internacional a cotizar. El peso final lo determina DHL.</div></li>
           <li><i class="fa-solid fa-location-dot"></i><div><b>Recoger en Monterrey</b>Si estás en Monterrey, puedes recoger tu pedido gratis.</div></li>
-          <li><i class="fa-solid fa-box-archive"></i><div><b>Resguardo: junta tus pedidos</b>Guardamos hasta 3 pedidos ya pagados y salen juntos en un solo envío; el envío se paga una sola vez.</div></li>
+          <li><i class="fa-solid fa-box-archive"></i><div><b>Resguardo: junta tus pedidos</b>Guardamos hasta 3 pedidos ya pagados y salen juntos en un solo envío; pagas el envío una vez (si la caja pasa de peso podría subir y te avisamos antes).</div></li>
         </ul>
         <form class="rastreo" id="rastreoAy" action="https://www.dhl.com/mx-es/home/tracking.html" method="get" target="_blank" rel="noopener" autocomplete="off">
           <label for="guiaAy"><i class="fa-solid fa-truck-fast"></i> Rastrea tu pedido</label>
@@ -230,7 +231,7 @@ window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, a todo México por DHL Express aéreo: si tu pedido sale hoy, llega mañana, siempre que haya oficina de DHL en tu localidad; en zonas extendidas tarda de 2 a 3 días hábiles. Costo: hasta 2 kg por $240 MXN y hasta 5 kg por $305 MXN; el peso final lo determina DHL. Para envíos internacionales, el costo es a cotizar.</p></details>
         <details><summary>¿Qué día sale y cuándo llega mi pedido?</summary><p>Los envíos salen de lunes a jueves y llegan al día siguiente (si hay oficina de DHL cerca de ti). Los que salen viernes o sábado, o en días festivos, llegan en 2 a 3 días hábiles.</p></details>
         <details><summary>¿Puedo recoger mi pedido?</summary><p>Sí. Si estás en Monterrey, puedes recoger tu pedido sin costo de envío; al confirmar te decimos dónde y cuándo.</p></details>
-        <details><summary>¿Puedo juntar varios pedidos en un envío? (Resguardo)</summary><p>Sí. Al pagar elige <b>Resguardo</b>: guardamos tu pedido ya pagado y en tus siguientes compras eliges <b>Agregar a mi resguardo</b>. Juntas hasta 3 pedidos y salen en una sola caja: el envío se paga una sola vez (solo la diferencia si pasa de peso). Es aparte de recoger en Monterrey. <a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Cómo funciona</a></p></details>
+        <details><summary>¿Puedo juntar varios pedidos en un envío? (Resguardo)</summary><p>Sí. Al pagar elige <b>Resguardo</b>: guardamos tu pedido ya pagado y en tus siguientes compras eliges <b>Agregar a mi resguardo</b>. Juntas hasta 3 pedidos y salen en una sola caja: pagas el envío una sola vez. Si al juntarse la caja pasa de 2 kg, el envío podría subir: te avisamos por WhatsApp antes de enviarlo. Es aparte de recoger en Monterrey. <a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Cómo funciona</a></p></details>
         <details><summary>¿Qué materiales manejan?</summary><p>Acero inoxidable, oro laminado y chapa de oro. El material se especifica en cada pieza de la tienda. Revisa los <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">cuidados de las piezas</a>.</p></details>
         <details><summary>¿Los precios son de mayoreo?</summary><p>Sí, todos los precios de la tienda son precios de mayoreo. Nuestras clientas suelen venderlas al doble o al triple.</p></details>
         <details><summary>¿Cómo pago?</summary><p>Con tarjeta de débito o crédito, Apple Pay, Google Pay o por transferencia bancaria. El pago con tarjeta se confirma al instante; con transferencia, tu pedido queda apartado 12 horas mientras nos mandas tu comprobante.</p></details>
@@ -441,7 +442,7 @@ window.MV_VER="20261107g";(function(){try{fetch("version.json?t="+Date.now(),{ca
 
 <script src="supabase-2.45.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="mv-tienda.js?v=20261107g"></script>
-<script src="mv-cuenta.js?v=20261107g"></script>
+<script src="mv-tienda.js?v=20261107h"></script>
+<script src="mv-cuenta.js?v=20261107h"></script>
 </body>
 </html>

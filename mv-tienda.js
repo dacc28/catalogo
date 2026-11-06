@@ -721,21 +721,31 @@ function elegirEntrega(m){ const r=infoResguardo(); S.tarifa=null;
   else { S.recoger=false; S.sumar=false; S.resguardar=false; }
   if(m!=='resguardo'&&S._crearForzado){ S.crearCuenta=false; S._crearForzado=false; }
   medir('entrega',{modo:m}); renderCarrito(); if(document.getElementById('coBody')) renderCheckout(); }
+/* envío con resguardo: el 1er pedido paga el envío más barato; el 2º y 3º no pagan en línea (si sube por peso, Marvea lo define y avisa) */
+function envio(){
+  if(!pzs()) return {costo:0};
+  if(S.recoger) return {costo:0,modo:'recoger'};
+  if(S.sumar&&S.cliente&&S.cliente.paquete) return {costo:0,modo:'sumar',t:TARIFAS[0]};
+  if(S.resguardar) return {costo:TARIFAS[0].costo,t:TARIFAS[0],modo:'resguardo'};
+  const min=tarifaPeso(kg()); if(!min) return {costo:null};
+  const t=TARIFAS.find(x=>x.id===S.tarifa&&kg()<=x.max)||min; return {costo:t.costo,t};
+}
 function normalizarEntrega(){ if(!(S.resguardar||S.sumar)) return; const r=infoResguardo(); if(r.pq&&!r.lleno){ S.sumar=true; S.resguardar=false; } else if(r.lleno){ S.sumar=false; S.resguardar=false; } else { S.sumar=false; S.resguardar=true; } }
 function opcionesEntrega(compacto){
   const m=modoEntrega(), k=kg(), t=tarifaPeso(k), r=infoResguardo();
   const costoEnvio=t?fmt(t.costo):'a cotizar';
   let resgPrecio, resgTxt;
-  if(r.pq&&!r.lleno){ const kt=r.pq.kg+k, nt=tarifaPeso(kt), pag=(TARIFAS.find(x=>x.id===r.pq.tarifa)||TARIFAS[0]).costo, dif=nt?Math.max(0,nt.costo-pag):null;
-    resgPrecio=dif===null?'a cotizar':(dif===0?'$0 de envío':'+'+fmt(dif)); resgTxt=`Se junta con tu paquete guardado (pedido ${r.n+1} de ${MAX_RESG}). ${dif===0?'No pagas envío otra vez.':'Solo pagas la diferencia de peso.'}`; }
+  const barato=fmt(TARIFAS[0].costo);
+  if(r.pq&&!r.lleno){ const kt=r.pq.kg+k, sube=kt>TARIFAS[0].max;
+    resgPrecio='$0 de envío'; resgTxt=`Se junta con tu paquete guardado (pedido ${r.n+1} de ${MAX_RESG}). Hoy no pagas envío.`+(sube?' Tu caja ya pesaría '+kt.toFixed(2)+' kg: el envío podría subir y te avisamos antes de enviarla.':''); }
   else if(r.lleno){ resgPrecio='lleno'; resgTxt=`Ya tienes ${MAX_RESG} pedidos guardados (máximo). Pide por WhatsApp que salga tu paquete.`; }
-  else { resgPrecio=costoEnvio+' una vez'; resgTxt=`Pagas el envío una sola vez y guardamos tu paquete. Tus próximos pedidos (hasta ${MAX_RESG}) se juntan en la misma caja.`; }
+  else { resgPrecio=barato+' una vez'; resgTxt=`Pagas el envío más barato (${barato}) una sola vez y guardamos tu paquete. Tus próximos pedidos (hasta ${MAX_RESG}) se juntan en la misma caja.`; }
   const op=(id,ico,tit,precio,txt,dis)=>`<button type="button" class="ent-op${m===id?' on':''}" ${dis?'disabled':''} onclick="elegirEntrega('${id}')"><span class="ent-i">${ico}</span><span class="ent-t"><b>${tit}</b>${compacto?'':`<small>${txt}</small>`}</span><em>${precio}</em></button>`;
   return `<div class="ent-ops${compacto?' compacto':''}">
     ${op('envio','<i class="fa-solid fa-truck-fast"></i>','Envío DHL',costoEnvio,'Sale hoy, llega mañana donde hay oficina DHL. Tu pedido pesa '+k.toFixed(2)+' kg.')}
     ${op('recoger','<i class="fa-solid fa-location-dot"></i>','Recoger en Monterrey','Gratis','Sin costo de envío. Te escribimos por WhatsApp para entregártelo.')}
     ${op('resguardo','<i class="fa-solid fa-box-archive"></i>',r.pq&&!r.lleno?'Agregar a mi resguardo':'Resguardo',resgPrecio,resgTxt,r.lleno)}
-  </div>${compacto?`<div class="ent-nota">${m==='resguardo'?'<i class="fa-solid fa-box-archive"></i> '+resgTxt:m==='recoger'?'<i class="fa-solid fa-location-dot"></i> Recoges gratis en Monterrey; te escribimos por WhatsApp.':'<i class="fa-solid fa-truck-fast"></i> Sale hoy por DHL Express.'}</div>`:''}`;
+  </div>${m==='resguardo'&&!r.lleno?`<div class="ent-aviso"><i class="fa-solid fa-triangle-exclamation"></i> <b>Importante:</b> al juntar tu 2º o 3er pedido, si la caja pasa de ${TARIFAS[0].max} kg <b>el envío podría subir</b> (DHL cobra por peso). Marvea revisa el peso final y <b>te avisa por WhatsApp antes de enviarlo</b>.</div>`:''}${compacto?`<div class="ent-nota">${m==='resguardo'?'<i class="fa-solid fa-box-archive"></i> '+resgTxt:m==='recoger'?'<i class="fa-solid fa-location-dot"></i> Recoges gratis en Monterrey; te escribimos por WhatsApp.':'<i class="fa-solid fa-truck-fast"></i> Sale hoy por DHL Express.'}</div>`:''}`;
 }
 /* carrito: barra fija abajo con el total y "Pagar" mientras ves tus piezas */
 let __pieObs=null;

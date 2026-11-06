@@ -4900,6 +4900,15 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
 @media (max-width:720px){.mvl-sp-cab{flex-direction:column;align-items:flex-start;gap:2px}.mvl-det.paquete>.mvl-partes{padding:10px 8px 4px}}
 .mvl-nl{display:flex;align-items:center;gap:8px;min-width:0}.mvl-nl b{min-width:0}
 .mvl-web{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.02em;padding:2px 7px;border-radius:999px;background:#F3E8EF;color:#5A2748;white-space:nowrap}
+.mvl-envpaq{margin:12px 0 4px;padding:14px;border-radius:14px;background:#FFFAF0;border:1px solid #F3DDB0}
+.mvl-ep-cab{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.mvl-ep-cab b{font-size:14px}.mvl-ep-cab span{font-size:12px;color:var(--muted)}
+.mvl-ep-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mvl-ep-g>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;min-width:0}
+.mvl-ep-g small{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mvl-ep-g b{font-size:17px;font-variant-numeric:tabular-nums}.mvl-ep-g span{font-size:11.5px;color:var(--muted)}.mvl-ep-g span.rojo{color:#C42B2B;font-weight:700}
+.mvl-ep-sel .mvl-sel{margin-top:4px;width:100%}
+.mvl-ep-dif.sube{background:#FFF1F1;border-color:#F2C2C2}.mvl-ep-dif.sube b{color:#C42B2B}.mvl-ep-dif.ok b{color:#1E7A34}
+@media (max-width:900px){.mvl-ep-g{grid-template-columns:1fr 1fr}}
 
 /* ===== Resumen: cuadros que se tocan + desglose ===== */
 
@@ -5076,6 +5085,43 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
   }
   window.mvVerPedido=verPedido;
 
+  /* ---------- Resguardo: envío del paquete según peso (Marvea decide y avisa a la clienta) ---------- */
+  const PESO_PZ_G=60;
+  const esDifEnvio=c=>!!(c&&c.envio&&c.envio.id==="dif-resguardo");
+  function opcionesEnvio(){ const l=(state.ship&&state.ship.length?state.ship:DEFAULT_SHIP).filter(o=>Number(o.precio)>0); return l.length?l:DEFAULT_SHIP; }
+  let envPaq=null, envPaqCargando=false;
+  async function cargarEnvPaq(){ if(envPaq||envPaqCargando||!state.db) return; envPaqCargando=true; try{ const d=await state.db.doc("config/envioPaquetes").get(); envPaq=(d.exists&&d.data()&&d.data().paquetes)||{}; }catch(e){ envPaq={}; } envPaqCargando=false; window.renderLogistica(); }
+  async function guardarEnvPaq(id,datos){ envPaq=envPaq||{}; envPaq[id]=Object.assign({},envPaq[id]||{},datos); try{ await state.db.doc("config/envioPaquetes").set({paquetes:envPaq,actualizado:new Date().toISOString()}); }catch(e){ toast("No se pudo guardar",true); } }
+  function envioPaquete(g){
+    cargarEnvPaq();
+    const c0=g.pagados[0], todos=[...g.pagados,...g.nuevos], info=(envPaq&&envPaq[c0.id])||{};
+    const pz=todos.reduce((s,c)=>s+cartPieces(c),0), kg=pz*PESO_PZ_G/1000;
+    const pagado=todos.filter(c=>cartSaldo(c)<=0.005).reduce((s,c)=>s+Math.max(0,cartShip(c)),0);
+    const porCobrar=todos.filter(c=>esDifEnvio(c)&&cartSaldo(c)>0.005).reduce((s,c)=>s+cartShip(c),0);
+    const ops=opcionesEnvio(); const sug=kg<=2?ops[0]:(ops.find(o=>Number(o.precio)>Number(ops[0].precio))||ops[ops.length-1]);
+    state.lgEnv=state.lgEnv||{}; const elegidoId=state.lgEnv[c0.id]||info.id||sug.id; const op=ops.find(o=>o.id===elegidoId)||sug;
+    const falta=Math.max(0,Math.round((Number(op.precio)-pagado)*100)/100); const dif=Math.max(0,Math.round((falta-porCobrar)*100)/100);
+    const sel=h("select",{class:"mvl-sel","aria-label":"Envío según peso"},...ops.map(o=>h("option",{value:o.id},o.nombre+" · "+money(o.precio)+(o.id===sug.id?" (sugerido)":""))));
+    sel.value=op.id; sel.addEventListener("change",()=>{ state.lgEnv[c0.id]=sel.value; window.renderLogistica(); }); sel.addEventListener("click",e=>e.stopPropagation());
+    const k=clienteDe(c0); const w=String(k&&k.whatsapp||"").replace(/\D/g,"").replace(/^52(?=\d{10}$)/,"");
+    const nom=String(c0.cliente||"").split(" ")[0];
+    const msg="¡Hola "+nom+"! 💛 Tu paquete en resguardo ya tiene "+todos.length+" pedido"+(todos.length===1?"":"s")+" ("+pz+" piezas, aprox. "+kg.toFixed(2)+" kg).\n\nCon ese peso, DHL cobra "+op.nombre.replace(/^Envío\s*/i,"")+" ("+money(op.precio)+"). Ya pagaste "+money(pagado)+" de envío"+(falta>0?", así que la diferencia es de "+money(falta)+". ¿Te paso los datos para pagarla y enviarte tu paquete?":", así que no pagas nada extra. ¿Te lo enviamos ya?");
+    const avisar=async()=>{ if(w.length===10) window.open("https://wa.me/52"+w+"?text="+encodeURIComponent(msg),"_blank"); else { try{ await navigator.clipboard.writeText(msg); toast("La clienta no tiene WhatsApp: copié el mensaje"); }catch(e){} } await guardarEnvPaq(c0.id,{id:op.id,nombre:op.nombre,precio:Number(op.precio),dif:falta,avisado:new Date().toISOString()}); window.renderLogistica(); };
+    const cobrar=async()=>{ if(!(dif>0)) return; if(!confirm("¿Agregar a "+(c0.cliente||"la clienta")+" una diferencia de envío de "+money(dif)+" ("+op.nombre+")? Queda como pendiente de pago dentro de su paquete.")) return;
+      const now=new Date().toISOString(); const data={liveId:c0.liveId,cliente:c0.cliente,clienteId:c0.clienteId,referencia:nuevaReferencia(),nueva:false,deposito:0,factura:false,pago:null,nota:"Diferencia de envío del paquete en resguardo · "+op.nombre+" ("+pz+" pzas, ~"+kg.toFixed(2)+" kg)",estado:"final",items:[],envio:{id:"dif-resguardo",nombre:"Diferencia de envío · paquete en resguardo ("+op.nombre.replace(/^Envío\s*/i,"")+")",precio:dif},anticipos:[],resguardo:true,enviado:"",finalizado:now,origen:"",creado:now,actualizado:now};
+      try{ await state.db.collection("carritos").add(data); await guardarEnvPaq(c0.id,{id:op.id,nombre:op.nombre,precio:Number(op.precio),dif,cobrado:now}); toast("Diferencia de "+money(dif)+" agregada al paquete de "+nom+" · cóbrala con $ Cobrar"); }catch(e){ toast("No se pudo agregar la diferencia",true); } };
+    return h("div",{class:"mvl-envpaq",onclick:e=>e.stopPropagation()},
+      h("div",{class:"mvl-ep-cab"},h("b",null,"Envío del paquete según peso"),h("span",null,"Tú decides el envío final y avisas a la clienta antes de enviarlo")),
+      h("div",{class:"mvl-ep-g"},
+        h("div",null,h("small",null,"Peso estimado"),h("b",null,kg.toFixed(2)+" kg"),h("span",null,pz+" pzas · ~"+PESO_PZ_G+" g c/u")),
+        h("div",null,h("small",null,"Envío ya pagado"),h("b",null,money(pagado)),porCobrar>0?h("span",{class:"rojo"},"+ "+money(porCobrar)+" por cobrar"):h("span",null,"en "+g.pagados.length+" pedido"+(g.pagados.length===1?"":"s"))),
+        h("div",{class:"mvl-ep-sel"},h("small",null,"Envío según peso"),sel),
+        h("div",{class:"mvl-ep-dif"+(falta>0?" sube":" ok")},h("small",null,"Diferencia"),h("b",null,falta>0?money(falta):"$0"),h("span",null,dif>0?"la clienta debe pagarla":falta>0?"ya agregada · falta cobrarla":"el envío pagado alcanza ✓"))),
+      h("div",{class:"mvl-acc izq"},
+        h("button",{type:"button",class:"mvl-b"+(falta>0?"":" primary"),onclick:avisar},icon("wa"),h("span",null,info.avisado?"Avisar otra vez":"Avisar a la clienta")),
+        dif>0?h("button",{type:"button",class:"mvl-b cobrar",onclick:cobrar},"Cobrar diferencia "+money(dif)):null,
+        info.avisado?h("span",{class:"mvl-muted"},"Avisada "+fechaC(info.avisado)+(info.dif!=null?" · diferencia "+money(info.dif):"")):h("span",{class:"mvl-muted"},"Aún no se le avisa")));
+  }
   /* ---------------- LOGÍSTICA: lista con filtros ---------------- */
   const ESTADOS_LG={envio:["Por enviar","env"],mty:["Entrega Mty","mty"],resguardo:["Resguardo","res"],debe:["Debe","debe"],enviado:["Enviado","envd"],entregado:["Entregado","ent"]};
   function estadoDe(c){ if(c.enviado) return c.entregado?"entregado":"enviado"; if(cartSaldo(c)>0.005) return "debe"; if(c.resguardo) return "resguardo"; return esMty(c)?"mty":"envio"; }
@@ -5136,7 +5182,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     logiSub();
     if(state.logiModo==="enviados"&&state.logiHostEl&&host===state.logiHostEl){ renderEnvios(host); return; }
     const q=normaliza(state.logiQ||""); const k2=c=>{ const k=clienteDe(c); return normaliza([c.cliente,numPedido(c),k&&k.whatsapp,k&&k.ciudad,c.guia].join(" ")); };
-    const visible=c=>c.items.length&&(!q||k2(c).includes(q));
+    const visible=c=>(c.items.length||esDifEnvio(c))&&(!q||k2(c).includes(q));
     const todosFinal=[...(state.logiFinal||new Map()).values()];
     const cerr=todosFinal.filter(c=>visible(c)&&!c.enviado);
     const abiertos=[...(state.cartsAbiertos||new Map()).values()].filter(c=>c.estado==="abierto"&&c.items.length);
@@ -5147,7 +5193,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
     const envio=envioTodos.filter(c=>!esMty(c)), mty=envioTodos.filter(esMty);
     const grupos=new Map(); for(const c of cerr.filter(c=>!deuda(c)&&c.resguardo)){ const k=logiClave(c); if(!grupos.has(k)) grupos.set(k,{pagados:[],nuevos:[]}); grupos.get(k).pagados.push(c); }
     for(const g of grupos.values()){ const k=logiClave(g.pagados[0]); g.pagados.sort((a,b)=>String(a.creado).localeCompare(String(b.creado)));
-      g.nuevos=[...abiertos.filter(c=>logiClave(c)===k),...todosFinal.filter(c=>!c.enviado&&c.items.length&&deuda(c)&&logiClave(c)===k)].sort((a,b)=>String(a.creado).localeCompare(String(b.creado))); }
+      g.nuevos=[...abiertos.filter(c=>logiClave(c)===k),...todosFinal.filter(c=>!c.enviado&&(c.items.length||esDifEnvio(c))&&deuda(c)&&logiClave(c)===k)].sort((a,b)=>String(a.creado).localeCompare(String(b.creado))); }
     const gs=[...grupos.values()].sort((a,b)=>String(a.pagados[0].cliente).localeCompare(String(b.pagados[0].cliente)));
     for(const g of gs){ const c0=g.pagados[0]; if(state.lgAbierto&&state.lgAbierto!==c0.id&&[...g.pagados,...g.nuevos].some(c=>c.id===state.lgAbierto)){ if(state.lgIr===state.lgAbierto) state.lgIr=c0.id; state.lgAbierto=c0.id; } } // un pedido dentro de un paquete en resguardo: se abre el paquete
     const hace=new Date(Date.now()-45*864e5).toISOString();
@@ -5166,6 +5212,7 @@ html:has(.drawer) ,html:has(.drawer) body{overflow:hidden!important}
           h("span",{class:"mvl-sp-n"},h("b",null,c.estado==="final"?"#"+numPedido(c)+" · "+fechaC(c.finalizado||c.creado):"Nuevo (abierto)"),h("small",null,cartPieces(c)+" pzas"+(c.envio?" · "+c.envio.nombre.replace(/^Envío\s*/i,""):" · sin envío")+(c.id===sel.id?" · viendo su carrito":""))),
           h("b",{class:"mvl-sp-t"},money(cartGrand(c))),
           h("span",{class:"mvl-acc",onclick:e=>e.stopPropagation()},h("button",{type:"button",class:"mvl-b",title:"Ver el carrito en Venta",onclick:()=>irACarrito(c)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",title:"Descargar ticket",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket"))))),
+        envioPaquete(g),
         h("div",{class:"mvl-acc izq mvl-paq-acc"},h("button",{type:"button",class:"mvl-b",onclick:()=>agregarMercancia(g)},"+ Mercancía"),h("button",{type:"button",class:"mvl-b",onclick:()=>quitarResguardoPaquete(g)},"Quitar resguardo"),listo?h("button",{type:"button",class:"mvl-b primary",onclick:()=>yaSalio(g.pagados)},"✓ Ya salió el paquete"):h("span",{class:"mvl-muted"},"Sale cuando lo nuevo esté pagado")));
       return fila(c0,{estado:"resguardo",total:tot,ver:sel,info:g.pagados.length+(g.pagados.length===1?" pedido pagado":" pedidos pagados")+(g.nuevos.length?" · "+g.nuevos.length+" nuevo por pagar":" · listo para salir")+" · "+[...g.pagados,...g.nuevos].reduce((s,c)=>s+cartPieces(c),0)+" pzas",extra:partes}); };
     const sec=(t,cls,arr)=>arr.length?[h("div",{class:"mvl-sec "+cls},h("span",null,t),h("b",null,String(arr.length))),...arr]:[];
