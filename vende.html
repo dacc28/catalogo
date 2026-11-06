@@ -5976,6 +5976,38 @@ body.vx-on #vxCamWrap{display:block!important}
 #vx .vx-alta-step input.vx-alta-num{background:transparent!important;border:0!important;box-shadow:none!important;height:52px;-webkit-appearance:none;appearance:none;border-radius:0}
 .vx-alta-ok .vx-check{flex:none}
 .vx-alta-aviso[hidden]{display:none}
+/* proceso paso a paso */
+.vx-alta-wiz{gap:14px}
+.vx-alta-wiz .vx-alta-pie{margin-top:auto}
+.vx-alta-top{display:flex;align-items:center;justify-content:space-between;min-height:34px;padding-right:44px}
+.vx-alta-titulo{font-size:15px;font-weight:700;color:#6E6E73}
+.vx-alta-atras{border:0;background:transparent;color:#5A2748;font-size:16px;font-weight:600;padding:6px 0}
+.vx-alta-pnum{font-size:13px;font-weight:600;color:#8E8E93}
+.vx-alta-prog{display:flex;gap:6px;margin-top:-4px}
+.vx-alta-prog i{flex:1;height:5px;border-radius:999px;background:rgba(118,118,128,.18);transition:background .2s}
+.vx-alta-prog i.ok{background:#5A2748}.vx-alta-prog i.on{background:#1D1D1F}
+.vx-alta-ph h2{margin:4px 0 2px;font-size:30px;letter-spacing:-.02em;line-height:1.1}
+.vx-alta-ph p{margin:0;color:#6E6E73;font-size:15px;line-height:1.35}
+.vx-alta-cats{display:flex;flex-wrap:wrap;gap:8px}
+.vx-alta-cats button{border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:14px;padding:12px 16px;font-size:16px;font-weight:600;color:#1D1D1F;min-width:calc(50% - 4px);flex:1 1 calc(50% - 4px);text-align:center}
+.vx-alta-cats button.on{background:#1D1D1F;color:#fff;border-color:transparent}
+.vx-alta-codtxt{margin:-2px 0 0;font-size:14px;color:#6E6E73}
+.vx-alta-codtxt b{font-family:ui-monospace,Menlo,monospace;color:#1D1D1F;font-size:15px}
+.vx-alta-wiz .vx-alta-foto{aspect-ratio:1/1}
+.vx-alta-rhead{display:flex;gap:14px;align-items:center}
+.vx-alta-rhead>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.vx-alta-rhead>div b{font-size:18px;line-height:1.25}
+.vx-alta-rhead>div small{font-size:13px;color:#6E6E73}
+.vx-alta-rcod{font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:700;color:#5A2748}
+.vx-alta-rfoto{flex:none;width:96px;height:96px;border-radius:20px;border:0;background:#F2F2F7;overflow:hidden;padding:0;display:grid;place-items:center}
+.vx-alta-rfoto img{width:100%;height:100%;object-fit:cover}
+.vx-alta-rfoto span{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:26px}.vx-alta-rfoto small{font-size:11px;font-weight:600;color:#6E6E73}
+.vx-alta-rlista{background:#fff;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,.06)}
+.vx-alta-rf{display:flex;align-items:center;gap:10px;width:100%;border:0;border-bottom:1px solid rgba(0,0,0,.06);background:transparent;padding:13px 14px;font:inherit;text-align:left;color:inherit}
+.vx-alta-rf:last-child{border-bottom:0}
+.vx-alta-rf span{flex:none;width:44%;font-size:14px;color:#6E6E73}
+.vx-alta-rf b{flex:1;min-width:0;font-size:15px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vx-alta-rf em{font-style:normal;color:#C7C7CC;font-size:20px;line-height:1}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -6265,8 +6297,8 @@ body.vx-on #vxCamWrap{display:block!important}
     const agot = todos.filter(p => (Number(p.existencia) || 0) <= 0).length;
     const chips = el("div", { class: "vx-chips" }, el("button", { type: "button", class: !V.invCat ? "on" : "", onclick: () => { V.invCat = ""; render(); } }, "Todas"),
       ...cats.filter(c => todos.some(p => p.categoria === c.p)).map(c => el("button", { type: "button", class: V.invCat === c.p ? "on" : "", onclick: () => { V.invCat = c.p; render(); } }, c.n)));
-    return el("main", { class: "vx-main vx-contabs", "data-k": "inv" }, grande("Inventario", el("button", { class: "vx-plus", type: "button", "aria-label": "Registrar producto", onclick: () => abrirAlta(null) }, "+")),
-      el("button", { type: "button", class: "vx-alta-cta", onclick: () => abrirAlta(null) }, el("span", { class: "vx-alta-ctai" }, "📷"), el("span", null, el("b", null, "Registrar producto"), el("small", null, "Foto, precio y piezas · llega al instante a la Mac")), el("em", null, "›")),
+    return el("main", { class: "vx-main vx-contabs", "data-k": "inv" }, grande("Inventario", el("button", { class: "vx-plus", type: "button", "aria-label": "Añadir producto", onclick: () => abrirAlta(null) }, "+")),
+      el("button", { type: "button", class: "vx-alta-cta", onclick: () => abrirAlta(null) }, el("span", { class: "vx-alta-ctai" }, "📷"), el("span", null, el("b", null, "Añadir producto"), el("small", null, "Registro paso a paso · llega al instante a la Mac")), el("em", null, "›")),
       el("section", { class: "vx-stats" }, el("div", null, el("b", null, todos.length), el("span", null, "modelos")), el("div", null, el("b", null, piezas.toLocaleString("es-MX")), el("span", null, "piezas")),
         el("div", null, el("b", null, precio(valor)), el("span", null, "a precio")), el("div", null, el("b", null, precio(costo)), el("span", null, "costo")), agot ? el("div", { class: "rojo" }, el("b", null, agot), el("span", null, "agotados")) : null),
       buscador("vxInvQ", V.invQ, "Buscar por nombre, palabra o código", v => V.invQ = v), chips,
@@ -6472,13 +6504,13 @@ body.vx-on #vxCamWrap{display:block!important}
   function pistas() {
     const f = V.alta; if (!f) return;
     const pr = num(f.precio), co = num(f.costo); const g = $$("#vxAltaGan");
-    if (g) { if (pr > 0 && co >= 0 && f.costo !== "") { const gan = pr - co; g.textContent = "Ganas " + precio(gan) + " por pieza" + (pr ? " · " + Math.round(gan / pr * 100) + "%" : "") + (f.piezas ? " · " + f.piezas + " pzas valen " + precio(pr * f.piezas) : ""); g.className = "vx-alta-gan" + (gan < 0 ? " rojo" : ""); } else { g.textContent = pr > 0 && f.piezas ? f.piezas + " pzas valen " + precio(pr * f.piezas) : ""; g.className = "vx-alta-gan"; } }
+    if (g) { if (pr > 0 && co >= 0 && f.costo !== "") { const gan = pr - co; g.textContent = "Ganas " + precio(gan) + " por pieza" + (pr ? " · " + Math.round(gan / pr * 100) + "%" : "") + (f.piezas ? " · " + f.piezas + (f.piezas === 1 ? " pza vale " : " pzas valen ") + precio(pr * f.piezas) : ""); g.className = "vx-alta-gan" + (gan < 0 ? " rojo" : ""); } else { g.textContent = pr > 0 && f.piezas ? f.piezas + (f.piezas === 1 ? " pza vale " : " pzas valen ") + precio(pr * f.piezas) : ""; g.className = "vx-alta-gan"; } }
     const cod = $$("#vxAltaCod"); if (cod) cod.textContent = f.codigo || (f.cat ? nextCode(f.cat) : "Elige categoría");
     const pal = $$("#vxAltaPal"); if (pal && f.palabraAuto && !f.codigo) { const w = f.nombre.trim() ? palabraDelProducto(f.nombre, f.material, null) : ""; if (w && w !== f.palabra) { f.palabra = w; pal.value = w; } }
     const d = $$("#vxAltaDup"); if (d) { const q = normaliza(f.nombre); const l = q.length < 4 ? [] : [...state.products.values()].filter(p => p.codigo !== f.codigo && (normaliza(p.nombre) === q || (q.length >= 8 && normaliza(p.nombre).includes(q)))).slice(0, 3);
       d.replaceChildren(...(l.length ? [el("b", null, l.length === 1 ? "¿Ya lo tienes registrado?" : "Se parecen a este:"), ...l.map(p => el("button", { type: "button", class: "vx-alta-dupf", onclick: () => abrirAlta(p.codigo) }, foto(p, "vx-alta-dupfoto"), el("span", null, el("b", null, p.nombre), el("small", null, p.codigo + " · " + (Number(p.existencia) || 0) + " pzas · " + precio(p.precio))), el("em", null, "Editar / sumar piezas")))] : [])); d.hidden = !l.length; }
     const av = $$("#vxAltaAviso"); if (av && f.codigo) { const dd = ent(f.piezas) - f.ex0; av.hidden = !dd; av.textContent = dd ? (dd > 0 ? "Se suman " + dd : "Se restan " + (-dd)) + " pieza" + (Math.abs(dd) === 1 ? "" : "s") + " al guardar (si mientras tanto se vende alguna, se respeta)." : ""; }
-    const b = $$("#vxAltaGuardar"); if (b) b.disabled = !!f.guardando;
+    const b = $$("#vxAltaGuardar"); if (b) b.disabled = !!f.guardando || (f.paso != null && f.paso !== ULTIMO && !pasoValido(f, f.paso));
   }
   function campo(k, etiqueta, attrs, ayuda) {
     const f = V.alta; const i = el(attrs && attrs.tag === "textarea" ? "textarea" : "input", Object.assign({ class: "vx-input", id: "vxAlta_" + k, value: f[k] == null ? "" : String(f[k]), autocomplete: "off" }, attrs || {}));
@@ -6537,6 +6569,21 @@ body.vx-on #vxCamWrap{display:block!important}
       toast(e && e.shown ? m : red ? "Sin internet: no se guardó. Revisa la conexión y vuelve a intentar." : /row-level|permission|42501/i.test(m) ? "Tu usuario no tiene permiso para registrar productos" : "No se pudo guardar: " + m, true); render();
     }
   }
+  /* proceso de registro paso a paso: Foto → Qué es → Material → Precio → Piezas → Revisar y registrar */
+  const PASOS = [
+    { t: "Foto", s: "Tómale foto a la pieza o elígela de tus fotos." },
+    { t: "¿Qué pieza es?", s: "Nombre y categoría. La categoría define el código." },
+    { t: "Material", s: "Elige uno o escríbelo." },
+    { t: "Precio", s: "Precio de mayoreo y lo que te costó (el costo nunca lo ven tus clientas)." },
+    { t: "Piezas", s: "¿Cuántas tienes y cuándo quieres que te avise para reponer?" },
+    { t: "Revisa y registra", s: "Toca cualquier dato para cambiarlo." }
+  ];
+  const ULTIMO = PASOS.length - 1;
+  function pasoValido(f, i) { if (i === 1) return !!(f.nombre.trim() && f.cat); if (i === 3) return num(f.precio) > 0 && (f.costo === "" || num(f.costo) >= 0); return true; }
+  function irPaso(i) { const f = V.alta; if (!f) return; if (i > f.paso) { for (let k = f.paso; k < i; k++) if (!pasoValido(f, k)) { toast(k === 1 ? (!f.nombre.trim() ? "Escribe el nombre del producto" : "Elige la categoría") : "Escribe el precio de mayoreo", true); return; } }
+    f.paso = Math.max(0, Math.min(ULTIMO, i)); if (f.paso === ULTIMO) f.visto = true; vibra(8); render(); setTimeout(() => { const s = $$(".vx-alta"); if (s) s.scrollTop = 0; }, 20); }
+  function siguiente() { const f = V.alta; if (!f) return; if (f.paso === ULTIMO) { guardarAlta(); return; } irPaso(f.visto ? ULTIMO : f.paso + 1); }
+  function conEnter(nodo) { const i = nodo.querySelector && nodo.querySelector("input"); if (i) i.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); i.blur(); siguiente(); } }); return nodo; }
   function altaSheet() {
     const f = V.alta; const cerrar = () => { if (f && f.fotoUrl) { try { URL.revokeObjectURL(f.fotoUrl); } catch (e) {} } V.alta = null; render(); };
     if (f.hecho) { const x = f.hecho; const p = state.products.get(x.codigo);
@@ -6549,32 +6596,58 @@ body.vx-on #vxCamWrap{display:block!important}
           !x.edit ? el("p", { class: "vx-nota" }, "La etiqueta con código de barras se imprime desde la Mac (Inventario › Imprimir etiquetas).") : null,
           el("button", { class: "vx-cta", type: "button", onclick: () => abrirAlta(null) }, "Registrar otro producto"),
           el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.alta = null; V.prod = x.codigo; render(); } }, "Ver producto"), el("button", { type: "button", onclick: cerrar }, "Listo")))); }
-    const edit = !!f.codigo; const cats = (state.cats || []).filter(c => c && c.p);
-    const mats = [...new Map(["Acero Inoxidable", "Chapa de Oro", "Oro Laminado", ...topValores("material", 6)].map(v => [normaliza(v.trim()), v.trim()])).values()].slice(0, 8);
-    const etqs = [...new Map(["New in", ...topValores("etiquetaCat", 5)].map(v => [normaliza(v), v])).values()].slice(0, 6);
-    const hoja = el("div", { class: "vx-sheet vx-alta" }, el("div", { class: "vx-grip" }),
-      el("div", { class: "vx-sheethead izq" }, el("span", null, edit ? "Editar producto" : "Registrar producto"), el("h2", { id: "vxAltaCod" }, f.codigo || (f.cat ? nextCode(f.cat) : "Elige categoría"))),
-      fotoAlta(),
-      campo("nombre", "Nombre del producto", { placeholder: "Ej. Collar cadena cubana dorada 45 cm", autocapitalize: "sentences", enterkeyhint: "next" }),
+    if (f.paso == null) f.paso = f.codigo ? ULTIMO : 0; if (f.codigo) f.visto = true;
+    const edit = !!f.codigo; const cats = (state.cats || []).filter(c => c && c.p); const P = PASOS[f.paso];
+    const unicos = l => { const m = new Map(); for (const v of l) { const t = String(v || "").trim(); if (t && !m.has(normaliza(t))) m.set(normaliza(t), t); } return [...m.values()]; };
+    const mats = unicos(["Acero Inoxidable", "Chapa de Oro", "Oro Laminado", ...topValores("material", 6)]).slice(0, 8);
+    const etqs = unicos(["New in", ...topValores("etiquetaCat", 5)]).slice(0, 6);
+    const codigoTxt = f.codigo || (f.cat ? nextCode(f.cat) : "");
+    let cuerpo;
+    if (f.paso === 0) cuerpo = [fotoAlta(), !(f.file || (!f.quitarFoto && f.fotoId)) ? el("p", { class: "vx-nota" }, "Si ahorita no tienes la foto, sigue: la puedes agregar después desde su ficha.") : null];
+    else if (f.paso === 1) cuerpo = [conEnter(campo("nombre", "Nombre del producto", { placeholder: "Ej. Collar cadena cubana dorada 45 cm", autocapitalize: "sentences", enterkeyhint: "next" })),
       el("div", { class: "vx-alta-dup", id: "vxAltaDup", hidden: true }),
-      el("div", { class: "vx-field" }, el("span", null, "Categoría"), chipsDe(cats.map(c => [c.p, c.n]), f.cat, v => { if (edit) { toast("La categoría define el código; para cambiarla usa la Mac", true); return; } f.cat = v; render(); })),
-      el("div", { class: "vx-field" }, el("span", null, "Material"), chipsDe(mats.map(m => [m, m]), f.material, v => { f.material = v; const i = $$("#vxAlta_material"); if (i) i.value = v; pistas(); render(); }),
-        (() => { const i = el("input", { class: "vx-input", id: "vxAlta_material", value: f.material, placeholder: "U otro material…", autocomplete: "off", autocapitalize: "words" }); i.addEventListener("input", () => { f.material = i.value; pistas(); }); return i; })()),
-      el("div", { class: "vx-alta-2" }, campo("precio", "Precio de mayoreo", { inputmode: "decimal", placeholder: "$0" }), campo("costo", "Costo (privado)", { inputmode: "decimal", placeholder: "$0" })),
-      el("div", { class: "vx-alta-gan", id: "vxAltaGan" }),
-      el("div", { class: "vx-alta-2" }, el("div", { class: "vx-field" }, el("span", null, edit ? "Piezas (ahora " + f.ex0 + ")" : "Piezas"), stepper("piezas", 0)), el("div", { class: "vx-field" }, el("span", null, "Avisar cuando queden"), stepper("minimo", 0))),
+      el("div", { class: "vx-field" }, el("span", null, "Categoría"), el("div", { class: "vx-alta-cats" }, ...cats.map(c => el("button", { type: "button", class: f.cat === c.p ? "on" : "", onclick: () => { if (edit) { toast("La categoría define el código; para cambiarla usa la Mac", true); return; } f.cat = c.p; render(); } }, c.n)))),
+      el("p", { class: "vx-alta-codtxt" }, codigoTxt ? "Su código será " : "", codigoTxt ? el("b", { id: "vxAltaCod" }, codigoTxt) : "Elige la categoría para ver su código")];
+    else if (f.paso === 2) cuerpo = [el("div", { class: "vx-alta-cats" }, ...mats.map(m => el("button", { type: "button", class: normaliza(f.material) === normaliza(m) && f.material ? "on" : "", onclick: () => { f.material = m; render(); } }, m))),
+      conEnter(campo("material", "U otro material", { placeholder: "Ej. Plata 925, Perla…", autocapitalize: "words", enterkeyhint: "next" }))];
+    else if (f.paso === 3) cuerpo = [el("div", { class: "vx-alta-2" }, conEnter(campo("precio", "Precio de mayoreo", { inputmode: "decimal", placeholder: "$0", enterkeyhint: "next" })), conEnter(campo("costo", "Costo (privado)", { inputmode: "decimal", placeholder: "$0", enterkeyhint: "next" }))),
+      el("div", { class: "vx-alta-gan", id: "vxAltaGan" })];
+    else if (f.paso === 4) cuerpo = [el("div", { class: "vx-field" }, el("span", null, edit ? "Piezas (ahora hay " + f.ex0 + ")" : "Piezas que tienes"), stepper("piezas", 0)),
       edit ? el("p", { class: "vx-alta-aviso", id: "vxAltaAviso", hidden: true }) : null,
-      el("div", { class: "vx-field" }, el("span", null, "Palabra clave (para vender rápido en el live)"),
-        el("div", { class: "vx-alta-pal" }, (() => { const i = el("input", { class: "vx-input", id: "vxAltaPal", value: f.palabra, autocomplete: "off", autocapitalize: "none", spellcheck: "false", placeholder: "Se pone sola con el nombre" }); i.addEventListener("input", () => { f.palabra = i.value; f.palabraAuto = false; }); return i; })(),
-          el("button", { type: "button", onclick: () => { f.palabra = palabraAleatoria(f.codigo); f.palabraAuto = false; const i = $$("#vxAltaPal"); if (i) i.value = f.palabra; } }, "Otra"))),
-      f.mas ? el("div", { class: "vx-alta-mas" },
-        el("div", { class: "vx-field" }, el("span", null, "Etiqueta del catálogo (opcional)"), chipsDe([...etqs.map(t => [t, t]), ["Ninguna", "Ninguna"]], f.etiqueta, v => { f.etiqueta = normaliza(f.etiqueta) === normaliza(v) ? "" : v; render(); })),
-        campo("notas", "Notas", { tag: "textarea", rows: 3, placeholder: "Medidas, color, empaque…" }))
-        : el("button", { type: "button", class: "vx-alta-masbtn", onclick: () => { f.mas = true; render(); } }, "+ Etiqueta del catálogo y notas"),
-      el("div", { class: "vx-alta-pie" }, el("button", { class: "vx-cta", id: "vxAltaGuardar", type: "button", disabled: !!f.guardando, onclick: guardarAlta }, f.guardando ? (f.msg || "Guardando…") : edit ? "Guardar cambios" : "Registrar producto"),
-        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: cerrar }, "Cancelar"))));
+      el("div", { class: "vx-field" }, el("span", null, "Avisarme cuando queden"), stepper("minimo", 0)), el("div", { class: "vx-alta-gan", id: "vxAltaGan" })];
+    else { // revisar
+      const fila = (paso, k, v, extra) => el("button", { type: "button", class: "vx-alta-rf", onclick: () => irPaso(paso) }, el("span", null, k), el("b", null, v || "—"), extra || null, el("em", null, "›"));
+      const pr = num(f.precio), co = f.costo === "" ? NaN : num(f.costo); const url = f.fotoUrl || (!f.quitarFoto && f.fotoId ? blobUrl(f.fotoId) : "");
+      cuerpo = [el("div", { class: "vx-alta-rhead" }, el("button", { type: "button", class: "vx-alta-rfoto", onclick: () => irPaso(0) }, url ? el("img", { src: url, alt: "" }) : el("span", null, "📷", el("small", null, "Agregar foto"))),
+          el("div", null, el("b", null, f.nombre || "Sin nombre"), el("span", { class: "vx-alta-rcod" }, codigoTxt || "Sin categoría"), el("small", null, (f.cat ? catName(f.cat) : "") + (f.material ? " · " + f.material : "")))),
+        el("div", { class: "vx-alta-rlista" },
+          fila(1, "Nombre", f.nombre), fila(1, "Categoría", f.cat ? catName(f.cat) : ""), fila(2, "Material", f.material),
+          fila(3, "Precio de mayoreo", pr > 0 ? precio(pr) : ""), fila(3, "Costo", co >= 0 ? precio(co) : ""), co >= 0 && pr > 0 ? fila(3, "Ganas por pieza", precio(pr - co) + " · " + Math.round((pr - co) / pr * 100) + "%") : null,
+          fila(4, "Piezas", String(ent(f.piezas)) + (edit && ent(f.piezas) !== f.ex0 ? " (antes " + f.ex0 + ")" : "")), fila(4, "Avisar cuando queden", String(ent(f.minimo)))),
+        el("div", { class: "vx-field" }, el("span", null, "Palabra clave (para vender rápido en el live)"),
+          el("div", { class: "vx-alta-pal" }, (() => { const i = el("input", { class: "vx-input", id: "vxAltaPal", value: f.palabra, autocomplete: "off", autocapitalize: "none", spellcheck: "false", placeholder: "Se pone sola con el nombre" }); i.addEventListener("input", () => { f.palabra = i.value; f.palabraAuto = false; }); return i; })(),
+            el("button", { type: "button", onclick: () => { f.palabra = palabraAleatoria(f.codigo); f.palabraAuto = false; const i = $$("#vxAltaPal"); if (i) i.value = f.palabra; } }, "Otra"))),
+        f.mas ? el("div", { class: "vx-alta-mas" },
+          el("div", { class: "vx-field" }, el("span", null, "Etiqueta del catálogo (opcional)"), chipsDe([...etqs.map(t => [t, t]), ["Ninguna", "Ninguna"]], f.etiqueta, v => { f.etiqueta = normaliza(f.etiqueta) === normaliza(v) ? "" : v; render(); })),
+          campo("notas", "Notas", { tag: "textarea", rows: 3, placeholder: "Medidas, color, empaque…" }))
+          : el("button", { type: "button", class: "vx-alta-masbtn", onclick: () => { f.mas = true; render(); } }, "+ Etiqueta del catálogo y notas (opcional)")];
+      if (f.palabraAuto && !f.codigo && f.nombre.trim()) { const w = palabraDelProducto(f.nombre, f.material, null); if (w) f.palabra = w; }
+    }
+    const barraPasos = el("div", { class: "vx-alta-prog" }, ...PASOS.map((x, i) => el("i", { class: i < f.paso ? "ok" : i === f.paso ? "on" : "" })));
+    const ok = pasoValido(f, f.paso);
+    const boton = f.paso === ULTIMO ? (f.guardando ? (f.msg || "Guardando…") : edit ? "Guardar cambios" : "Registrar producto")
+      : f.paso === 0 ? ((f.file || (!f.quitarFoto && f.fotoId)) ? "Siguiente" : "Seguir sin foto") : f.visto ? "Listo" : "Siguiente";
+    const hoja = el("div", { class: "vx-sheet vx-alta vx-alta-wiz" }, el("div", { class: "vx-grip" }),
+      el("div", { class: "vx-alta-top" },
+        f.paso > 0 && !(f.visto && f.paso === ULTIMO) ? el("button", { type: "button", class: "vx-alta-atras", onclick: () => irPaso(f.visto ? ULTIMO : f.paso - 1) }, f.visto ? "‹ Resumen" : "‹ Atrás") : el("span", { class: "vx-alta-titulo" }, edit ? "Editar producto" : "Añadir producto"),
+        el("span", { class: "vx-alta-pnum" }, f.paso === ULTIMO ? (edit ? "" : "Último paso") : "Paso " + (f.paso + 1) + " de " + PASOS.length)),
+      barraPasos,
+      el("div", { class: "vx-alta-ph" }, el("h2", null, edit && f.paso === ULTIMO ? "Revisa y guarda" : P.t), el("p", null, P.s)),
+      ...cuerpo.filter(Boolean),
+      el("div", { class: "vx-alta-pie" }, el("button", { class: "vx-cta", id: "vxAltaGuardar", type: "button", disabled: !!f.guardando || (!ok && f.paso !== ULTIMO), onclick: siguiente }, boton),
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { if ((f.nombre || f.file) && !edit && !f.guardando) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "Cancelar"))));
     setTimeout(pistas, 0);
-    return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if (f.nombre || f.file) { if (!confirm("¿Salir sin guardar?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
+    return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if ((f.nombre || f.file) && !edit) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
   }
 
   render(); arrancar();
