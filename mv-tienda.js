@@ -603,7 +603,7 @@ function irVista(v,sub,sinHash){
   if(v==='catalogo'){ renderGrid(true); }
   if(v==='cuenta'){ S._panel=sub||S._panel||'inicio'; if(S.cliente&&window.MVCuenta){ document.getElementById('cuentaEntrar').classList.remove('on'); window.MVCuenta.abrir(S._panel); } else renderCuentaEntrar(); }
   if(v==='ayuda'){ S._ay=sub||S._ay||'comprar'; pintarAyuda(S._ay); }
-  renderFiltros(); toggleCarritoM(false);
+  renderFiltros(); toggleCarritoM(false); pintarNavM();
   if(!sinHash){ const h='#/'+(v==='inicio'?'':v)+((v==='cuenta'&&sub&&sub!=='inicio')||(v==='ayuda'&&sub)?'/'+sub:''); if(location.hash!==h) history.pushState(null,'',location.pathname+h); }
   window.scrollTo({top:0}); medir('vista',{vista:v,sub:sub||''});
 }
@@ -640,12 +640,12 @@ function irAyuda(t){ irVista('ayuda',t||'comprar'); }
 function pintarAyuda(t){ if(!document.getElementById('ay-'+t)) t='comprar'; S._ay=t;
   document.querySelectorAll('#tabsAy button').forEach(b=>b.classList.toggle('on',b.dataset.ay===t));
   document.querySelectorAll('.ay-panel').forEach(x=>x.classList.toggle('on',x.id==='ay-'+t));
-  const b=document.querySelector('#tabsAy button.on'); if(b) b.scrollIntoView({block:'nearest',inline:'center'}); }
+  const b=document.querySelector('#tabsAy button.on'); if(b) centrarH(b,'center'); }
 document.querySelectorAll('#tabsAy button').forEach(b=>b.addEventListener('click',()=>{ pintarAyuda(b.dataset.ay); renderFiltros(); const h='#/ayuda/'+b.dataset.ay; if(location.hash!==h) history.replaceState(null,'',location.pathname+h); medir('ayuda',{tema:b.dataset.ay}); }));
 (function(){ const f=document.getElementById('rastreoAy'); if(f) f.addEventListener('submit',()=>{ const g=document.getElementById('guiaAy'); g.value=(g.value||'').replace(/[^0-9A-Za-z]/g,''); medir('rastreo_dhl'); }); })();
 /* alto de la barra superior (para las pestañas pegadas) */
 function medirTop(){ const t=document.querySelector('header.top'); if(t) document.documentElement.style.setProperty('--top-h',t.offsetHeight+'px'); }
-window.addEventListener('resize',medirTop); setTimeout(medirTop,50);
+let __anchoTop=window.innerWidth; window.addEventListener('resize',()=>{ if(window.innerWidth!==__anchoTop){ __anchoTop=window.innerWidth; medirTop(); } }); setTimeout(medirTop,50); window.addEventListener('load',medirTop);
 
 /* ============================================================ BARRA DE CATEGORÍAS + MENÚ "Todo el catálogo" */
 function pintarBarra(cnt,foto,cats){
@@ -653,7 +653,7 @@ function pintarBarra(cnt,foto,cats){
   f.innerHTML=`<button class="b-todo ${MEGA.abierto?'abierto':''}" id="btnMega" onclick="toggleMega()" aria-expanded="${MEGA.abierto}"><i class="fa-solid fa-bars-staggered"></i><span>Todo el catálogo</span><i class="fa-solid fa-chevron-down fl"></i></button>`
     +`<div class="b-cats">`+AYUDA_BARRA.map(([t,ic,n])=>`<button class="b-cat b-info ${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')"><span class="ic"><i class="${ic}"></i></span><span>${n}</span></button>`).join('')+`</div>`
     +`<button class="b-arma" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Arma mi paquete</span></button>`;
-  const on=f.querySelector('.b-cat.on'); if(on) on.scrollIntoView({block:'nearest',inline:'nearest'});
+  const on=f.querySelector('.b-cat.on'); if(on) centrarH(on,'nearest');
 }
 const MEGA={abierto:false,cat:null};
 const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['cambios','fa-solid fa-shield-heart','Garantía'],['contacto','fa-brands fa-whatsapp','Contacto']];
@@ -690,6 +690,27 @@ function megaMaterial(m){ S.material=m; S.filtro='Todos'; document.querySelector
 document.addEventListener('click',e=>{ if(!MEGA.abierto) return; if(e.target.closest('#mega')||e.target.closest('#btnMega')) return; toggleMega(false); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&MEGA.abierto) toggleMega(false); });
 
+/* ============================================================ SIN BRINCOS: scroll horizontal de barras y página quieta con carrito/ventanas abiertas */
+function centrarH(el,modo){ const p=el&&el.parentElement; if(!p||p.scrollWidth<=p.clientWidth+1) return; const r=el.getBoundingClientRect(), pr=p.getBoundingClientRect();
+  if(modo==='nearest'){ if(r.left>=pr.left&&r.right<=pr.right) return; p.scrollLeft+= r.left<pr.left?(r.left-pr.left-12):(r.right-pr.right+12); return; }
+  p.scrollLeft+=(r.left-pr.left)-(pr.width-r.width)/2; }
+const BLOQ={n:new Set(),y:0};
+const TACTIL=window.matchMedia('(hover:none) and (pointer:coarse)').matches;
+function bloquear(quien,on){ const antes=BLOQ.n.size; if(on) BLOQ.n.add(quien); else BLOQ.n.delete(quien); const b=document.body, d=document.documentElement;
+  if(!antes&&BLOQ.n.size){ BLOQ.y=window.scrollY; d.classList.add('bloq');
+    if(TACTIL){ b.style.position='fixed'; b.style.top=(-BLOQ.y)+'px'; b.style.left='0'; b.style.right='0'; b.style.width='100%'; }
+    else { const g=window.innerWidth-d.clientWidth; d.style.overflow='hidden'; if(g>0) b.style.paddingRight=g+'px'; } }
+  else if(antes&&!BLOQ.n.size){ d.classList.remove('bloq');
+    if(TACTIL){ b.style.position=''; b.style.top=''; b.style.left=''; b.style.right=''; b.style.width=''; window.scrollTo(0,BLOQ.y); }
+    else { d.style.overflow=''; b.style.paddingRight=''; } } }
+toggleCarritoM=(function(o){ return function(on){ o.apply(this,arguments); bloquear('carrito',!!on); }; })(toggleCarritoM);
+abrirModal=(function(o){ return function(){ o.apply(this,arguments); bloquear('modal',true); }; })(abrirModal);
+cerrarModal=(function(o){ return function(){ o.apply(this,arguments); bloquear('modal',false); }; })(cerrarModal);
+toggleMega=(function(o){ return function(){ o.apply(this,arguments); bloquear('mega',MEGA.abierto); }; })(toggleMega);
+/* barra de abajo en el celular */
+actualizar=(function(o){ return function(){ const r=o.apply(this,arguments); try{ pintarNavM(); }catch(e){} return r; }; })(actualizar);
+function pintarNavM(){ const n=document.getElementById('navM'); if(!n) return; const v=S.vista; n.querySelectorAll('button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); const c=document.getElementById('navMn'); if(c){ const z=pzs(); c.textContent=z; c.style.display=z?'':'none'; const b=c.parentElement, l=b&&b.querySelector('span'), t=document.getElementById('bmTot'); if(l){ l.textContent=z&&t&&t.textContent?t.textContent:'Carrito'; b.classList.toggle('lleno',!!z); } } }
+
 /* ============================================================ CATÁLOGO con pestañas por categoría */
 const ICONO_CAT={'Aretes':'fa-solid fa-star','Pulseras':'fa-solid fa-ring','Collares':'fa-solid fa-gem','Anillos':'fa-solid fa-ring','Juegos':'fa-solid fa-gift','Cadenas':'fa-solid fa-link','Dijes':'fa-solid fa-heart'};
 function infoCats(){ const cnt={},foto={},min={}; P.forEach(x=>{ cnt[x.cat]=(cnt[x.cat]||0)+1; if(x.foto&&(!foto[x.cat]||/vendido|tendencia/i.test(x.et))) foto[x.cat]=x.foto; min[x.cat]=Math.min(min[x.cat]||9999,x.p); }); return {cnt,foto,min,cats:Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])}; }
@@ -698,7 +719,7 @@ function renderFiltros(){
   pintarBarra(cnt,foto,cats);
   const lat=document.getElementById('catsLat'); if(lat) lat.innerHTML=todas.map(c=>`<label><input type="radio" name="catl" ${S.filtro===c?'checked':''} onchange="setFiltro('${esc(c)}')"> ${c==='Todos'?'Todas':esc(c)}<small>${c==='Todos'?P.length:cnt[c]}</small></label>`).join('');
   const tb=document.getElementById('tabsCat'); if(tb){ tb.innerHTML=todas.map(c=>{ const f=c==='Todos'?null:foto[c]; return `<button class="${S.filtro===c?'on':''}" onclick="setFiltro('${esc(c)}')"><span class="ph">${f?`<img src="${esc(f)}" alt="" loading="lazy">`:`<i class="${c==='Todos'?'fa-solid fa-table-cells-large':(ICONO_CAT[c]||'fa-solid fa-gem')}"></i>`}</span><span><b>${c==='Todos'?'Todo':esc(c)}</b><small>${c==='Todos'?P.length+' modelos':cnt[c]+' · desde '+fmt(min[c])}</small></span></button>`; }).join('');
-    const on=tb.querySelector('button.on'); if(on&&enCat) on.scrollIntoView({block:'nearest',inline:'center'}); }
+    const on=tb.querySelector('button.on'); if(on&&enCat) centrarH(on,'center'); }
 }
 function renderGrid(anim){
   const g=document.getElementById('grid'),b=norm(S.busca);
