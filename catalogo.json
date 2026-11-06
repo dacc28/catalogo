@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T17:58:42.398Z",
+ "actualizado": "2026-11-06T17:58:51.379Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 724,
+ "piezas": 730,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1383,6 +1383,18 @@
    "notas": "",
    "foto": "fotos/fb51e6c7cc5ba4abfb7453b8f1c3678e.jpg",
    "creado": "2026-11-01T20:23:14.478Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00058",
+   "nombre": "Collar Tenis Blanco Plateado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 60,
+   "etiqueta": "new in",
+   "notas": "",
+   "foto": "fotos/b87b73b6db7f22d77c1a21a01581b373.jpg",
+   "creado": "2026-11-06T17:42:58.863Z",
    "disponible": true
   },
   {
