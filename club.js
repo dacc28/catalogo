@@ -168,7 +168,7 @@
           + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
           + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> ' + (ent.tipo === "recoger" ? "Recoges en Monterrey" : ent.resguardar ? "En resguardo (sale cuando tú lo pidas)" : "Envío DHL Express") + '</label>'
           + (guia ? '<input value="' + esc(guia) + '" disabled>' + (track ? '<a class="btn claro sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') : '<span style="font-size:13px;opacity:.85">' + (p.estado === "preparando" ? "Estamos preparando tu paquete; aquí aparecerá tu guía." : "") + '</span>') + '</div>';
-        repetirBtn(el, p); box.append(el); continue; }
+        box.append(el); continue; }
       const el = document.createElement("div"); el.className = "glass ped";
       const guia = (p.guia || "").trim(); const track = rastreoDe(guia);
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
@@ -178,22 +178,8 @@
         + (p.estado !== "entregado" ? '<button class="btn vidrio sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>';
       $(".guardar", el).addEventListener("click", async () => { const g = $(".guia input", el).value.trim(); const { error } = await sb.from("pedidos").update({ guia: g, estado: g && p.estado === "preparando" ? "enviado" : p.estado }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.guia = g; if (g && p.estado === "preparando") p.estado = "enviado"; toast("Guía guardada"); pintarPedidos(); pintarInicio(); });
       const r = $(".recibido", el); r && r.addEventListener("click", async () => { const { error } = await sb.from("pedidos").update({ estado: "entregado" }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.estado = "entregado"; toast("¡Qué bien! Pedido entregado"); pintarPedidos(); pintarInicio(); });
-      repetirBtn(el, p); box.append(el);
+      box.append(el);
     }
-  }
-  /* "Volver a pedir": manda las piezas del pedido al carrito de la tienda en línea (tienda.html las agrega con apartado real) */
-  function irAlCarrito(items, desde) {
-    const lista = (items || []).filter(i => i && i.codigo && Number(i.cant) > 0).map(i => ({ codigo: String(i.codigo), cant: Math.round(Number(i.cant)) }));
-    if (!lista.length) return toast("Este pedido no tiene piezas que se puedan volver a pedir.", true);
-    try { localStorage.setItem("marvea.agregar", JSON.stringify({ items: lista, t: Date.now() })); } catch (e) {}
-    medir("club_ir_al_carrito", { desde: desde || "", piezas: lista.reduce((a, i) => a + i.cant, 0) });
-    location.href = "tienda.html?agregar=1";
-  }
-  function repetirBtn(el, p) {
-    const g = $(".guia", el); if (!g) return;
-    const b = document.createElement("button"); b.className = "btn claro sm"; b.type = "button"; b.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Volver a pedir';
-    b.addEventListener("click", () => irAlCarrito((p.items || []).map(i => ({ codigo: i.codigo, cant: i.cant || i.cantidad || 1 })), "pedido"));
-    g.append(b);
   }
 
   function ganDe(r, pv) { // ganancia por pieza, si vende lo que le queda, y lo que ya ganó
