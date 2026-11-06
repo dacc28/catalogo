@@ -109,7 +109,7 @@
     const e = (p.etiqueta || "").toLowerCase();
     const cls = e.includes("tendencia") ? "coral" : e.includes("ltimas") ? "rosa" : e.includes("dupe") ? "cielo" : e.includes("new") ? "lima" : e.includes("vendido") ? "amarillo" : "";
     const etq = p.etiqueta && e !== "ninguna" ? `<span class="etq ${cls}">${esc(p.etiqueta)}</span>` : "";
-    return `<a class="vidrio prod" href="catalogo.html#${esc(p.codigo)}">${etq}<div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span>MXN · mayoreo</span></div><div class="ver"><span>Ver pieza</span></div></div></a>`;
+    return `<a class="vidrio prod" href="tienda.html">${etq}<div class="ph"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}"></div><div class="tx"><div class="nm">${esc(p.nombre)}</div><div class="mt">${esc(cats[p.categoria] || "")}${p.material ? " · " + esc(p.material) : ""}</div><div class="pr">${money(p.precio)}<span>MXN · mayoreo</span></div><div class="ver"><span>Ver en la tienda 🔒</span></div></div></a>`;
   }
   async function catalogo() {
     try {
@@ -123,7 +123,9 @@
       const g1 = $("#masPedido"), g2 = $("#recienLlegado");
       if (g1) g1.innerHTML = dest.length ? dest.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas destacadas.</div>';
       if (g2) g2.innerHTML = nuevo.length ? nuevo.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas nuevas.</div>';
-      const total = $("#totalPiezas"); if (total) { total.dataset.contar = String(prods.length); if (total.textContent !== "0") contador(total); }
+      const total = $("#totalPiezas"); if (total) { const piezas = Number(d.piezas) > 0 ? Number(d.piezas) : prods.length * 12; total.dataset.contar = String(piezas); if (total.textContent !== "0") contador(total); }
+      /* maqueta del Business Club: catálogo de ejemplo de una clienta, con nuestras fotos y sus precios (×2) */
+      const demo = $("#catDemo"); if (demo) { const l = prods.filter(p => p.foto).slice(0, 4); demo.innerHTML = l.map(p => `<div class="p"><div class="im"><img loading="lazy" src="${esc(p.foto)}" alt=""></div><b>${esc(p.nombre)}</b><span>${money(Number(p.precio) * 2)}</span></div>`).join(""); }
       if (location.hash) setTimeout(irAlHash, 100);
       const fecha = $("#fechaCat"); if (fecha && d.actualizado) fecha.textContent = new Date(d.actualizado).toLocaleDateString("es-MX", { day: "numeric", month: "long" });
     } catch (e) {}
