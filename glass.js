@@ -125,7 +125,7 @@
       if (g2) g2.innerHTML = nuevo.length ? nuevo.map(p => tarjeta(p, cats)).join("") : '<div class="vacio">Pronto verás aquí las piezas nuevas.</div>';
       const total = $("#totalPiezas"); if (total) { const piezas = Number(d.piezas) > 0 ? Number(d.piezas) : prods.length * 12; total.dataset.contar = String(piezas); if (total.textContent !== "0") contador(total); }
       /* maqueta del Business Club: catálogo de ejemplo de una clienta, con nuestras fotos y sus precios (×2) */
-      const demo = $("#catDemo"); if (demo) { const l = prods.filter(p => p.foto).slice(0, 4); demo.innerHTML = l.map(p => `<div class="p"><div class="im"><img loading="lazy" src="${esc(p.foto)}" alt=""></div><b>${esc(p.nombre)}</b><span>${money(Number(p.precio) * 2)}</span></div>`).join(""); }
+      const demo = $("#catDemo"); if (demo) { const l = prods.filter(p => p.foto).slice(0, 6); if (l.length >= 3) demo.innerHTML = l.map(p => `<div class="p"><div class="im"><img loading="lazy" src="${esc(p.foto)}" alt=""></div><b>${esc(p.nombre)}</b><span>${money(Number(p.precio) * 2)}</span></div>`).join(""); }
       if (location.hash) setTimeout(irAlHash, 100);
       const fecha = $("#fechaCat"); if (fecha && d.actualizado) fecha.textContent = new Date(d.actualizado).toLocaleDateString("es-MX", { day: "numeric", month: "long" });
     } catch (e) {}
