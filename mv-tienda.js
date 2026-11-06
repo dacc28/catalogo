@@ -13,7 +13,7 @@ const ICONOS = {
 const CAT_COLOR = new Proxy({Pulseras:'#F5C9D8',Aretes:'#9CC9EC',Collares:'#F2D84B',Cadenas:'#B9C93A',Anillos:'#F2653F',Dijes:'#E8A0C0',Juegos:'#5A2748',Tobilleras:'#8DB8A0',Accesorios:'#C9A86A'},{get:(o,k)=>o[k]||'#9a8e95'});
 const PESO_G=60, MIN=12;
 const TARIFAS=[{id:'2kg',nombre:'Hasta 2 kg',max:2,costo:240},{id:'5kg',nombre:'Hasta 5 kg',max:5,costo:305}];
-let P=[]; const CATS={};
+let P=[]; const CATS={}; let CAT_PIEZAS=0;
 const hash=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return h;};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function fotoHTML(x){ return (x.foto?`<img src="${esc(x.foto)}" alt="${esc(x.n)}" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('sinfoto')">`:'')+(ICONOS[x.cat]||ICONOS.Collares); }
@@ -21,6 +21,7 @@ async function cargarCatalogo(){
   let d=null;
   try{ const r=await fetch('catalogo.json?v='+Date.now(),{cache:'no-cache'}); if(r.ok) d=await r.json(); }catch(e){}
   if(!d||!d.productos||!d.productos.length) return false;
+  CAT_PIEZAS=Math.max(0,Math.round(Number(d.piezas)||0)); // total de piezas con existencia (lo manda la app; nunca por modelo)
   (d.categorias||[]).forEach(c=>{CATS[c.p]=c.n;});
   P=d.productos.filter(p=>p&&p.codigo&&p.precio>0).map(p=>{
     const cat=CATS[p.categoria]||p.categoria, h=hash(p.codigo), et=(p.etiqueta||'').trim(), etl=et.toLowerCase();
@@ -129,7 +130,7 @@ function abrirFicha(c){
      <div class="gana">💰 Si la vendes entre <b>${fmt(x.p*2)}</b> y <b>${fmt(x.p*3)}</b>, ganas de <b>${fmt(x.p)}</b> a <b>${fmt(x.p*2)}</b> por pieza.</div>
      ${x.notas?`<div class="notas">${esc(x.notas)}</div>`:''}
      <div class="ctl" id="ficha-ctl" data-c="${esc(c)}" style="margin-top:16px"></div>
-     <div class="ben"><span><i class="fa-solid fa-lock"></i> Al agregarla queda apartada 15 minutos para ti</span><span><i class="fa-solid fa-gem"></i> Mínimo 12 piezas en total, combinando modelos</span><span><i class="fa-solid fa-plane-up"></i> Sale hoy y llega mañana por DHL Express</span></div>
+     <div class="ben"><span><i class="fa-solid fa-lock"></i> Al agregarla queda apartada 15 minutos para ti</span><span><i class="fa-solid fa-gem"></i> Mínimo 12 piezas en total, combinando modelos</span><span><i class="fa-solid fa-plane-up"></i> Envío DHL Express con guía de rastreo</span></div>
     </div></div></div>`,'grande');
   pintarFichaCtl(c);
 }
@@ -210,9 +211,14 @@ function renderCarrito(){
     <small>${ok?'✓ Ya cumples el mínimo':(n?`Te faltan ${MIN-n} · <button onclick="completar()">completar con lo más vendido</button>`:'Agrega modelos o deja que te armemos tu paquete')}</small>`;
   document.getElementById('notis').innerHTML=S.notis.map((o,i)=>`<div class="noti">🔔<div><b>¡Ya está disponible ${esc(prod(o.c).n)}!</b></div><button onclick="add('${o.c}');S.notis.splice(${i},1);renderCarrito()">Agregar</button></div>`).join('');
   document.getElementById('lista').innerHTML=n?Object.entries(S.cart).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf">${fotoHTML(x)}</div><div><div class="t">${esc(x.n)}</div><div class="s">${fmt(x.p)} c/u · ${fmt(x.p*q)}</div></div><div class="q"><button onclick="quitar1('${c}')">−</button><span>${q}</span><button onclick="add('${c}')" ${disp(c)?'':'disabled'}>+</button></div></div>`}).join(''):'<div class="vacio">Tu pedido está vacío.<br>Toca <b>Agregar</b> en cualquier modelo o usa <b>Arma mi paquete</b>.</div>';
-  const e=envio();
-  document.getElementById('tot').innerHTML=`<div class="f"><span>Subtotal · ${n} pzas</span><span>${fmt(sub())}</span></div>
-    <div class="f"><span>Envío DHL ${n?`(${kg().toFixed(2)} kg)`:''}</span><span>${n?(e.costo===null?'a cotizar':(e.modo==='recoger'?'gratis':fmt(e.costo))):'—'}</span></div>
+  const e=envio(), pq=S.cliente&&S.cliente.paquete, tD=tarifaPeso(kg()), lleno=pq&&(pq.folios||[]).length>=3;
+  const ent=n?`<div class="ent-cart"><div class="ec-t">¿Cómo quieres recibirlo?</div><div class="ec-ops">
+      <button class="${!S.recoger&&!S.sumar?'on':''}" onclick="elegirEntrega('dhl')"><i class="fa-solid fa-plane-up"></i><span><b>Envío DHL Express</b><small>${tD?fmt(tD.costo)+' · '+kg().toFixed(2)+' kg':'a cotizar'}</small></span></button>
+      ${pq&&!lleno?`<button class="${S.sumar?'on':''}" onclick="elegirEntrega('sumar')"><i class="fa-solid fa-box-archive"></i><span><b>Sumar a mi resguardo</b><small>solo la diferencia</small></span></button>`:''}
+      <button class="${S.recoger?'on':''}" onclick="elegirEntrega('recoger')"><i class="fa-solid fa-store"></i><span><b>Recoger en Monterrey</b><small>Gratis</small></span></button></div></div>`:'';
+  const etE=S.recoger?'Recoges en Monterrey':S.sumar?'Diferencia de envío':`Envío DHL${n?` (${kg().toFixed(2)} kg)`:''}`;
+  document.getElementById('tot').innerHTML=`${ent}<div class="f"><span>Subtotal · ${n} pzas</span><span>${fmt(sub())}</span></div>
+    <div class="f"><span>${etE}</span><span>${n?(e.costo===null?'a cotizar':(e.modo==='recoger'||e.costo===0?'gratis':fmt(e.costo))):'—'}</span></div>
     <div class="f total"><span>Total</span><span>${fmt(total())} <small style="font-size:12px;font-weight:600">MXN</small></span></div>
     ${n?`<div class="ganancia"><span>💰 Ganas entre <b>${fmt(sub())}</b> y <b>${fmt(sub()*2)}</b> (×2–×3)</span><a href="#calculadora" onclick="toggleCarritoM(false);irSeccion('calculadora');return false" style="color:var(--verde);font-weight:800">calcular</a></div>`:''}
     <button class="comprar" ${ok?'':'disabled'} onclick="abrirCheckout()">${ok?'Pagar ahora →':`Faltan ${MIN-n} piezas para pagar`}</button><button class="seguir" onclick="toggleCarritoM(false);if(S.vista!=='catalogo')irVista('catalogo')">Seguir comprando</button>
@@ -223,6 +229,10 @@ function renderCarrito(){
   document.getElementById('barraM').classList.toggle('on',n>0); document.body.classList.toggle('con-barra',n>0);
 }
 function verCarrito(){ toggleCarritoM(true); }
+function elegirEntrega(m){ const pq=S.cliente&&S.cliente.paquete;
+  S.recoger=m==='recoger'; S.sumar=m==='sumar'&&!!pq; if(S.recoger||S.sumar) S.resguardar=false;
+  if(m==='dhl'){ const t=TARIFAS.find(x=>x.id===S.tarifa); if(!t||kg()>t.max) S.tarifa=null; }
+  S.verEntrega=false; renderCarrito(); if(document.getElementById('coBody')) renderCheckout(); }
 function toggleCarritoM(on){ document.getElementById('carrito').classList.toggle('abierto',on); document.getElementById('veloC').classList.toggle('on',on); }
 function actualizar(){renderCarrito();}
 setInterval(()=>{
@@ -452,6 +462,7 @@ function aceptar(pagar){ Object.entries(A.prop.out).forEach(([c,q])=>add(c,q,tru
 function abrirCheckout(){
   if(pzs()<MIN){ toast(`El mínimo de mayoreo es ${MIN} piezas.`,'alerta'); return; } toggleCarritoM(false);
   if(!S.tarifa){const t=tarifaPeso(kg());S.tarifa=t?t.id:null;}
+  S.verEntrega=false;
   if(S.cliente&&!S.editar){ const c=S.cliente; S.form=Object.assign({},S.form,{nombre:c.nombre,wa:c.wa,mail:c.mail,negocio:c.negocio,dir:c.dir,ciudad:c.ciudad,estado:c.estado,cp:c.cp,ref:c.ref}); if(!c.dir||!c.ciudad) S.editar=true; }
   abrirModal(`<div class="m-cab"><h3>Finalizar <i>compra</i></h3><button class="x-btn" onclick="cerrarModal()">✕</button></div><div class="m-body" id="coBody"></div>`);
   renderCheckout(); medir('begin_checkout',{piezas:pzs(),valor:total()});
@@ -474,15 +485,15 @@ function renderCheckout(){
      <label class="check"><input type="checkbox" ${S.crearCuenta?'checked':''} onchange="S.crearCuenta=this.checked;renderCheckout()"><div><b>Guardar mis datos en una cuenta Marvea</b><small>Para no volver a escribir tu domicilio y activar tu Business Club (tus pedidos, tu guía DHL y tu catálogo con nuestras fotos). Solo eliges una contraseña.</small></div></label>
      ${S.crearCuenta?`<div class="form" style="margin-top:8px">${campo('pass','Contraseña (mínimo 8)','••••••••',false,'type="password" autocomplete="new-password"')}${campo('pass2','Repite tu contraseña','••••••••',false,'type="password" autocomplete="new-password"')}</div>`:''}`;
   }
-  const tar=TARIFAS.map(t=>{const cabe=k<=t.max,on=!S.sumar&&!S.recoger&&S.tarifa===t.id&&cabe;return `<button class="${on?'on':''}" ${cabe?'':'disabled'} onclick="S.sumar=false;S.recoger=false;S.tarifa='${t.id}';renderCheckout();renderCarrito()"><b>DHL ${t.nombre}</b><em>${fmt(t.costo)}</em><small>${cabe?(tarifaPeso(k).id===t.id?'Tu pedido pesa '+k.toFixed(2)+' kg':'Útil si vas a resguardar y sumar'):'No cabe tu pedido'}</small></button>`;}).join('');
+  const tar=TARIFAS.map(t=>{const cabe=k<=t.max,on=!S.sumar&&!S.recoger&&S.tarifa===t.id&&cabe;return `<button class="${on?'on':''}" ${cabe?'':'disabled'} onclick="S.sumar=false;S.recoger=false;S.tarifa='${t.id}';S.verEntrega=false;renderCheckout();renderCarrito()"><b>DHL ${t.nombre}</b><em>${fmt(t.costo)}</em><small>${cabe?(tarifaPeso(k).id===t.id?'Tu pedido pesa '+k.toFixed(2)+' kg':'Útil si vas a resguardar y sumar'):'No cabe tu pedido'}</small></button>`;}).join('');
   let sb='';
   if(pq){const kt=pq.kg+k,nt=tarifaPeso(kt),pag=(TARIFAS.find(x=>x.id===pq.tarifa)||TARIFAS[0]).costo,dif=nt?Math.max(0,nt.costo-pag):null;
     const lleno=(pq.folios||[]).length>=3; if(lleno&&S.sumar){S.sumar=false;}
-    sb=`<button class="${S.sumar?'on':''}" ${lleno?'disabled':''} onclick="S.sumar=true;S.recoger=false;S.resguardar=false;renderCheckout();renderCarrito()"><b>Agregar a mis resguardos</b><em>${lleno?'lleno':(dif===null?'cotizar':fmt(dif))}</em><small>${lleno?'Ya tienes 3 pedidos en resguardo (máximo 3): pide que salga tu paquete':`máximo 3 pedidos · ${pq.piezas} pzas guardadas · total ${kt.toFixed(2)} kg${dif===0?' · sin costo extra':' · solo la diferencia'}`}</small></button>`;}
+    sb=`<button class="${S.sumar?'on':''}" ${lleno?'disabled':''} onclick="S.sumar=true;S.recoger=false;S.resguardar=false;S.verEntrega=false;renderCheckout();renderCarrito()"><b>Agregar a mis resguardos</b><em>${lleno?'lleno':(dif===null?'cotizar':fmt(dif))}</em><small>${lleno?'Ya tienes 3 pedidos en resguardo (máximo 3): pide que salga tu paquete':`máximo 3 pedidos · ${pq.piezas} pzas guardadas · total ${kt.toFixed(2)} kg${dif===0?' · sin costo extra':' · solo la diferencia'}`}</small></button>`;}
   document.getElementById('coBody').innerHTML=`
     <div class="bloq"><div class="tt"><span>1</span>¿A quién le enviamos?</div>${quien}</div>
-    <div class="bloq"><div class="tt"><span>2</span>Entrega</div><div class="seg">${tar}${sb}<button class="${S.recoger?'on':''}" onclick="S.recoger=true;S.sumar=false;S.resguardar=false;renderCheckout();renderCarrito()"><b>Recoger en Monterrey</b><em>Gratis</em><small>Te contactamos por WhatsApp para la entrega</small></button></div>
-      <div class="nota dhl-n">✈️ <b>Tarifas y tiempos los determina DHL</b> según el peso y tu localidad. Sale hoy y llega mañana donde hay oficina DHL.</div>
+    <div class="bloq"><div class="tt"><span>2</span>Entrega</div>${S.verEntrega?`<div class="seg">${tar}${sb}<button class="${S.recoger?'on':''}" onclick="S.recoger=true;S.sumar=false;S.resguardar=false;S.verEntrega=false;renderCheckout();renderCarrito()"><b>Recoger en Monterrey</b><em>Gratis</em><small>Te contactamos por WhatsApp para la entrega</small></button></div>`:entResumen(e,k)}
+      <div class="nota dhl-n">✈️ <b>Tarifas y tiempos los determina DHL</b> según el peso y tu localidad. Recibes tu guía de rastreo en cuanto sale tu paquete.</div>
       ${S.sumar||S.recoger?'':`<label class="check"><input type="checkbox" ${S.resguardar?'checked':''} onchange="S.resguardar=this.checked"><div><b>Resguardar mi paquete</b><small>Lo guardamos para juntarlo con tus próximos pedidos (hasta 3) y que todo salga en un envío; solo se cobra la diferencia si cambia la tarifa.</small></div></label>`}
       <label class="check"><input type="checkbox" ${S.factura?'checked':''} onchange="S.factura=this.checked;renderCheckout();renderCarrito()"><div><b>Necesito factura</b><small>Se agrega 16% de IVA. Te pedimos tus datos fiscales por WhatsApp.</small></div></label></div>
     <div class="bloq"><div class="tt"><span>3</span>Paga</div>
@@ -490,6 +501,13 @@ function renderCheckout(){
       <div class="pagos"><button class="pago tarjeta" id="btnTarjeta" onclick="pagar('tarjeta')"><b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe; Marvea nunca ve tu tarjeta.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span><span>Crédito y débito</span></div></button>
       <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 12 h.</small></button></div>
       <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">Al pagar aceptas los <a href="legal.html#terminos" target="_blank" style="color:var(--coral)">términos y condiciones</a> y el <a href="legal.html#privacidad" target="_blank" style="color:var(--coral)">aviso de privacidad</a>.</p></div>`;
+}
+function entResumen(e,k){
+  const tt=TARIFAS.find(x=>x.id===S.tarifa&&k<=x.max)||tarifaPeso(k);
+  const r=S.recoger?{i:'fa-store',b:'Recoger en Monterrey',s:'Te contactamos por WhatsApp para la entrega',c:'Gratis'}
+    :S.sumar?{i:'fa-box-archive',b:'Agregar a mis resguardos',s:'Se junta con tu paquete guardado · solo pagas la diferencia',c:e.costo===null?'a cotizar':(e.costo===0?'Sin costo':fmt(e.costo))}
+    :{i:'fa-plane-up',b:'Envío DHL Express'+(tt?' · '+tt.nombre.toLowerCase():''),s:'Tu pedido pesa '+k.toFixed(2)+' kg',c:e.costo===null?'a cotizar':fmt(e.costo)};
+  return `<div class="ent-res"><span class="ic"><i class="fa-solid ${r.i}"></i></span><div class="tx"><b>${r.b}</b><small>${r.s}</small></div><em>${r.c}</em><button type="button" onclick="S.verEntrega=true;renderCheckout()">Cambiar</button></div>`;
 }
 function validar(){ let ok=true;
   const req=S.recoger?['wa','nombre']:['wa','nombre','dir','ciudad','estado']; if(!S.cliente&&S.crearCuenta) req.push('pass','pass2');
@@ -831,7 +849,7 @@ async function registrarInline(){
   const ok=await cargarCatalogo();
   if(!ok){ document.getElementById('grid').innerHTML='<div class="vacio">No se pudo cargar el catálogo. Revisa tu conexión y recarga la página.</div>'; document.getElementById('rowTop').innerHTML='<div class="vacio">No se pudo cargar el catálogo.</div>'; document.getElementById('nModelos').textContent='0'; return; }
   P.forEach(x=>{S.stock[x.c]={ex:x.ex};});
-  document.getElementById('nModelos').textContent=P.length;
+  document.getElementById('nModelos').textContent=(CAT_PIEZAS||P.length).toLocaleString('es-MX'); if(!CAT_PIEZAS){ const sl=document.querySelector('.banner-sello span'); if(sl) sl.textContent='modelos disponibles hoy'; }
   renderInicio(); calcMontar('calcHome'); actualizar();
   leerHash();
   // carrito guardado + disponibilidad real del inventario

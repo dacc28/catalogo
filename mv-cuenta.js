@@ -63,7 +63,7 @@
     const m = {};
     for (const p of S.pedidos) for (const it of (p.items || [])) { const c = it.codigo; if (!c) continue; const r = m[c] || (m[c] = { codigo: c, nombre: it.nombre, foto: it.foto, categoria: it.categoria, material: it.material, comprado: 0, costoTotal: 0, vendido: 0, ingresos: 0 }); r.comprado += Number(it.cant) || 0; r.costoTotal += (Number(it.cant) || 0) * (Number(it.precio) || 0); if (!r.foto && it.foto) r.foto = it.foto; }
     for (const v of S.ventas) { const r = m[v.codigo]; if (!r) continue; r.vendido += Number(v.cant) || 0; r.ingresos += (Number(v.cant) || 0) * (Number(v.precio_venta) || 0); }
-    S.inv = Object.values(m).map(r => { r.costo = r.comprado ? r.costoTotal / r.comprado : 0; const pr = S.precios[r.codigo]; r.precioVenta = pr && pr.precio_venta != null ? Number(pr.precio_venta) : null; r.precioMayoreo = pr && pr.precio_mayoreo != null ? Number(pr.precio_mayoreo) : null; r.minMayoreo = pr && pr.min_mayoreo ? Number(pr.min_mayoreo) : Number($("#minMayoreo").value) || 3; r.visible = pr ? pr.visible !== false : true; r.disponibles = Math.max(0, r.comprado - r.vendido); r.ganancia = r.ingresos - r.vendido * r.costo; return r; }).sort((a, b) => (a.categoria || "").localeCompare(b.categoria || "") || (a.nombre || "").localeCompare(b.nombre || ""));
+    S.inv = Object.values(m).map(r => { r.costo = r.comprado ? r.costoTotal / r.comprado : 0; const pr = S.precios[r.codigo]; r.precioVenta = pr && pr.precio_venta != null ? Number(pr.precio_venta) : null; const may = mayoreoCfg(); r.precioMayoreo = may.precios[r.codigo] != null ? Number(may.precios[r.codigo]) : (pr && pr.precio_mayoreo != null ? Number(pr.precio_mayoreo) : null); r.minMayoreo = may.desde; r.visible = pr ? pr.visible !== false : true; r.disponibles = Math.max(0, r.comprado - r.vendido); r.ganancia = r.ingresos - r.vendido * r.costo; return r; }).sort((a, b) => (a.categoria || "").localeCompare(b.categoria || "") || (a.nombre || "").localeCompare(b.nombre || ""));
   }
 
   /* ---------- pestañas ---------- */
@@ -92,8 +92,8 @@
     else { $("#uDesc").textContent = "Todavía no tienes pedidos. Cuando pagues tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
     pintarMiniCat();
   }
-  const abrirDHL = g => { g = String(g || "").replace(/\s+/g, ""); if (!g) return toast("Escribe tu número de guía", true); window.open("https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1", "_blank", "noopener"); medir("club_rastrear"); };
-  $("#rastreoClub").addEventListener("submit", e => { e.preventDefault(); abrirDHL($("#guiaRapida").value); });
+  const abrirRastreo = g => { g = String(g || "").trim(); if (!g) { toast("Escribe tu número de guía", true); $("#guiaRapida").focus(); return; } const u = rastreoDe(/^(fedex|estafeta|paquetexpress|otra)\s/i.test(g) ? g : g.replace(/\s+/g, "")); if (!u) return toast("Esa paquetería se rastrea en su propia página: " + g, true); window.open(u, "_blank", "noopener"); medir("club_rastrear"); };
+  $("#rastreoClub").addEventListener("submit", e => { e.preventDefault(); abrirRastreo($("#guiaRapida").value); });
   function rastreoDe(g) { // la guía que pone Marvea: "1234" (DHL), "FedEx 1234", "Estafeta 1234"...
     g = String(g || "").trim(); if (!g) return ""; const m = g.match(/^(fedex|estafeta|paquetexpress|otra)\s+(.+)$/i);
     if (!m) return "https://www.dhl.com/mx-es/home/tracking.html?tracking-id=" + encodeURIComponent(g) + "&submit=1";
@@ -102,33 +102,43 @@
   function pintarPedidos() {
     const box = $("#listaPedidos"); box.innerHTML = "";
     const todos = [...(S.pedidosWeb || []), ...S.pedidos];
-    if (!todos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto pagues tu primera compra en la tienda en línea (o te la confirmemos por WhatsApp), la verás aquí con sus fotos, su estado y su guía DHL.</div>'; return; }
+    // una sola barra para rastrear: debajo, un botón por cada pedido que ya tiene guía (un clic y abre el rastreo)
+    const conGuia = todos.filter(p => (p.guia || "").trim());
+    $("#guiasRap").innerHTML = conGuia.length ? '<span class="gr-t">Tus guías:</span>' + conGuia.slice(0, 6).map((p, i) => { const g = p.guia.trim(); const enCamino = p.estado !== "entregado";
+      return '<button type="button" class="g-chip' + (enCamino ? " camino" : "") + '" data-i="' + i + '"><i class="fa-solid ' + (enCamino ? "fa-truck-fast" : "fa-check") + '"></i><span><b>' + esc(p.web ? p.titulo.replace("Pedido web ", "Web ") : fecha(p.fecha)) + '</b><small>' + esc(g) + ' · ' + (enCamino ? "en camino" : "entregado") + '</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></button>'; }).join("") : "";
+    $$("#guiasRap .g-chip").forEach(b => b.addEventListener("click", () => { const g = conGuia[Number(b.dataset.i)].guia.trim(); $("#guiaRapida").value = g; abrirRastreo(g); }));
+    if (!todos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto pagues tu primera compra en la tienda en línea (o te la confirmemos por WhatsApp), la verás aquí con sus fotos, su estado y su guía.</div>'; return; }
     for (const p of todos) {
-      if (p.web) { const el = document.createElement("div"); el.className = "vidrio suave ped"; const guia = (p.guia || "").trim(); const track = rastreoDe(guia); const ent = p.entrega || {};
-        el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo) + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN · pagado con tarjeta</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
-          + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
-          + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> ' + (ent.tipo === "recoger" ? "Recoges en Monterrey" : ent.resguardar ? "En resguardo (sale cuando tú lo pidas)" : "Envío DHL Express") + '</label>'
-          + (guia ? '<input value="' + esc(guia) + '" disabled>' + (track ? '<a class="btn sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') : '<span style="font-size:13px;opacity:.85">' + (p.estado === "preparando" ? "Estamos preparando tu paquete; aquí aparecerá tu guía." : "") + '</span>') + '</div>';
-        box.append(el); continue; }
       const el = document.createElement("div"); el.className = "vidrio suave ped";
-      const guia = (p.guia || "").trim(); const track = rastreoDe(guia);
-      el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
+      const guia = (p.guia || "").trim(), ent = p.entrega || {};
+      const tipo = p.web ? (ent.tipo === "recoger" ? '<i class="fa-solid fa-store"></i> Recoges en Monterrey' : ent.resguardar ? '<i class="fa-solid fa-box-archive"></i> En resguardo (sale cuando tú lo pidas)' : '<i class="fa-solid fa-plane-up"></i> Envío DHL Express') : '<i class="fa-solid fa-truck-fast"></i> Envío';
+      const guiaTx = guia ? '<button type="button" class="g-link" title="Rastrear este envío">Guía <b>' + esc(guia) + '</b> <i class="fa-solid fa-arrow-up-right-from-square"></i></button>'
+        : '<span class="g-sin">' + (p.estado === "entregado" ? "" : (p.web && ent.tipo === "recoger" ? "Te avisamos por WhatsApp para la entrega" : "Tu guía aparece aquí cuando salga tu paquete")) + '</span>';
+      el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN' + (p.web ? ' · pagado' : '') + '</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
         + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
-        + '<div class="guia"><label><i class="fa-solid fa-truck-fast"></i> Guía de envío</label><input value="' + esc(guia) + '" placeholder="Pega aquí tu número de guía" maxlength="30">'
-        + (track ? '<a class="btn sm" href="' + track + '" target="_blank" rel="noopener">Rastrear</a>' : '') + '<button class="btn cristal sm guardar">Guardar guía</button>'
-        + (p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>';
-      $(".guardar", el).addEventListener("click", async () => { const g = $(".guia input", el).value.trim(); const { error } = await sb.from("pedidos").update({ guia: g, estado: g && p.estado === "preparando" ? "enviado" : p.estado }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.guia = g; if (g && p.estado === "preparando") p.estado = "enviado"; toast("Guía guardada"); pintarPedidos(); pintarInicio(); });
+        + (!p.web && !guia && p.estado === "entregado" ? '' : '<div class="ped-pie"><span class="tipo">' + tipo + '</span>' + guiaTx + (!p.web && p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>');
+      const gl = $(".g-link", el); if (gl) gl.addEventListener("click", () => abrirRastreo(guia));
       const r = $(".recibido", el); r && r.addEventListener("click", async () => { const { error } = await sb.from("pedidos").update({ estado: "entregado" }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.estado = "entregado"; toast("¡Qué bien! Pedido entregado"); pintarPedidos(); pintarInicio(); });
       box.append(el);
     }
   }
 
-  /* ---------- Mis precios y ventas: menudeo, mayoreo (desde N piezas), ventas registradas ---------- */
+  /* ---------- Mis precios y ventas: menudeo, mayoreo (desde N piezas, igual para todas), ventas registradas ----------
+     Menudeo y "visible" van en la tabla precios. El precio de mayoreo de cada pieza y el "desde N piezas" van en
+     clientas.catalogo.mayoreo = { desde, precios: { codigo: precio } } (la tabla precios no tiene esas columnas). */
+  const mayoreoCfg = () => { const m = (S.yo && S.yo.catalogo && S.yo.catalogo.mayoreo) || {}; return { desde: Math.max(2, Math.min(99, Math.round(Number(m.desde) || 3))), precios: Object.assign({}, m.precios || {}) }; };
+  let colaMay = Promise.resolve(true);
+  function guardarMayoreo(parcial) { // se guarda en orden (una escritura a la vez) y siempre con lo último
+    const m = mayoreoCfg(); S.yo.catalogo = Object.assign({}, S.yo.catalogo, { mayoreo: { desde: parcial.desde != null ? parcial.desde : m.desde, precios: parcial.precios || m.precios } });
+    const run = async () => { const { error } = await sb.from("clientas").update({ catalogo: S.yo.catalogo }).eq("id", S.yo.id); if (error) { toast("No se guardó: " + error.message, true); return false; } return true; };
+    colaMay = colaMay.then(run, run); return colaMay;
+  }
   function ganDe(r, pv) { const pp = pv == null || isNaN(pv) ? null : pv - r.costo; return { pp, potencial: pp == null ? 0 : pp * r.disponibles }; }
   function ganHTML(r, pv, pm) { const g = ganDe(r, pv);
-    if (g.pp == null) return '<span class="gsin">Pon tu precio</span>' + (r.vendido ? '<small>Ya ganaste ' + mxn(r.ganancia) + '</small>' : '');
     const gm = pm != null && !isNaN(pm) ? pm - r.costo : null;
-    return '<b class="' + (g.pp < 0 ? "neg" : "") + '">' + mxn(g.pp) + ' <i>c/u menudeo</i></b>' + (gm != null ? '<small>' + mxn(gm) + ' c/u en mayoreo</small>' : '') + (r.disponibles ? '<small>Si vendes ' + (r.disponibles === 1 ? "la que queda" : "las " + r.disponibles) + ': <b style="display:inline">' + mxn(g.potencial) + '</b></small>' : '') + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : ''); }
+    const lineaMay = gm != null ? '<small class="gmay">' + mxn(gm) + ' c/u en mayoreo</small>' : '';
+    if (g.pp == null) return '<span class="gsin">Pon tu precio</span>' + lineaMay + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : '');
+    return '<b class="' + (g.pp < 0 ? "neg" : "") + '">' + mxn(g.pp) + ' <i>c/u menudeo</i></b>' + lineaMay + (r.disponibles ? '<small>Si vendes ' + (r.disponibles === 1 ? "la que queda" : "las " + r.disponibles) + ': <b style="display:inline">' + mxn(g.potencial) + '</b></small>' : '') + (r.vendido ? '<small class="ya">Ya ganaste ' + mxn(r.ganancia) + '</small>' : ''); }
   function pintarResumenNegocio() {
     const disp = S.inv.reduce((s, r) => s + r.disponibles, 0), gan = S.inv.reduce((s, r) => s + r.ganancia, 0), ing = S.inv.reduce((s, r) => s + r.ingresos, 0);
     const pot = S.inv.reduce((s, r) => s + ganDe(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta).potencial, 0);
@@ -136,9 +146,10 @@
     $("#resumenNegocio").innerHTML = '<span class="chip"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(ing) + ' vendidos</span><span class="chip prep"><i class="fa-solid fa-arrow-trend-up"></i> ' + mxn(gan) + ' de ganancia ya hecha</span><span class="chip ent"><i class="fa-solid fa-coins"></i> ' + mxn(pot) + ' más si vendes lo que te queda</span><span class="chip total"><i class="fa-solid fa-star"></i> Ganancia total: ' + mxn(gan + pot) + '</span>' + (sinPrecio ? '<span class="chip"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio de venta</span>' : "");
   }
   async function guardarPrecio(r, cambios) {
-    const fila = Object.assign({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: r.precioVenta, precio_mayoreo: r.precioMayoreo, min_mayoreo: r.minMayoreo, visible: r.visible }, cambios);
+    if ("precio_mayoreo" in cambios) { const m = mayoreoCfg(); const v = cambios.precio_mayoreo; if (v == null) delete m.precios[r.codigo]; else m.precios[r.codigo] = v; r.precioMayoreo = v; return guardarMayoreo({ precios: m.precios }); }
+    const fila = { clienta_id: S.yo.id, codigo: r.codigo, precio_venta: "precio_venta" in cambios ? cambios.precio_venta : r.precioVenta, visible: "visible" in cambios ? cambios.visible : r.visible };
     const { error } = await sb.from("precios").upsert(fila); if (error) { toast("No se guardó: " + error.message, true); return false; }
-    S.precios[r.codigo] = fila; r.precioVenta = fila.precio_venta; r.precioMayoreo = fila.precio_mayoreo; r.minMayoreo = fila.min_mayoreo; r.visible = fila.visible !== false; return true;
+    S.precios[r.codigo] = Object.assign({}, S.precios[r.codigo], fila); r.precioVenta = fila.precio_venta; r.visible = fila.visible !== false; return true;
   }
   async function cancelarVenta(v) {
     const r = S.inv.find(x => x.codigo === v.codigo) || {}; if (!confirm("¿Cancelar esta venta?\n" + (r.nombre || v.codigo) + " · " + v.cant + " × " + mxn(v.precio_venta) + "\nLa pieza vuelve a tu inventario.")) return;
@@ -155,47 +166,65 @@
       el.innerHTML = '<div><b>' + esc(nom(v.codigo)) + '</b><span>' + fecha(v.fecha || v.creado) + ' · ' + v.cant + ' × ' + mxn(v.precio_venta) + '</span></div><b>' + mxn((Number(v.cant) || 0) * (Number(v.precio_venta) || 0)) + '</b><button class="btn cristal sm cancelar"><i class="fa-solid fa-rotate-left"></i> Cancelar</button>';
       $(".cancelar", el).addEventListener("click", () => cancelarVenta(v)); lista.append(el); }
   }
+  const filaGan = new Map(); // codigo → función que repinta la ganancia de su fila (para cuando cambia "desde N piezas")
   function pintarNegocio() {
-    const tb = $("#tablaInv tbody"); tb.innerHTML = ""; $("#invVacio").style.display = S.inv.length ? "none" : "block"; $("#tablaInv").closest(".tabla-wrap").style.display = S.inv.length ? "" : "none"; $("#rapidos").style.display = S.inv.length ? "" : "none";
-    for (const r of S.inv) delete r.precioTmp;
+    const tb = $("#tablaInv tbody"); tb.innerHTML = ""; filaGan.clear(); $("#invVacio").style.display = S.inv.length ? "none" : "block"; $("#tablaInv").closest(".tabla-wrap").style.display = S.inv.length ? "" : "none"; $("#rapidos").style.display = S.inv.length ? "" : "none";
+    const desde = mayoreoCfg().desde; if (document.activeElement !== $("#minMayoreo")) $("#minMayoreo").value = desde;
+    for (const r of S.inv) { delete r.precioTmp; r.minMayoreo = desde; }
     pintarResumenNegocio();
     for (const r of S.inv) {
       const tr = document.createElement("tr"); if (!r.disponibles) tr.className = "agotado";
       const ultima = S.ventas.find(v => v.codigo === r.codigo);
       tr.innerHTML = '<td><div class="pcell">' + ((r.foto = r.foto || mvF(r.codigo)) ? '<img src="' + esc(r.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div><b>' + esc(r.nombre || r.codigo) + '</b><span>' + esc(r.codigo) + (r.material ? ' · ' + esc(r.material) : '') + ' · compraste ' + r.comprado + ', vendiste ' + r.vendido + '</span></div></div></td>'
         + '<td><b>' + r.disponibles + '</b></td><td>' + mxn(r.costo) + '</td>'
-        + '<td><span class="inp">$<input type="number" min="0" step="1" class="precio" value="' + (r.precioVenta == null ? "" : Math.round(r.precioVenta)) + '" placeholder="' + Math.round(r.costo * 2) + '"></span></td>'
-        + '<td><span class="inp">$<input type="number" min="0" step="1" class="mayoreo" value="' + (r.precioMayoreo == null ? "" : Math.round(r.precioMayoreo)) + '" placeholder="' + Math.round(r.costo * 1.5) + '"></span><span class="inp min"><small>desde</small><input type="number" min="2" max="99" class="minm" value="' + r.minMayoreo + '"><small>pzas</small></span></td>'
+        + '<td><span class="inp">$<input type="number" min="0" step="1" inputmode="numeric" class="precio" value="' + (r.precioVenta == null ? "" : Math.round(r.precioVenta)) + '" placeholder="' + Math.round(r.costo * 2) + '"></span></td>'
+        + '<td><span class="inp">$<input type="number" min="0" step="1" inputmode="numeric" class="mayoreo" value="' + (r.precioMayoreo == null ? "" : Math.round(r.precioMayoreo)) + '" placeholder="' + Math.round(r.costo * 1.5) + '"></span><small class="desde-hint">desde <b>' + r.minMayoreo + '</b> pzas</small></td>'
         + '<td class="gan">' + ganHTML(r, r.precioVenta, r.precioMayoreo) + '</td>'
-        + '<td><span class="inp"><input type="number" min="1" max="' + (r.disponibles || 1) + '" step="1" class="cant" value="1" style="width:40px"></span> <button class="ico vender" title="Registrar venta"' + (r.disponibles ? "" : " disabled") + '><i class="fa-solid fa-plus"></i></button>' + (ultima ? ' <button class="ico deshacer" title="Cancelar la última venta de esta pieza"><i class="fa-solid fa-rotate-left"></i></button>' : '') + '</td>'
+        + '<td><div class="vender-box"><span class="inp"><input type="number" min="1" max="' + (r.disponibles || 1) + '" step="1" inputmode="numeric" class="cant" value="1" style="width:40px"></span><button class="ico vender" title="Registrar venta"' + (r.disponibles ? "" : " disabled") + '><i class="fa-solid fa-plus"></i></button>' + (ultima ? '<button class="ico deshacer" title="Cancelar la última venta de esta pieza"><i class="fa-solid fa-rotate-left"></i></button>' : '') + '</div></td>'
         + '<td><button class="ico visible' + (r.visible ? "" : " off") + '" title="' + (r.visible ? "Visible en tu catálogo" : "Oculta en tu catálogo") + '"><i class="fa-regular ' + (r.visible ? "fa-eye" : "fa-eye-slash") + '"></i></button></td>';
-      const precioIn = $(".precio", tr), mayIn = $(".mayoreo", tr), minIn = $(".minm", tr);
-      const num = i => i.value === "" ? null : Number(i.value);
-      precioIn.addEventListener("input", () => { r.precioTmp = num(precioIn); $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp, num(mayIn)); pintarResumenNegocio(); });
-      precioIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_venta: num(precioIn) })) { delete r.precioTmp; $(".gan", tr).innerHTML = ganHTML(r, r.precioVenta, r.precioMayoreo); pintarResumenNegocio(); toast("Precio de menudeo guardado"); } });
-      mayIn.addEventListener("input", () => { $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta, num(mayIn)); });
-      mayIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_mayoreo: num(mayIn) })) toast("Precio de mayoreo guardado"); });
-      minIn.addEventListener("change", async () => { const v = Math.max(2, Math.min(99, Number(minIn.value) || 3)); minIn.value = v; if (await guardarPrecio(r, { min_mayoreo: v })) toast("Mayoreo desde " + v + " piezas"); });
+      const precioIn = $(".precio", tr), mayIn = $(".mayoreo", tr);
+      const num = i => i.value === "" ? null : Math.max(0, Number(i.value));
+      const repGan = () => { $(".gan", tr).innerHTML = ganHTML(r, r.precioTmp !== undefined ? r.precioTmp : r.precioVenta, num(mayIn)); $(".desde-hint b", tr).textContent = r.minMayoreo; };
+      filaGan.set(r.codigo, repGan);
+      precioIn.addEventListener("input", () => { r.precioTmp = num(precioIn); repGan(); pintarResumenNegocio(); });
+      precioIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_venta: num(precioIn) })) { delete r.precioTmp; repGan(); pintarResumenNegocio(); toast("Precio de menudeo guardado"); } });
+      mayIn.addEventListener("input", repGan);
+      mayIn.addEventListener("change", async () => { if (await guardarPrecio(r, { precio_mayoreo: num(mayIn) })) { repGan(); toast(num(mayIn) == null ? "Precio de mayoreo quitado" : "Precio de mayoreo guardado"); } });
       $(".visible", tr).addEventListener("click", async () => { if (await guardarPrecio(r, { visible: !r.visible })) { calcular(); pintarNegocio(); pintarMiniCat(); } });
       const dz = $(".deshacer", tr); if (dz) dz.addEventListener("click", () => cancelarVenta(ultima));
       $(".vender", tr).addEventListener("click", async () => {
-        const cant = Math.max(1, Math.min(r.disponibles, Number($(".cant", tr).value) || 1)); let pv = num(precioIn);
-        if (pv != null && r.precioMayoreo != null && cant >= r.minMayoreo) pv = r.precioMayoreo; // venta por mayoreo
+        const cant = Math.max(1, Math.min(r.disponibles, Number($(".cant", tr).value) || 1)); let pv = num(precioIn); const pm = num(mayIn);
+        const porMayoreo = pm != null && cant >= r.minMayoreo; if (porMayoreo) pv = pm; // venta por mayoreo
         if (pv == null) { const s = prompt("¿A cuánto vendiste cada pieza?", Math.round(r.costo * 2)); if (s == null) return; pv = Number(s) || 0; precioIn.value = pv; precioIn.dispatchEvent(new Event("change")); }
         const { data, error } = await sb.from("ventas").insert({ clienta_id: S.yo.id, codigo: r.codigo, cant, precio_venta: pv }).select().single(); if (error) return toast("No se registró: " + error.message, true);
-        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + (cant >= r.minMayoreo && r.precioMayoreo != null ? " (precio de mayoreo)" : "") + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
+        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + (porMayoreo ? " (precio de mayoreo)" : "") + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
       });
       tb.append(tr);
     }
     pintarVentasHechas();
   }
-  // rellenar todos los precios de un golpe (solo los que estén vacíos, para no pisar lo que ya puso)
+  // rellenar de un golpe solo los precios vacíos (para no pisar lo que ya puso): una sola escritura por botón
   $$("#rapidos [data-mult],#rapidos [data-multm]").forEach(b => b.addEventListener("click", async () => {
-    const m = Number(b.dataset.mult || b.dataset.multm), esMay = !!b.dataset.multm; let n = 0;
-    for (const r of S.inv) { if (!r.disponibles) continue; if (esMay ? r.precioMayoreo != null : r.precioVenta != null) continue; const v = Math.round(r.costo * m); if (await guardarPrecio(r, esMay ? { precio_mayoreo: v } : { precio_venta: v })) n++; }
-    calcular(); pintarNegocio(); pintarInicio(); toast(n ? "Listo: " + n + " precios de " + (esMay ? "mayoreo" : "menudeo") + " puestos (×" + m + "). Puedes ajustar cada uno." : "Todas las piezas ya tenían precio; cámbialo pieza por pieza.");
+    const m = Number(b.dataset.mult || b.dataset.multm), esMay = !!b.dataset.multm;
+    const vacias = S.inv.filter(r => r.disponibles && (esMay ? r.precioMayoreo == null : r.precioVenta == null));
+    if (!vacias.length) return toast("Todas tus piezas ya tienen precio de " + (esMay ? "mayoreo" : "menudeo") + "; cámbialo pieza por pieza.");
+    b.disabled = true; let ok;
+    if (esMay) { const cfg = mayoreoCfg(); vacias.forEach(r => cfg.precios[r.codigo] = Math.round(r.costo * m)); ok = await guardarMayoreo({ precios: cfg.precios }); }
+    else { const filas = vacias.map(r => ({ clienta_id: S.yo.id, codigo: r.codigo, precio_venta: Math.round(r.costo * m), visible: r.visible })); const { error } = await sb.from("precios").upsert(filas); if (error) toast("No se guardó: " + error.message, true); else filas.forEach(f => S.precios[f.codigo] = Object.assign({}, S.precios[f.codigo], f)); ok = !error; }
+    b.disabled = false; if (!ok) return;
+    calcular(); pintarNegocio(); pintarInicio(); toast("Listo: " + vacias.length + " precios de " + (esMay ? "mayoreo" : "menudeo") + " puestos (×" + m + "). Puedes ajustar cada uno.");
   }));
-  $("#minMayoreo").addEventListener("change", async () => { const v = Math.max(2, Math.min(99, Number($("#minMayoreo").value) || 3)); $("#minMayoreo").value = v; let n = 0; for (const r of S.inv) { if (r.minMayoreo !== v && await guardarPrecio(r, { min_mayoreo: v })) n++; } pintarNegocio(); toast("Mayoreo desde " + v + " piezas en todas tus piezas"); });
+  // "Mayoreo desde N piezas": aplica a todas las piezas; se ve al instante y se guarda una sola vez
+  let tMin = null;
+  function ponerDesde(v, guardar) {
+    v = Math.max(2, Math.min(99, Math.round(Number(v) || 3))); $("#minMayoreo").value = v;
+    S.yo.catalogo = Object.assign({}, S.yo.catalogo, { mayoreo: Object.assign(mayoreoCfg(), { desde: v }) });
+    S.inv.forEach(r => r.minMayoreo = v); filaGan.forEach(f => f());
+    clearTimeout(tMin); if (guardar) tMin = setTimeout(async () => { if (await guardarMayoreo({ desde: v })) toast("Listo: precio de mayoreo desde " + v + " piezas"); }, 700);
+  }
+  $$("#minMayoreoBox [data-d]").forEach(b => b.addEventListener("click", () => ponerDesde((Number($("#minMayoreo").value) || 3) + Number(b.dataset.d), true)));
+  $("#minMayoreo").addEventListener("input", () => { if ($("#minMayoreo").value !== "") ponerDesde($("#minMayoreo").value, true); });
+  $("#minMayoreo").addEventListener("change", () => ponerDesde($("#minMayoreo").value, true));
 
   /* ---------- Mi catálogo: PDF con su nombre, logo y precios (sin links ni datos del proveedor) ---------- */
   const COLORES = ["#2B2B2B", "#5A2748", "#B76E79", "#1F4E5A", "#8C6A3F", "#C2185B", "#3C5A40", "#1D3557"];
