@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-07T19:24:15.085Z",
+ "actualizado": "2026-11-07T21:00:58.539Z",
  "categorias": [
   {
    "p": "ANI",
@@ -37,6 +37,10 @@
   {
    "p": "JUE",
    "n": "Juegos"
+  },
+  {
+   "p": "SIM",
+   "n": "Simuladores"
   }
  ],
  "piezas": 726,
