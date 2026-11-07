@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-06T18:23:04.907Z",
+ "actualizado": "2026-11-07T18:59:08.343Z",
  "categorias": [
   {
    "p": "ANI",
@@ -39,7 +39,7 @@
    "n": "Juegos"
   }
  ],
- "piezas": 729,
+ "piezas": 726,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -318,18 +318,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00019",
-   "nombre": "Aretes Verde",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/171c384dce61cf1b148ebc05d24b587e.jpg",
-   "creado": "2026-10-20T17:19:22.890Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00020",
    "nombre": "Aretes Azul",
    "categoria": "ARE",
@@ -479,7 +467,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a422ead30d36f3d6b598b1447a287057.jpg",
    "creado": "2026-10-20T23:14:13.742Z",
