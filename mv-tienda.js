@@ -499,7 +499,7 @@ function renderCheckout(){
     <div class="bloq"><div class="tt"><span>3</span>Paga</div>
       <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${S.factura?` · IVA ${fmt(iva())}`:''} · ${e.costo===null?'envío a cotizar':(e.modo==='recoger'?'recoges gratis':(e.modo==='sumar'?'diferencia de envío ':'envío DHL ')+fmt(e.costo))}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
       <div class="pagos"><button class="pago tarjeta" id="btnTarjeta" onclick="pagar('tarjeta')"><b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe; Marvea nunca ve tu tarjeta.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span><span>Crédito y débito</span></div></button>
-      <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 12 h.</small></button></div>
+      <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 6 h.</small></button></div>
       <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">Al pagar aceptas los <a href="legal.html#terminos" target="_blank" style="color:var(--coral)">términos y condiciones</a> y el <a href="legal.html#privacidad" target="_blank" style="color:var(--coral)">aviso de privacidad</a>.</p></div>`;
 }
 function entResumen(e,k){
@@ -579,7 +579,7 @@ function finalizar(metodo,folio){
   const nom=esc((c.nombre||'').split(' ')[0]);
   document.getElementById('coBody').innerHTML=`
     <div class="exito"><h3>${metodo==='tarjeta'?`¡Listo, ${nom}! <i>${resg?'Tu paquete queda en resguardo.':'Ya estamos preparando tu pedido.'}</i>`:`Ya casi, ${nom}. <i>Envíanos tu comprobante.</i>`}</h3>
-      <p class="sub">Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 12 h; ya se abrió tu chat de WhatsApp)'}.</p>
+      <p class="sub">Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 6 h; ya se abrió tu chat de WhatsApp)'}.</p>
       <div class="chips"><span class="chip">📦 ${n} piezas · ${k.toFixed(2)} kg</span><span class="chip">${S.recoger?'📍 Recoges gratis en Monterrey':resg?'🗃 En resguardo':'✈️ DHL Express'}</span>${fac?'<span class="chip">🧾 Factura</span>':''}</div>
     </div>
     ${nueva?`<div class="club"><span class="kicker">Activa tu Business Club</span>
@@ -800,7 +800,7 @@ function renderCheckout(){
     <div class="bloq"><div class="tt"><span>3</span>Paga</div>
       <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${S.factura?` · IVA ${fmt(iva())}`:''} · ${envTxt}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
       <div class="pagos"><button class="pago tarjeta" id="btnTarjeta" onclick="pagar('tarjeta')"><b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe; Marvea nunca ve tu tarjeta.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span><span>Crédito y débito</span></div></button>
-      <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 12 h.</small></button></div>
+      <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 6 h.</small></button></div>
       <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">Al pagar aceptas los <a href="legal.html#terminos" target="_blank" style="color:var(--coral)">términos y condiciones</a> y el <a href="legal.html#privacidad" target="_blank" style="color:var(--coral)">aviso de privacidad</a>.</p></div>`;
 }
 
