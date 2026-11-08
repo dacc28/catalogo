@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-08T20:01:52.342Z",
+ "actualizado": "2026-11-08T20:14:41.008Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 712,
+ "piezas": 726,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -243,7 +243,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "Inspo Ferragamo",
    "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
    "creado": "2026-10-19T01:46:11.478Z",
