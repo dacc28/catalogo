@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-08T23:33:45.694Z",
+ "actualizado": "2026-11-08T23:35:14.992Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1266,
+ "piezas": 1316,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -235,6 +235,18 @@
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00030",
+   "nombre": "Prueba",
+   "categoria": "ANI",
+   "material": "Prueba",
+   "precio": 1,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "",
+   "creado": "2026-11-08T23:35:09.735Z",
    "disponible": true
   },
   {
