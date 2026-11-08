@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-08T19:45:55.545Z",
+ "actualizado": "2026-11-08T19:57:34.320Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 665,
+ "piezas": 687,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -94,6 +94,18 @@
    "disponible": true
   },
   {
+   "codigo": "ANI-00011",
+   "nombre": "Anillo Ajustable Corte Pera Plata",
+   "categoria": "ANI",
+   "material": "Chapa de oro",
+   "precio": 40,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
+   "creado": "2026-10-27T00:43:11.368Z",
+   "disponible": true
+  },
+  {
    "codigo": "ANI-00017",
    "nombre": "Anillo Ajustable Corte Marquesa Dorado",
    "categoria": "ANI",
@@ -115,6 +127,18 @@
    "notas": "",
    "foto": "fotos/217c111b5684d27d294608257c003243.jpg",
    "creado": "2026-10-27T00:51:49.839Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00019",
+   "nombre": "Anillo Ajustable Brilllantes Plata",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 33,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/3da1504929d304cf142ea81658206f50.jpg",
+   "creado": "2026-10-27T00:53:07.627Z",
    "disponible": true
   },
   {
@@ -243,7 +267,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Más Vendido",
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
@@ -267,7 +291,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/08d6b9c371127b6cb8f688eb4e91e996.jpg",
    "creado": "2026-10-19T02:08:54.968Z",
@@ -910,6 +934,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00004",
+   "nombre": "Collar de Hongo",
+   "categoria": "COL",
+   "material": "Chapa de Oro",
+   "precio": 45,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/ff8325a9d93f7d8a140c5b61b0b56968.jpg",
+   "creado": "2026-10-19T01:00:48.001Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00005",
    "nombre": "Collar Yakli Azul",
    "categoria": "COL",
@@ -1315,6 +1351,18 @@
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00054",
+   "nombre": "Collar de Caracol Turbo",
+   "categoria": "COL",
+   "material": "Chapa de Oro",
+   "precio": 55,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
+   "creado": "2026-10-21T22:43:28.806Z",
    "disponible": true
   },
   {

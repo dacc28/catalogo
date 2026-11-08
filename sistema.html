@@ -5031,6 +5031,26 @@ button.dg-f.mvr-a{cursor:pointer}
 @media (max-width:600px){.mvr .dg-res{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .dg-f.mvr-a .dg-n b{white-space:normal}
 .mvr .dg-r span{white-space:normal;overflow:visible;line-height:1.25}
+/* ===== Revisar piezas › Carritos abiertos (8-nov-2026) ===== */
+.dg-f.mvc-m{grid-template-columns:44px minmax(0,1fr) auto;cursor:pointer}
+.dg-f.mvc-m .th{width:44px;height:44px;border-radius:10px;overflow:hidden;background:#F4F1EC}
+.dg-f.mvc-m .th img{width:100%;height:100%;object-fit:cover;display:block}
+.dg-f.mvc-m small{white-space:normal}
+.mvc-lista{display:flex;flex-direction:column;gap:10px}
+.mvc-c{background:#fff;border:1px solid var(--line);border-left:4px solid #5A2748;border-radius:14px;overflow:hidden}
+.mvc-c.web{border-left-color:#F2653F}
+.mvc-h{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:10px 14px;background:var(--surface-2,#F4F1EC);font-size:13px}
+.mvc-h>b:first-child{font-size:15px}
+.mvc-t,.mvc-e{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;background:#fff;color:#5A2748}
+.mvc-c.web .mvc-t{color:#B8431F}
+.mvc-r{color:var(--muted)}
+.mvc-n{margin-left:auto;font-variant-numeric:tabular-nums}
+.mvc-i{padding:4px 0}
+.mvc-l{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:6px 14px;font-size:13.5px;border-top:1px solid var(--line)}
+.mvc-l:first-child{border-top:0}
+.mvc-l span{font-weight:700;font-variant-numeric:tabular-nums}
+.mvc-l small{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mvc-l b{font-variant-numeric:tabular-nums;white-space:nowrap}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -5478,9 +5498,9 @@ button.dg-f.mvr-a{cursor:pointer}
   function enCarritos(){ const m=new Map(); for(const c of (state.allCarts||[])){ if(!activo(c)) continue; for(const it of c.items||[]){ if(esEnvio(it)) continue; const cant=Number(it.cant)||0; if(cant<=0) continue;
       let r=m.get(it.codigo); if(!r) m.set(it.codigo,r={apartadas:0,vendidas:0,carts:[]}); if(c.estado==="final") r.vendidas+=cant; else r.apartadas+=cant; r.carts.push({c,cant,emp:Number(it.emp)||0}); } } return m; }
   async function cargarNube(){ const s=sb(); if(!s){ R.web=R.web||{}; R.srvErr=R.srvErr||"sin-nube"; pintar(); return; } if(R.cargando) return; R.cargando=true; pintar();
-    try{ const [a,b]=await Promise.all([s.rpc("marvea_inventario_revision"),s.from("apartados_web").select("codigo,cant,estado").in("estado",["activo","pago"])]);
+    try{ const [a,b]=await Promise.all([s.rpc("marvea_inventario_revision"),s.from("apartados_web").select("sesion,codigo,cant,estado,expira,folio").in("estado",["activo","pago"])]);
       if(a.error){ R.srv=null; R.srvErr=/marvea_inventario_revision/.test(a.error.message||"")&&/find|exist/i.test(a.error.message||"")?"falta":String(a.error.message||a.error.code||"error"); } else { R.srv=a.data; R.srvErr=""; }
-      if(!b.error){ const w={}; for(const r of b.data||[]){ const x=w[r.codigo]||(w[r.codigo]={activo:0,pago:0}); x[r.estado]=(x[r.estado]||0)+(Number(r.cant)||0); } R.web=w; }
+      if(!b.error){ R.webRows=b.data||[]; R.webAt=Date.now(); const w={}; for(const r of b.data||[]){ const x=w[r.codigo]||(w[r.codigo]={activo:0,pago:0}); x[r.estado]=(x[r.estado]||0)+(Number(r.cant)||0); } R.web=w; }
     }catch(e){ R.srvErr=String(e.message||e); }
     finally{ R.cargando=false; pintar(); } }
   async function cargarMov(codigo){ const s=sb(); if(!s){ R.mov[codigo]={error:"sin-nube"}; pintar(); return; } try{ const {data,error}=await s.from("marvea_movimientos").select("*").eq("codigo",codigo).order("id",{ascending:false}).limit(120); R.mov[codigo]=error?{error:error.message||"error"}:data||[]; }catch(e){ R.mov[codigo]={error:String(e.message||e)}; } pintar(); }
@@ -5562,11 +5582,51 @@ button.dg-f.mvr-a{cursor:pointer}
           h("span",{class:"dg-d"},h("b",{class:ap>0?"mas":ap<0?"menos":""},m.motivo==="inicio"?String(m.despues):(ap>0?"+":"")+ap),h("small",null,m.motivo==="inicio"?"pzas":"quedan "+m.despues))); }));
     return h("div",null,cab,tot,h("h4",{class:"mvr-h"},"¿En qué carritos está?"),carts,h("h4",{class:"mvr-h"},"Historial de piezas"),hist);
   }
+
+  /* ---------- Carritos abiertos (8-nov-2026): qué piezas están en carritos, sin nombres, para cotejar el conteo ---------- */
+  const abierto=c=>c&&c.estado!=="cancelado"&&c.estado!=="final";
+  const pz=n=>n+" pza"+(n===1?"":"s");
+  const quedan=f=>{ const ms=new Date(f)-Date.now(); if(!(ms>0)) return "venciendo…"; const m=Math.ceil(ms/60000); return m>=60?"le quedan "+Math.floor(m/60)+" h "+(m%60)+" min":"le quedan "+m+" min"; };
+  function carritosAbiertos(){
+    const L=[];
+    const sis=(state.allCarts||[]).filter(abierto).slice().sort((a,b)=>String(a.creado||"").localeCompare(String(b.creado||"")));
+    for(const c of sis){ const items=[]; for(const it of c.items||[]){ if(esEnvio(it)) continue; const cant=Number(it.cant)||0; if(cant>0) items.push({codigo:it.codigo,nombre:it.nombre,cant,emp:Number(it.emp)||0}); }
+      if(!items.length) continue;
+      const tipo=c.origen==="web"?"Pedido web pagado":(typeof esVentaDirectaCart==="function"&&esVentaDirectaCart(c))?"Venta directa":c.liveId?"Live":"Venta directa";
+      L.push({src:"sis",items,tipo,estado:c.estado==="cerrado"?"Cerrado, por entregar":c.estado==="abierto"||!c.estado?"Abierto":String(c.estado).charAt(0).toUpperCase()+String(c.estado).slice(1),ref:"#"+numPedido(c),fecha:c.creado}); }
+    const ses=new Map(); for(const r of R.webRows||[]){ const cant=Number(r.cant)||0; if(cant<=0) continue; let x=ses.get(r.sesion); if(!x) ses.set(r.sesion,x={items:new Map(),pago:false,exp:null,folio:""});
+      x.items.set(r.codigo,(x.items.get(r.codigo)||0)+cant); if(r.estado==="pago"){ x.pago=true; if(r.folio) x.folio=r.folio; } if(!x.exp||new Date(r.expira)<new Date(x.exp)) x.exp=r.expira; }
+    for(const x of ses.values()){ const items=[...x.items].map(([codigo,cant])=>{ const p=state.products.get(codigo); return {codigo,nombre:p?p.nombre:codigo,cant,emp:0}; });
+      L.push({src:"web",items,tipo:"Tienda en línea",estado:x.pago?"Pagando"+(x.folio?" · "+x.folio:""):"Apartado",ref:quedan(x.exp),exp:x.exp}); }
+    let ns=0,nw=0; for(const c of L) c.n=c.src==="sis"?++ns:++nw; return L; }
+  function vistaCarritos(){
+    const L=carritosAbiertos(); const porMod=new Map(); let tot=0,tsis=0,tweb=0;
+    for(const c of L) for(const it of c.items){ let r=porMod.get(it.codigo); if(!r) porMod.set(it.codigo,r={codigo:it.codigo,nombre:it.nombre,sis:0,web:0}); r[c.src]+=it.cant; tot+=it.cant; if(c.src==="sis") tsis+=it.cant; else tweb+=it.cant; }
+    const nota=R.srvErr==="sin-nube"?h("p",{class:"mvr-nota"},"Sin conexión con la nube: no se pueden ver los carritos de la tienda en línea, solo los del sistema.")
+      :!R.webRows&&R.cargando?h("p",{class:"mvr-nota"},"Leyendo los carritos de la tienda en línea…")
+      :h("p",{class:"mvr-nota ok"},"Se actualiza solo cada 30 s"+(R.webAt?" · última lectura "+new Date(R.webAt).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",second:"2-digit"}):""));
+    const res=h("div",{class:"dg-res"},
+      h("div",{class:"dg-r warn"},h("span",null,"Piezas en carritos abiertos"),h("b",null,tot.toLocaleString("es-MX"))),
+      h("div",{class:"dg-r"},h("span",null,"Carritos del sistema"),h("b",null,String(L.filter(c=>c.src==="sis").length)+" · "+pz(tsis))),
+      h("div",{class:"dg-r"},h("span",null,"Carritos en la tienda en línea"),h("b",null,R.webRows?String(L.filter(c=>c.src==="web").length)+" · "+pz(tweb):"…")));
+    if(!L.length) return [nota,res,h("div",{class:"mvr-ok"},h("b",null,"No hay carritos abiertos"),h("span",null,"Ninguna pieza está apartada ahora: todo lo que no se ha vendido está en Disponibles."))];
+    const mods=[...porMod.values()].sort((a,b)=>(b.sis+b.web)-(a.sis+a.web)||String(a.codigo).localeCompare(String(b.codigo)));
+    const tabla=h("div",{class:"dg-lista"},...mods.map(r=>{ const p=state.products.get(r.codigo);
+      return h("button",{type:"button",class:"dg-f mvc-m",onclick:()=>abrirModelo(r.codigo)},thumb(p||{nombre:r.nombre||r.codigo}),
+        h("span",{class:"dg-n"},h("b",null,(p&&p.nombre)||r.nombre||r.codigo),h("small",null,[r.codigo,r.sis?"sistema "+r.sis:"",r.web?"tienda "+r.web:"",p?"quedan "+(Number(p.existencia)||0)+" disp.":"ya no está en inventario"].filter(Boolean).join(" · "))),
+        h("span",{class:"dg-d"},h("b",null,pz(r.sis+r.web)))); }));
+    const cards=L.map(c=>{ const n=c.items.reduce((a,i)=>a+i.cant,0);
+      return h("div",{class:"mvc-c "+c.src},
+        h("div",{class:"mvc-h"},h("b",null,(c.src==="sis"?"Carrito ":"Tienda ")+c.n),h("span",{class:"mvc-t"},c.tipo),h("span",{class:"mvc-e"},c.estado),h("span",{class:"mvc-r"},c.ref),h("b",{class:"mvc-n"},pz(n))),
+        h("div",{class:"mvc-i"},...c.items.map(i=>h("div",{class:"mvc-l"},h("span",null,i.codigo),h("small",null,i.nombre||""),h("b",null,"× "+i.cant+(c.src==="sis"&&i.emp>=i.cant?" ✓":""))))));});
+    return [nota,res,h("h4",{class:"mvr-h"},"Total por modelo"),tabla,h("h4",{class:"mvr-h"},"Cada carrito"),h("p",{class:"dg-sub"},"Sin nombres. ✓ = ya está en la bolsa física."),h("div",{class:"mvc-lista"},...cards)];
+  }
+  setInterval(()=>{ if(R.tab!=="carritos"||!document.querySelector("#drawerHost .drawer.mvr")) return; state.allCartsAt=0; loadAllCarts().then(pintar); cargarNube(); },30000);
   function pintar(){ const dr=document.querySelector("#drawerHost .drawer.mvr"); if(!dr) return; const st=dr.scrollTop;
-    const tabs=h("div",{class:"dg-chips"},...[["alertas","Lo que no cuadra"],["rastrear","Rastrear un modelo"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(R.tab===v?" on":""),onclick:()=>{ R.tab=v; if(v==="alertas") R.codigo=null; pintar(); }},t)));
+    const tabs=h("div",{class:"dg-chips"},...[["alertas","Lo que no cuadra"],["carritos","Carritos abiertos"],["rastrear","Rastrear un modelo"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(R.tab===v?" on":""),onclick:()=>{ R.tab=v; if(v==="alertas") R.codigo=null; pintar(); }},t)));
     dr.replaceChildren(h("div",{class:"head"},h("span",{class:"pill on"},"Inventario"),h("div",{style:"display:flex;gap:6px"},h("button",{class:"btn sm",onclick:()=>{ state.allCartsAt=0; R.mov={}; loadAllCarts().then(pintar); cargarNube(); }},"Volver a revisar"),h("button",{class:"btn sm",onclick:cerrar},"Cerrar"))),
       h("h2",{class:"dg-t"},"Revisar piezas"),h("p",{class:"dg-sub"},"Cada pieza se rastrea: disponibles, en carritos, apartadas en la tienda en línea y vendidas. Aquí aparece lo que no cuadre."),
-      resumen(),tabs,...[].concat(R.tab==="alertas"?vistaAlertas():vistaRastrear()).filter(Boolean));
+      resumen(),tabs,...[].concat(R.tab==="alertas"?vistaAlertas():R.tab==="carritos"?vistaCarritos():vistaRastrear()).filter(Boolean));
     dr.scrollTop=st; }
   function cerrar(){ closeDrawer(); }
   function abrirModelo(codigo){ R.tab="rastrear"; R.codigo=codigo; const p=state.products.get(codigo); R.q=p?p.codigo:codigo; delete R.mov[codigo]; pintar(); const dr=document.querySelector("#drawerHost .drawer.mvr"); if(dr) dr.scrollTop=0; }
