@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-08T20:14:55.743Z",
+ "actualizado": "2026-11-08T20:40:40.874Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 726,
+ "piezas": 722,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -1275,7 +1275,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 60,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/d6c6ef9c82544a016fe6528c23088aa6.jpg",
    "creado": "2026-10-20T16:33:21.277Z",

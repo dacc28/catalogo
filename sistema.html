@@ -5604,7 +5604,7 @@ button.dg-f.mvr-a{cursor:pointer}
     for(const c of L) for(const it of c.items){ let r=porMod.get(it.codigo); if(!r) porMod.set(it.codigo,r={codigo:it.codigo,nombre:it.nombre,sis:0,web:0}); r[c.src]+=it.cant; tot+=it.cant; if(c.src==="sis") tsis+=it.cant; else tweb+=it.cant; }
     const nota=R.srvErr==="sin-nube"?h("p",{class:"mvr-nota"},"Sin conexión con la nube: no se pueden ver los carritos de la tienda en línea, solo los del sistema.")
       :!R.webRows&&R.cargando?h("p",{class:"mvr-nota"},"Leyendo los carritos de la tienda en línea…")
-      :h("p",{class:"mvr-nota ok"},"Se actualiza solo cada 30 s"+(R.webAt?" · última lectura "+new Date(R.webAt).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",second:"2-digit"}):""));
+      :h("p",{class:"mvr-nota ok"},"Se actualiza solo cada 10 s"+(R.webAt?" · última lectura "+new Date(R.webAt).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit",second:"2-digit"}):""));
     const res=h("div",{class:"dg-res"},
       h("div",{class:"dg-r warn"},h("span",null,"Piezas en carritos abiertos"),h("b",null,tot.toLocaleString("es-MX"))),
       h("div",{class:"dg-r"},h("span",null,"Carritos del sistema"),h("b",null,String(L.filter(c=>c.src==="sis").length)+" · "+pz(tsis))),
@@ -5621,9 +5621,9 @@ button.dg-f.mvr-a{cursor:pointer}
         h("div",{class:"mvc-i"},...c.items.map(i=>h("div",{class:"mvc-l"},h("span",null,i.codigo),h("small",null,i.nombre||""),h("b",null,"× "+i.cant+(c.src==="sis"&&i.emp>=i.cant?" ✓":""))))));});
     return [nota,res,h("h4",{class:"mvr-h"},"Total por modelo"),tabla,h("h4",{class:"mvr-h"},"Cada carrito"),h("p",{class:"dg-sub"},"Sin nombres. ✓ = ya está en la bolsa física."),h("div",{class:"mvc-lista"},...cards)];
   }
-  setInterval(()=>{ if(R.tab!=="carritos"||!document.querySelector("#drawerHost .drawer.mvr")) return; state.allCartsAt=0; loadAllCarts().then(pintar); cargarNube(); },30000);
+  setInterval(()=>{ if(R.tab!=="carritos"||!document.querySelector("#drawerHost .drawer.mvr")) return; state.allCartsAt=0; loadAllCarts().then(pintar); cargarNube(); },10000);
   function pintar(){ const dr=document.querySelector("#drawerHost .drawer.mvr"); if(!dr) return; const st=dr.scrollTop;
-    const tabs=h("div",{class:"dg-chips"},...[["alertas","Lo que no cuadra"],["carritos","Carritos abiertos"],["rastrear","Rastrear un modelo"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(R.tab===v?" on":""),onclick:()=>{ R.tab=v; if(v==="alertas") R.codigo=null; pintar(); }},t)));
+    const tabs=h("div",{class:"dg-chips"},...[["alertas","Lo que no cuadra"],["carritos","Carritos abiertos"],["rastrear","Rastrear un modelo"]].map(([v,t])=>h("button",{type:"button",class:"dg-chip"+(R.tab===v?" on":""),onclick:()=>{ R.tab=v; if(v==="alertas") R.codigo=null; pintar(); if(v==="carritos"){ state.allCartsAt=0; loadAllCarts().then(pintar); cargarNube(); } }},t)));
     dr.replaceChildren(h("div",{class:"head"},h("span",{class:"pill on"},"Inventario"),h("div",{style:"display:flex;gap:6px"},h("button",{class:"btn sm",onclick:()=>{ state.allCartsAt=0; R.mov={}; loadAllCarts().then(pintar); cargarNube(); }},"Volver a revisar"),h("button",{class:"btn sm",onclick:cerrar},"Cerrar"))),
       h("h2",{class:"dg-t"},"Revisar piezas"),h("p",{class:"dg-sub"},"Cada pieza se rastrea: disponibles, en carritos, apartadas en la tienda en línea y vendidas. Aquí aparece lo que no cuadre."),
       resumen(),tabs,...[].concat(R.tab==="alertas"?vistaAlertas():R.tab==="carritos"?vistaCarritos():vistaRastrear()).filter(Boolean));
