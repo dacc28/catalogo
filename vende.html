@@ -5630,13 +5630,13 @@ button.dg-f.mvr-a{cursor:pointer}
     dr.scrollTop=st; }
   function cerrar(){ closeDrawer(); }
   function abrirModelo(codigo){ R.tab="rastrear"; R.codigo=codigo; const p=state.products.get(codigo); R.q=p?p.codigo:codigo; delete R.mov[codigo]; pintar(); const dr=document.querySelector("#drawerHost .drawer.mvr"); if(dr) dr.scrollTop=0; }
-  W.abrirRevisionPiezas=function(codigo){ const host=document.getElementById("drawerHost"); if(!host) return;
+  W.abrirRevisionPiezas=function(codigo,tab){ const host=document.getElementById("drawerHost"); if(!host) return;
     host.replaceChildren(h("div",{class:"scrim",onclick:cerrar}),h("aside",{class:"drawer dg mvr",role:"dialog","aria-label":"Revisar piezas"})); document.addEventListener("keydown",escClose);
-    R.tab=codigo?"rastrear":"alertas"; R.codigo=codigo||null; R.mov={}; pintar();
+    R.tab=tab||(codigo?"rastrear":"alertas"); R.codigo=codigo||null; R.mov={}; pintar();
     loadAllCarts().then(pintar); cargarNube(); };
   /* botón en Inventario */
   function boton(){ const tb=document.querySelector("#view-inv .toolbar"); if(!tb||tb.querySelector(".mvr-btn")) return;
-    tb.append(h("button",{class:"btn mvr-btn",type:"button",title:"Revisa que ninguna pieza esté duplicada, de más o vendida dos veces, y rastrea cada modelo",onclick:()=>W.abrirRevisionPiezas()},"Revisar piezas")); }
+    tb.append(h("button",{class:"btn mvr-btn",type:"button",title:"Revisa que ninguna pieza esté duplicada, de más o vendida dos veces, y rastrea cada modelo",onclick:()=>W.abrirRevisionPiezas()},"Revisar piezas"),h("button",{class:"btn mvr-btn mvc-btn",type:"button",title:"Qué piezas están en carritos abiertos (sistema y tienda en línea), sin nombres",onclick:()=>W.abrirRevisionPiezas(null,"carritos")},"🛒 Carritos abiertos")); }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boton); else boton();
   /* en la ficha del producto: acceso directo a su historial */
   const od=W.openDrawer; if(typeof od==="function"&&!od.__mvr){ const g=function(code){ const r=od.apply(this,arguments); try{ const dr=document.querySelector("#drawerHost .drawer:not(.dg)"); const p=state.products.get(code);
