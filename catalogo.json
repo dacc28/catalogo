@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-08T19:33:36.980Z",
+ "actualizado": "2026-11-08T19:45:55.545Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 684,
+ "piezas": 665,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -94,18 +94,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00011",
-   "nombre": "Anillo Ajustable Corte Pera Plata",
-   "categoria": "ANI",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
-   "creado": "2026-10-27T00:43:11.368Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00017",
    "nombre": "Anillo Ajustable Corte Marquesa Dorado",
    "categoria": "ANI",
@@ -127,18 +115,6 @@
    "notas": "",
    "foto": "fotos/217c111b5684d27d294608257c003243.jpg",
    "creado": "2026-10-27T00:51:49.839Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00019",
-   "nombre": "Anillo Ajustable Brilllantes Plata",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3da1504929d304cf142ea81658206f50.jpg",
-   "creado": "2026-10-27T00:53:07.627Z",
    "disponible": true
   },
   {
@@ -267,7 +243,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
@@ -291,7 +267,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/08d6b9c371127b6cb8f688eb4e91e996.jpg",
    "creado": "2026-10-19T02:08:54.968Z",
@@ -363,7 +339,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
    "creado": "2026-10-20T23:06:31.619Z",
@@ -447,7 +423,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
@@ -459,10 +435,22 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
    "creado": "2026-10-20T23:12:55.345Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00032",
+   "nombre": "Aretes Xuping  Marmol Claro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/a422ead30d36f3d6b598b1447a287057.jpg",
+   "creado": "2026-10-20T23:14:13.742Z",
    "disponible": true
   },
   {
@@ -567,7 +555,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a267cea574d036fdf2cb20169de8763b.jpg",
    "creado": "2026-10-20T23:26:21.628Z",
@@ -639,7 +627,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -723,7 +711,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
@@ -759,7 +747,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/ccf036c9dc7867fd1e356758244d42e4.jpg",
    "creado": "2026-11-01T20:11:39.625Z",
@@ -771,7 +759,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
    "creado": "2026-11-01T20:13:25.629Z",
@@ -855,7 +843,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
    "creado": "2026-11-01T21:49:51.697Z",
@@ -919,18 +907,6 @@
    "notas": "",
    "foto": "fotos/67f76e0fc9d23f0091171fc4b30eb030.jpg",
    "creado": "2026-10-19T00:57:07.111Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00004",
-   "nombre": "Collar de Hongo",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 45,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/ff8325a9d93f7d8a140c5b61b0b56968.jpg",
-   "creado": "2026-10-19T01:00:48.001Z",
    "disponible": true
   },
   {
@@ -1258,30 +1234,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00044",
-   "nombre": "Collar de Chicle Crema",
-   "categoria": "COL",
-   "material": "Yakli",
-   "precio": 60,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/d6c6ef9c82544a016fe6528c23088aa6.jpg",
-   "creado": "2026-10-20T16:33:21.277Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00045",
-   "nombre": "Collar de Chicle Amarillo",
-   "categoria": "COL",
-   "material": "Yakli",
-   "precio": 60,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/67e9cfb8071fcbdab64cd4180946deb6.jpg",
-   "creado": "2026-10-20T16:33:54.094Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00046",
    "nombre": "Corbatin Ajustable Plata",
    "categoria": "COL",
@@ -1363,18 +1315,6 @@
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00054",
-   "nombre": "Collar de Caracol Turbo",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 55,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
-   "creado": "2026-10-21T22:43:28.806Z",
    "disponible": true
   },
   {
@@ -1618,30 +1558,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00001",
-   "nombre": "Pulsera de Acero con Piedras Multicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eb63e97b63ad32d3166f4119372b658c.jpg",
-   "creado": "2026-10-19T01:17:13.969Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00002",
-   "nombre": "Pulsera Colorida",
-   "categoria": "PUL",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/c756c6cd13f9bba825c903a5fb31585a.jpg",
-   "creado": "2026-10-19T01:47:59.602Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00003",
    "nombre": "Pulsera de Ojitos de Colores",
    "categoria": "PUL",
@@ -1843,18 +1759,6 @@
    "notas": "",
    "foto": "fotos/2ae4d146a0e7fd20bb0ac5aa3dde52b9.jpg",
    "creado": "2026-10-20T23:41:47.831Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00022",
-   "nombre": "Brazalete Blanco",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/c06a445e868d72b7e693987ae8255f19.jpg",
-   "creado": "2026-10-20T23:42:22.950Z",
    "disponible": true
   },
   {
