@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T16:22:17.717Z",
+ "actualizado": "2026-11-09T17:19:02.265Z",
  "categorias": [
   {
    "p": "ANI",
@@ -67,42 +67,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00006",
-   "nombre": "Anillo Ajustable Carey Marrón",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 38,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
-   "creado": "2026-10-19T02:44:23.589Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00007",
-   "nombre": "Anillo Ajustable de Acero",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
-   "creado": "2026-10-19T02:47:25.972Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00008",
-   "nombre": "Anillo Triple Dupe Talla 8",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/701ddae51aea00707ae22fae9814a8a4.jpg",
-   "creado": "2026-10-20T17:15:43.616Z",
    "disponible": true
   },
   {
@@ -319,18 +283,6 @@
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00008",
-   "nombre": "Arracadas de Acero",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
-   "creado": "2026-10-19T02:01:12.007Z",
    "disponible": true
   },
   {
@@ -783,7 +735,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
@@ -831,7 +783,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
    "creado": "2026-11-01T20:13:25.629Z",
@@ -915,7 +867,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
    "creado": "2026-11-01T21:49:51.697Z",
@@ -1839,7 +1791,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 32,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/311920e1f57cf4c1467db6d55ba5490b.jpg",
    "creado": "2026-10-19T02:46:28.359Z",
@@ -1923,22 +1875,10 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Dupe Messika",
    "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
    "creado": "2026-10-20T16:09:00.792Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00039",
-   "nombre": "Collar Dije Barril",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c4c44e478df531e66f1d840dfca31576.jpg",
-   "creado": "2026-10-20T16:15:19.713Z",
    "disponible": true
   },
   {
@@ -2167,18 +2107,6 @@
    "notas": "",
    "foto": "fotos/a0e07bdafec644930830b36bf73f4b23.jpg",
    "creado": "2026-10-19T01:08:26.544Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00002",
-   "nombre": "Dije de Oval Ambar",
-   "categoria": "DIJ",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/56eb31033c715318418ac87958305d19.jpg",
-   "creado": "2026-10-19T01:09:33.126Z",
    "disponible": true
   },
   {
