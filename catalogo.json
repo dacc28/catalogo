@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T17:19:02.265Z",
+ "actualizado": "2026-11-09T17:31:05.765Z",
  "categorias": [
   {
    "p": "ANI",
@@ -67,6 +67,18 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00006",
+   "nombre": "Anillo Ajustable Carey Marrón",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 38,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
+   "creado": "2026-10-19T02:44:23.589Z",
    "disponible": true
   },
   {
@@ -483,7 +495,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2daa3d6bce3789a8aa2f151c96416fe2.jpg",
    "creado": "2026-10-20T23:14:48.191Z",
@@ -603,7 +615,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/aa741abba1789d8073f55eef861d8c5d.jpg",
    "creado": "2026-10-20T23:28:52.359Z",
@@ -735,7 +747,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
@@ -783,7 +795,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
    "creado": "2026-11-01T20:13:25.629Z",
@@ -867,7 +879,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
    "creado": "2026-11-01T21:49:51.697Z",
@@ -1779,7 +1791,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
@@ -2110,6 +2122,18 @@
    "disponible": true
   },
   {
+   "codigo": "DIJ-00002",
+   "nombre": "Dije de Oval Ambar",
+   "categoria": "DIJ",
+   "material": "Chapa de Oro",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/56eb31033c715318418ac87958305d19.jpg",
+   "creado": "2026-10-19T01:09:33.126Z",
+   "disponible": true
+  },
+  {
    "codigo": "DIJ-00003",
    "nombre": "Dije de Oval Esmeralda",
    "categoria": "DIJ",
@@ -2343,7 +2367,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/e301da6cd971272672db9872deac6826.jpg",
    "creado": "2026-10-19T01:59:20.484Z",
