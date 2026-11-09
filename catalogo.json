@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T23:40:40.546Z",
+ "actualizado": "2026-11-09T23:41:17.690Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1282,
+ "piezas": 1244,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1253,7 +1253,7 @@
    "precio": 20,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/5c8a33ff980db7c93c747a026d97dc8b.jpg",
+   "foto": "fotos/71eba3f6f6ac76279dcd1e1c52e99b45.jpg",
    "creado": "2026-10-20T16:13:15.587Z",
    "disponible": true
   },
@@ -1265,7 +1265,7 @@
    "precio": 45,
    "etiqueta": "En Tendencia",
    "notas": "",
-   "foto": "fotos/f27dcc2da975e30a2e90c12d7aad4a24.jpg",
+   "foto": "fotos/0b6db2b11aeae8d4a7e3a3880bef36b8.jpg",
    "creado": "2026-10-20T21:15:39.255Z",
    "disponible": true
   },
@@ -1277,7 +1277,7 @@
    "precio": 35,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/983d42c56079b49f8805fbe350a417f1.jpg",
+   "foto": "fotos/07dcb44f2ff32cc78571caf59484ef1d.jpg",
    "creado": "2026-11-07T20:02:54.174Z",
    "disponible": true
   },
@@ -1289,7 +1289,7 @@
    "precio": 35,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/78465212f6e87832bbf9ab6c3ec74abf.jpg",
+   "foto": "fotos/fb96bcac6bb1baaabfd06ba2b19364fd.jpg",
    "creado": "2026-11-07T20:04:16.939Z",
    "disponible": true
   },
@@ -1301,7 +1301,7 @@
    "precio": 55,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/a65afc575db56106412e01d93712e7d2.jpg",
+   "foto": "fotos/35420d576c46aa9fa7def06819d2ff30.jpg",
    "creado": "2026-11-07T20:06:10.353Z",
    "disponible": true
   },
@@ -1313,7 +1313,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/f7d619a683e83e1129a1c8dc31bf59c4.jpg",
+   "foto": "fotos/7ff148ea836321ca517746f22b29090f.jpg",
    "creado": "2026-11-07T20:08:11.497Z",
    "disponible": true
   },
@@ -1325,7 +1325,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/dca9ef50b9ab91833ac67ed4eacc1d81.jpg",
+   "foto": "fotos/157afdbd6adca1e337f5e9a6f0f5bfda.jpg",
    "creado": "2026-11-07T20:10:51.567Z",
    "disponible": true
   },
@@ -1337,7 +1337,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/63926f3ed3c780b2101817c578268b0a.jpg",
+   "foto": "fotos/01a297677cf10c88c82740fc8ec795fc.jpg",
    "creado": "2026-11-07T20:11:37.497Z",
    "disponible": true
   },
@@ -1349,7 +1349,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/d592e5b264ffb493d5ed0fc286c5be66.jpg",
+   "foto": "fotos/49a30e288b58131c82f64f700ac4a1e1.jpg",
    "creado": "2026-11-07T20:12:30.531Z",
    "disponible": true
   },
@@ -1361,7 +1361,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/5621bc29eabba3ee6853cd768cf6ca7a.jpg",
+   "foto": "fotos/03490ffb2e9838a9e4bc35d450bda731.jpg",
    "creado": "2026-11-07T20:21:44.468Z",
    "disponible": true
   },
@@ -1373,7 +1373,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/2255715af3bcfe909d8f8f218abee82a.jpg",
+   "foto": "fotos/cdc2488d8b86c0d6abb1d9a30d7c87d3.jpg",
    "creado": "2026-11-07T20:22:38.246Z",
    "disponible": true
   },
@@ -1385,7 +1385,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/e5fcea693bbd7fc5f93f326ba4585553.jpg",
+   "foto": "fotos/63013dd72c7bf8d68f006695c67e6243.jpg",
    "creado": "2026-11-07T20:24:20.656Z",
    "disponible": true
   },
@@ -1397,7 +1397,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/32013d7c2d9d66d149ce843827b67e4f.jpg",
+   "foto": "fotos/7dcd8c905ee7d3ed8f787fa2cc18a98d.jpg",
    "creado": "2026-11-07T20:25:11.922Z",
    "disponible": true
   },
@@ -1409,7 +1409,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/9dd8fbecda7a297918daa8863350fed0.jpg",
+   "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
    "creado": "2026-11-07T20:26:02.349Z",
    "disponible": true
   },
@@ -1421,7 +1421,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/fa95a0c0c1e9c382b7c5a0ca050b3f07.jpg",
+   "foto": "fotos/cbb13247c0a53f341d38b6b0d4cec126.jpg",
    "creado": "2026-11-07T20:27:31.336Z",
    "disponible": true
   },
@@ -1433,7 +1433,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/b835a814b0bed915f399df29b54d8373.jpg",
+   "foto": "fotos/d7717972eca12dfd873984ba82b99014.jpg",
    "creado": "2026-11-07T20:28:26.089Z",
    "disponible": true
   },
@@ -1445,7 +1445,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/4dd0d7af762645a32f308dbe3bac4011.jpg",
+   "foto": "fotos/df79b1b461917085b407d23480c204f2.jpg",
    "creado": "2026-11-07T20:34:40.117Z",
    "disponible": true
   },
@@ -1457,7 +1457,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/55f069d1a51c98d9d88666f437fa130f.jpg",
+   "foto": "fotos/4219114d55ec00314dd2b15f1aeff934.jpg",
    "creado": "2026-11-07T20:35:22.595Z",
    "disponible": true
   },
@@ -1469,7 +1469,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/cfc428027868c9da9bfd0da8a02e5ceb.jpg",
+   "foto": "fotos/8ae10d1dc231a454531c8d914a6d1b82.jpg",
    "creado": "2026-11-07T20:37:01.164Z",
    "disponible": true
   },
@@ -1481,7 +1481,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/ae3779739d7964938e946df6d2c41433.jpg",
+   "foto": "fotos/054361c2c5e97d2c21d8b4a675e14573.jpg",
    "creado": "2026-11-07T20:38:34.240Z",
    "disponible": true
   },
@@ -1493,7 +1493,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/b626df5301dbb76483db7b1f85f8461c.jpg",
+   "foto": "fotos/cd23432cee9c67a327c6c73bf159dfb4.jpg",
    "creado": "2026-11-07T20:39:26.376Z",
    "disponible": true
   },
@@ -1505,7 +1505,7 @@
    "precio": 40,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/4041c08386b17a9737e8000894e1a079.jpg",
+   "foto": "fotos/15d30a3678868c1f37ceb3ef2878cf61.jpg",
    "creado": "2026-11-07T20:40:10.008Z",
    "disponible": true
   },
@@ -1673,7 +1673,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/1b83eb89749f39681e838e1c6d91f56c.jpg",
+   "foto": "fotos/b78c9b18648a9665b9cd45b2fabd39ab.jpg",
    "creado": "2026-10-19T02:21:15.687Z",
    "disponible": true
   },
@@ -1709,7 +1709,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/e848db1530b44a34f0c57f5442d17c39.jpg",
+   "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
    "disponible": true
   },
@@ -1733,7 +1733,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/8cee8f9d91e97f9ed47322f03a45746e.jpg",
+   "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
    "creado": "2026-10-19T02:29:34.252Z",
    "disponible": true
   },
@@ -1769,7 +1769,7 @@
    "precio": 32,
    "etiqueta": "Últimas piezas",
    "notas": "",
-   "foto": "fotos/311920e1f57cf4c1467db6d55ba5490b.jpg",
+   "foto": "fotos/2e3f14cf401b37554bd067cac599494c.jpg",
    "creado": "2026-10-19T02:46:28.359Z",
    "disponible": true
   },
