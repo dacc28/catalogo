@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T18:34:52.660Z",
+ "actualizado": "2026-11-09T18:55:08.140Z",
  "categorias": [
   {
    "p": "ANI",
@@ -55,6 +55,18 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00006",
+   "nombre": "Anillo Ajustable Carey Marrón",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 38,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
+   "creado": "2026-10-19T02:44:23.589Z",
    "disponible": true
   },
   {
@@ -147,7 +159,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
@@ -231,7 +243,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -243,7 +255,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Inspo Ferragamo",
    "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
    "creado": "2026-10-19T01:46:11.478Z",
@@ -567,7 +579,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a267cea574d036fdf2cb20169de8763b.jpg",
    "creado": "2026-10-20T23:26:21.628Z",
@@ -603,7 +615,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
    "creado": "2026-10-20T23:30:07.673Z",
@@ -627,7 +639,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -711,7 +723,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
@@ -1606,18 +1618,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00014",
-   "nombre": "Collar Colgante de Cuero con Dije",
-   "categoria": "COL",
-   "material": "Cuero con Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
-   "creado": "2026-10-19T01:36:03.511Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00015",
    "nombre": "Collar de Cuentas",
    "categoria": "COL",
@@ -1690,6 +1690,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00023",
+   "nombre": "Collar Rainbow",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/d5cfff539d1d0c1ad201d8d78945fd48.jpg",
+   "creado": "2026-10-19T02:24:00.818Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00024",
    "nombre": "Cadena Mini",
    "categoria": "CAD",
@@ -1743,7 +1755,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
@@ -1831,6 +1843,18 @@
    "notas": "",
    "foto": "fotos/e5f33abfaa3ad264f1d121c00106763c.jpg",
    "creado": "2026-10-20T16:08:07.319Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00038",
+   "nombre": "Collar Dupe 3 puntos",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "Últimas piezas",
+   "notas": "Dupe Messika",
+   "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
+   "creado": "2026-10-20T16:09:00.792Z",
    "disponible": true
   },
   {
@@ -1987,6 +2011,18 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00055",
+   "nombre": "Collar Vanc",
+   "categoria": "COL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2804a2c47e46a4b0589c3479ed8efbc3.jpg",
+   "creado": "2026-11-01T20:21:28.845Z",
    "disponible": true
   },
   {
@@ -2371,6 +2407,18 @@
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00012",
+   "nombre": "Pulsera corte Esmerlada",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/a8957e60ab21aadb4a998db89bfddff2.jpg",
+   "creado": "2026-10-20T17:59:41.923Z",
    "disponible": true
   },
   {
