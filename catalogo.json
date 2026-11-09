@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T19:23:15.944Z",
+ "actualizado": "2026-11-09T19:38:15.981Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1786,6 +1786,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00033",
+   "nombre": "Collar Piedra Rosa",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/ecc61ef5a04a69060df75498659d889b.jpg",
+   "creado": "2026-10-19T02:54:22.152Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00034",
    "nombre": "Collar Piedra Azul",
    "categoria": "COL",
@@ -1851,7 +1863,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
    "creado": "2026-10-20T16:17:20.278Z",
