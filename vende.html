@@ -3107,7 +3107,7 @@ async function restoreTrash(t){
   if(!state.db||state.busy) return; state.busy=true;
   try{
     if(t.tipo==="producto"){ const d=t.data; if(!d) throw new Error("sin datos"); if(state.products.has(d.codigo)){ toast(`Ya existe un producto con el código ${d.codigo}; cámbialo o elimínalo antes de restaurar`,true); return; } await state.db.doc("productos/"+d.codigo).set({...d,actualizado:new Date().toISOString()}); }
-    else if(t.tipo==="carrito"){ const d=t.data; if(!d) throw new Error("sin datos"); if(!state.lives.some(l=>l.id===d.liveId)){ toast("El live de ese carrito ya no existe; restaura primero el live",true); return; } const faltan=await retakeStock(d.items||[]); await state.db.doc("carritos/"+d.id).set({...d,actualizado:new Date().toISOString()}); if(faltan) toast(`Carrito restaurado; ${faltan} piezas ya no había en inventario`,true); }
+    else if(t.tipo==="carrito"){ const d=t.data; if(!d) throw new Error("sin datos"); if(!state.lives.some(l=>l.id===d.liveId)){ toast("El live de ese carrito ya no existe; restaura primero el live",true); return; } const faltan=t.sinDevolver?0:await retakeStock(d.items||[]); await state.db.doc("carritos/"+d.id).set({...d,actualizado:new Date().toISOString()}); if(faltan) toast(`Carrito restaurado; ${faltan} piezas ya no había en inventario`,true); }
     else if(t.tipo==="live"){ const d=t.data; if(!d) throw new Error("sin datos"); await state.db.doc("lives/"+d.id).set({nombre:d.nombre,estado:d.estado||"cerrado",creado:d.creado||"",cerrado:d.cerrado||"",actualizado:new Date().toISOString()}); let faltan=0; for(const c of t.carritos){ if(c.estado!=="cancelado"&&t.devuelto!==false) faltan+=await retakeStock(c.items||[]); await state.db.doc("carritos/"+c.id).set({...c}); } if(faltan) toast(`Live restaurado; ${faltan} piezas ya no había en inventario`,true); }
     await state.db.doc("papelera/"+t.id).delete(); state.trash.delete(t.id); const tc=$("#trashCount"); if(tc) tc.textContent=state.trash.size;
     renderAll(); if(state.view==="live") renderLive(); openTrash(); toast(trashLabel(t)+" restaurado");
@@ -4645,6 +4645,33 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
 .web-it .q{font-weight:800;font-size:15px;white-space:nowrap}
 .web-acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
 .web-vacio{padding:24px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:16px}
+/* mvWebCompacto · Tienda en línea: tarjetas compactas + clic derecho (8-nov-2026) */
+.web-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;align-items:start}
+@media (max-width:760px){ .web-grid{grid-template-columns:1fr} }
+.web-card.mvwc{padding:9px 10px;gap:6px;border-radius:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:context-menu}
+.web-card.mvwc .top{gap:8px;align-items:baseline}
+.web-card.mvwc .top b{font-size:13.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.web-card.mvwc .top small{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.web-card.mvwc .tot{font-size:15px}
+.web-card.mvwc .web-chips{gap:4px}
+.web-card.mvwc .web-chip{font-size:10.5px;padding:2px 7px}
+.web-card.mvwc .web-dir{font-size:11px;line-height:1.3}
+.web-card.mvwc .web-prog{font-size:11px;gap:6px}
+.web-card.mvwc .web-prog i{height:4px}
+.web-card.mvwc .web-items{gap:3px}
+.web-card.mvwc .web-it{gap:8px;padding:3px 6px 3px 4px;border-radius:8px;grid-template-columns:auto minmax(0,1fr) auto}
+.web-card.mvwc .web-it .th{width:28px;height:28px;border-radius:6px;overflow:hidden;display:grid;place-items:center;background:var(--surface-2);font-size:10px}
+.web-card.mvwc .web-it .th img{width:100%;height:100%;object-fit:cover}
+.web-card.mvwc .empchk{width:17px;height:17px;right:-5px;bottom:-5px;font-size:10px;line-height:13px;border-width:1.5px}
+.web-card.mvwc .empchk.parcial{width:24px;font-size:8px}
+.web-card.mvwc .web-it .tx{min-width:0;display:flex;flex-direction:column}
+.web-card.mvwc .web-it .tn{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.web-card.mvwc .web-it .ts{font-size:10.5px;line-height:1.25;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.web-card.mvwc .web-it .q{font-size:12.5px;font-weight:800}
+.web-card.mvwc .web-acc{gap:4px}
+.web-card.mvwc .web-acc .btn{padding:4px 9px;font-size:11.5px;min-height:0;height:auto;border-radius:8px}
+.web-card.mvwc .mas{margin-left:auto;padding:4px 8px;font-size:13px;line-height:1}
+.web-card.mvwc .mvwc-mas{font-size:11px;color:var(--muted);padding:0 6px}
 </style>
 <script id="marvea0711js">
 /* ===== Marvea Tienda en línea (7-nov-2026): todas las ventas de la página ya pagadas, con checklist de armado ===== */
@@ -4659,16 +4686,48 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
   function pagado(c){ return !!c.pago||(cartGrand(c)>0&&cartPagado(c)>=cartGrand(c)-0.005); }
   function fechaDe(c){ const d=new Date(c.finalizado||c.creado||Date.now()); return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
   function sub(){ const st=S(); if(!st||!st.db||unsub) return; try{ unsub=st.db.collection("carritos").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x&&x.estado!=="cancelado"&&esWeb(x)) m.set(d.id,cartFromDoc(d.id,x)); } carts=m; if(st.view==="web") window.renderWeb(); },e=>console.warn("web",e)); }catch(e){ console.warn("web sub",e); } }
-  function card(c){
+  function card(c){ /* mvWebCompacto 8-nov-2026: tarjeta compacta + clic derecho (borrar / devolver piezas) */
     const st=S(); const e=empCuenta(c), pct=e.t?Math.round(e.o/e.t*100):0, todo=e.t&&e.o>=e.t, ent=entregaDe(c), k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId);
-    const items=c.items.map(it=>{ const p=st.products.get(it.codigo); return h("div",{class:"web-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{style:"min-width:0"},h("div",{class:"tn"},it.nombre),h("div",{class:"ts"},(it.palabra?it.palabra+" · ":"")+it.codigo+" · $"+fmtMoney(it.precio)+" c/u")),h("span",{class:"q"},it.cant+" pza"+(it.cant===1?"":"s"))); });
-    return h("div",{class:"web-card"+(todo?" listo":"")},
-      h("div",{class:"top"},h("div",{style:"min-width:0"},h("b",null,c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas",k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c)))),
-      h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pagado(c)?" pag":"")},pagado(c)?"✓ Pagado · Tarjeta (Stripe)":"Pago pendiente"),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null),
-      dirDe(c)?h("div",{class:"web-dir"},dirDe(c)):null,
-      h("div",{class:"web-prog"},h("span",null,todo?"✓ Carrito físico completo":"Armado: "+e.o+" de "+e.t),h("i",null,h("b",{style:"width:"+pct+"%"}))),
+    const MAX=6, lista=c.items.slice(0,MAX);
+    const items=lista.map(it=>{ const p=st.products.get(it.codigo); return h("div",{class:"web-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{class:"tx"},h("span",{class:"tn"},it.nombre),h("span",{class:"ts"},it.codigo+" · $"+fmtMoney(it.precio)+" c/u")),h("span",{class:"q"},"×"+it.cant)); });
+    if(c.items.length>MAX) items.push(h("div",{class:"mvwc-mas"},"+ "+(c.items.length-MAX)+" modelos más · Abrir en Venta para verlos"));
+    const dir=dirDe(c).split("·").map(x=>x.trim()).filter(x=>x&&!/^PAGADO/i.test(x)).join(" · ");
+    const ticket=()=>{ try{ printTicket(c,st.lives.find(l=>l.id===c.liveId)); }catch(x){ toast("No se pudo imprimir",true); } };
+    const menu=(ev,x,y)=>{ if(ev){ ev.preventDefault(); ev.stopPropagation(); } menuPedido(c,x!=null?x:ev.clientX,y!=null?y:ev.clientY,ticket); };
+    const el=h("div",{class:"web-card mvwc"+(todo?" listo":""),oncontextmenu:ev=>menu(ev)},
+      h("div",{class:"top"},h("div",{style:"min-width:0"},h("b",{title:c.cliente||""},c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas",k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c)))),
+      h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pagado(c)?" pag":""),title:pagado(c)?"Pagado con tarjeta (Stripe)":""},pagado(c)?"✓ Pagado":"Pago pendiente"),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null),
+      dir?h("div",{class:"web-dir"},dir):null,
+      h("div",{class:"web-prog"},h("span",null,todo?"✓ Armado":"Armado "+e.o+"/"+e.t),h("i",null,h("b",{style:"width:"+pct+"%"}))),
       h("div",{class:"web-items"},...items),
-      h("div",{class:"web-acc"},h("button",{class:"btn sm primary",type:"button",onclick:()=>irACarrito(c)},"Abrir en Venta"),h("button",{class:"btn sm",type:"button",onclick:()=>{ try{ printTicket(c,st.lives.find(l=>l.id===c.liveId)); }catch(x){ toast("No se pudo imprimir",true); } }},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>setView("logi")},"Logística")));
+      h("div",{class:"web-acc"},h("button",{class:"btn sm primary",type:"button",onclick:()=>irACarrito(c)},"Abrir"),h("button",{class:"btn sm",type:"button",onclick:ticket},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>setView("logi")},"Logística"),h("button",{class:"btn sm mas",type:"button",title:"Más opciones (borrar pedido)","aria-label":"Más opciones",onclick:ev=>{ const r=ev.currentTarget.getBoundingClientRect(); menu(ev,r.left,r.bottom+4); }},"⋯")));
+    /* iPhone / iPad: dejar el dedo presionado = clic derecho */
+    let t=null, sx=0, sy=0, abrio=false;
+    el.addEventListener("touchstart",ev=>{ if(ev.target.closest("button,a,input")) return; const p=ev.touches[0]; sx=p.clientX; sy=p.clientY; abrio=false; clearTimeout(t); t=setTimeout(()=>{ abrio=true; try{ navigator.vibrate&&navigator.vibrate(15); }catch(x){} menu(null,sx,sy); },550); },{passive:true});
+    el.addEventListener("touchmove",ev=>{ const p=ev.touches[0]; if(Math.abs(p.clientX-sx)>10||Math.abs(p.clientY-sy)>10) clearTimeout(t); },{passive:true});
+    el.addEventListener("touchend",ev=>{ clearTimeout(t); if(abrio&&ev.cancelable) ev.preventDefault(); },{passive:false});
+    el.addEventListener("touchcancel",()=>clearTimeout(t));
+    return el;
+  }
+  function menuPedido(c,x,y,ticket){
+    const pz=cartPieces(c), f=folioDe(c), devuelve=c.estado!=="cancelado"&&c.items.length>0;
+    showMenu(x,y,(c.cliente||"Pedido")+(f?" · "+f:""),[
+      {label:"Abrir en Venta",run:()=>irACarrito(c)},
+      {label:"Imprimir ticket",run:ticket},
+      {label:"Ir a Logística",run:()=>setView("logi")},
+      "-",
+      {label:"Borrar pedido…",danger:true,confirm:`¿Borrar el pedido${f?" "+f:""} de ${c.cliente||"esta clienta"} (${pz} pzas)? Se va a la papelera. El dinero no se regresa solo: el reembolso se hace en Stripe.`,options:[
+        ...(devuelve?[{label:`Borrar y devolver ${pz} pzas al inventario`,run:()=>borrarPedido(c,true)}]:[]),
+        {label:devuelve?"Borrar sin devolver piezas":"Sí, borrar",run:()=>borrarPedido(c,false)}]}]);
+  }
+  async function borrarPedido(c,devolver){
+    const st=S(); if(!st||!st.db) return; if(st.busy){ toast("Espera un momento y vuelve a intentar",true); return; }
+    if(devolver&&typeof window.deleteCart==="function"){ await window.deleteCart(c); setTimeout(()=>window.renderWeb(),300); return; }
+    st.busy=true;
+    try{ await trashAdd({tipo:"carrito",nombre:c.cliente,data:{...c},liveNombre:"Tienda en línea",sinDevolver:true}); await st.db.doc("carritos/"+c.id).delete(); if(st.carts) st.carts.delete(c.id); if(st.cartId===c.id) st.cartId=null; carts.delete(c.id); toast("Pedido borrado · las piezas no regresaron al inventario"); }
+    catch(e){ console.warn("borrar pedido web",e); toast("No se pudo borrar el pedido",true); }
+    finally{ st.busy=false; }
+    try{ window.renderWeb(); }catch(e){}
   }
   window.renderWeb=function(){
     const host=document.getElementById("webHost"); const st=S(); if(!host||!st) return;
