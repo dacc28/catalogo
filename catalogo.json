@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T00:57:46.700Z",
+ "actualizado": "2026-11-09T16:04:52.052Z",
  "categorias": [
   {
    "p": "ANI",
@@ -67,18 +67,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00007",
-   "nombre": "Anillo Ajustable de Acero",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
-   "creado": "2026-10-19T02:47:25.972Z",
    "disponible": true
   },
   {
@@ -255,7 +243,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Inspo Ferragamo",
    "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
    "creado": "2026-10-19T01:46:11.478Z",
@@ -310,42 +298,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00013",
-   "nombre": "Arracadas Bicolor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
-   "creado": "2026-10-19T02:09:50.151Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00017",
-   "nombre": "Aretes Vintage negros",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/53fa4c2c86504cd7d9f5e4f2154b6d15.jpg",
-   "creado": "2026-10-20T15:52:10.573Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00020",
-   "nombre": "Aretes Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cebd5465ddd9f3e65b6c6b6d3bd5c47.jpg",
-   "creado": "2026-10-20T17:20:14.987Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00021",
    "nombre": "Aretes Cuadrado",
    "categoria": "ARE",
@@ -367,18 +319,6 @@
    "notas": "",
    "foto": "fotos/d0f74768f08a10e1721efd0f75841208.jpg",
    "creado": "2026-10-20T23:05:34.760Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00023",
-   "nombre": "Aretes Xuping  Verde Esmeralda",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
-   "creado": "2026-10-20T23:06:31.619Z",
    "disponible": true
   },
   {
@@ -423,7 +363,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/85bd536aa161445d5c5caa4ae22d6b8d.jpg",
    "creado": "2026-10-20T23:09:32.970Z",
@@ -591,7 +531,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a267cea574d036fdf2cb20169de8763b.jpg",
    "creado": "2026-10-20T23:26:21.628Z",
@@ -634,18 +574,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00045",
-   "nombre": "Aretes Xuping  Marmol Gota",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
-   "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00046",
    "nombre": "Aretes Xuping  Oval Blanco",
    "categoria": "ARE",
@@ -663,7 +591,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -735,7 +663,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
    "creado": "2026-10-20T23:37:14.343Z",
@@ -747,7 +675,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
    "creado": "2026-11-01T20:07:45.241Z",
@@ -823,18 +751,6 @@
    "notas": "",
    "foto": "fotos/33b88b2c34b8b743a847da5acc2a5b7e.jpg",
    "creado": "2026-11-01T21:36:28.348Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00062",
-   "nombre": "Aretes Flor de Colores",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/aa5a183e06ad7ef94b45eb575b2d1ab1.jpg",
-   "creado": "2026-11-01T21:39:40.125Z",
    "disponible": true
   },
   {
@@ -1606,18 +1522,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00008",
-   "nombre": "Collar de Luna",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/0b209269940a6425897ba5b968d49f6b.jpg",
-   "creado": "2026-10-19T01:18:46.039Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00012",
    "nombre": "Collar de Elefante",
    "categoria": "COL",
@@ -1699,18 +1603,6 @@
    "notas": "",
    "foto": "fotos/1b83eb89749f39681e838e1c6d91f56c.jpg",
    "creado": "2026-10-19T02:21:15.687Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00022",
-   "nombre": "Collar Piedra Flotante",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
-   "creado": "2026-10-19T02:22:32.186Z",
    "disponible": true
   },
   {
@@ -1858,24 +1750,12 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00038",
-   "nombre": "Collar Dupe 3 puntos",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "Dupe Messika",
-   "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
-   "creado": "2026-10-20T16:09:00.792Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00040",
    "nombre": "Collar Perlita",
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
    "creado": "2026-10-20T16:17:20.278Z",
@@ -2242,24 +2122,12 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00010",
-   "nombre": "Juegos Dos Corazones Blancos",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ad0fe3faa81b57d79d6b6caf73404941.jpg",
-   "creado": "2026-11-01T22:01:35.363Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00011",
    "nombre": "Juego Dos Corazones Blanco y Negro",
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/984ea7e638e6ace737cb273c3e73f912.jpg",
    "creado": "2026-11-01T22:03:25.682Z",
@@ -2307,22 +2175,10 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00004",
-   "nombre": "Pulseras Bicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e301da6cd971272672db9872deac6826.jpg",
-   "creado": "2026-10-19T01:59:20.484Z",
    "disponible": true
   },
   {
