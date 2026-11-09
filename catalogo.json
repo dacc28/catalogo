@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T16:13:45.583Z",
+ "actualizado": "2026-11-09T16:17:24.439Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1277,
+ "piezas": 1282,
  "productos": [
   {
    "codigo": "ANI-00001",
@@ -79,6 +79,18 @@
    "notas": "",
    "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
    "creado": "2026-10-19T02:44:23.589Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00007",
+   "nombre": "Anillo Ajustable de Acero",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
+   "creado": "2026-10-19T02:47:25.972Z",
    "disponible": true
   },
   {
@@ -1935,7 +1947,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
    "creado": "2026-10-20T16:17:20.278Z",
