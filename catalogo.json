@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T19:09:48.334Z",
+ "actualizado": "2026-11-09T19:23:15.944Z",
  "categorias": [
   {
    "p": "ANI",
@@ -55,18 +55,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00006",
-   "nombre": "Anillo Ajustable Carey Marrón",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 38,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6b460b4e85ecd092fef6d8049ad06aa4.jpg",
-   "creado": "2026-10-19T02:44:23.589Z",
    "disponible": true
   },
   {
@@ -739,6 +727,18 @@
    "notas": "",
    "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
    "creado": "2026-11-01T20:08:35.163Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00057",
+   "nombre": "Arete Vanc Rojo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
+   "creado": "2026-11-01T20:09:55.282Z",
    "disponible": true
   },
   {
@@ -1786,18 +1786,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00033",
-   "nombre": "Collar Piedra Rosa",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ecc61ef5a04a69060df75498659d889b.jpg",
-   "creado": "2026-10-19T02:54:22.152Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00034",
    "nombre": "Collar Piedra Azul",
    "categoria": "COL",
@@ -1863,7 +1851,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
    "creado": "2026-10-20T16:17:20.278Z",
