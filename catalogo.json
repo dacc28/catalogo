@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-09T18:55:08.140Z",
+ "actualizado": "2026-11-09T19:09:48.334Z",
  "categorias": [
   {
    "p": "ANI",
@@ -243,7 +243,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -579,7 +579,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a267cea574d036fdf2cb20169de8763b.jpg",
    "creado": "2026-10-20T23:26:21.628Z",
@@ -735,22 +735,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
    "creado": "2026-11-01T20:08:35.163Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00057",
-   "nombre": "Arete Vanc Rojo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
-   "creado": "2026-11-01T20:09:55.282Z",
    "disponible": true
   },
   {
@@ -1615,6 +1603,18 @@
    "notas": "",
    "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
    "creado": "2026-10-19T01:33:02.110Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00014",
+   "nombre": "Collar Colgante de Cuero con Dije",
+   "categoria": "COL",
+   "material": "Cuero con Chapa de Oro",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
+   "creado": "2026-10-19T01:36:03.511Z",
    "disponible": true
   },
   {
@@ -2583,7 +2583,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
    "creado": "2026-11-01T20:31:42.070Z",
