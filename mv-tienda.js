@@ -549,7 +549,8 @@ async function pagarTransfer(folio,wWA){
   let r=null, d={};
   try{ const ses=await sesionActual(); const tokenAuth=ses&&ses.access_token?ses.access_token:TRANSFER.anon;
     const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),15000);
-    try{ r=await fetch(TRANSFER.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':TRANSFER.anon,'Authorization':'Bearer '+tokenAuth},body:JSON.stringify(payload),signal:ctrl.signal}); try{ d=await r.json(); }catch(_){ d={}; } } finally{ clearTimeout(tm); }
+    const manda=tk=>fetch(TRANSFER.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':TRANSFER.anon,'Authorization':'Bearer '+tk},body:JSON.stringify(payload),signal:ctrl.signal});
+    try{ r=await manda(tokenAuth); if(r.status===401&&tokenAuth!==TRANSFER.anon) r=await manda(TRANSFER.anon); /* si no acepta el token de su cuenta, entra como invitada: la app la reconoce por su WhatsApp */ try{ d=await r.json(); }catch(_){ d={}; } } finally{ clearTimeout(tm); }
   }catch(_){ r=null; }
   if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null); S.timerFin=Date.now()+15*60000; cerrarModal(); const fl=d.faltan||[];
     toast((d.error||'Se acabaron algunas piezas')+(fl.length?' ('+fl.map(x=>`${x.nombre}: ${x.apartadas} de ${x.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<=980) toggleCarritoM(true); return; }
