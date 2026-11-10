@@ -5871,7 +5871,7 @@ button.dg-f.mvr-a{cursor:pointer}
       guia=t(guia); const antes=t(c&&c.guia); const r=await g0.call(this,c,guia,paq); if(!c||!guia) return r;
       try{ const {corregir,sin}=hermanosGuia(await otrosPedidos(c),guia,antes); let aplicar=[...corregir];
         if(sin.length){ const lista=sin.map(x=>"   • Pedido #"+numPedido(x)+" · "+fechaC(x.finalizado||x.creado)+" · "+cartPieces(x)+" pzas").join("\n");
-          if(confirm((c.cliente||"Esta clienta")+" tiene "+(sin.length===1?"otro pedido":"otros "+sin.length+" pedidos")+" sin guía:\n\n"+lista+"\n\n¿Van en el mismo paquete?\n\nAceptar = se pone esta misma guía ("+(paq||"DHL")+" "+guia+") y quedan como enviados.\nCancelar = solo este pedido.")) aplicar=aplicar.concat(sin); }
+          if(confirm((c.cliente||"Esta clienta")+" tiene "+(sin.length===1?"otro pedido":"otros "+sin.length+" pedidos")+" sin guía:\n\n"+lista+"\n\n¿Van en el mismo paquete?\n\nSi aceptas, se pone esta misma guía ("+(paq||"DHL")+" "+guia+") en todos y quedan como enviados.\nSi cancelas, la guía se queda solo en este pedido.")) aplicar=aplicar.concat(sin); }
         if(aplicar.length){ const now=new Date().toISOString(); let n=0;
           for(const x of aplicar){ const patch={guia,paqueteria:paq||"DHL",actualizado:now}; if(!x.enviado) patch.enviado=c.enviado||now;
             try{ await state.db.doc("carritos/"+x.id).update(patch); n++; for(const y of logiTodos()) if(y.id===x.id) Object.assign(y,patch); }catch(e){} }
