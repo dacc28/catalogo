@@ -5110,6 +5110,32 @@ button.dg-f.mvr-a{cursor:pointer}
 .mvc-l span{font-weight:700;font-variant-numeric:tabular-nums}
 .mvc-l small{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mvc-l b{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ===== Marvea · unir fichas + guía compartida · 9-nov-2026 ===== */
+.mvu-fondo{position:fixed;inset:0;z-index:4000;background:rgba(29,29,31,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.mvu-caja{background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.22);width:min(620px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:22px;display:flex;flex-direction:column;gap:12px}
+.mvu-caja h3{margin:0;font-size:20px}
+.mvu-elige{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;font-weight:700}.mvu-sel{flex:1;min-width:220px;height:40px}
+.mvu-tx{margin:0;font-size:13px;color:var(--muted)}
+.mvu-par{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mvu-ficha{display:flex;flex-direction:column;gap:3px;align-items:flex-start;text-align:left;padding:12px 14px;border-radius:16px;border:2px solid rgba(0,0,0,.1);background:#fff;font:inherit;color:var(--fg);cursor:pointer;min-width:0}
+.mvu-ficha:disabled{cursor:default;opacity:1}
+.mvu-ficha.on{border-color:#5A2748;background:#FBF4F8}
+.mvu-ficha b{font-size:15px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mvu-ficha small{font-size:12.5px;color:var(--muted)}
+.mvu-eti{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.mvu-ficha.on .mvu-eti{color:#5A2748}
+.mvu-res{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:14px;background:#F5F5F7;font-size:13px}
+.mvu-res b{font-size:13.5px}
+.mvu-pie{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.mvu-pie .mvl-b{height:38px;padding:0 16px;font-size:13.5px}.mvu-pie .mvl-b:disabled{opacity:.45;cursor:default}
+.mvu-aviso{display:flex;flex-direction:column;gap:8px;margin:0 0 12px;padding:12px 14px;border-radius:16px;background:#FFF8E1;border:1px solid #F1DFA0;font-size:13px}
+.mvu-aviso>b{font-size:13.5px}
+.mvu-av-f{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.mvu-av-f>span:first-child{white-space:pre-wrap;font-weight:600}
+.mvu-btn{white-space:nowrap}
+.mvl-junta{display:block;margin-top:6px;font-size:12.5px;font-weight:700;color:#5A2748}
+@media (max-width:560px){.mvu-par{grid-template-columns:1fr}.mvu-caja{padding:16px;border-radius:18px}}
 </style>
 <script id="mv0711listaJs">
 /* ===== Marvea · Clientas en lista, Logística en lista y barra fija (7-nov-2026) ===== */
@@ -5267,6 +5293,7 @@ button.dg-f.mvr-a{cursor:pointer}
           h("h4",null,"Guía de envío"),
           h("div",{class:"mvl-guia"},paq,guiaIn,h("button",{type:"button",class:"mvl-b primary",onclick:async()=>{ await guardarGuia(c,guiaIn.value,paq.value); window.renderLogistica(); }},"Guardar")),
           link?h("a",{class:"mvl-rastrear",href:link,target:"_blank",rel:"noopener"},"Rastrear "+(c.paqueteria||"DHL")+" "+c.guia):null,
+          (()=>{ try{ const j=typeof window.mvMismaGuia==="function"?window.mvMismaGuia(c):[]; return j.length?h("span",{class:"mvl-junta"},"Un solo paquete: esta guía también va en "+j.map(x=>"#"+numPedido(x)).join(", ")+". Si la corriges aquí, se corrige en todos."):null; }catch(e){ return null; } })(),
           enPaquete?null:(extra||null))));
   }
   function fila(c,opts){ opts=opts||{}; const est=opts.estado||estadoDe(c); const [et,ecl]=ESTADOS_LG[est]; const saldo=cartSaldo(c); const abierto=state.lgAbierto===c.id; const cobrando=state.logiCobro===c.id; const k=clienteDe(c);
@@ -5701,6 +5728,158 @@ button.dg-f.mvr-a{cursor:pointer}
   const od=W.openDrawer; if(typeof od==="function"&&!od.__mvr){ const g=function(code){ const r=od.apply(this,arguments); try{ const dr=document.querySelector("#drawerHost .drawer:not(.dg)"); const p=state.products.get(code);
       if(dr&&p&&!dr.querySelector(".mvr-fbtn")){ const b=h("button",{class:"btn sm mvr-fbtn",type:"button",onclick:()=>W.abrirRevisionPiezas(code)},"Rastrear piezas e historial"); const hd=dr.querySelector(".head"); if(hd&&hd.nextSibling) hd.parentNode.insertBefore(h("div",{class:"mvr-fwrap"},b),hd.nextSibling); else dr.prepend(b); } }catch(e){} return r; };
     g.__mvr=true; Object.assign(g,od); W.openDrawer=g; }
+})();
+
+/* ===== Marvea · Unir fichas repetidas de una clienta + una guía para varios pedidos (9-nov-2026) ===== */
+(function(){
+  const dig=w=>{ const d=String(w||"").replace(/\D/g,""); return d.length>10?d.slice(-10):d; };
+  const tel=w=>{ const d=dig(w); return d.length===10?(/^(81|55|33)/.test(d)?d.slice(0,2)+" "+d.slice(2,6)+" "+d.slice(6):d.slice(0,3)+" "+d.slice(3,6)+" "+d.slice(6)):String(w||""); };
+  const t=x=>String(x==null?"":x).trim();
+  const esWeb=(id,k)=>/^web-/.test(String(id||""))||!!(k&&k.origen==="web");
+  const fechaL=f=>f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}):"";
+  const fechaC=f=>f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):"";
+
+  /* ---------- la mezcla de dos fichas (lo de la que se queda manda; lo que le falte se toma de la otra) ---------- */
+  function mezclar(idA,a,idB,b,now){
+    const r=Object.assign({},b,a);
+    for(const f of ["nombre","facebook","negocio","ciudad","direccion","correo","whatsapp"]) r[f]=t(a[f])||t(b[f]);
+    const principal=dig(r.whatsapp);
+    const otros=[...new Set([a.whatsapp2,b.whatsapp,b.whatsapp2].join(",").split(",").map(dig).filter(x=>x&&x!==principal))];
+    if(otros.length) r.whatsapp2=otros.join(", "); else delete r.whatsapp2;
+    const ca=t(a.correo).toLowerCase(), cb=t(b.correo).toLowerCase(); const correos=[...new Set([t(a.correo2).toLowerCase(),cb,t(b.correo2).toLowerCase()].join(",").split(",").map(t).filter(x=>x&&x!==(ca||cb)))];
+    if(correos.length) r.correo2=correos.join(", "); else delete r.correo2;
+    r.notas=[t(a.notas),t(b.notas),"Se unió con la ficha «"+t(b.nombre)+"»"+(dig(b.whatsapp)&&dig(b.whatsapp)!==principal?" (WhatsApp "+tel(b.whatsapp)+")":"")+" el "+fechaL(now)].filter(Boolean).join(" · ");
+    const cr=[a.creado,b.creado].filter(Boolean).sort(); r.creado=cr[0]||now;
+    r.unidas=[...new Set([...(Array.isArray(a.unidas)?a.unidas:[]),idB,...(Array.isArray(b.unidas)?b.unidas:[])])].filter(x=>x&&x!==idA);
+    if(a.origen||b.origen) r.origen=a.origen||b.origen;
+    r.actualizado=now; delete r.id; return r;
+  }
+  /* ¿cuál se queda? la que tiene cuenta en la página (su acceso con Google/WhatsApp vive en esa ficha) */
+  function cualSeQueda(idA,idB){ const wa=esWeb(idA), wb=esWeb(idB); if(wa&&!wb) return {id:idA,fija:true}; if(wb&&!wa) return {id:idB,fija:true}; return {id:idA,fija:false}; }
+
+  async function docClienta(id){ try{ const d=await state.db.doc("clientas/"+id).get(); return d.exists?(d.data()||{}):null; }catch(e){ return null; } }
+  async function carritosDe(id){ try{ const s=await state.db.collection("carritos").where("clienteId","==",id).get(); return s.docs.map(d=>({id:d.id,data:d.data()||{}})); }catch(e){ return null; } }
+
+  async function unirClientas(keepId,dropId){
+    if(!state.db||!keepId||!dropId||keepId===dropId) return false;
+    const a=await docClienta(keepId), b=await docClienta(dropId); if(!a||!b){ toast("No pude leer las dos fichas. Intenta otra vez.",true); return false; }
+    const cs=await carritosDe(dropId); if(cs===null){ toast("No pude leer sus pedidos. Intenta otra vez.",true); return false; }
+    const now=new Date().toISOString(); const nuevo=mezclar(keepId,a,dropId,b,now);
+    // respaldo (para poder deshacerlo a mano): cómo estaban las dos fichas y qué pedidos se movieron
+    try{ const ref=state.db.doc("config/clientasUnidas"); const d=await ref.get(); const prev=(d.exists&&d.data())||{}; const hechos=Array.isArray(prev.hechos)?prev.hechos:[];
+      hechos.push({fecha:now,seQueda:{id:keepId,antes:a},seFue:{id:dropId,antes:b},carritos:cs.map(c=>c.id)}); await ref.set({hechos:hechos.slice(-60),actualizado:now});
+    }catch(e){ toast("No se pudo guardar el respaldo, así que no se unió nada.",true); return false; }
+    try{
+      await state.db.doc("clientas/"+keepId).set(nuevo);
+      for(const c of cs) await state.db.doc("carritos/"+c.id).update({clienteId:keepId,cliente:nuevo.nombre,actualizado:now});
+      await state.db.doc("clientas/"+dropId).delete();
+    }catch(e){ console.error("unir",e); toast("Se cortó a la mitad. Vuelve a dar «Unir» para terminar.",true); return false; }
+    for(const src of [state.logiFinal,state.cartsAbiertos,state.ventaCarts,state.carts]) if(src&&typeof src.values==="function") for(const c of src.values()) if(c&&c.clienteId===dropId){ c.clienteId=keepId; c.cliente=nuevo.nombre; }
+    try{ state.clientas.delete(dropId); const k=state.clientas.get(keepId); if(k) Object.assign(k,{nombre:nuevo.nombre,facebook:nuevo.facebook||"",whatsapp:nuevo.whatsapp||"",ciudad:nuevo.ciudad||"",direccion:nuevo.direccion||"",notas:nuevo.notas||""}); }catch(e){}
+    const abiertos=cs.filter(c=>c.data.estado==="abierto").length;
+    toast("Listo: quedó una sola ficha de "+nuevo.nombre+" con "+cs.length+" pedido"+(cs.length===1?"":"s")+" más. En un par de minutos se ve igual en su Marvea Business."+(abiertos?" Ojo: revisa en Venta si quedó con dos carritos abiertos.":""));
+    try{ closeDrawer(); }catch(e){} try{ if(typeof window.renderClientas==="function") window.renderClientas(); }catch(e){} try{ if(state.view==="logi") window.renderLogistica(); }catch(e){}
+    return true;
+  }
+  window.mvUnirClientas=unirClientas; window.__mvMezclarFichas=mezclar;
+
+  /* ---------- ventana para unir ---------- */
+  function pedidosDe(id){ let n=0, tot=0; for(const c of (state.logiFinal||new Map()).values()) if(c&&c.clienteId===id&&c.items&&c.items.length){ n++; try{ tot+=cartGrand(c); }catch(e){} } return {n,tot}; }
+  function parecidas(k){ const nk=normaliza(k.nombre), wk=dig(k.whatsapp), p2=nk.split(/\s+/).slice(0,2).join(" ");
+    return [...state.clientas.values()].filter(x=>x.id!==k.id).map(x=>{ const nx=normaliza(x.nombre); const s=(nx&&nx===nk?3:0)+(wk.length===10&&dig(x.whatsapp)===wk?3:0)+(p2&&p2.includes(" ")&&nx.startsWith(p2)?2:0)+(k.facebook&&normaliza(x.facebook)===normaliza(k.facebook)?2:0); return {x,s}; }).sort((a,b)=>b.s-a.s||a.x.nombre.localeCompare(b.x.nombre)); }
+  function cerrarDlg(){ const d=document.getElementById("mvuDlg"); if(d) d.remove(); }
+  function dialogoUnir(idA,idB){
+    const A=state.clientas.get(idA); if(!A) return; cerrarDlg(); try{ if(typeof logiSub==="function") logiSub(); }catch(e){}
+    let otra=idB||""; let queda=""; let ocupado=false;
+    const caja=h("div",{class:"mvu-caja",role:"dialog","aria-label":"Unir fichas"}); const fondo=h("div",{id:"mvuDlg",class:"mvu-fondo",onclick:e=>{ if(e.target===fondo&&!ocupado) cerrarDlg(); }},caja);
+    const tarjeta=(k,sel,fija,onSel)=>{ const p=pedidosDe(k.id);
+      return h("button",{type:"button",class:"mvu-ficha"+(sel?" on":""),disabled:fija?true:null,onclick:onSel},
+        h("span",{class:"mvu-eti"},sel?"Se queda":"Se une a la otra"),
+        h("b",null,k.nombre||"Sin nombre",esWeb(k.id)?h("span",{class:"mvl-web"},"Cuenta web"):null),
+        k.facebook?h("small",null,"FB: "+k.facebook):null,
+        h("small",null,k.whatsapp?"WhatsApp "+tel(k.whatsapp):"Sin WhatsApp"),
+        h("small",null,p.n?p.n+" pedido"+(p.n===1?"":"s")+" · $"+fmtMoney(p.tot):"Sin pedidos cerrados"),
+        k.creado?h("small",null,"Registrada "+fechaC(k.creado)):null); };
+    const pintar=()=>{
+      const B=otra?state.clientas.get(otra):null; const lista=parecidas(A);
+      const sel=h("select",{class:"mvl-sel mvu-sel","aria-label":"Ficha con la que se une"},h("option",{value:""},"Elige la otra ficha…"),...lista.map(({x,s})=>h("option",{value:x.id},(s>=3?"★ ":"")+x.nombre+(x.whatsapp?" · "+tel(x.whatsapp):"")+(esWeb(x.id)?" · cuenta web":""))));
+      sel.value=otra; sel.addEventListener("change",()=>{ otra=sel.value; queda=""; pintar(); });
+      let cuerpo=[h("p",{class:"mvu-tx"},"Elige la otra ficha de la misma clienta (★ = se parece).")];
+      if(B){ const q=cualSeQueda(idA,otra); if(!queda||q.fija) queda=q.id; const K=queda===idA?A:B, D=queda===idA?B:A; const pk=pedidosDe(K.id), pd=pedidosDe(D.id);
+        const wK=dig(K.whatsapp), wD=dig(D.whatsapp);
+        cuerpo=[
+          h("div",{class:"mvu-par"},tarjeta(A,queda===idA,q.fija,()=>{ queda=idA; pintar(); }),tarjeta(B,queda===otra,q.fija,()=>{ queda=otra; pintar(); })),
+          q.fija?h("p",{class:"mvu-tx"},"Se queda la ficha con cuenta en la página, para que su acceso (Google o WhatsApp) siga funcionando igual.")
+                :h("p",{class:"mvu-tx"},"Toca la ficha que se queda. La otra se une a ella."),
+          h("div",{class:"mvu-res"},h("b",null,"Así queda"),
+            h("span",null,"Una sola ficha: "+(K.nombre||"")+((K.facebook||D.facebook)?" · FB: "+(K.facebook||D.facebook):"")),
+            h("span",null,"WhatsApp "+(wK?tel(wK):(wD?tel(wD):"—"))+(wK&&wD&&wK!==wD?" (el otro, "+tel(wD)+", queda anotado en su ficha)":"")),
+            h("span",null,(pk.n+pd.n)+" pedidos juntos"+(pk.n+pd.n?" · $"+fmtMoney(pk.tot+pd.tot):"")+" · los ve todos en su Marvea Business"),
+            h("span",null,"Nada se borra: sus pedidos, pagos y guías se conservan."),
+            h("span",null,"En su Marvea Business entra con el acceso de la ficha que se queda (si la otra tenía un acceso generado por Marvea, deja de usarse)."))];
+      }
+      const ok=h("button",{type:"button",class:"mvl-b primary",disabled:B?null:true,onclick:async()=>{ if(ocupado||!B) return; ocupado=true; ok.disabled=true; ok.textContent="Uniendo…"; const hecho=await unirClientas(queda,queda===idA?otra:idA); ocupado=false; if(hecho) cerrarDlg(); else { ok.disabled=false; ok.textContent="Unir fichas"; } }},"Unir fichas");
+      caja.replaceChildren(...[h("h3",null,"Unir fichas de la misma clienta"),idB?null:h("div",{class:"mvu-elige"},h("span",null,A.nombre+" se une con:"),sel),...cuerpo,
+        h("div",{class:"mvu-pie"},h("button",{type:"button",class:"mvl-b",onclick:()=>{ if(!ocupado) cerrarDlg(); }},"Cancelar"),ok)].filter(Boolean));
+    };
+    pintar(); document.body.append(fondo);
+  }
+  window.mvDialogoUnir=dialogoUnir;
+
+  /* ---------- ficha de la clienta: botón «Unir con otra ficha…» y su otro WhatsApp ---------- */
+  { const abrir0=window.openClienta; if(typeof abrir0==="function"&&!abrir0.__mvu){ const w=function(id){ const r=abrir0.apply(this,arguments);
+      try{ const dr=document.querySelector("#drawerHost .drawer"); const fila=dr&&[...dr.querySelectorAll("button")].find(b=>b.textContent.trim()==="Editar"); const k=state.clientas.get(id);
+        if(fila&&k&&!dr.querySelector(".mvu-btn")&&state.clientas.size>1){ fila.insertAdjacentElement("afterend",h("button",{class:"btn mvu-btn",type:"button",title:"Cuando la misma clienta quedó con dos fichas",onclick:()=>dialogoUnir(id)},"Unir con otra ficha…")); }
+        if(dr&&k) docClienta(id).then(d=>{ if(!d||!document.body.contains(dr)) return; const dl=dr.querySelector("dl.kv"); if(!dl||dl.querySelector(".mvu-dd")) return; const extra=[]; if(d.whatsapp2) extra.push(["Otro WhatsApp",String(d.whatsapp2).split(",").map(tel).join(", ")]); if(d.correo) extra.push(["Correo",d.correo+(d.correo2?", "+d.correo2:"")]); if(d.negocio) extra.push(["Negocio",d.negocio]);
+          const ref=[...dl.querySelectorAll("dt")].find(x=>x.textContent==="Registrada"); for(const [a,b] of extra){ const dt=h("dt",{class:"mvu-dd"},a), dd=h("dd",null,b); if(ref){ dl.insertBefore(dt,ref); dl.insertBefore(dd,ref); } else dl.append(dt,dd); } });
+      }catch(e){ console.warn("unir ficha",e); } return r; }; w.__mvu=true; window.openClienta=w; } }
+
+  /* al editar una ficha no se pierden su correo, negocio, otro WhatsApp ni el registro de fichas unidas */
+  { const save0=window.saveClienta; if(typeof save0==="function"&&!save0.__mvu){ const w=async function(data,id){ if(!id||!state.db) return save0.apply(this,arguments);
+      const antes=await docClienta(id); const r=await save0.apply(this,arguments);
+      if(r&&antes){ const keep={}; for(const f of ["correo","correo2","negocio","origen","whatsapp2","unidas"]) if(antes[f]!=null&&antes[f]!==""&&!(Array.isArray(antes[f])&&!antes[f].length)) keep[f]=antes[f]; if(Object.keys(keep).length){ try{ await state.db.doc("clientas/"+id).update(keep); }catch(e){} } }
+      return r; }; w.__mvu=true; window.saveClienta=w; } }
+
+  /* ---------- Clientas: aviso cuando dos fichas parecen la misma persona ---------- */
+  const NO_KEY="marvea.noDuplicadas"; const noSon=()=>{ try{ return JSON.parse(localStorage.getItem(NO_KEY)||"[]"); }catch(e){ return []; } };
+  const parId=(a,b)=>[a,b].sort().join("|");
+  function duplicadas(){ const ks=[...state.clientas.values()]; const no=new Set(noSon()); const pares=[]; const visto=new Set();
+    const por=new Map(); const mete=(clave,k)=>{ if(!clave) return; if(!por.has(clave)) por.set(clave,[]); por.get(clave).push(k); };
+    for(const k of ks){ const n=normaliza(k.nombre).replace(/\s+/g," "); if(n.length>=5) mete("n:"+n,k); const w=dig(k.whatsapp); if(w.length===10) mete("w:"+w,k); }
+    for(const g of por.values()) if(g.length>1) for(let i=0;i<g.length;i++) for(let j=i+1;j<g.length;j++){ const id=parId(g[i].id,g[j].id); if(visto.has(id)||no.has(id)) continue; visto.add(id); pares.push([g[i],g[j]]); }
+    return pares; }
+  window.__mvDuplicadas=duplicadas;
+  { const rc0=window.renderClientas; if(typeof rc0==="function"&&!rc0.__mvu){ const w=function(){ const r=rc0.apply(this,arguments);
+      try{ const host=document.getElementById("cliHost"); const cab=host&&host.querySelector(".mvl-cab"); if(cab&&state.clientas&&state.clientas.size>1){ const pares=duplicadas().slice(0,4);
+          if(pares.length) cab.insertAdjacentElement("afterend",h("div",{class:"mvu-aviso"},h("b",null,pares.length===1?"Parece la misma clienta con dos fichas":"Parecen la misma clienta con dos fichas"),
+            ...pares.map(([a,b])=>h("div",{class:"mvu-av-f"},h("span",null,a.nombre+(a.whatsapp?" ("+tel(a.whatsapp)+")":"")+"  y  "+b.nombre+(b.whatsapp?" ("+tel(b.whatsapp)+")":"")),
+              h("span",{class:"mvl-acc"},h("button",{type:"button",class:"mvl-b primary",onclick:()=>dialogoUnir(a.id,b.id)},"Unir"),h("button",{type:"button",class:"mvl-b",title:"Son dos personas distintas: no volver a avisar",onclick:()=>{ try{ localStorage.setItem(NO_KEY,JSON.stringify([...noSon(),parId(a.id,b.id)].slice(-300))); }catch(e){} window.renderClientas(); }},"No son la misma")))))); }
+      }catch(e){ console.warn("duplicadas",e); } return r; }; w.__mvu=true; window.renderClientas=w; } }
+
+  /* ---------- una guía para varios pedidos (salieron en el mismo paquete) ---------- */
+  function hermanosGuia(otros,guia,antes,ahoraMs){ // otros: demás pedidos cerrados de la misma clienta
+    const hace=new Date((ahoraMs||Date.now())-10*864e5).toISOString(); const g=x=>t(x.guia);
+    const corregir=antes&&antes!==guia?otros.filter(x=>g(x)===antes):[];                     // tenían la guía anterior: se corrigen igual
+    const sin=otros.filter(x=>!g(x)&&!x.entregado&&(!x.enviado||String(x.enviado)>=hace));   // sin guía y sin entregar
+    return {corregir,sin}; }
+  window.__mvHermanosGuia=hermanosGuia;
+  async function otrosPedidos(c){ let rows=[]; const k=logiClave(c);
+    if(c.clienteId){ const cs=await carritosDe(c.clienteId); if(cs) rows=cs.map(x=>cartFromDoc(x.id,x.data)); }
+    if(!rows.length&&k) rows=logiTodos().filter(x=>logiClave(x)===k);
+    return rows.filter(x=>x.id!==c.id&&x.estado==="final"&&x.items&&x.items.length); }
+  { const g0=window.guardarGuia; if(typeof g0==="function"&&!g0.__mvu){ const w=async function(c,guia,paq){
+      guia=t(guia); const antes=t(c&&c.guia); const r=await g0.call(this,c,guia,paq); if(!c||!guia) return r;
+      try{ const {corregir,sin}=hermanosGuia(await otrosPedidos(c),guia,antes); let aplicar=[...corregir];
+        if(sin.length){ const lista=sin.map(x=>"   • Pedido #"+numPedido(x)+" · "+fechaC(x.finalizado||x.creado)+" · "+cartPieces(x)+" pzas").join("\n");
+          if(confirm((c.cliente||"Esta clienta")+" tiene "+(sin.length===1?"otro pedido":"otros "+sin.length+" pedidos")+" sin guía:\n\n"+lista+"\n\n¿Van en el mismo paquete?\n\nAceptar = se pone esta misma guía ("+(paq||"DHL")+" "+guia+") y quedan como enviados.\nCancelar = solo este pedido.")) aplicar=aplicar.concat(sin); }
+        if(aplicar.length){ const now=new Date().toISOString(); let n=0;
+          for(const x of aplicar){ const patch={guia,paqueteria:paq||"DHL",actualizado:now}; if(!x.enviado) patch.enviado=c.enviado||now;
+            try{ await state.db.doc("carritos/"+x.id).update(patch); n++; for(const y of logiTodos()) if(y.id===x.id) Object.assign(y,patch); }catch(e){} }
+          if(n){ let tot=1; try{ tot=1+(await otrosPedidos(c)).filter(x=>t(x.guia)===guia).length; }catch(e){ tot=n+1; } toast("Una sola guía para "+tot+" pedidos de "+(c.cliente||"la clienta")+" · así la ve en su Marvea Business"); } }
+      }catch(e){ console.warn("guía compartida",e); }
+      return r; }; w.__mvu=true; window.guardarGuia=w; } }
+  /* para la lista de Logística: con quién comparte guía un pedido */
+  window.mvMismaGuia=function(c){ const g=t(c&&c.guia); if(!g) return []; const k=logiClave(c); return logiTodos().filter(x=>x.id!==c.id&&x.estado==="final"&&t(x.guia)===g&&logiClave(x)===k); };
 })();
 </script>
 <!-- ===== Marvea · navegación sencilla (5 pestañas + sub-pestañas) · 4-nov-2026 ===== -->

@@ -103,22 +103,27 @@
     const box = $("#listaPedidos"); box.innerHTML = "";
     const todos = [...(S.pedidosWeb || []), ...S.pedidos];
     // una sola barra para rastrear: debajo, un botón por cada pedido que ya tiene guía (un clic y abre el rastreo)
-    const conGuia = todos.filter(p => (p.guia || "").trim());
-    $("#guiasRap").innerHTML = conGuia.length ? '<span class="gr-t">Tus guías:</span>' + conGuia.slice(0, 6).map((p, i) => { const g = p.guia.trim(); const enCamino = p.estado !== "entregado";
-      return '<button type="button" class="g-chip' + (enCamino ? " camino" : "") + '" data-i="' + i + '"><i class="fa-solid ' + (enCamino ? "fa-truck-fast" : "fa-check") + '"></i><span><b>' + esc(p.web ? p.titulo.replace("Pedido web ", "Web ") : fecha(p.fecha)) + '</b><small>' + esc(g) + ' · ' + (enCamino ? "en camino" : "entregado") + '</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></button>'; }).join("") : "";
-    $$("#guiasRap .g-chip").forEach(b => b.addEventListener("click", () => { const g = conGuia[Number(b.dataset.i)].guia.trim(); $("#guiaRapida").value = g; abrirRastreo(g); }));
+    // un paquete = una guía: si varios pedidos salieron juntos se muestra una sola guía para todos
+    const porGuia = new Map(); for (const p of todos) { const g = (p.guia || "").trim(); if (!g) continue; if (!porGuia.has(g)) porGuia.set(g, []); porGuia.get(g).push(p); }
+    const guias = [...porGuia.entries()];
+    $("#guiasRap").innerHTML = guias.length ? '<span class="gr-t">Tus guías:</span>' + guias.slice(0, 6).map(([g, ps], i) => { const enCamino = ps.some(p => p.estado !== "entregado"); const p = ps[0];
+      const tit = ps.length > 1 ? ps.length + " pedidos · un solo paquete" : (p.web ? p.titulo.replace("Pedido web ", "Web ") : fecha(p.fecha));
+      return '<button type="button" class="g-chip' + (enCamino ? " camino" : "") + '" data-i="' + i + '"><i class="fa-solid ' + (enCamino ? "fa-truck-fast" : "fa-check") + '"></i><span><b>' + esc(tit) + '</b><small>' + esc(g) + ' · ' + (enCamino ? "en camino" : "entregado") + '</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></button>'; }).join("") : "";
+    $$("#guiasRap .g-chip").forEach(b => b.addEventListener("click", () => { const g = guias[Number(b.dataset.i)][0]; $("#guiaRapida").value = g; abrirRastreo(g); }));
     if (!todos.length) { box.innerHTML = '<div class="vacio"><b>Aún no hay pedidos</b>En cuanto pagues tu primera compra en la tienda en línea (o te la confirmemos por WhatsApp), la verás aquí con sus fotos, su estado y su guía.</div>'; return; }
     for (const p of todos) {
       const el = document.createElement("div"); el.className = "vidrio suave ped";
-      const guia = (p.guia || "").trim(), ent = p.entrega || {};
+      const guia = (p.guia || "").trim(), ent = p.entrega || {}; const juntos = guia ? (porGuia.get(guia) || []) : [];
       const tipo = p.web ? (ent.tipo === "recoger" ? '<i class="fa-solid fa-store"></i> Recoges en Monterrey' : ent.resguardar ? '<i class="fa-solid fa-box-archive"></i> En resguardo (sale cuando tú lo pidas)' : '<i class="fa-solid fa-plane-up"></i> Envío DHL Express') : '<i class="fa-solid fa-truck-fast"></i> Envío';
       const guiaTx = guia ? '<button type="button" class="g-link" title="Rastrear este envío">Guía <b>' + esc(guia) + '</b> <i class="fa-solid fa-arrow-up-right-from-square"></i></button>'
         : '<span class="g-sin">' + (p.estado === "entregado" ? "" : (p.web && ent.tipo === "recoger" ? "Te avisamos por WhatsApp para la entrega" : "Tu guía aparece aquí cuando salga tu paquete")) + '</span>';
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN' + (p.web ? ' · pagado' : '') + '</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
         + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
-        + (!p.web && !guia && p.estado === "entregado" ? '' : '<div class="ped-pie"><span class="tipo">' + tipo + '</span>' + guiaTx + (!p.web && p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>');
+        + (!p.web && !guia && p.estado === "entregado" ? '' : '<div class="ped-pie"><span class="tipo">' + tipo + '</span>' + guiaTx + (!p.web && p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>')
+        + (juntos.length > 1 ? '<div class="ped-junto"><i class="fa-solid fa-box-open"></i> Viaja en el mismo paquete que ' + (juntos.length === 2 ? 'tu otro pedido' : 'tus otros ' + (juntos.length - 1) + ' pedidos') + ': una sola guía para ' + (juntos.length === 2 ? 'los dos' : 'los ' + juntos.length) + '.</div>' : '');
       const gl = $(".g-link", el); if (gl) gl.addEventListener("click", () => abrirRastreo(guia));
-      const r = $(".recibido", el); r && r.addEventListener("click", async () => { const { error } = await sb.from("pedidos").update({ estado: "entregado" }).eq("id", p.id); if (error) return toast("No se guardó: " + error.message, true); p.estado = "entregado"; toast("¡Qué bien! Pedido entregado"); pintarPedidos(); pintarInicio(); });
+      const r = $(".recibido", el); r && r.addEventListener("click", async () => { const mismos = juntos.filter(x => !x.web && x.estado !== "entregado"); const ids = mismos.length > 1 ? mismos.map(x => x.id) : [p.id]; // mismo paquete: se marcan todos
+        const { error } = await sb.from("pedidos").update({ estado: "entregado" }).in("id", ids); if (error) return toast("No se guardó: " + error.message, true); for (const x of (mismos.length > 1 ? mismos : [p])) x.estado = "entregado"; toast(ids.length > 1 ? "¡Qué bien! Tus " + ids.length + " pedidos quedaron como entregados" : "¡Qué bien! Pedido entregado"); pintarPedidos(); pintarInicio(); });
       box.append(el);
     }
   }

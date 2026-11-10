@@ -806,6 +806,7 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 .ped-pie .g-link:hover{background:var(--coral);color:#fff}.ped-pie .g-link i{font-size:10.5px}
 .ped-pie .g-sin{color:var(--tinta-2);font-weight:600}
 .ped-pie .recibido{margin-left:auto}
+.ped-junto{margin-top:10px;padding:8px 12px;border-radius:12px;background:var(--coral-3);color:#B5401E;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:center}
 
 /* portada con las fotos en movimiento (video), sin deformar */
 .banner-img{overflow:hidden;background:#F3EEEA}
