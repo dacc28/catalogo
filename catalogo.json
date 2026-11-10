@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-10T16:56:14.601Z",
+ "actualizado": "2026-11-10T17:49:34.151Z",
  "categorias": [
   {
    "p": "ANI",
@@ -843,7 +843,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
    "creado": "2026-11-01T21:49:51.697Z",
@@ -2311,18 +2311,6 @@
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00004",
-   "nombre": "Pulseras Bicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e301da6cd971272672db9872deac6826.jpg",
-   "creado": "2026-10-19T01:59:20.484Z",
    "disponible": true
   },
   {
