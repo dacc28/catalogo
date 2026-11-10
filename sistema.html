@@ -4688,6 +4688,14 @@ body:has(.mvwl-back) .toast{z-index:96}
 .mvwl-dlg .ft{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .mvwl-dlg .ft .mas{margin-left:auto}
 @media (max-width:760px){ .mvwl-back{padding:0;place-items:end stretch} .mvwl-dlg{width:100%;max-height:92vh;border-radius:18px 18px 0 0} }
+/* buscador de pedidos (10-nov-2026) */
+.mvwl-bus{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.mvwl-busbox{position:relative;flex:1 1 300px;max-width:560px}
+.mvwl-busbox svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+.mvwl-busbox input{display:block;width:100%;box-sizing:border-box;height:46px;margin:0;padding:0 44px 0 44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:16px;min-width:0}
+.mvwl-busbox input:focus{outline:2px solid var(--fg);outline-offset:1px}
+.mvwl-busx{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:28px;height:28px;min-height:0;border-radius:50%;border:0;background:var(--surface-2);color:var(--fg);font-size:13px;line-height:1;padding:0;cursor:pointer;box-shadow:none;display:grid;place-items:center}
+.mvwl-cuenta{font-size:13px;font-weight:600;color:var(--muted)}
 </style>
 <script id="marvea0711js">
 /* ===== Marvea Tienda en línea (7-nov-2026): todas las ventas de la página ya pagadas, con checklist de armado ===== */
@@ -4765,19 +4773,44 @@ body:has(.mvwl-back) .toast{z-index:96}
     finally{ st.busy=false; }
     try{ window.renderWeb(); }catch(e){}
   }
+  /* mvWebLista 10-nov-2026 · buscador de pedidos: clienta (con o sin acentos, palabras en cualquier orden), folio, WhatsApp, Facebook, negocio, correo o nota */
+  const LUPA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>';
+  let cab=null, bus=null, cuerpo=null, inpQ=null, btnX=null, cuentaQ=null;
+  function coincide(c,qq){
+    const st=S(), k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId), f=folioDe(c);
+    const txt=normaliza([c.cliente,f,c.nota,c.referencia,k&&k.nombre,k&&k.facebook,k&&k.negocio,k&&k.correo,k&&k.whatsapp,k&&k.whatsapp2].filter(Boolean).join(" "));
+    if(qq.split(/\s+/).every(w=>txt.includes(w))) return true;
+    const dq=qq.replace(/\D/g,""); if(dq.length<3||/[a-z]/.test(qq)) return false;
+    return [k&&k.whatsapp,k&&k.whatsapp2,f,c.referencia].some(x=>String(x||"").split(",").some(y=>y.replace(/\D/g,"").includes(dq)));
+  }
+  function armaBuscador(){
+    cab=h("div",{class:"web-head"},h("div",null,h("h2",null,"Marvea Tienda en línea"),h("p",null,"Pedidos pagados en www.marveamayoreo.com. Palomea cada pieza conforme la pongas en el carrito físico; cuando salga, márcalo en Logística.")));
+    const limpia=()=>{ q=""; inpQ.value=""; window.renderWeb(); inpQ.focus(); };
+    inpQ=h("input",{type:"text",inputmode:"search",enterkeyhint:"search",placeholder:"Buscar clienta, folio o WhatsApp",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","aria-label":"Buscar pedidos de la tienda en línea",oninput:e=>{ q=e.target.value; window.renderWeb(); },onkeydown:e=>{ if(e.key==="Escape"&&q){ e.preventDefault(); e.stopPropagation(); limpia(); } }});
+    btnX=h("button",{class:"mvwl-busx",type:"button",title:"Borrar búsqueda","aria-label":"Borrar búsqueda",hidden:true,onclick:limpia},"✕");
+    const caja=h("div",{class:"mvwl-busbox"}); caja.innerHTML=LUPA; caja.append(inpQ,btnX);
+    cuentaQ=h("span",{class:"mvwl-cuenta","aria-live":"polite"});
+    bus=h("div",{class:"mvwl-bus"},caja,cuentaQ); cuerpo=h("div",null);
+  }
   window.renderWeb=function(){
     const host=document.getElementById("webHost"); const st=S(); if(!host||!st) return;
     if(!st.db){ host.replaceChildren(h("div",{class:"notice"},"Conectando con los datos de Marvea…")); return; }
     sub(); try{ pintaPedido(); }catch(e){}
-    const qq=normaliza(q); const all=[...carts.values()].filter(c=>c.items.length&&(!qq||normaliza(c.cliente+" "+folioDe(c)+" "+(c.nota||"")).includes(qq))).sort((a,b)=>String(b.creado).localeCompare(String(a.creado)));
-    const porArmar=all.filter(c=>!c.enviado&&!(empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t)), listos=all.filter(c=>!c.enviado&&empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t), enviados=all.filter(c=>c.enviado).slice(0,30);
+    /* el título y el buscador se arman una sola vez: así no se pierde el cursor (ni los acentos) al escribir */
+    if(!cab) armaBuscador();
+    if(host.firstChild!==cab||cuerpo.parentNode!==host) host.replaceChildren(cab,bus,cuerpo);
+    if(inpQ.value!==q&&document.activeElement!==inpQ) inpQ.value=q;
+    const qq=normaliza(q); const todos=[...carts.values()].filter(c=>c.items.length).sort((a,b)=>String(b.creado).localeCompare(String(a.creado)));
+    const all=qq?todos.filter(c=>coincide(c,qq)):todos;
+    btnX.hidden=!q; cuentaQ.textContent=qq?(all.length?all.length+" pedido"+(all.length===1?"":"s")+" de "+todos.length:"Sin resultados"):"";
+    const porArmar=all.filter(c=>!c.enviado&&!(empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t)), listos=all.filter(c=>!c.enviado&&empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t), enviadosT=all.filter(c=>c.enviado), enviados=qq?enviadosT:enviadosT.slice(0,30);
     const hoy=new Date().toDateString(); const deHoy=all.filter(c=>new Date(c.creado).toDateString()===hoy);
     const money=x=>"$"+fmtMoney(x); const tile=(k,v,s2,cls)=>h("div",{class:"tile"+(cls?" "+cls:"")},h("div",{class:"k"},k),h("div",{class:"v"},v),s2?h("div",{class:"s"},s2):null);
-    const inp=h("input",{placeholder:"Buscar clienta o folio",value:q,oninput:e=>{ q=e.target.value; window.renderWeb(); }});
-    const sec=(t,n,lista,vacio)=>[h("div",{class:"web-sec"},h("h3",null,t),h("span",{class:"n"},String(n))),lista.length?h("div",{class:"web-grid"},...lista.map(card)):h("div",{class:"web-vacio"},vacio)];
-    host.replaceChildren(
-      h("div",{class:"web-head"},h("div",null,h("h2",null,"Marvea Tienda en línea"),h("p",null,"Pedidos pagados en www.marveamayoreo.com. Palomea cada pieza conforme la pongas en el carrito físico; cuando salga, márcalo en Logística.")),inp),
-      h("div",{class:"web-tiles"},tile("Por armar",String(porArmar.length),porArmar.length?porArmar.reduce((s,c)=>s+cartPieces(c),0)+" piezas por surtir":"Todo armado","warn"),tile("Listos para salir",String(listos.length),"carrito físico completo","ok"),tile("Hoy",money(deHoy.reduce((s,c)=>s+cartGrand(c),0)),deHoy.length+" pedido"+(deHoy.length===1?"":"s")+" · "+deHoy.reduce((s,c)=>s+cartPieces(c),0)+" piezas","hero"),tile("Enviados",String(all.filter(c=>c.enviado).length),"en total")),
+    const sec=(t,n,lista,vacio)=>(qq&&!lista.length)?[]:[h("div",{class:"web-sec"},h("h3",null,t),h("span",{class:"n"},String(n))),lista.length?h("div",{class:"web-grid"},...lista.map(card)):h("div",{class:"web-vacio"},vacio)];
+    if(qq){ cuerpo.replaceChildren(...(all.length?[]:[h("div",{class:"web-vacio"},"Ningún pedido coincide con «"+q.trim()+"». Prueba con otro nombre, el folio (MV-…) o el WhatsApp.")]),
+      ...sec("Por armar",porArmar.length,porArmar,""),...sec("Listos para salir",listos.length,listos,""),...sec("Enviados / entregados",enviados.length,enviados,"")); return; }
+    cuerpo.replaceChildren(
+      h("div",{class:"web-tiles"},tile("Por armar",String(porArmar.length),porArmar.length?porArmar.reduce((s,c)=>s+cartPieces(c),0)+" piezas por surtir":"Todo armado","warn"),tile("Listos para salir",String(listos.length),"carrito físico completo","ok"),tile("Hoy",money(deHoy.reduce((s,c)=>s+cartGrand(c),0)),deHoy.length+" pedido"+(deHoy.length===1?"":"s")+" · "+deHoy.reduce((s,c)=>s+cartPieces(c),0)+" piezas","hero"),tile("Enviados",String(enviadosT.length),"en total")),
       ...sec("Por armar",porArmar.length,porArmar,"No hay pedidos pendientes de armar. Los nuevos aparecen aquí solos (la Mac los importa cada minuto)."),
       ...sec("Listos para salir",listos.length,listos,"Cuando palomees todas las piezas de un pedido, aparece aquí."),
       ...sec("Enviados / entregados",enviados.length,enviados,"Aquí quedan los pedidos web que ya salieron."));
