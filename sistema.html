@@ -4645,33 +4645,49 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
 .web-it .q{font-weight:800;font-size:15px;white-space:nowrap}
 .web-acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
 .web-vacio{padding:24px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:16px}
-/* mvWebCompacto · Tienda en línea: tarjetas compactas + clic derecho (8-nov-2026) */
-.web-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;align-items:start}
-@media (max-width:760px){ .web-grid{grid-template-columns:1fr} }
-.web-card.mvwc{padding:9px 10px;gap:6px;border-radius:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:context-menu}
-.web-card.mvwc .top{gap:8px;align-items:baseline}
-.web-card.mvwc .top b{font-size:13.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.web-card.mvwc .top small{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.web-card.mvwc .tot{font-size:15px}
-.web-card.mvwc .web-chips{gap:4px}
-.web-card.mvwc .web-chip{font-size:10.5px;padding:2px 7px}
-.web-card.mvwc .web-dir{font-size:11px;line-height:1.3}
-.web-card.mvwc .web-prog{font-size:11px;gap:6px}
-.web-card.mvwc .web-prog i{height:4px}
-.web-card.mvwc .web-items{gap:3px}
-.web-card.mvwc .web-it{gap:8px;padding:3px 6px 3px 4px;border-radius:8px;grid-template-columns:auto minmax(0,1fr) auto}
-.web-card.mvwc .web-it .th{width:28px;height:28px;border-radius:6px;overflow:hidden;display:grid;place-items:center;background:var(--surface-2);font-size:10px}
-.web-card.mvwc .web-it .th img{width:100%;height:100%;object-fit:cover}
-.web-card.mvwc .empchk{width:17px;height:17px;right:-5px;bottom:-5px;font-size:10px;line-height:13px;border-width:1.5px}
-.web-card.mvwc .empchk.parcial{width:24px;font-size:8px}
-.web-card.mvwc .web-it .tx{min-width:0;display:flex;flex-direction:column}
-.web-card.mvwc .web-it .tn{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
-.web-card.mvwc .web-it .ts{font-size:10.5px;line-height:1.25;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.web-card.mvwc .web-it .q{font-size:12.5px;font-weight:800}
-.web-card.mvwc .web-acc{gap:4px}
-.web-card.mvwc .web-acc .btn{padding:4px 9px;font-size:11.5px;min-height:0;height:auto;border-radius:8px}
-.web-card.mvwc .mas{margin-left:auto;padding:4px 8px;font-size:13px;line-height:1}
-.web-card.mvwc .mvwc-mas{font-size:11px;color:var(--muted);padding:0 6px}
+/* mvWebLista · Tienda en línea: lista de pedidos + ojito que abre el pedido en una ventana (10-nov-2026) */
+.web-grid{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.mvwl-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 150px 96px 36px;gap:12px;align-items:center;padding:9px 10px 9px 14px;border-top:1px solid var(--line);cursor:pointer;min-width:0;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.mvwl-row:first-child{border-top:0}
+.mvwl-row:hover{background:var(--surface-2)}
+.mvwl-row.listo{background:#F2FAF4}
+.mvwl-row.listo:hover{background:#E7F4EA}
+.mvwl-row .c1{min-width:0}
+.mvwl-row .c1 b{display:block;font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvwl-row .c1 small{display:block;color:var(--muted);font-size:11.5px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvwl-row .web-chips{gap:4px;min-width:0}
+.mvwl-row .web-chip{font-size:11px;padding:2px 8px;white-space:nowrap}
+.mvwl-row .web-prog{font-size:11.5px;gap:6px;white-space:nowrap}
+.mvwl-row .web-prog i{height:5px}
+.mvwl-row .tot{font-family:var(--display);font-weight:700;font-size:15px;text-align:right;white-space:nowrap}
+.mvwl-ojo{width:34px;height:34px;min-height:0;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:none}
+.mvwl-ojo svg{width:18px;height:18px;display:block}
+.mvwl-ojo:hover,.mvwl-ojo:focus-visible{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+@media (max-width:760px){
+  .mvwl-row{grid-template-columns:minmax(0,1fr) auto 36px;grid-template-areas:"c1 tot ojo" "chips chips ojo" "prog prog ojo";gap:5px 10px;padding:10px 8px 10px 12px}
+  .mvwl-row .c1{grid-area:c1} .mvwl-row .tot{grid-area:tot} .mvwl-row .web-chips{grid-area:chips} .mvwl-row .web-prog{grid-area:prog} .mvwl-row .mvwl-ojo{grid-area:ojo}
+}
+/* ventana del pedido (encima de la barra de pestañas; el menú ⋯ y los avisos van encima de la ventana) */
+body:has(.mvwl-back) .ctxmenu{z-index:95}
+body:has(.mvwl-back) .toast{z-index:96}
+.mvwl-back{position:fixed;inset:0;z-index:90;background:rgba(20,16,24,.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;overscroll-behavior:contain}
+.mvwl-dlg{width:min(560px,100%);max-height:min(86vh,820px);display:flex;flex-direction:column;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.28);overflow:hidden}
+.mvwl-dlg.listo{border-color:#8DB8A0}
+.mvwl-dlg .hd{display:flex;gap:12px;align-items:flex-start;padding:16px 14px 10px 18px}
+.mvwl-dlg .hd .tx{flex:1;min-width:0}
+.mvwl-dlg .hd b{display:block;font-family:var(--display);font-weight:600;font-size:19px;line-height:1.2;overflow-wrap:anywhere}
+.mvwl-dlg .hd small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
+.mvwl-dlg .hd .tot{font-family:var(--display);font-weight:700;font-size:20px;white-space:nowrap;padding-top:1px}
+.mvwl-x{width:32px;height:32px;min-height:0;flex:none;border-radius:50%;border:0;background:var(--surface-2);color:var(--fg);font-size:15px;line-height:1;padding:0;cursor:pointer;box-shadow:none;display:grid;place-items:center}
+.mvwl-dlg .meta{padding:0 18px 10px;display:flex;flex-direction:column;gap:8px}
+.mvwl-items{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:6px 14px 12px;display:grid;gap:6px;align-content:start;border-top:1px solid var(--line)}
+.mvwl-items .web-it{padding:7px 12px 7px 8px}
+.mvwl-items .web-it .th{width:44px;height:44px;border-radius:9px;overflow:hidden;display:grid;place-items:center;background:var(--surface-2);font-size:12px}
+.mvwl-items .web-it .th img{width:100%;height:100%;object-fit:cover}
+.mvwl-items .web-it .tx{min-width:0;display:flex;flex-direction:column}
+.mvwl-dlg .ft{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.mvwl-dlg .ft .mas{margin-left:auto}
+@media (max-width:760px){ .mvwl-back{padding:0;place-items:end stretch} .mvwl-dlg{width:100%;max-height:92vh;border-radius:18px 18px 0 0} }
 </style>
 <script id="marvea0711js">
 /* ===== Marvea Tienda en línea (7-nov-2026): todas las ventas de la página ya pagadas, con checklist de armado ===== */
@@ -4686,21 +4702,16 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
   function pagado(c){ return !!c.pago||(cartGrand(c)>0&&cartPagado(c)>=cartGrand(c)-0.005); }
   function fechaDe(c){ const d=new Date(c.finalizado||c.creado||Date.now()); return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
   function sub(){ const st=S(); if(!st||!st.db||unsub) return; try{ unsub=st.db.collection("carritos").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x&&x.estado!=="cancelado"&&esWeb(x)) m.set(d.id,cartFromDoc(d.id,x)); } carts=m; if(st.view==="web") window.renderWeb(); },e=>console.warn("web",e)); }catch(e){ console.warn("web sub",e); } }
-  function card(c){ /* mvWebCompacto 8-nov-2026: tarjeta compacta + clic derecho (borrar / devolver piezas) */
-    const st=S(); const e=empCuenta(c), pct=e.t?Math.round(e.o/e.t*100):0, todo=e.t&&e.o>=e.t, ent=entregaDe(c), k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId);
-    const MAX=6, lista=c.items.slice(0,MAX);
-    const items=lista.map(it=>{ const p=st.products.get(it.codigo); return h("div",{class:"web-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{class:"tx"},h("span",{class:"tn"},it.nombre),h("span",{class:"ts"},it.codigo+" · $"+fmtMoney(it.precio)+" c/u")),h("span",{class:"q"},"×"+it.cant)); });
-    if(c.items.length>MAX) items.push(h("div",{class:"mvwc-mas"},"+ "+(c.items.length-MAX)+" modelos más · Abrir en Venta para verlos"));
-    const dir=dirDe(c).split("·").map(x=>x.trim()).filter(x=>x&&!/^PAGADO/i.test(x)).join(" · ");
-    const ticket=()=>{ try{ printTicket(c,st.lives.find(l=>l.id===c.liveId)); }catch(x){ toast("No se pudo imprimir",true); } };
-    const menu=(ev,x,y)=>{ if(ev){ ev.preventDefault(); ev.stopPropagation(); } menuPedido(c,x!=null?x:ev.clientX,y!=null?y:ev.clientY,ticket); };
-    const el=h("div",{class:"web-card mvwc"+(todo?" listo":""),oncontextmenu:ev=>menu(ev)},
-      h("div",{class:"top"},h("div",{style:"min-width:0"},h("b",{title:c.cliente||""},c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas",k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c)))),
-      h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pagado(c)?" pag":""),title:pagado(c)?"Pagado con tarjeta (Stripe)":""},pagado(c)?"✓ Pagado":"Pago pendiente"),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null),
-      dir?h("div",{class:"web-dir"},dir):null,
+  function card(c){ /* mvWebLista 10-nov-2026: renglón de lista; el ojito (o tocar el renglón) abre el pedido completo en una ventana */
+    const st=S(); const e=empCuenta(c), pct=e.t?Math.round(e.o/e.t*100):0, todo=e.t&&e.o>=e.t, k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId);
+    const menu=(ev,x,y)=>{ if(ev){ ev.preventDefault(); ev.stopPropagation(); } menuPedido(c,x!=null?x:ev.clientX,y!=null?y:ev.clientY,true); };
+    const ojo=h("button",{class:"mvwl-ojo",type:"button",title:"Ver el pedido completo","aria-label":"Ver el pedido completo de "+(c.cliente||"esta clienta"),onclick:ev=>{ ev.stopPropagation(); abrirPedido(c.id); }}); ojo.innerHTML=OJO;
+    const el=h("div",{class:"mvwl-row"+(todo?" listo":""),oncontextmenu:ev=>menu(ev),onclick:()=>abrirPedido(c.id)},
+      h("div",{class:"c1"},h("b",{title:c.cliente||""},c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas",k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),
+      chipsDe(c),
       h("div",{class:"web-prog"},h("span",null,todo?"✓ Armado":"Armado "+e.o+"/"+e.t),h("i",null,h("b",{style:"width:"+pct+"%"}))),
-      h("div",{class:"web-items"},...items),
-      h("div",{class:"web-acc"},h("button",{class:"btn sm primary",type:"button",onclick:()=>irACarrito(c)},"Abrir"),h("button",{class:"btn sm",type:"button",onclick:ticket},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>setView("logi")},"Logística"),h("button",{class:"btn sm mas",type:"button",title:"Más opciones (borrar pedido)","aria-label":"Más opciones",onclick:ev=>{ const r=ev.currentTarget.getBoundingClientRect(); menu(ev,r.left,r.bottom+4); }},"⋯")));
+      h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c))),
+      ojo);
     /* iPhone / iPad: dejar el dedo presionado = clic derecho */
     let t=null, sx=0, sy=0, abrio=false;
     el.addEventListener("touchstart",ev=>{ if(ev.target.closest("button,a,input")) return; const p=ev.touches[0]; sx=p.clientX; sy=p.clientY; abrio=false; clearTimeout(t); t=setTimeout(()=>{ abrio=true; try{ navigator.vibrate&&navigator.vibrate(15); }catch(x){} menu(null,sx,sy); },550); },{passive:true});
@@ -4709,12 +4720,37 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
     el.addEventListener("touchcancel",()=>clearTimeout(t));
     return el;
   }
-  function menuPedido(c,x,y,ticket){
+  const OJO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  function chipsDe(c){ const ent=entregaDe(c); return h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pagado(c)?" pag":""),title:pagado(c)?"Pagado con tarjeta (Stripe)":""},pagado(c)?"✓ Pagado":"Pago pendiente"),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null); }
+  function ticketDe(c){ const st=S(); try{ printTicket(c,st.lives.find(l=>l.id===c.liveId)); }catch(x){ toast("No se pudo imprimir",true); } }
+  /* ventana del pedido: todas las piezas con su palomita + Abrir / Ticket / Logística / ⋯ */
+  let abierto=null, dlg=null;
+  function abrirPedido(id){ try{ closeMenu(); }catch(e){} abierto=id; pintaPedido(); }
+  function cerrarPedido(){ abierto=null; if(dlg){ dlg.remove(); dlg=null; } document.removeEventListener("keydown",escPedido,true); }
+  function escPedido(ev){ if(ev.key==="Escape"&&!document.getElementById("ctxmenu")){ ev.stopPropagation(); cerrarPedido(); } }
+  function pintaPedido(){
+    const st=S(); const c=abierto&&carts.get(abierto); if(!c||!st||st.view!=="web"){ if(abierto||dlg) cerrarPedido(); return; }
+    const e=empCuenta(c), pct=e.t?Math.round(e.o/e.t*100):0, todo=e.t&&e.o>=e.t, k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId);
+    const dir=dirDe(c).split("·").map(x=>x.trim()).filter(x=>x&&!/^PAGADO/i.test(x)).join(" · ");
+    const items=h("div",{class:"web-items mvwl-items"},...c.items.map(it=>{ const p=st.products.get(it.codigo); return h("div",{class:"web-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{class:"tx"},h("span",{class:"tn"},it.nombre),h("span",{class:"ts"},it.codigo+" · $"+fmtMoney(it.precio)+" c/u")),h("span",{class:"q"},"×"+it.cant)); }));
+    /* al palomear, la ventana y la lista se actualizan al momento (sin esperar a la nube) */
+    items.addEventListener("click",ev=>{ if(ev.target.closest&&ev.target.closest(".empchk")) setTimeout(()=>{ try{ window.renderWeb(); }catch(x){} },0); },true);
+    const box=h("div",{class:"mvwl-dlg"+(todo?" listo":""),role:"dialog","aria-modal":"true","aria-label":"Pedido de "+(c.cliente||"clienta"),oncontextmenu:ev=>{ if(ev.target.closest("input,textarea")) return; ev.preventDefault(); menuPedido(c,ev.clientX,ev.clientY,false); }},
+      h("div",{class:"hd"},h("div",{class:"tx"},h("b",null,c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas · "+c.items.length+" modelo"+(c.items.length===1?"":"s"),k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c))),h("button",{class:"mvwl-x",type:"button",title:"Cerrar","aria-label":"Cerrar",onclick:cerrarPedido},"✕")),
+      h("div",{class:"meta"},chipsDe(c),dir?h("div",{class:"web-dir"},dir):null,h("div",{class:"web-prog"},h("span",null,todo?"✓ Armado":"Armado "+e.o+"/"+e.t),h("i",null,h("b",{style:"width:"+pct+"%"})))),
+      items,
+      h("div",{class:"ft web-acc"},h("button",{class:"btn sm primary",type:"button",onclick:()=>{ cerrarPedido(); irACarrito(c); }},"Abrir en Venta"),h("button",{class:"btn sm",type:"button",onclick:()=>ticketDe(c)},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>{ cerrarPedido(); setView("logi"); }},"Logística"),h("button",{class:"btn sm mas",type:"button",title:"Más opciones (borrar pedido)","aria-label":"Más opciones",onclick:ev=>{ ev.stopPropagation(); const r=ev.currentTarget.getBoundingClientRect(); menuPedido(c,r.left,r.top-150,false); }},"⋯")));
+    const sc=dlg&&dlg.querySelector(".mvwl-items"), top=sc?sc.scrollTop:0;
+    if(!dlg){ dlg=h("div",{class:"mvwl-back",onmousedown:ev=>{ if(ev.target===dlg) cerrarPedido(); }}); document.body.append(dlg); document.addEventListener("keydown",escPedido,true); }
+    dlg.replaceChildren(box); if(top) items.scrollTop=top;
+  }
+  function menuPedido(c,x,y,conVer){
     const pz=cartPieces(c), f=folioDe(c), devuelve=c.estado!=="cancelado"&&c.items.length>0;
     showMenu(x,y,(c.cliente||"Pedido")+(f?" · "+f:""),[
-      {label:"Abrir en Venta",run:()=>irACarrito(c)},
-      {label:"Imprimir ticket",run:ticket},
-      {label:"Ir a Logística",run:()=>setView("logi")},
+      ...(conVer?[{label:"Ver pedido completo",run:()=>abrirPedido(c.id)}]:[]),
+      {label:"Abrir en Venta",run:()=>{ cerrarPedido(); irACarrito(c); }},
+      {label:"Imprimir ticket",run:()=>ticketDe(c)},
+      {label:"Ir a Logística",run:()=>{ cerrarPedido(); setView("logi"); }},
       "-",
       {label:"Borrar pedido…",danger:true,confirm:`¿Borrar el pedido${f?" "+f:""} de ${c.cliente||"esta clienta"} (${pz} pzas)? Se va a la papelera. El dinero no se regresa solo: el reembolso se hace en Stripe.`,options:[
         ...(devuelve?[{label:`Borrar y devolver ${pz} pzas al inventario`,run:()=>borrarPedido(c,true)}]:[]),
@@ -4732,7 +4768,7 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
   window.renderWeb=function(){
     const host=document.getElementById("webHost"); const st=S(); if(!host||!st) return;
     if(!st.db){ host.replaceChildren(h("div",{class:"notice"},"Conectando con los datos de Marvea…")); return; }
-    sub();
+    sub(); try{ pintaPedido(); }catch(e){}
     const qq=normaliza(q); const all=[...carts.values()].filter(c=>c.items.length&&(!qq||normaliza(c.cliente+" "+folioDe(c)+" "+(c.nota||"")).includes(qq))).sort((a,b)=>String(b.creado).localeCompare(String(a.creado)));
     const porArmar=all.filter(c=>!c.enviado&&!(empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t)), listos=all.filter(c=>!c.enviado&&empCuenta(c).t&&empCuenta(c).o>=empCuenta(c).t), enviados=all.filter(c=>c.enviado).slice(0,30);
     const hoy=new Date().toDateString(); const deHoy=all.filter(c=>new Date(c.creado).toDateString()===hoy);
@@ -4746,6 +4782,7 @@ nav.tabs button{flex:0 0 auto!important;white-space:nowrap}
       ...sec("Listos para salir",listos.length,listos,"Cuando palomees todas las piezas de un pedido, aparece aquí."),
       ...sec("Enviados / entregados",enviados.length,enviados,"Aquí quedan los pedidos web que ya salieron."));
   };
+  document.addEventListener("click",e=>{ if(e.target&&e.target.closest&&e.target.closest("nav.tabs [role=tab]")) cerrarPedido(); },true);
   document.addEventListener("click",e=>{ const b=e.target&&e.target.closest&&e.target.closest("nav.tabs [data-view=web]"); if(b) setTimeout(()=>{ try{ setView("web"); }catch(x){} },0); },true);
 })();
 </script>
