@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-10T02:40:26.201Z",
+ "actualizado": "2026-11-10T02:57:09.157Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1743,7 +1743,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/5942efcb03bf096723cb137b86e8c9f8.jpg",
    "creado": "2026-10-19T02:30:54.417Z",
@@ -1915,6 +1915,18 @@
    "notas": "",
    "foto": "fotos/67e9cfb8071fcbdab64cd4180946deb6.jpg",
    "creado": "2026-10-20T16:33:54.094Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00046",
+   "nombre": "Corbatin Ajustable Plata",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/74172cd89992fac3727fcb63a9ad2564.jpg",
+   "creado": "2026-10-20T17:24:28.236Z",
    "disponible": true
   },
   {
