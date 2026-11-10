@@ -4696,6 +4696,8 @@ body:has(.mvwl-back) .toast{z-index:96}
 .mvwl-busbox input:focus{outline:2px solid var(--fg);outline-offset:1px}
 .mvwl-busx{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:28px;height:28px;min-height:0;border-radius:50%;border:0;background:var(--surface-2);color:var(--fg);font-size:13px;line-height:1;padding:0;cursor:pointer;box-shadow:none;display:grid;place-items:center}
 .mvwl-cuenta{font-size:13px;font-weight:600;color:var(--muted)}
+.web-chip.trf{background:#FDE7C7;color:#8A4B00}
+.mvwl-dlg .ft .mvwl-cobrar{background:#1f7a4d;color:#fff;border-color:#1f7a4d}
 </style>
 <script id="marvea0711js">
 /* ===== Marvea Tienda en línea (7-nov-2026): todas las ventas de la página ya pagadas, con checklist de armado ===== */
@@ -4729,7 +4731,12 @@ body:has(.mvwl-back) .toast{z-index:96}
     return el;
   }
   const OJO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-  function chipsDe(c){ const ent=entregaDe(c); return h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pagado(c)?" pag":""),title:pagado(c)?"Pagado con tarjeta (Stripe)":""},pagado(c)?"✓ Pagado":"Pago pendiente"),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null); }
+  /* 10-nov-2026 · pedidos que la clienta pidió pagar por TRANSFERENCIA: entran sin pago y aquí se les registra */
+  function esTransfer(c){ return /·\s*TRANSFERENCIA/i.test(String(c.nota||"")); }
+  function faltaDe(c){ return Math.max(0,cartGrand(c)-cartPagado(c)); }
+  function registrarPago(c,x,y){ const f=folioDe(c), m=Math.round(faltaDe(c)*100)/100; if(!(m>0)||typeof agregarAnticipo!=="function") return;
+    showMenu(x,y,"Registrar pago · "+(c.cliente||"Pedido")+(f?" · "+f:""),[{label:"Sí, ya recibí $"+fmtMoney(m)+" por transferencia",run:async()=>{ await agregarAnticipo(c,m,"Transferencia","Pedido web "+f); try{ window.renderWeb(); }catch(e){} }},{label:"Otro monto o medio: abrir en Venta",run:()=>{ cerrarPedido(); irACarrito(c); }}]); }
+  function chipsDe(c){ const ent=entregaDe(c), pg=pagado(c), tr=esTransfer(c); return h("div",{class:"web-chips"},h("span",{class:"web-chip"+(pg?" pag":(tr?" trf":"")),title:pg?(tr?"Pago registrado (transferencia)":"Pagado con tarjeta (Stripe)"):(tr?"Pidió pagar por transferencia: falta registrar su pago":"")},pg?(tr?"✓ Pagado · transferencia":"✓ Pagado"):(tr?"Transferencia · falta pago":"Pago pendiente")),h("span",{class:"web-chip "+ent.t},ent.txt),c.factura?h("span",{class:"web-chip"},"Factura"):null,c.enviado?h("span",{class:"web-chip env"},"Enviado"):null); }
   function ticketDe(c){ const st=S(); try{ printTicket(c,st.lives.find(l=>l.id===c.liveId)); }catch(x){ toast("No se pudo imprimir",true); } }
   /* ventana del pedido: todas las piezas con su palomita + Abrir / Ticket / Logística / ⋯ */
   let abierto=null, dlg=null;
@@ -4739,7 +4746,7 @@ body:has(.mvwl-back) .toast{z-index:96}
   function pintaPedido(){
     const st=S(); const c=abierto&&carts.get(abierto); if(!c||!st||st.view!=="web"){ if(abierto||dlg) cerrarPedido(); return; }
     const e=empCuenta(c), pct=e.t?Math.round(e.o/e.t*100):0, todo=e.t&&e.o>=e.t, k=c.clienteId&&st.clientas&&st.clientas.get(c.clienteId);
-    const dir=dirDe(c).split("·").map(x=>x.trim()).filter(x=>x&&!/^PAGADO/i.test(x)).join(" · ");
+    const dir=dirDe(c).split("·").map(x=>x.trim()).filter(x=>x&&!/^(PAGADO|TRANSFERENCIA)/i.test(x)).join(" · ");
     const items=h("div",{class:"web-items mvwl-items"},...c.items.map(it=>{ const p=st.products.get(it.codigo); return h("div",{class:"web-it"+(empOk(it)?" ok":"")},conCheck(c,it,thumb(p||{nombre:it.nombre})),h("div",{class:"tx"},h("span",{class:"tn"},it.nombre),h("span",{class:"ts"},it.codigo+" · $"+fmtMoney(it.precio)+" c/u")),h("span",{class:"q"},"×"+it.cant)); }));
     /* al palomear, la ventana y la lista se actualizan al momento (sin esperar a la nube) */
     items.addEventListener("click",ev=>{ if(ev.target.closest&&ev.target.closest(".empchk")) setTimeout(()=>{ try{ window.renderWeb(); }catch(x){} },0); },true);
@@ -4747,7 +4754,7 @@ body:has(.mvwl-back) .toast{z-index:96}
       h("div",{class:"hd"},h("div",{class:"tx"},h("b",null,c.cliente||"Sin nombre"),h("small",null,[folioDe(c),fechaDe(c),cartPieces(c)+" pzas · "+c.items.length+" modelo"+(c.items.length===1?"":"s"),k&&k.whatsapp?k.whatsapp:null].filter(Boolean).join(" · "))),h("span",{class:"tot"},"$"+fmtMoney(cartGrand(c))),h("button",{class:"mvwl-x",type:"button",title:"Cerrar","aria-label":"Cerrar",onclick:cerrarPedido},"✕")),
       h("div",{class:"meta"},chipsDe(c),dir?h("div",{class:"web-dir"},dir):null,h("div",{class:"web-prog"},h("span",null,todo?"✓ Armado":"Armado "+e.o+"/"+e.t),h("i",null,h("b",{style:"width:"+pct+"%"})))),
       items,
-      h("div",{class:"ft web-acc"},h("button",{class:"btn sm primary",type:"button",onclick:()=>{ cerrarPedido(); irACarrito(c); }},"Abrir en Venta"),h("button",{class:"btn sm",type:"button",onclick:()=>ticketDe(c)},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>{ cerrarPedido(); setView("logi"); }},"Logística"),h("button",{class:"btn sm mas",type:"button",title:"Más opciones (borrar pedido)","aria-label":"Más opciones",onclick:ev=>{ ev.stopPropagation(); const r=ev.currentTarget.getBoundingClientRect(); menuPedido(c,r.left,r.top-150,false); }},"⋯")));
+      h("div",{class:"ft web-acc"},(!pagado(c)&&faltaDe(c)>0.005)?h("button",{class:"btn sm mvwl-cobrar",type:"button",title:"Registrar el pago de este pedido",onclick:ev=>{ ev.stopPropagation(); const r=ev.currentTarget.getBoundingClientRect(); registrarPago(c,r.left,r.top-110); }},"$ Registrar pago"):null,h("button",{class:"btn sm primary",type:"button",onclick:()=>{ cerrarPedido(); irACarrito(c); }},"Abrir en Venta"),h("button",{class:"btn sm",type:"button",onclick:()=>ticketDe(c)},"Ticket"),h("button",{class:"btn sm",type:"button",onclick:()=>{ cerrarPedido(); setView("logi"); }},"Logística"),h("button",{class:"btn sm mas",type:"button",title:"Más opciones (borrar pedido)","aria-label":"Más opciones",onclick:ev=>{ ev.stopPropagation(); const r=ev.currentTarget.getBoundingClientRect(); menuPedido(c,r.left,r.top-150,false); }},"⋯")));
     const sc=dlg&&dlg.querySelector(".mvwl-items"), top=sc?sc.scrollTop:0;
     if(!dlg){ dlg=h("div",{class:"mvwl-back",onmousedown:ev=>{ if(ev.target===dlg) cerrarPedido(); }}); document.body.append(dlg); document.addEventListener("keydown",escPedido,true); }
     dlg.replaceChildren(box); if(top) items.scrollTop=top;
@@ -4759,8 +4766,9 @@ body:has(.mvwl-back) .toast{z-index:96}
       {label:"Abrir en Venta",run:()=>{ cerrarPedido(); irACarrito(c); }},
       {label:"Imprimir ticket",run:()=>ticketDe(c)},
       {label:"Ir a Logística",run:()=>{ cerrarPedido(); setView("logi"); }},
+      ...((!pagado(c)&&faltaDe(c)>0.005)?[{label:"$ Registrar pago…",run:()=>setTimeout(()=>registrarPago(c,x,y),30)}]:[]),
       "-",
-      {label:"Borrar pedido…",danger:true,confirm:`¿Borrar el pedido${f?" "+f:""} de ${c.cliente||"esta clienta"} (${pz} pzas)? Se va a la papelera. El dinero no se regresa solo: el reembolso se hace en Stripe.`,options:[
+      {label:"Borrar pedido…",danger:true,confirm:`¿Borrar el pedido${f?" "+f:""} de ${c.cliente||"esta clienta"} (${pz} pzas)? Se va a la papelera.${cartPagado(c)>0.005?(esTransfer(c)?" Ya tiene pago registrado: si hay que regresar dinero, se hace aparte.":" El dinero no se regresa solo: el reembolso se hace en Stripe."):" No tiene pago registrado."}`,options:[
         ...(devuelve?[{label:`Borrar y devolver ${pz} pzas al inventario`,run:()=>borrarPedido(c,true)}]:[]),
         {label:devuelve?"Borrar sin devolver piezas":"Sí, borrar",run:()=>borrarPedido(c,false)}]}]);
   }
@@ -4784,7 +4792,7 @@ body:has(.mvwl-back) .toast{z-index:96}
     return [k&&k.whatsapp,k&&k.whatsapp2,f,c.referencia].some(x=>String(x||"").split(",").some(y=>y.replace(/\D/g,"").includes(dq)));
   }
   function armaBuscador(){
-    cab=h("div",{class:"web-head"},h("div",null,h("h2",null,"Marvea Tienda en línea"),h("p",null,"Pedidos pagados en www.marveamayoreo.com. Palomea cada pieza conforme la pongas en el carrito físico; cuando salga, márcalo en Logística.")));
+    cab=h("div",{class:"web-head"},h("div",null,h("h2",null,"Marvea Tienda en línea"),h("p",null,"Pedidos de www.marveamayoreo.com: los pagados con tarjeta y los de transferencia (esos entran con «Transferencia · falta pago» hasta que registres su pago). Palomea cada pieza conforme la pongas en el carrito físico; cuando salga, márcalo en Logística.")));
     const limpia=()=>{ q=""; inpQ.value=""; window.renderWeb(); inpQ.focus(); };
     inpQ=h("input",{type:"text",inputmode:"search",enterkeyhint:"search",placeholder:"Buscar clienta, folio o WhatsApp",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","aria-label":"Buscar pedidos de la tienda en línea",oninput:e=>{ q=e.target.value; window.renderWeb(); },onkeydown:e=>{ if(e.key==="Escape"&&q){ e.preventDefault(); e.stopPropagation(); limpia(); } }});
     btnX=h("button",{class:"mvwl-busx",type:"button",title:"Borrar búsqueda","aria-label":"Borrar búsqueda",hidden:true,onclick:limpia},"✕");
@@ -4810,7 +4818,8 @@ body:has(.mvwl-back) .toast{z-index:96}
     if(qq){ cuerpo.replaceChildren(...(all.length?[]:[h("div",{class:"web-vacio"},"Ningún pedido coincide con «"+q.trim()+"». Prueba con otro nombre, el folio (MV-…) o el WhatsApp.")]),
       ...sec("Por armar",porArmar.length,porArmar,""),...sec("Listos para salir",listos.length,listos,""),...sec("Enviados / entregados",enviados.length,enviados,"")); return; }
     cuerpo.replaceChildren(
-      h("div",{class:"web-tiles"},tile("Por armar",String(porArmar.length),porArmar.length?porArmar.reduce((s,c)=>s+cartPieces(c),0)+" piezas por surtir":"Todo armado","warn"),tile("Listos para salir",String(listos.length),"carrito físico completo","ok"),tile("Hoy",money(deHoy.reduce((s,c)=>s+cartGrand(c),0)),deHoy.length+" pedido"+(deHoy.length===1?"":"s")+" · "+deHoy.reduce((s,c)=>s+cartPieces(c),0)+" piezas","hero"),tile("Enviados",String(enviadosT.length),"en total")),
+      h("div",{class:"web-tiles"},tile("Por armar",String(porArmar.length),porArmar.length?porArmar.reduce((s,c)=>s+cartPieces(c),0)+" piezas por surtir":"Todo armado","warn"),tile("Listos para salir",String(listos.length),"carrito físico completo","ok"),tile("Hoy",money(deHoy.reduce((s,c)=>s+cartGrand(c),0)),deHoy.length+" pedido"+(deHoy.length===1?"":"s")+" · "+deHoy.reduce((s,c)=>s+cartPieces(c),0)+" piezas","hero"),tile("Enviados",String(enviadosT.length),"en total"),
+        ...(()=>{ const fp=all.filter(c=>!pagado(c)&&faltaDe(c)>0.005); return fp.length?[tile("Falta pago",String(fp.length),money(fp.reduce((s,c)=>s+faltaDe(c),0))+" por cobrar · transferencia","warn")]:[]; })()),
       ...sec("Por armar",porArmar.length,porArmar,"No hay pedidos pendientes de armar. Los nuevos aparecen aquí solos (la Mac los importa cada minuto)."),
       ...sec("Listos para salir",listos.length,listos,"Cuando palomees todas las piezas de un pedido, aparece aquí."),
       ...sec("Enviados / entregados",enviados.length,enviados,"Aquí quedan los pedidos web que ya salieron."));

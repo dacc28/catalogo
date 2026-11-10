@@ -523,16 +523,43 @@ async function guardarDatosCuenta(){ // la clienta editó sus datos en el pago �
   try{ const { error } = await sbc.from('clientas').update(cambios).eq('id',S.cliente.id); if(!error){ Object.assign(S.cliente,{nombre:cambios.nombre,wa:cambios.whatsapp,mail:cambios.correo,negocio:cambios.negocio,dir:cambios.direccion,ciudad:cambios.ciudad,estado:cambios.estado,cp:cambios.cp,ref:cambios.referencias}); S.editar=false; } }catch(_){}
 }
 async function pagar(m){ if(!validar()) return;
+  let wWA=null; if(m==='transfer'){ const bt=btnTransfer(); if(bt&&bt.disabled) return; try{ wWA=window.open('','_blank'); if(wWA&&wWA.document) wWA.document.write('<p style="font:16px sans-serif;padding:24px">Abriendo WhatsApp…</p>'); }catch(_){ wWA=null; } } // se abre aquí (con el toque) para que el navegador no lo bloquee
   S.form.wa=dig10(S.form.wa||'');
   if(S.cliente&&S.editar) await guardarDatosCuenta();
   if(!S.cliente&&S.crearCuenta){ const f=S.form; const r=await crearCuenta({nombre:f.nombre,wa:f.wa,correo:f.mail||'',negocio:f.negocio||'',password:f.pass||'',dir:f.dir||'',ciudad:f.ciudad||'',estado:f.estado||'',cp:f.cp||'',ref:f.ref||''});
-    if(!r.ok){ toast(r.error+' Si ya tienes cuenta, entra con tu contraseña.','alerta'); return; } if(r.cliente){ S.cliente=r.cliente; alEntrar(r.cliente); } toast('Tu cuenta quedó creada ✓','ok'); }
+    if(!r.ok){ try{ if(wWA) wWA.close(); }catch(_){} toast(r.error+' Si ya tienes cuenta, entra con tu contraseña.','alerta'); return; } if(r.cliente){ S.cliente=r.cliente; alEntrar(r.cliente); } toast('Tu cuenta quedó creada ✓','ok'); }
   const folio='MV-'+Math.floor(10000+Math.random()*90000);
-  if(m==='transfer'){window.open('https://wa.me/528132660673?text='+encodeURIComponent(mensajeWA(folio)),'_blank');finalizar(m,folio);return;}
+  if(m==='transfer'){ await pagarTransfer(folio,wWA); return; }
   const b=document.getElementById('btnTarjeta');b.disabled=true;b.innerHTML='<b><span class="cargando"></span>Conectando con Stripe…</b><small>Te llevamos a la página segura de pago.</small>';
   pagarStripe(folio).catch(err=>{ b.disabled=false; b.innerHTML='<b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span></div>';
     if(err.faltan){ cerrarModal(); toast(err.message+(err.faltan.length?' ('+err.faltan.map(f=>`${f.nombre}: ${f.apartadas} de ${f.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<=980) toggleCarritoM(true); return; }
     toast('No se pudo iniciar el pago: '+err.message,'alerta'); }); }
+/* ---------- Transferencia (10-nov-2026): el pedido se guarda en la nube para que Marvea lo vea en su sistema (Tienda en línea) y luego se abre WhatsApp */
+const TRANSFER={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/pedido-transferencia', anon:CUENTA.anon };
+function btnTransfer(){ return document.querySelector('#coBody .pago.wa')||document.querySelector('.pago.wa'); }
+async function pagarTransfer(folio,wWA){
+  const bt=btnTransfer(), html0=bt?bt.innerHTML:''; const cierra=()=>{ try{ if(wWA) wWA.close(); }catch(_){} };
+  if(bt){ bt.disabled=true; bt.innerHTML='<b><span class="cargando"></span>Registrando tu pedido…</b><small>Un momento: estamos apartando tus piezas.</small>'; }
+  const rest=()=>{ if(bt){ bt.disabled=false; bt.innerHTML=html0; } };
+  const c=S.form, e=envio();
+  if(SRV.pend.size||SRV.enviando){ await new Promise(r=>setTimeout(r,700)); }
+  const payload={ folio, sesion:SESION, items:Object.entries(S.cart).map(([codigo,cant])=>({codigo,cant})), factura:S.factura, resguardar:S.resguardar, sumar:S.sumar,
+    envio:{ tipo:S.recoger?'recoger':(e.t?e.t.id:'2kg'), costo:e.costo===null?0:e.costo },
+    cliente:{ nombre:c.nombre, wa:dig10(c.wa||''), mail:c.mail||'', negocio:c.negocio||'', dir:c.dir||'', ciudad:c.ciudad||'', estado:c.estado||'', cp:c.cp||'', ref:c.ref||'', crearCuenta:!!S.cliente } };
+  let r=null, d={};
+  try{ const ses=await sesionActual(); const tokenAuth=ses&&ses.access_token?ses.access_token:TRANSFER.anon;
+    const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),15000);
+    try{ r=await fetch(TRANSFER.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':TRANSFER.anon,'Authorization':'Bearer '+tokenAuth},body:JSON.stringify(payload),signal:ctrl.signal}); try{ d=await r.json(); }catch(_){ d={}; } } finally{ clearTimeout(tm); }
+  }catch(_){ r=null; }
+  if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null); S.timerFin=Date.now()+15*60000; cerrarModal(); const fl=d.faltan||[];
+    toast((d.error||'Se acabaron algunas piezas')+(fl.length?' ('+fl.map(x=>`${x.nombre}: ${x.apartadas} de ${x.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<=980) toggleCarritoM(true); return; }
+  if(r&&(r.status===400||r.status===409||r.status===429)&&d&&d.error){ cierra(); rest(); toast(d.error,'alerta'); return; }
+  const registrado=!!(r&&r.ok&&d&&d.ok); if(registrado&&d.folio) folio=d.folio; // si la nube no contestó, el pedido sale solo por WhatsApp (como antes)
+  const url='https://wa.me/528132660673?text='+encodeURIComponent(mensajeWA(folio)); S.waTransfer=url;
+  let abrio=false; try{ if(wWA&&!wWA.closed){ wWA.location.href=url; abrio=true; } else { abrio=!!window.open(url,'_blank'); } }catch(_){ abrio=false; }
+  S.waAbrio=abrio; medir('add_payment_info',{valor:total(),metodo:'transferencia'});
+  finalizar('transfer',folio,registrado);
+}
 /* ---------- Stripe Checkout (real) */
 const STRIPE={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/crear-pago', anon:CUENTA.anon };
 function snapshotPedido(folio){ return {folio,cart:S.cart,form:S.form,cliente:S.cliente,tarifa:S.tarifa,recoger:S.recoger,sumar:S.sumar,resguardar:S.resguardar,factura:S.factura,crearCuenta:S.crearCuenta,t:Date.now()}; }
@@ -567,19 +594,20 @@ function regresoStripe(){
   else { toast('El pago se canceló. Tus piezas siguen en tu carrito.','alerta'); if(innerWidth<=980) toggleCarritoM(true);
     stockApi('reactivar').then(d=>{ aplicarDisp(d.disponibilidad); sincronizarCarrito(d.carrito,d.expira); if(!pzs()) toast('Pasó el tiempo del apartado: tus piezas regresaron al inventario. Vuelve a agregarlas.','alerta'); }).catch(()=>{}); }
 }
-function finalizar(metodo,folio){
+function finalizar(metodo,folio,registrado){
   const c=S.cliente||{wa:dig10(S.form.wa||''),nombre:S.form.nombre||'',negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',estado:S.form.estado||'',cp:S.form.cp||'',ref:S.form.ref||''}; const nueva=!S.cliente;
   const e=envio(),items={...S.cart},n=pzs(),sub0=sub(),tot=total(),k=kg(),fac=S.factura,ivaV=iva();
   Object.entries(items).forEach(([cd,q])=>{ prod(cd).v+=q; });
   if(S.cliente){ if(S.sumar&&c.paquete){c.paquete.piezas+=n;c.paquete.kg+=k;c.paquete.folios.push(folio);if(e.t)c.paquete.tarifa=e.t.id;} else if(S.resguardar){c.paquete={piezas:n,kg:k,tarifa:(e.t||TARIFAS[1]).id,folios:[folio]};} c.ultimo={folio,items}; c.pedidos=(c.pedidos||0)+1; }
   const resg=S.sumar||S.resguardar;
   S.cart={}; SRV.cart={}; SRV.pend.clear(); guardarCarritoLocal(); Object.keys(items).forEach(patch); actualizar(); if(!nueva) setCliente(c);
-  if(metodo==='transfer') stockApi('liberar').catch(()=>{}); // por transferencia Marvea aparta a mano al recibir el WhatsApp
+  if(metodo==='transfer'&&!registrado) stockApi('liberar').catch(()=>{}); // solo si la nube no guardó el pedido: Marvea aparta a mano al recibir el WhatsApp
   setTimeout(refrescarEstado,1500);
   const nom=esc((c.nombre||'').split(' ')[0]);
   document.getElementById('coBody').innerHTML=`
     <div class="exito"><h3>${metodo==='tarjeta'?`¡Listo, ${nom}! <i>${resg?'Tu paquete queda en resguardo.':'Ya estamos preparando tu pedido.'}</i>`:`Ya casi, ${nom}. <i>Envíanos tu comprobante.</i>`}</h3>
-      <p class="sub">Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 6 h; ya se abrió tu chat de WhatsApp)'}.</p>
+      <p class="sub">Pedido <b>${folio}</b> · ${metodo==='tarjeta'?'pagado con tarjeta (Stripe)':'pendiente de transferencia (apartado 6 h). '+(S.waAbrio?'Ya se abrió tu chat de WhatsApp: envía el mensaje y después tu comprobante':'Toca el botón para mandarnos tu pedido por WhatsApp y recibir los datos bancarios')}.</p>
+      ${metodo!=='tarjeta'&&S.waTransfer?`<div class="acc" style="margin-top:12px"><a class="c" href="${esc(S.waTransfer)}" target="_blank" rel="noopener">${S.waAbrio?'Abrir WhatsApp otra vez':'Enviar mi pedido por WhatsApp'}</a></div>`:''}
       <div class="chips"><span class="chip">📦 ${n} piezas · ${k.toFixed(2)} kg</span><span class="chip">${S.recoger?'📍 Recoges gratis en Monterrey':resg?'🗃 En resguardo':'✈️ DHL Express'}</span>${fac?'<span class="chip">🧾 Factura</span>':''}</div>
     </div>
     ${nueva?`<div class="club"><span class="kicker">Activa tu Business Club</span>
