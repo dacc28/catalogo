@@ -6009,6 +6009,13 @@ button.dg-f.mvr-a{cursor:pointer}
 .lightbox .lbimg img{place-self:center}
 .lightbox .lbnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#1d1d1f;font-size:26px;line-height:1;cursor:pointer;z-index:2;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .lightbox .lbnav.prev{left:6px}.lightbox .lbnav.next{right:6px}
+/* ===== fotos completas (11-nov-2026): la pieza se ve entera, sin recortar, en la ficha, las tarjetas y al escanear =====
+   La imagen va en flujo normal y ella misma es el cuadro (aspect-ratio en el <img>): con la imagen en position:absolute el
+   cuadro de la tarjeta se quedaba sin alto en la app de la Mac. */
+.drawer .hero{aspect-ratio:auto!important;background:#fff!important}
+.drawer .hero img{width:100%!important;height:auto!important;aspect-ratio:1/1;max-height:min(62vh,560px);object-fit:contain!important;background:#fff;display:block}
+.card .ph img,.result .ph img,.cttile .ph img{width:100%!important;height:auto!important;aspect-ratio:1/1;object-fit:contain!important;background:#fff;display:block}
+.card .ph,.result .ph,.cttile .ph{background:#fff!important}
 </style>
 <script id="mvFoto2Js">
 /* ===== Marvea · Foto 2 del producto (11-nov-2026) =====
@@ -6490,6 +6497,8 @@ body.vx-on #vxCamWrap{display:block!important}
 .vx-f2th{display:flex;align-items:center;gap:8px;border:2px solid transparent;background:#F5F5F7;border-radius:14px;padding:4px 10px 4px 4px;font-size:12px;font-weight:600;color:#6E6E73}
 .vx-f2th img{width:42px;height:42px;border-radius:10px;object-fit:cover;background:#fff;display:block}
 .vx-f2th.on{border-color:#1D1D1F;color:#1D1D1F}
+/* fotos completas (11-nov-2026): la pieza se ve entera en las tarjetas */
+.vx-tfoto img,.vx-alta-okfoto img{object-fit:contain;background:#fff}
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
