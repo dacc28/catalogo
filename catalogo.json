@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-11T18:14:52.171Z",
+ "actualizado": "2026-11-11T18:27:03.436Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2443,6 +2443,18 @@
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00017",
+   "nombre": "Pulsera Tennis de colores con cartier",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/713ff3a379847b1d694399ea96dedfaf.jpg",
+   "creado": "2026-10-20T18:06:43.453Z",
    "disponible": true
   },
   {
