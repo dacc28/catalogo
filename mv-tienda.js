@@ -29,7 +29,7 @@ async function cargarCatalogo(){
     // existencia REAL: llega del servidor (nivel 0 agotado · 1 últimas · 2 hay) al arrancar y cada minuto; popularidad por etiqueta
     const ex=ult?1:2;
     const v=(etl.includes('vendido')?60:etl.includes('tendencia')?45:etl.includes('new')||etl.includes('dupe')?25:8)+(h%15);
-    return {c:p.codigo,n:p.nombre,cat,catP:p.categoria,m:p.material||'',p:Number(p.precio),foto:p.foto||'',et:ult?'':(et&&etl!=='ninguna'?et:''),notas:p.notas||'',ex,v,creado:p.creado||''};
+    return {c:p.codigo,n:p.nombre,cat,catP:p.categoria,m:p.material||'',p:Number(p.precio),foto:p.foto||'',foto2:p.foto2||'',et:ult?'':(et&&etl!=='ninguna'?et:''),notas:p.notas||'',ex,v,creado:p.creado||''};
   });
   return true;
 }
@@ -121,10 +121,11 @@ function renderGrid(anim){
   l.forEach(x=>patch(x.c)); if(anim) setTimeout(()=>g.classList.remove('anim'),600);
 }
 /* ---------- ficha de producto ---------- */
+function fichaFoto(b,u){ const i=document.getElementById('fichaImg'); if(i) i.src=u; b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); } // piezas con dos fotos (11-nov-2026)
 function abrirFicha(c){
   const x=prod(c); if(!x) return; medir('ver_pieza',{codigo:c});
   abrirModal(`<div class="m-cab"><span class="kicker">${esc(x.cat)} · ${esc(x.c)}</span><button class="x-btn" onclick="cerrarModal()">✕</button></div>
-   <div class="m-body"><div class="ficha"><div class="foto-g">${x.foto?`<img src="${esc(x.foto)}" alt="${esc(x.n)}">`:ICONOS[x.cat]||ICONOS.Collares}</div>
+   <div class="m-body"><div class="ficha"><div class="foto-col"><div class="foto-g">${x.foto?`<img id="fichaImg" src="${esc(x.foto)}" alt="${esc(x.n)}">`:ICONOS[x.cat]||ICONOS.Collares}</div>${x.foto&&x.foto2?`<div class="foto-minis"><button type="button" class="on" aria-label="Foto 1" onclick="fichaFoto(this,'${esc(x.foto)}')"><img src="${esc(x.foto)}" alt=""></button><button type="button" aria-label="Foto 2" onclick="fichaFoto(this,'${esc(x.foto2)}')"><img src="${esc(x.foto2)}" alt="" onerror="this.closest('.foto-minis').remove()"></button></div>`:''}</div>
     <div><h3>${esc(x.n)}</h3><div class="sub" style="margin-top:4px">${esc(x.m)}${x.et?' · <b style="color:var(--coral)">'+esc(x.et)+'</b>':''}</div>
      <div class="precio">${fmt(x.p)} <small>MXN · precio de mayoreo</small></div>
      <div class="gana">💰 Si la vendes entre <b>${fmt(x.p*2)}</b> y <b>${fmt(x.p*3)}</b>, ganas de <b>${fmt(x.p)}</b> a <b>${fmt(x.p*2)}</b> por pieza.</div>

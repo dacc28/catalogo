@@ -378,7 +378,7 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
   window.addEventListener("offline", () => { enLinea = false; pintarEstado(); });
   setInterval(() => { if (perfil) cargarFotos().catch(() => {}); }, 1000 * 60 * 60 * 24);
   // si hay modelos cuya foto todavía no está (p. ej. la Mac la sigue subiendo), se vuelve a buscar cada 45 s
-  setInterval(() => { if (!perfil || document.hidden) return; const faltan = Object.values(store.productos || {}).some(p => p && p.fotoId && !fotos.has(p.fotoId)); if (faltan) cargarFotos().catch(() => {}); }, 45000);
+  setInterval(() => { if (!perfil || document.hidden) return; const faltan = Object.values(store.productos || {}).some(p => p && ((p.fotoId && !fotos.has(p.fotoId)) || (p.fotoId2 && !fotos.has(p.fotoId2)))); if (faltan) cargarFotos().catch(() => {}); }, 45000);
 
   async function refrescarDoc(c, i) {
     try { const { data, error } = await sb.from(TABLE).select("data").eq("col", c).eq("id", i).maybeSingle(); if (error) return;
@@ -1528,6 +1528,7 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
   <section class="view" id="view-new" hidden>
     <form id="form" class="form" novalidate>
       <div>
+        <div class="f2tit">Foto 1 · principal <small>(la del catálogo)</small></div>
         <label class="photo" id="photoBox">
           <img id="photoPrev" alt="" hidden>
           <span class="hint" id="photoHint">Toca para agregar la fotografía<br><small>Se muestra al escanear la pieza</small></span>
@@ -1539,6 +1540,22 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
           <button type="button" class="btn sm ghost" id="photoClear" hidden>Quitar foto</button>
         </div>
         <div id="camBox" class="cambox" hidden></div>
+        <div class="f2wrap" id="foto2Wrap">
+          <div class="f2tit">Foto 2 <small>(extra · otra vista de la pieza)</small></div>
+          <div class="f2row">
+            <label class="photo f2box" id="photoBox2">
+              <img id="photoPrev2" alt="" hidden>
+              <span class="hint" id="photoHint2">+ Añadir<br>foto 2</span>
+              <input type="file" id="photo2" accept="image/*">
+            </label>
+            <div class="f2btns">
+              <button type="button" class="btn sm" id="photoCam2">Tomar con la cámara</button>
+              <button type="button" class="btn sm" id="photoFile2">Adjuntar archivo</button>
+              <button type="button" class="btn sm" id="photoSwap" hidden>Hacer principal</button>
+              <button type="button" class="btn sm ghost" id="photoClear2" hidden>Quitar foto 2</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="fields">
         <div class="field full">
@@ -2420,24 +2437,29 @@ async function camStart(deviceId){
 function camCapture(video){
   const w=video.videoWidth,hh=video.videoHeight; if(!w){ toast("La cámara todavía no da imagen, espera un momento",true); return; }
   const c=document.createElement("canvas"); c.width=w; c.height=hh; c.getContext("2d").drawImage(video,0,0,w,hh);
-  c.toBlob(b=>{ if(!b){ toast("No se pudo capturar la foto",true); return; } setPendingPhoto(new File([b],"camara-"+Date.now()+".jpg",{type:"image/jpeg"})); camStop(); toast("Foto capturada · se guarda al registrar el producto"); },"image/jpeg",0.92);
+  c.toBlob(b=>{ if(!b){ toast("No se pudo capturar la foto",true); return; } (state.camTarget===2&&window.__foto2Set?window.__foto2Set:setPendingPhoto)(new File([b],"camara-"+Date.now()+".jpg",{type:"image/jpeg"})); camStop(); toast("Foto capturada · se guarda al registrar el producto"); },"image/jpeg",0.92);
 }
-$("#photoCam").addEventListener("click",()=>camStart());
+$("#photoCam").addEventListener("click",()=>{ state.camTarget=1; camStart(); });
 $("#photoFile").addEventListener("click",()=>$("#photo").click());
 /* ---- Ver la foto en grande ---- */
-function openLightbox(p){
-  if(!p||!p.fotoId) return; closeLightbox();
-  const img=h("img",{src:blobUrl(p.fotoId),alt:p.nombre});
+function openLightbox(p,n){ /* foto2: con dos fotos se cambia con las flechas */
+  if(!p) return; const ids=[p.fotoId,p.fotoId2].filter(Boolean); if(!ids.length) return; closeLightbox();
+  let k=Math.min(Math.max(0,Number(n)||0),ids.length-1); const varias=ids.length>1;
+  const img=h("img",{src:blobUrl(ids[k]),alt:p.nombre});
+  const cuenta=h("span",null,"");
+  const ir=d=>{ k=(k+d+ids.length)%ids.length; if(d) img.src=blobUrl(ids[k]); cuenta.textContent=varias?"Foto "+(k+1)+" de "+ids.length+(ids[k]===p.fotoId?" (principal)":"")+" · ← → para cambiar · ":""; };
+  const flecha=(d,t,c)=>varias?h("button",{type:"button",class:"lbnav "+c,"aria-label":t,title:t,onclick:e=>{ e.stopPropagation(); ir(d); }},d<0?"‹":"›"):null;
   const box=h("div",{id:"lightbox",class:"lightbox",role:"dialog","aria-label":"Foto de "+p.nombre,onclick:e=>{ if(e.target===box||e.target.classList.contains("lbimg")) closeLightbox(); }},
     h("div",{class:"lbhead"},h("div",{style:"min-width:0"},h("b",null,p.nombre),h("span",{style:"opacity:.75;margin-left:8px"},p.codigo+(p.palabra?" · "+p.palabra:"")+" · $"+fmtMoney(p.precio))),h("button",{type:"button",class:"btn sm",onclick:closeLightbox},"Cerrar  ✕")),
-    h("div",{class:"lbimg"},img),
-    h("div",{class:"lbfoot"},"Esc o clic fuera de la foto para cerrar"));
+    h("div",{class:"lbimg"},flecha(-1,"Foto anterior","prev"),img,flecha(1,"Foto siguiente","next")),
+    h("div",{class:"lbfoot"},cuenta,"Esc o clic fuera de la foto para cerrar"));
+  box.__ir=varias?ir:null; ir(0);
   document.body.append(box); document.addEventListener("keydown",lbKey,true);
 }
 function closeLightbox(){ const b=document.getElementById("lightbox"); if(b) b.remove(); document.removeEventListener("keydown",lbKey,true); }
-function lbKey(e){ if(e.key==="Escape"){ e.stopPropagation(); closeLightbox(); } }
+function lbKey(e){ if(e.key==="Escape"){ e.stopPropagation(); closeLightbox(); } else if(e.key==="ArrowLeft"||e.key==="ArrowRight"){ const b=document.getElementById("lightbox"); if(b&&b.__ir){ e.stopPropagation(); e.preventDefault(); b.__ir(e.key==="ArrowLeft"?-1:1); } } }
 
-function resetForm(){ state.palabraAuto=true; form.reset(); $("#existencia").value="0"; $("#minimo").value="5"; state.editing=null; state.removePhoto=false; clearPhotoUI(); $("#newCat").hidden=true; $("#palabra").value=palabraAleatoria(null); $("#btnSave").textContent="Registrar producto"; $("#formMsg").textContent=""; updateGain(); $("#done").hidden=true; form.hidden=false; updateCodePreview(); }
+function resetForm(){ state.palabraAuto=true; form.reset(); $("#existencia").value="0"; $("#minimo").value="5"; state.editing=null; state.removePhoto=false; clearPhotoUI(); if(window.__foto2Reset) window.__foto2Reset(); $("#newCat").hidden=true; $("#palabra").value=palabraAleatoria(null); $("#btnSave").textContent="Registrar producto"; $("#formMsg").textContent=""; updateGain(); $("#done").hidden=true; form.hidden=false; updateCodePreview(); }
 $("#btnReset").addEventListener("click",resetForm);
 $("#btnCancelNew").addEventListener("click",()=>{ resetForm(); setView("inv"); });
 form.addEventListener("submit",async(ev)=>{
@@ -2450,8 +2472,9 @@ form.addEventListener("submit",async(ev)=>{
   const btn=$("#btnSave"); btn.disabled=true; $("#formMsg").textContent="Guardando…";
   try{
     const prev=state.editing?state.products.get(state.editing):null;
-    let fotoId=prev?prev.fotoId||null:null;
+    let fotoId=prev?prev.fotoId||null:null, fotoId2=prev?prev.fotoId2||null:null; if(state.fotoSwap){ const t=fotoId; fotoId=fotoId2; fotoId2=t; } /* foto2 */
     if(state.removePhoto&&!state.pendingPhoto) fotoId=null;
+    if(state.removePhoto2&&!state.pendingPhoto2) fotoId2=null;
     if(state.pendingPhoto){
       if(!state.assets) throw Object.assign(new Error("Sin permiso para subir fotos"),{shown:true});
       $("#formMsg").textContent="Subiendo fotografía…";
@@ -2459,11 +2482,18 @@ form.addEventListener("submit",async(ev)=>{
       const up=await state.assets.upload(blob,{type:"image/jpeg"});
       fotoId=up.id;
     }
+    if(state.pendingPhoto2){
+      if(!state.assets) throw Object.assign(new Error("Sin permiso para subir fotos"),{shown:true});
+      $("#formMsg").textContent="Subiendo la foto 2…";
+      const up2=await state.assets.upload(await compressImage(state.pendingPhoto2),{type:"image/jpeg"});
+      fotoId2=up2.id;
+    }
+    if(!fotoId&&fotoId2){ fotoId=fotoId2; fotoId2=null; } /* si solo hay una foto, esa es la principal */
     let codigo=state.editing||nextCode(cat);
     if(!state.editing&&state.products.has(codigo)) codigo=nextCode(cat);
     const now=new Date().toISOString();
     let palabra=normaliza($("#palabra").value)||palabraDelProducto(nombre,$("#material").value,codigo); if(palabrasUsadas(codigo).has(palabra)){ const otro=porPalabra(palabra); toast(`La palabra "${palabra}" ya la usa ${otro?otro.codigo:"otro producto"}; se asignó otra`,true); palabra=palabraAleatoria(codigo); }
-    const data={codigo,nombre,palabra,categoria:cat,material:materialNormalizado($("#material").value),costo:Math.round((parseFloat($("#costo").value)||0)*100)/100,precio:Math.round(precio*100)/100,existencia:Math.max(0,parseInt($("#existencia").value,10)||0),minimo:Math.max(0,parseInt($("#minimo").value,10)||0),notas:$("#notas").value.trim(),etiquetaCat:$("#etiquetaCat").value.trim().slice(0,24),fotoId,creado:prev?prev.creado||now:now,actualizado:now};
+    const data={codigo,nombre,palabra,categoria:cat,material:materialNormalizado($("#material").value),costo:Math.round((parseFloat($("#costo").value)||0)*100)/100,precio:Math.round(precio*100)/100,existencia:Math.max(0,parseInt($("#existencia").value,10)||0),minimo:Math.max(0,parseInt($("#minimo").value,10)||0),notas:$("#notas").value.trim(),etiquetaCat:$("#etiquetaCat").value.trim().slice(0,24),fotoId,...(fotoId2?{fotoId2}:{}),creado:prev?prev.creado||now:now,actualizado:now};
     if(prev&&state.db&&typeof state.db.stock==="function"){ /* mvInv: solo la diferencia */ const vivo=state.products.get(codigo)||prev; const ex0=(state.__mvEx0&&state.__mvEx0.codigo===codigo)?state.__mvEx0.ex:Math.max(0,Number(prev.existencia)||0); const quiere=data.existencia; data.existencia=Math.max(0,Number(vivo.existencia)||0); await state.db.doc("productos/"+codigo).set(data); const dif=quiere-ex0; if(dif){ const pv=window.__mvMov; window.__mvMov={motivo:"ajuste",ref:"ficha del producto"}; try{ const r=await state.db.stock(codigo,dif); data.existencia=Number(r.existencia)||0; if(Number(r.aplicado)!==dif) toast(`Existencia: pediste ${dif>0?"+":""}${dif} y solo se pudo ${r.aplicado}; ahora hay ${data.existencia}`,true); }finally{ window.__mvMov=pv||null; } } state.__mvEx0=null; }
     else await state.db.doc("productos/"+codigo).set(data);
     state.products.set(codigo,data); renderAll();
@@ -2504,7 +2534,7 @@ function materialNormalizado(v){ v=(v||"").trim(); return /^acero$/i.test(v)?"Ac
   el.addEventListener("input",e=>{ if(e.inputType&&e.inputType.startsWith("delete")) return; if(/^acero$/i.test(el.value.trim())&&el.selectionStart===el.value.length){ el.value=FULL; el.setSelectionRange(5,FULL.length); } });
   el.addEventListener("blur",()=>{ el.value=materialNormalizado(el.value); });
 })();
-function startEdit(p){ resetForm(); state.palabraAuto=false; state.editing=p.codigo; $("#nombre").value=p.nombre; $("#categoria").value=p.categoria; $("#material").value=p.material||""; $("#palabra").value=p.palabra||palabraAleatoria(p.codigo); $("#precio").value=p.precio; $("#costo").value=p.costo||""; $("#existencia").value=p.existencia||0; $("#minimo").value=p.minimo==null?5:p.minimo; $("#notas").value=p.notas||""; $("#etiquetaCat").value=p.etiquetaCat||""; if(p.fotoId){ const im=$("#photoPrev"); im.src=blobUrl(p.fotoId); im.hidden=false; $("#photoBox").classList.add("has"); $("#photoHint").textContent="Cambiar fotografía"; $("#photoClear").hidden=false; } $("#btnSave").textContent="Guardar cambios"; updateGain(); closeDrawer(); setView("new"); updateCodePreview(); $("#nombre").focus(); }
+function startEdit(p){ resetForm(); state.palabraAuto=false; state.editing=p.codigo; $("#nombre").value=p.nombre; $("#categoria").value=p.categoria; $("#material").value=p.material||""; $("#palabra").value=p.palabra||palabraAleatoria(p.codigo); $("#precio").value=p.precio; $("#costo").value=p.costo||""; $("#existencia").value=p.existencia||0; $("#minimo").value=p.minimo==null?5:p.minimo; $("#notas").value=p.notas||""; $("#etiquetaCat").value=p.etiquetaCat||""; if(p.fotoId){ const im=$("#photoPrev"); im.src=blobUrl(p.fotoId); im.hidden=false; $("#photoBox").classList.add("has"); $("#photoHint").textContent="Cambiar fotografía"; $("#photoClear").hidden=false; } if(window.__foto2Edit) window.__foto2Edit(p); $("#btnSave").textContent="Guardar cambios"; updateGain(); closeDrawer(); setView("new"); updateCodePreview(); $("#nombre").focus(); }
 
 /* ============ Cajón de detalle ============ */
 function presetGuardado(){ try{ if(!localStorage.getItem("marvea.preset.50x30")){ localStorage.setItem("marvea.preset","50x30"); localStorage.setItem("marvea.preset.50x30","1"); } const saved=localStorage.getItem("marvea.preset"); if(saved&&PRESETS.some(x=>x.id===saved)) return saved; }catch(e){} return PRESETS[0].id; }
@@ -2570,7 +2600,7 @@ function openDrawer(code,focusLabel){
   const delBox=h("div");
   const drawer=h("aside",{class:"drawer",role:"dialog","aria-label":p.nombre},
     h("div",{class:"head"},h("span",{class:"code",style:"font-size:16px"},p.codigo),h("button",{class:"btn sm",onclick:closeDrawer},"Cerrar")),
-    imgOrPh(p,"hero"),
+    imgOrPh(p,"hero"),(window.__foto2Strip?window.__foto2Strip(p):null),
     h("h2",null,p.nombre),
     h("div",{class:"row",style:"justify-content:flex-start;flex-wrap:wrap"},p.palabra?h("span",{class:"chip word",style:"font-size:14px"},"Palabra clave: ",h("b",null,p.palabra)):null,h("span",{class:"chip"},catName(p.categoria)),stockChip(p)),
     h("dl",{class:"kv"},
@@ -3098,7 +3128,7 @@ function trashLabel(t){ return t.tipo==="producto"?"Producto":t.tipo==="carrito"
 async function trashAdd(entry){ const ref=await state.db.collection("papelera").add({...entry,eliminado:new Date().toISOString()}); state.trash.set(ref.id,{id:ref.id,...entry,eliminado:new Date().toISOString()}); const tc=$("#trashCount"); if(tc) tc.textContent=state.trash.size; return ref.id; }
 async function purgeTrashEntry(t){
   if(!state.db) return;
-  if(t.tipo==="producto"&&t.data){ if(t.data.fotoId&&state.assets){ try{ await state.assets.delete(t.data.fotoId);}catch(e){} } if(typeof window.__onProductDeleted==="function"){ try{ await window.__onProductDeleted(t.codigo||t.data.codigo); }catch(e){} } }
+  if(t.tipo==="producto"&&t.data){ if(t.data.fotoId&&state.assets){ try{ await state.assets.delete(t.data.fotoId);}catch(e){} } if(t.data.fotoId2&&state.assets){ try{ await state.assets.delete(t.data.fotoId2);}catch(e){} } if(typeof window.__onProductDeleted==="function"){ try{ await window.__onProductDeleted(t.codigo||t.data.codigo); }catch(e){} } }
   await state.db.doc("papelera/"+t.id).delete(); state.trash.delete(t.id); const tc=$("#trashCount"); if(tc) tc.textContent=state.trash.size;
 }
 async function purgeOldTrash(){ if(state.purged||!state.db) return; state.purged=true; const lim=Date.now()-TRASH_DAYS*864e5; for(const t of [...state.trash.values()]){ if(t.eliminado&&new Date(t.eliminado).getTime()<lim){ try{ await purgeTrashEntry(t); }catch(e){} } } }
@@ -4215,7 +4245,7 @@ async function boot(){
   db.doc("config/categorias").onSnapshot(s=>{ const d=s.exists?s.data():null; if(d&&Array.isArray(d.lista)&&d.lista.length){ state.cats=d.lista.filter(c=>c&&typeof c.p==="string"&&typeof c.n==="string").map(c=>({p:String(c.p).toUpperCase().slice(0,4),n:String(c.n)})); } state.catsLoaded=true; renderCats(); renderGrid(); if(state.view==="new") updateCodePreview(); migracionCadenas(); },e=>console.warn("categorias",e));
   db.collection("productos").onSnapshot(s=>{
     const m=new Map();
-    for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
+    for(const d of s.docs){ const x=d.data(); if(!x||typeof x.codigo!=="string") continue; m.set(d.id,{codigo:d.id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,...(typeof x.fotoId2==="string"&&x.fotoId2?{fotoId2:x.fotoId2}:{}),etiquetaCat:String(x.etiquetaCat||""),creado:x.creado||"",actualizado:x.actualizado||""}); }
     state.products=m; if(!state.editing&&palabrasUsadas(null).has(normaliza($("#palabra").value))) $("#palabra").value=palabraAleatoria(null); renderAll(); migracionCadenas(); migracionPalabras(); try{ logiSub(); }catch(e){} setTimeout(async()=>{ await juntarDuplicados031126(); await juntarAbiertos031126(); await regresarFernanda031126(); await todoAVenta031126(); await corregirPagosDobles031126(); await unificarClientas041126(); await separarEdith041126(); },20000);
   },e=>{ console.warn("productos",e); $("#dbNotice").hidden=false; });
 }
@@ -5959,6 +5989,65 @@ button.dg-f.mvr-a{cursor:pointer}
       return r; }; w.__mvu=true; window.guardarGuia=w; } }
   /* para la lista de Logística: con quién comparte guía un pedido */
   window.mvMismaGuia=function(c){ const g=t(c&&c.guia); if(!g) return []; const k=logiClave(c); return logiTodos().filter(x=>x.id!==c.id&&x.estado==="final"&&t(x.guia)===g&&logiClave(x)===k); };
+})();
+</script>
+<style id="mvFoto2">
+/* ===== Marvea · Foto 2 del producto (11-nov-2026) ===== */
+.f2tit{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
+.f2tit small{font-weight:600;text-transform:none;letter-spacing:0}
+.f2wrap{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.f2row{display:flex;gap:10px;align-items:flex-start}
+#view-new .photo.f2box{aspect-ratio:1/1!important;width:112px;max-height:112px;flex:none;padding:6px}
+.photo.f2box .hint{font-size:12px;line-height:1.25}
+.photo.f2box.has .hint{font-size:11px;padding:2px 8px}
+.f2btns{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0}
+.f2strip{display:flex;gap:8px;margin-top:8px}
+.f2th{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:4px 10px 4px 4px;font:inherit;font-size:12px;font-weight:600;color:var(--muted);cursor:zoom-in}
+.f2th img{width:44px;height:44px;border-radius:8px;object-fit:cover;display:block;background:#fff}
+.f2th:hover{border-color:var(--accent);color:var(--accent)}
+.lightbox .lbimg{position:relative;grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+.lightbox .lbimg img{place-self:center}
+.lightbox .lbnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#1d1d1f;font-size:26px;line-height:1;cursor:pointer;z-index:2;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.lightbox .lbnav.prev{left:6px}.lightbox .lbnav.next{right:6px}
+</style>
+<script id="mvFoto2Js">
+/* ===== Marvea · Foto 2 del producto (11-nov-2026) =====
+   Cada producto puede llevar dos fotos: fotoId (la 1, principal: catálogo, listas, carritos, etiquetas) y fotoId2 (extra).
+   Este bloque maneja el espacio «Foto 2» del formulario, las miniaturas en la ficha y el cambio de foto al verla en grande.
+   Los cambios dentro del código de la página (guardar, editar, leer el producto) los pone tools/patch_foto2.py. */
+(function(){
+  const W=window; const HINT2="+ Añadir<br>foto 2"; let url1=null, url2=null;
+  const libera=u=>{ if(u){ try{ URL.revokeObjectURL(u); }catch(e){} } };
+  function base(){ const p=state.editing?state.products.get(state.editing):null; let a=p?p.fotoId||null:null, b=p?p.fotoId2||null:null; if(state.fotoSwap){ const t=a; a=b; b=t; } return [a,b]; }
+  function pinta2(){ const box=$("#photoBox2"); if(!box) return; const im=$("#photoPrev2"); const b=base()[1]; libera(url2); url2=null; let src="";
+    if(state.pendingPhoto2){ url2=URL.createObjectURL(state.pendingPhoto2); src=url2; } else if(b&&!state.removePhoto2) src=blobUrl(b);
+    const hay=!!(state.pendingPhoto2||(b&&!state.removePhoto2));
+    if(src){ im.src=src; im.hidden=false; } else { im.hidden=true; im.removeAttribute("src"); }
+    box.classList.toggle("has",hay); $("#photoHint2").innerHTML=hay?"Cambiar":HINT2; $("#photoClear2").hidden=!hay; $("#photoSwap").hidden=!hay; }
+  function pinta1(){ const im=$("#photoPrev"); const a=base()[0]; libera(url1); url1=null; let src="";
+    if(state.pendingPhoto){ url1=URL.createObjectURL(state.pendingPhoto); src=url1; } else if(a&&!state.removePhoto) src=blobUrl(a);
+    const hay=!!(state.pendingPhoto||(a&&!state.removePhoto));
+    if(src){ im.src=src; im.hidden=false; } else { im.hidden=true; im.removeAttribute("src"); }
+    $("#photoBox").classList.toggle("has",hay); $("#photoHint").innerHTML=hay?"Cambiar fotografía":"Toca para agregar la fotografía<br><small>Se muestra al escanear la pieza</small>"; $("#photoClear").hidden=!hay; }
+  W.__foto2Set=function(f){ state.pendingPhoto2=f; state.removePhoto2=false; pinta2(); };
+  W.__foto2Reset=function(){ state.pendingPhoto2=null; state.removePhoto2=false; state.fotoSwap=false; state.camTarget=1; const i=$("#photo2"); if(i) i.value=""; pinta2(); };
+  W.__foto2Edit=function(){ pinta2(); };
+  function listo(){ if(!$("#photoBox2")) return;
+    $("#photo2").addEventListener("change",()=>{ const f=$("#photo2").files[0]; if(f) W.__foto2Set(f); });
+    $("#photoFile2").addEventListener("click",()=>$("#photo2").click());
+    $("#photoCam2").addEventListener("click",()=>{ state.camTarget=2; camStart(); });
+    $("#photoClear2").addEventListener("click",()=>{ state.pendingPhoto2=null; state.removePhoto2=true; $("#photo2").value=""; pinta2(); });
+    $("#photoSwap").addEventListener("click",()=>{ // la foto 2 pasa a ser la principal (la del catálogo) y la principal pasa a foto 2
+      state.fotoSwap=!state.fotoSwap; let t=state.pendingPhoto; state.pendingPhoto=state.pendingPhoto2||null; state.pendingPhoto2=t||null;
+      t=!!state.removePhoto; state.removePhoto=!!state.removePhoto2; state.removePhoto2=t; $("#photo").value=""; $("#photo2").value=""; pinta1(); pinta2();
+      toast("Listo: esa foto queda como principal al guardar"); });
+    pinta2(); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",listo); else listo();
+  /* miniaturas en la ficha del producto (solo si tiene dos fotos) */
+  W.__foto2Strip=function(p){ if(!p||!p.fotoId||!p.fotoId2) return null;
+    const mk=(id,n,txt)=>{ const im=h("img",{src:miniUrl(id),alt:"",loading:"lazy",decoding:"async"}); im.addEventListener("error",()=>{ const full=blobUrl(id); if(full&&im.getAttribute("src")!==full) im.src=full; });
+      return h("button",{type:"button",class:"f2th",title:"Ver en grande",onclick:()=>openLightbox(p,n)},im,h("span",null,txt)); };
+    return h("div",{class:"f2strip"},mk(p.fotoId,0,"Foto 1 · principal"),mk(p.fotoId2,1,"Foto 2")); };
 })();
 </script>
 <!-- ===== Marvea · navegación sencilla (5 pestañas + sub-pestañas) · 4-nov-2026 ===== -->
