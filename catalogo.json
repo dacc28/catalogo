@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-10T22:22:32.828Z",
+ "actualizado": "2026-11-11T00:26:23.437Z",
  "categorias": [
   {
    "p": "ANI",
@@ -94,24 +94,12 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00014",
-   "nombre": "Anillo Ajustable Corte Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
-   "creado": "2026-10-27T00:46:37.184Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00017",
    "nombre": "Anillo Ajustable Corte Marquesa Dorado",
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/1eab262050ee871c532cab1735fc580e.jpg",
    "creado": "2026-10-27T00:50:27.444Z",
@@ -147,7 +135,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
@@ -730,18 +718,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00057",
-   "nombre": "Arete Vanc Rojo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
-   "creado": "2026-11-01T20:09:55.282Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00058",
    "nombre": "Arete Vanc Azul",
    "categoria": "ARE",
@@ -751,18 +727,6 @@
    "notas": "",
    "foto": "fotos/ccf036c9dc7867fd1e356758244d42e4.jpg",
    "creado": "2026-11-01T20:11:39.625Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00059",
-   "nombre": "Arete Vanc Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
-   "creado": "2026-11-01T20:13:25.629Z",
    "disponible": true
   },
   {
@@ -835,18 +799,6 @@
    "notas": "",
    "foto": "fotos/b7cf075f33d0f1b03f6af05c78487cad.jpg",
    "creado": "2026-11-01T21:48:24.238Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00066",
-   "nombre": "Arracadas Eslabón Trebol",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
-   "creado": "2026-11-01T21:49:51.697Z",
    "disponible": true
   },
   {
@@ -1630,30 +1582,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00016",
-   "nombre": "Collar Ojo Serpiente",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/135661a33cc9e2e836e003822a0558e0.jpg",
-   "creado": "2026-10-19T01:52:16.304Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00019",
-   "nombre": "Collar Zirconia Oval",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38e60913798c36a56d9eac50f44dc102.jpg",
-   "creado": "2026-10-19T02:18:10.083Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00020",
    "nombre": "Collar Bibiana",
    "categoria": "COL",
@@ -1846,18 +1774,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00038",
-   "nombre": "Collar Dupe 3 puntos",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "Dupe Messika",
-   "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
-   "creado": "2026-10-20T16:09:00.792Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00040",
    "nombre": "Collar Perlita",
    "categoria": "COL",
@@ -1999,18 +1915,6 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00055",
-   "nombre": "Collar Vanc",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2804a2c47e46a4b0589c3479ed8efbc3.jpg",
-   "creado": "2026-11-01T20:21:28.845Z",
    "disponible": true
   },
   {
@@ -2211,7 +2115,7 @@
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2a62a561aac36996ea13ce6a9d1af090.jpg",
    "creado": "2026-11-01T21:54:21.362Z",
@@ -2275,18 +2179,6 @@
    "notas": "",
    "foto": "fotos/4134a8db329b146e555e99c23a8a140b.jpg",
    "creado": "2026-11-03T20:23:09.385Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00001",
-   "nombre": "Pulsera de Acero con Piedras Multicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eb63e97b63ad32d3166f4119372b658c.jpg",
-   "creado": "2026-10-19T01:17:13.969Z",
    "disponible": true
   },
   {
