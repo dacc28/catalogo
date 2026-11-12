@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-12T17:18:04.781Z",
+ "actualizado": "2026-11-12T18:35:04.397Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1642,18 +1642,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00019",
-   "nombre": "Collar Zirconia Oval",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38e60913798c36a56d9eac50f44dc102.jpg",
-   "creado": "2026-10-19T02:18:10.083Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00020",
    "nombre": "Collar Bibiana",
    "categoria": "COL",
@@ -1675,18 +1663,6 @@
    "notas": "",
    "foto": "fotos/b78c9b18648a9665b9cd45b2fabd39ab.jpg",
    "creado": "2026-10-19T02:21:15.687Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00022",
-   "nombre": "Collar Piedra Flotante",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f3c5b3fb11b6fe1476c58d81e8c51b3d.jpg",
-   "creado": "2026-10-19T02:22:32.186Z",
    "disponible": true
   },
   {
@@ -1815,7 +1791,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b9e0be65694defd3ac5afe7bf1915b2d.jpg",
    "creado": "2026-10-20T16:01:35.239Z",
@@ -1827,7 +1803,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7387cebd88240733a07d30cacd5d63a1.jpg",
    "creado": "2026-10-20T16:03:36.822Z",
@@ -2059,30 +2035,6 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00001",
-   "nombre": "Dije de Oval Turquesa",
-   "categoria": "DIJ",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a0e07bdafec644930830b36bf73f4b23.jpg",
-   "creado": "2026-10-19T01:08:26.544Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00002",
-   "nombre": "Dije de Oval Ambar",
-   "categoria": "DIJ",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/56eb31033c715318418ac87958305d19.jpg",
-   "creado": "2026-10-19T01:09:33.126Z",
    "disponible": true
   },
   {
@@ -2343,7 +2295,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/af153da1fe82f1a82b6259f755891e3c.jpg",
    "creado": "2026-10-19T02:49:33.420Z",
