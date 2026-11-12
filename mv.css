@@ -859,3 +859,19 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 .ficha .foto-minis button{width:64px;height:64px;padding:0;border-radius:14px;overflow:hidden;border:2px solid transparent;background:var(--fondo);cursor:pointer;opacity:.7;transition:opacity .15s,border-color .15s}
 .ficha .foto-minis button img{width:100%;height:100%;object-fit:cover;display:block}
 .ficha .foto-minis button.on{border-color:var(--coral);opacity:1}
+
+/* ===== APARTADO CLARO (12-nov-2026): piezas que salieron del carrito ===== */
+.salio{margin:10px 16px 0;padding:12px;border-radius:16px;background:#FFF4EF;border:1.5px solid var(--coral)}
+.salio-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.salio-cab b{color:var(--ciruela);font-size:14px;line-height:1.25}
+.salio-cab button{border:0;background:transparent;color:var(--ciruela);font-size:14px;line-height:1;padding:4px 6px;cursor:pointer;opacity:.6}
+.salio-li{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid rgba(90,39,72,.12)}
+.salio-li .mf{width:46px;height:46px;border-radius:10px;overflow:hidden;background:#fff;cursor:pointer}
+.salio-li .mf img{width:100%;height:100%;object-fit:cover;display:block}
+.salio-li .tx{min-width:0}
+.salio-li .tx b{display:block;font-size:13px;color:var(--tinta);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.salio-li .tx small{display:block;font-size:11.5px;color:var(--tinta);opacity:.7;line-height:1.3}
+.salio-li .tx small.mo{color:var(--coral);opacity:1;font-weight:700}
+.salio-li>button,.salio-todas{border:0;background:var(--ciruela);color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit}
+.salio-li .ago{font-size:11.5px;font-weight:800;color:var(--rojo);white-space:nowrap}
+.salio-todas{display:block;width:100%;margin-top:8px;padding:10px 12px;font-size:13px}

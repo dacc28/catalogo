@@ -68,7 +68,7 @@ const total=()=>sub()+iva()+(envio().costo||0);
 const pVenta=c=>(S.calc[c]&&S.calc[c].pv)||Math.round(prod(c).p*S.mult);
 
 /* ============================================================ UI BÁSICA */
-function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;e.innerHTML=m;document.getElementById('toasts').appendChild(e);setTimeout(()=>e.remove(),4200);}
+function toast(m,t='',ms){const e=document.createElement('div');e.className='toast '+t;e.innerHTML=m;document.getElementById('toasts').appendChild(e);setTimeout(()=>e.remove(),ms||4200);}
 function sec(id){const el=document.getElementById(id); if(!el) return; const y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});}
 function abrirModal(html,tam){const m=document.getElementById('modal');m.className='modal'+(tam?' '+tam:'');m.innerHTML=html;m.scrollTop=0;requestAnimationFrame(()=>{m.classList.add('on');document.getElementById('velo').classList.add('on');});}
 function cerrarModal(){document.getElementById('modal').classList.remove('on');document.getElementById('velo').classList.remove('on');}
@@ -151,17 +151,21 @@ async function stockApi(accion,datos){
   clearTimeout(tm); let d={}; try{ d=await r.json(); }catch(_){}
   if(!r.ok) throw new Error(d.error||('error '+r.status)); return d;
 }
-const SRV={cart:{},pend:new Set(),timer:null,enviando:false,avisar:true};
+const SRV={cart:{},pend:new Set(),timer:null,enviando:false,avisar:true,rev:0,reloj:0,recuperando:false};
+try{ SRV.reloj=Number(localStorage.getItem('marvea.reloj'))||0; }catch(_){}
 function aplicarDisp(disp){ if(!disp) return; let cambio=[]; Object.entries(disp).forEach(([c,n])=>{ const s=S.stock[c]; if(!s) return; const antes=s.ex; s.ex=Number(n)||0; if(antes!==s.ex){ patch(c); if(antes===0&&s.ex>0&&S.avisos.has(c)){ const av=S.avisos.get(c); S.notis.unshift({c,av}); S.avisos.delete(c); cambio.push(prod(c).n); } } });
   if(cambio.length){ actualizar(); toast(`¡Ya está disponible <b>${cambio.join(', ')}</b>! Te la dejamos lista en tu carrito.`,'ok'); } }
-function sincronizarCarrito(carrito,expira){ // el servidor manda la verdad: lo que de veras quedó apartado
+function sincronizarCarrito(carrito,expira,motivo){ // el servidor manda la verdad: lo que de veras quedó apartado
   const nuevo={}; Object.entries(carrito||{}).forEach(([c,q])=>{ if(prod(c)&&q>0) nuevo[c]=Number(q); });
-  const tocados=new Set([...Object.keys(S.cart),...Object.keys(nuevo)]); S.cart=nuevo; SRV.cart=Object.assign({},nuevo);
-  if(expira){ const t=new Date(expira).getTime(); if(t>Date.now()) S.timerFin=t; }
-  tocados.forEach(c=>{ patch(c); setInp(c,S.cart[c]||0); }); actualizar(); guardarCarritoLocal();
+  const antes=Object.assign({},S.cart);
+  const tocados=new Set([...Object.keys(S.cart),...Object.keys(nuevo)]); S.cart=nuevo; SRV.cart=Object.assign({},nuevo); SRV.rev++;
+  if(expira){ const t=finLocal(expira); if(t>Date.now()) S.timerFin=t; }
+  tocados.forEach(c=>{ patch(c); setInp(c,S.cart[c]||0); });
+  if(motivo!==false) anotarSalidas(antes,nuevo,motivo||'venc',motivo==='agot');
+  actualizar(); guardarCarritoLocal();
 }
 function guardarCarritoLocal(){ try{ localStorage.setItem('marvea.carrito',JSON.stringify({cart:S.cart,fin:S.timerFin})); }catch(_){} }
-function programar(c){ SRV.pend.add(c); clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,180); }
+function programar(c){ SRV.rev++; SRV.pend.add(c); clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,180); }
 async function enviarApartado(){
   if(SRV.enviando){ clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,150); return; }
   const codes=[...SRV.pend]; if(!codes.length) return; SRV.pend.clear(); SRV.enviando=true;
@@ -173,7 +177,7 @@ async function enviarApartado(){
       if(!SRV.pend.has(c)){ if(tiene) S.cart[c]=tiene; else delete S.cart[c]; }
       SRV.cart[c]=tiene; S.stock[c].ex=Number(o.nivel)||0; if(o.parcial&&tiene<quiso) parciales.push(tiene?`${prod(c).n}: solo había ${tiene}`:`${prod(c).n}: ya no hay`);
       patch(c); setInp(c,S.cart[c]||0); });
-    if(d.expira){ const t=new Date(d.expira).getTime(); if(t>Date.now()) S.timerFin=t; }
+    SRV.rev++; if(d.expira){ medirReloj(d.expira); const t=finLocal(d.expira); if(t>Date.now()) S.timerFin=t; }
     if(parciales.length&&SRV.avisar) toast('Se ajustó tu carrito a lo que queda en inventario: '+parciales.join(' · '),'alerta');
     SRV.avisar=true; actualizar(); guardarCarritoLocal();
   }catch(err){
@@ -197,7 +201,9 @@ function setQty(c,v){
 }
 function quitar1(c){if(!S.cart[c])return;S.cart[c]--;if(!S.cart[c])delete S.cart[c];patch(c);actualizar();programar(c);}
 async function liberarTodo(){ const cs=Object.keys(S.cart); S.cart={}; SRV.cart={}; SRV.pend.clear(); cs.forEach(patch); actualizar(); guardarCarritoLocal(); try{ await stockApi('liberar'); }catch(_){} }
-async function refrescarEstado(){ try{ const d=await stockApi('estado'); aplicarDisp(d.disponibilidad); if(!SRV.pend.size&&!SRV.enviando) sincronizarCarrito(d.carrito,d.expira); }catch(_){} }
+async function refrescarEstado(){ // una respuesta vieja nunca pisa un cambio que la clienta hizo mientras llegaba
+  if(enPago()) return recuperarPago();
+  const rev=SRV.rev; try{ const d=await stockApi('estado'); aplicarDisp(d.disponibilidad); if(!SRV.pend.size&&!SRV.enviando&&rev===SRV.rev) sincronizarCarrito(d.carrito,d.expira); }catch(_){} }
 function bump(){const n=document.getElementById('tabN');n.classList.add('bump');setTimeout(()=>n.classList.remove('bump'),250);}
 function completar(){
   const falta=MIN-pzs(); let p=0,i=0; const t=topN(16).filter(x=>disp(x.c)>0);
@@ -239,7 +245,7 @@ function actualizar(){renderCarrito();}
 setInterval(()=>{
   const t=document.getElementById('timer');
   if(!pzs()) t.textContent=''; else { const ms=S.timerFin-Date.now();
-    if(ms<=0){liberarTodo();toast('Pasaron los 15 minutos: tus piezas regresaron al inventario y quedan libres para otras compras.','alerta');}
+    if(ms<=0){ const antes=Object.assign({},S.cart); liberarTodo(); anotarSalidas(antes,{},'tiempo',true); toast('Se terminó el tiempo de tu apartado y tus piezas regresaron al inventario. En tu carrito están anotadas para que las vuelvas a agregar.','alerta',9000); if(innerWidth<=980) toggleCarritoM(true); }
     else t.textContent=`⏱ apartadas ${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms%60000/1000)).padStart(2,'0')}`; }
 },1000);
 setInterval(refrescarEstado,60000);
@@ -533,7 +539,7 @@ async function pagar(m){ if(!validar()) return;
   if(m==='transfer'){ await pagarTransfer(folio,wWA); return; }
   const b=document.getElementById('btnTarjeta');b.disabled=true;b.innerHTML='<b><span class="cargando"></span>Conectando con Stripe…</b><small>Te llevamos a la página segura de pago.</small>';
   pagarStripe(folio).catch(err=>{ b.disabled=false; b.innerHTML='<b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span></div>';
-    if(err.faltan){ cerrarModal(); toast(err.message+(err.faltan.length?' ('+err.faltan.map(f=>`${f.nombre}: ${f.apartadas} de ${f.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<=980) toggleCarritoM(true); return; }
+    if(err.faltan){ cerrarModal(); toast(textoFaltan(err.message,err.faltan),'alerta',10000); if(innerWidth<=980) toggleCarritoM(true); return; }
     toast('No se pudo iniciar el pago: '+err.message,'alerta'); }); }
 /* ---------- Transferencia (10-nov-2026): el pedido se guarda en la nube para que Marvea lo vea en su sistema (Tienda en línea) y luego se abre WhatsApp */
 const TRANSFER={ fn:'https://kuuewntjxtjjktxbgxfk.supabase.co/functions/v1/pedido-transferencia', anon:CUENTA.anon };
@@ -553,8 +559,8 @@ async function pagarTransfer(folio,wWA){
     const manda=tk=>fetch(TRANSFER.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':TRANSFER.anon,'Authorization':'Bearer '+tk},body:JSON.stringify(payload),signal:ctrl.signal});
     try{ r=await manda(tokenAuth); if(r.status===401&&tokenAuth!==TRANSFER.anon) r=await manda(TRANSFER.anon); /* si no acepta el token de su cuenta, entra como invitada: la app la reconoce por su WhatsApp */ try{ d=await r.json(); }catch(_){ d={}; } } finally{ clearTimeout(tm); }
   }catch(_){ r=null; }
-  if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null); S.timerFin=Date.now()+15*60000; cerrarModal(); const fl=d.faltan||[];
-    toast((d.error||'Se acabaron algunas piezas')+(fl.length?' ('+fl.map(x=>`${x.nombre}: ${x.apartadas} de ${x.pedidas}`).join(' · ')+')':''),'alerta'); if(innerWidth<=980) toggleCarritoM(true); return; }
+  if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null,'agot'); S.timerFin=Date.now()+15*60000; cerrarModal(); const fl=d.faltan||[];
+    toast(textoFaltan(d.error||'Se acabaron algunas piezas',fl),'alerta',10000); if(innerWidth<=980) toggleCarritoM(true); return; }
   if(r&&(r.status===400||r.status===409||r.status===429)&&d&&d.error){ cierra(); rest(); toast(d.error,'alerta'); return; }
   const registrado=!!(r&&r.ok&&d&&d.ok); if(registrado&&d.folio) folio=d.folio; // si la nube no contestó, el pedido sale solo por WhatsApp (como antes)
   const url='https://wa.me/528132660673?text='+encodeURIComponent(mensajeWA(folio)); S.waTransfer=url;
@@ -578,15 +584,16 @@ async function pagarStripe(folio){
   catch(err){ clearTimeout(tm); throw new Error('sin conexión con la función de pago'); }
   clearTimeout(tm);
   let d={}; try{ d=await r.json(); }catch(_){}
-  if(r.status===409&&d.carrito){ sincronizarCarrito(d.carrito,null); S.timerFin=Date.now()+15*60000; const e2=new Error(d.error||'Se acabaron algunas piezas'); e2.faltan=d.faltan||[]; throw e2; }
+  if(r.status===409&&d.carrito){ sincronizarCarrito(d.carrito,null,'agot'); S.timerFin=Date.now()+15*60000; const e2=new Error(d.error||'Se acabaron algunas piezas'); e2.faltan=d.faltan||[]; throw e2; }
   if(!r.ok||!d.url) throw new Error(d.error||('función de pago no disponible ('+r.status+')'));
-  medir('add_payment_info',{valor:total()}); location.href=d.url;
+  medir('add_payment_info',{valor:total()}); try{ localStorage.setItem('marvea.enpago',JSON.stringify({folio:d.folio||folio,t:Date.now()})); }catch(_){} location.href=d.url;
 }
 function regresoStripe(){
   const q=new URLSearchParams(location.search), pago=q.get('pago'); if(!pago) return;
   let sn=null; try{ sn=JSON.parse(localStorage.getItem('marvea.pedido')||'null'); }catch(_){}
-  history.replaceState(null,'',location.pathname);
-  if(!sn||(q.get('folio')&&sn.folio!==q.get('folio'))){ toast(pago==='ok'?'Pago recibido ✓ Te enviamos tu ticket por correo.':'El pago se canceló; tu carrito sigue aquí.',pago==='ok'?'ok':'alerta'); return; }
+  history.replaceState(null,'',location.pathname); try{ localStorage.removeItem('marvea.enpago'); }catch(_){}
+  if(!sn||(q.get('folio')&&sn.folio!==q.get('folio'))){ toast(pago==='ok'?'Pago recibido ✓ Te enviamos tu ticket por correo.':'El pago se canceló; tu carrito sigue aquí.',pago==='ok'?'ok':'alerta');
+    if(pago!=='ok') stockApi('reactivar').then(d=>{ aplicarDisp(d.disponibilidad); sincronizarCarrito(d.carrito,d.expira,false); }).catch(()=>{}); return; }
   const cart={}; Object.entries(sn.cart||{}).forEach(([c,q2])=>{ if(prod(c)) cart[c]=q2; });
   Object.assign(S,{cart,form:sn.form||{},tarifa:sn.tarifa,recoger:!!sn.recoger,sumar:!!sn.sumar,resguardar:!!sn.resguardar,factura:!!sn.factura,crearCuenta:!!sn.crearCuenta});
   S.timerFin=Date.now()+15*60000;
@@ -594,7 +601,7 @@ function regresoStripe(){
   Object.keys(cart).forEach(patch); actualizar();
   if(pago==='ok'){ try{localStorage.removeItem('marvea.pedido');}catch(_){} if(pzs()>=MIN){ abrirCheckout(); finalizar('tarjeta',sn.folio); } else toast('Pago recibido ✓','ok'); medir('purchase',{folio:sn.folio}); }
   else { toast('El pago se canceló. Tus piezas siguen en tu carrito.','alerta'); if(innerWidth<=980) toggleCarritoM(true);
-    stockApi('reactivar').then(d=>{ aplicarDisp(d.disponibilidad); sincronizarCarrito(d.carrito,d.expira); if(!pzs()) toast('Pasó el tiempo del apartado: tus piezas regresaron al inventario. Vuelve a agregarlas.','alerta'); }).catch(()=>{}); }
+    stockApi('reactivar').then(d=>{ const antes=Object.assign({},S.cart); aplicarDisp(d.disponibilidad); sincronizarCarrito(d.carrito,d.expira,false); anotarSalidas(antes,S.cart,'venc',true); if(!pzs()) toast('Pasó el tiempo del apartado: tus piezas regresaron al inventario. Vuelve a agregarlas.','alerta'); }).catch(()=>{}); }
 }
 function finalizar(metodo,folio,registrado){
   const c=S.cliente||{wa:dig10(S.form.wa||''),nombre:S.form.nombre||'',negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',estado:S.form.estado||'',cp:S.form.cp||'',ref:S.form.ref||''}; const nueva=!S.cliente;
@@ -967,6 +974,48 @@ async function registrarInline(){
   if(r.cliente){ alEntrar(r.cliente); toast('¡Bienvenida a Marvea! Tu cuenta quedó lista.','ok'); }
 }
 
+/* ============================================================ APARTADO CLARO (12-nov-2026)
+   · Regresar de Stripe sin pagar por cualquier camino (botón atrás, cerrar la pestaña) recupera el carrito: antes las piezas
+     se quedaban 35 min en "pago", el carrito salía vacío y a la misma clienta le aparecían «Agotado».
+   · Lo que sale del carrito (venció el tiempo, se acabó al pagar) queda anotado en el carrito con foto, nombre y código.
+   · El reloj del apartado se mide contra el servidor, no contra la hora del celular. */
+S.salieron={};
+const MOTIVO_SALIO={venc:'Se venció el tiempo del apartado',tiempo:'Se terminó el tiempo del apartado',agot:'Ya no alcanzó: se vendió antes de tu pago'};
+function medirReloj(exp){ const k=new Date(exp).getTime()-15*60000-Date.now(); if(isFinite(k)){ SRV.reloj=k; try{ localStorage.setItem('marvea.reloj',String(Math.round(k))); }catch(_){} } } // diferencia servidor − celular
+function finLocal(exp){ return new Date(exp).getTime()-(SRV.reloj||0)-5000; } // 5 s de margen: el reloj de la clienta nunca dura más que el del servidor
+function anotarSalidas(antes,ahora,motivo,callado){ const l=[];
+  Object.entries(antes||{}).forEach(([c,q])=>{ const x=prod(c), d=Number(q)-(Number((ahora||{})[c])||0); if(!x||!(d>0)) return; const s=S.salieron[c]; S.salieron[c]={q:(s?s.q:0)+d,m:motivo||'venc'}; l.push(`<b>${esc(x.n)}</b>${d>1?' ×'+d:''}`); });
+  if(!l.length) return 0;
+  try{ renderCarrito(); }catch(_){}
+  if(!callado) toast(`${MOTIVO_SALIO[motivo]||MOTIVO_SALIO.venc}: ${l.slice(0,3).join(', ')}${l.length>3?` y ${l.length-3} más`:''}. <u style="cursor:pointer" onclick="verCarrito()">Ver en mi carrito</u>`,'alerta',9000);
+  return l.length; }
+function textoFaltan(msj,fl){ fl=fl||[]; return esc(msj||'Se acabaron algunas piezas')+(fl.length?' '+fl.map(f=>`<b>${esc(f.nombre)}</b> (${f.apartadas?'solo quedaron '+f.apartadas+' de '+f.pedidas:'ya no hay'})`).join(' · ')+'.':'')+' En tu carrito quedaron anotadas.'; }
+function htmlSalieron(){ const e=Object.entries(S.salieron).filter(([c,o])=>prod(c)&&o.q>0); if(!e.length) return '';
+  const hay=e.filter(([c])=>disp(c)>0).length;
+  return `<div class="salio" id="salio"><div class="salio-cab"><b>${e.length===1?'Esta pieza ya no está':'Estas piezas ya no están'} en tu carrito</b><button onclick="cerrarSalieron()" aria-label="quitar aviso">✕</button></div>
+    ${e.map(([c,o])=>{ const x=prod(c), d=disp(c)>0; return `<div class="salio-li"><div class="mf" onclick="abrirFicha('${c}')">${fotoHTML(x)}</div><div class="tx"><b>${esc(x.n)}</b><small>${o.q} pza${o.q===1?'':'s'} · ${esc(c)}</small><small class="mo">${MOTIVO_SALIO[o.m]||MOTIVO_SALIO.venc}</small></div>${d?`<button onclick="reagregar('${c}')">Volver a agregar</button>`:`<span class="ago">Agotada</span>`}</div>`; }).join('')}
+    ${hay>1?`<button class="salio-todas" onclick="reagregarTodas()">Volver a agregar las ${hay} disponibles</button>`:''}</div>`; }
+function reagregar(c,callado){ const o=S.salieron[c]; if(!o) return 0; const q=o.q, h=add(c,q,true); if(S.salieron[c]&&h>=q) delete S.salieron[c];
+  if(!callado){ bump(); toast(h?`<b>${esc(prod(c).n)}</b> regresó a tu carrito${h<q?` (solo quedaban ${h})`:''} ✓`:`Ya no hay piezas disponibles de <b>${esc(prod(c).n)}</b>.`,h?'ok':'alerta'); } renderCarrito(); return h; }
+function reagregarTodas(){ let t=0; Object.keys(S.salieron).forEach(c=>{ if(disp(c)>0) t+=reagregar(c,true); }); bump(); toast(t?`Regresamos <b>${t} pieza${t===1?'':'s'}</b> a tu carrito ✓`:'Esas piezas ya no están disponibles.',t?'ok':'alerta'); renderCarrito(); }
+function cerrarSalieron(){ S.salieron={}; renderCarrito(); }
+add=(function(o){ return function(c){ const h=o.apply(this,arguments); const s=S.salieron[c]; if(h&&s){ s.q-=h; if(s.q<=0) delete S.salieron[c]; try{ renderCarrito(); }catch(_){} } return h; }; })(add);
+renderCarrito=(function(o){ return function(){ const r=o.apply(this,arguments); try{ const n=document.getElementById('notis'); if(n) n.insertAdjacentHTML('beforeend',htmlSalieron()); }catch(_){} return r; }; })(renderCarrito);
+/* --- regreso de Stripe sin pagar --- */
+function enPago(){ try{ const o=JSON.parse(localStorage.getItem('marvea.enpago')||'null'); if(o&&o.t&&Date.now()-o.t<40*60000) return o; if(o) localStorage.removeItem('marvea.enpago'); }catch(_){} return null; }
+function avisoRecuperado(){ toast('No se completó el pago. <b>Tus piezas siguen apartadas</b> en tu carrito 15 minutos más.','ok',8000); }
+async function recuperarPago(){ if(!enPago()||SRV.recuperando) return; SRV.recuperando=true; const rev=SRV.rev;
+  try{ const d=await stockApi('reactivar'); try{ localStorage.removeItem('marvea.enpago'); }catch(_){}
+    aplicarDisp(d.disponibilidad);
+    if(!SRV.pend.size&&!SRV.enviando&&rev===SRV.rev){ sincronizarCarrito(d.carrito,d.expira,false); if(pzs()) avisoRecuperado(); }
+  }catch(_){} finally{ SRV.recuperando=false; }
+  try{ const b=document.getElementById('btnTarjeta'); if(b&&b.disabled&&document.getElementById('coBody')){ if(pzs()>=MIN) renderCheckout(); else cerrarModal(); } }catch(_){} }
+window.addEventListener('pageshow',e=>{ if(e.persisted) refrescarEstado(); }); // el navegador regresó la página "congelada" (botón atrás desde Stripe)
+/* --- al abrir «Finalizar compra» el apartado se renueva: 15 minutos completos para llenar datos y pagar --- */
+abrirCheckout=(function(o){ return function(){ const r=o.apply(this,arguments);
+  try{ if(!S._regreso&&pzs()>=MIN&&document.getElementById('coBody')){ S.timerFin=Date.now()+15*60000; SRV.avisar=true; Object.keys(S.cart).forEach(c=>SRV.pend.add(c)); SRV.rev++; clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,180); } }catch(_){}
+  return r; }; })(abrirCheckout);
+
 /* ============================================================ ARRANQUE */
 (async()=>{
   const ok=await cargarCatalogo();
@@ -978,7 +1027,11 @@ async function registrarInline(){
   // carrito guardado + disponibilidad real del inventario
   let local=null; try{ local=JSON.parse(localStorage.getItem('marvea.carrito')||'null'); }catch(_){}
   const esRegreso=!!new URLSearchParams(location.search).get('pago');
-  try{ const d=await stockApi('estado'); aplicarDisp(d.disponibilidad); if(!esRegreso) sincronizarCarrito(d.carrito,d.expira); }
+  try{ const ep=!esRegreso&&enPago(); const d=await stockApi(ep?'reactivar':'estado'); if(ep){ try{ localStorage.removeItem('marvea.enpago'); }catch(_){} }
+    aplicarDisp(d.disponibilidad);
+    if(!esRegreso){ sincronizarCarrito(d.carrito,d.expira,false);
+      if(ep){ if(pzs()) avisoRecuperado(); }
+      else if(local&&local.cart&&local.fin&&Date.now()-local.fin<12*3600e3){ const antes={}; Object.entries(local.cart).forEach(([c,q])=>{ if(prod(c)&&q>0) antes[c]=Number(q); }); anotarSalidas(antes,S.cart,'venc'); } } }
   catch(_){ if(local&&local.fin>Date.now()&&!esRegreso){ Object.entries(local.cart||{}).forEach(([c,q])=>{ if(prod(c)) S.cart[c]=q; }); S.timerFin=local.fin; Object.keys(S.cart).forEach(patch); actualizar(); } }
   renderInicio();
   // sesión (contraseña o Google)
