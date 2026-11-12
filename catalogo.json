@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-12T18:48:20.947Z",
+ "actualizado": "2026-11-12T19:40:55.940Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1639,18 +1639,6 @@
    "notas": "",
    "foto": "fotos/135661a33cc9e2e836e003822a0558e0.jpg",
    "creado": "2026-10-19T01:52:16.304Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00019",
-   "nombre": "Collar Zirconia Oval",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38e60913798c36a56d9eac50f44dc102.jpg",
-   "creado": "2026-10-19T02:18:10.083Z",
    "disponible": true
   },
   {
