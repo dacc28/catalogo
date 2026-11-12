@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-12T18:35:04.397Z",
+ "actualizado": "2026-11-12T18:48:20.947Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1642,6 +1642,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00019",
+   "nombre": "Collar Zirconia Oval",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/38e60913798c36a56d9eac50f44dc102.jpg",
+   "creado": "2026-10-19T02:18:10.083Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00020",
    "nombre": "Collar Bibiana",
    "categoria": "COL",
@@ -2035,18 +2047,6 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00003",
-   "nombre": "Dije de Oval Esmeralda",
-   "categoria": "DIJ",
-   "material": "Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/b997841e80ad18d4a4bef0e75c1b24a0.jpg",
-   "creado": "2026-10-19T01:10:37.094Z",
    "disponible": true
   },
   {
