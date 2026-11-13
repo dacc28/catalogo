@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T16:44:16.639Z",
+ "actualizado": "2026-11-13T16:59:12.766Z",
  "categorias": [
   {
    "p": "ANI",
@@ -259,6 +259,18 @@
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00006",
+   "nombre": "Par Xuping Brillante",
+   "categoria": "ARE",
+   "material": "Chapa de Oro",
+   "precio": 30,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
+   "creado": "2026-10-19T01:56:07.969Z",
    "disponible": true
   },
   {
@@ -742,6 +754,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00059",
+   "nombre": "Arete Vanc Negro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
+   "creado": "2026-11-01T20:13:25.629Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00060",
    "nombre": "Huggie Eslabón",
    "categoria": "ARE",
@@ -1171,6 +1195,18 @@
    "notas": "",
    "foto": "fotos/db00969dca4979a4371ccc2acc536be3.jpg",
    "creado": "2026-11-07T21:43:50.581Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00096",
+   "nombre": "Trio de Arracadas Tiff",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/b89334e15ce3f3ba67bb195bccf35827.jpg",
+   "creado": "2026-11-07T21:46:00.691Z",
    "disponible": true
   },
   {
