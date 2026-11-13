@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T16:27:57.631Z",
+ "actualizado": "2026-11-13T16:40:39.969Z",
  "categorias": [
   {
    "p": "ANI",
@@ -259,18 +259,6 @@
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00006",
-   "nombre": "Par Xuping Brillante",
-   "categoria": "ARE",
-   "material": "Chapa de Oro",
-   "precio": 30,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
-   "creado": "2026-10-19T01:56:07.969Z",
    "disponible": true
   },
   {
@@ -1186,18 +1174,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00096",
-   "nombre": "Trio de Arracadas Tiff",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/b89334e15ce3f3ba67bb195bccf35827.jpg",
-   "creado": "2026-11-07T21:46:00.691Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00097",
    "nombre": "Huggies Flor",
    "categoria": "ARE",
@@ -1987,18 +1963,6 @@
    "notas": "",
    "foto": "fotos/fb51e6c7cc5ba4abfb7453b8f1c3678e.jpg",
    "creado": "2026-11-01T20:23:14.478Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00057",
-   "nombre": "Collar Tenis Rosa",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/0dc03e2120d2fdfb44ee048dd1bd5291.jpg",
-   "creado": "2026-11-03T20:04:51.942Z",
    "disponible": true
   },
   {
