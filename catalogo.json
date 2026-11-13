@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T17:59:12.537Z",
+ "actualizado": "2026-11-13T18:11:43.817Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1479,7 +1479,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "New in",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4f6a1fe22fe13f1e6b63f38d7effb3b8.jpg",
    "creado": "2026-10-19T00:55:53.709Z",
@@ -2235,7 +2235,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/c3db719050c8971bf1263ea29c1d4e7d.jpg",
    "creado": "2026-11-01T20:29:22.921Z",
@@ -2359,18 +2359,6 @@
    "notas": "",
    "foto": "fotos/439f6cf1bb826d391c16e8137d523d15.jpg",
    "creado": "2026-11-01T21:13:04.105Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00036",
-   "nombre": "Pulsera Colores Ajustable Pasteles",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c16e08e4c92481c78fd820eafd78aa18.jpg",
-   "creado": "2026-11-01T21:13:59.616Z",
    "disponible": true
   },
   {
