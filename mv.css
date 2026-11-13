@@ -875,3 +875,10 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 .salio-li>button,.salio-todas{border:0;background:var(--ciruela);color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit}
 .salio-li .ago{font-size:11.5px;font-weight:800;color:var(--rojo);white-space:nowrap}
 .salio-todas{display:block;width:100%;margin-top:8px;padding:10px 12px;font-size:13px}
+
+/* BUEN FIN 4x3 en el carrito (13-nov-2026) */
+.carrito .bf-f{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:800;color:#B5121B;padding:2px 0}
+.carrito .bf-nota{margin:6px 0 8px;padding:8px 11px;border-radius:12px;background:#141414;color:#fff;font-size:12.5px;line-height:1.35}
+.carrito .bf-nota b{display:inline-block;background:#D7141F;color:#fff;font-size:10.5px;letter-spacing:.06em;padding:1px 7px;border-radius:999px;margin-right:6px}
+.bf-g{display:inline-block;background:#FDE8E9;color:#B5121B;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px;white-space:nowrap}
+.tk .r.bf-r span,.tk .r.bf-r b{color:#B5121B;font-weight:800}

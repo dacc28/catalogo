@@ -48,7 +48,13 @@ function setInp(c,v){ tarjetas(c).forEach(el=>{ const i=el.querySelector('.step 
 // nivel público del inventario real (ya descontadas las piezas que esta clienta tiene apartadas): 0 agotado · 1 últimas (≤2) · 2 hay
 const disp=c=>{const s=S.stock[c]; if(!s) return 0; return s.ex===0?0:s.ex===1?2:99;};
 const pzs=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
-const sub=()=>Object.entries(S.cart).reduce((a,[c,q])=>a+prod(c).p*q,0);
+const subB=()=>Object.entries(S.cart).reduce((a,[c,q])=>a+prod(c).p*q,0);
+/* BUEN FIN 4x3 (mvBF): del 13 al 15-nov-2026. Por cada 4 piezas, 1 gratis: siempre las de menor precio del carrito. El cobro real lo calcula el servidor con la misma regla. */
+const BF={ini:Date.UTC(2026,10,13,6),fin:Date.UTC(2026,10,16,6)};
+const bfOn=()=>{ const t=Date.now(); return t>=BF.ini&&t<BF.fin; };
+function bfGratis(cart){ const r={n:0,desc:0,por:{},pz:0}; if(!bfOn()) return r; const u=Object.entries(cart||S.cart).map(([c,q])=>({c,p:Number((prod(c)||{}).p)||0,q:Math.floor(Number(q)||0)})).filter(x=>x.p>0&&x.q>0).sort((a,b)=>a.p-b.p);
+  r.pz=u.reduce((a,x)=>a+x.q,0); let g=Math.floor(r.pz/4); r.n=g; for(const x of u){ if(g<=0) break; const t=Math.min(g,x.q); r.por[x.c]=t; r.desc+=t*x.p; g-=t; } return r; }
+const sub=()=>subB()-bfGratis().desc;
 const kg=()=>pzs()*PESO_G/1000;
 const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX');
 const tarifaPeso=k=>TARIFAS.find(t=>k<=t.max)||null;
@@ -217,17 +223,17 @@ function renderCarrito(){
   mi.innerHTML=`<div class="t"><span>Mínimo de mayoreo</span><span><b>${n}</b> / ${MIN} piezas</span></div><div class="barra"><i style="width:${Math.min(100,n/MIN*100)}%"></i></div>
     <small>${ok?'✓ Ya cumples el mínimo':(n?`Te faltan ${MIN-n} · <button onclick="completar()">completar con lo más vendido</button>`:'Agrega modelos o deja que te armemos tu paquete')}</small>`;
   document.getElementById('notis').innerHTML=S.notis.map((o,i)=>`<div class="noti">🔔<div><b>¡Ya está disponible ${esc(prod(o.c).n)}!</b></div><button onclick="add('${o.c}');S.notis.splice(${i},1);renderCarrito()">Agregar</button></div>`).join('');
-  document.getElementById('lista').innerHTML=n?Object.entries(S.cart).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf">${fotoHTML(x)}</div><div><div class="t">${esc(x.n)}</div><div class="s">${fmt(x.p)} c/u · ${fmt(x.p*q)}</div></div><div class="q"><button onclick="quitar1('${c}')">−</button><span>${q}</span><button onclick="add('${c}')" ${disp(c)?'':'disabled'}>+</button></div></div>`}).join(''):'<div class="vacio">Tu pedido está vacío.<br>Toca <b>Agregar</b> en cualquier modelo o usa <b>Arma mi paquete</b>.</div>';
+  document.getElementById('lista').innerHTML=n?Object.entries(S.cart).map(([c,q])=>{const x=prod(c);return `<div class="li"><div class="mf">${fotoHTML(x)}</div><div><div class="t">${esc(x.n)}</div><div class="s">${fmt(x.p)} c/u · ${fmt(x.p*q)}${bfGratis().por[c]?` <b class="bf-g">${bfGratis().por[c]===q?(q===1?'Gratis':q+' gratis'):bfGratis().por[c]+' de '+q+' gratis'} · 4x3</b>`:''}</div></div><div class="q"><button onclick="quitar1('${c}')">−</button><span>${q}</span><button onclick="add('${c}')" ${disp(c)?'':'disabled'}>+</button></div></div>`}).join(''):'<div class="vacio">Tu pedido está vacío.<br>Toca <b>Agregar</b> en cualquier modelo o usa <b>Arma mi paquete</b>.</div>';
   const e=envio(), pq=S.cliente&&S.cliente.paquete, tD=tarifaPeso(kg()), lleno=pq&&(pq.folios||[]).length>=3;
   const ent=n?`<div class="ent-cart"><div class="ec-t">¿Cómo quieres recibirlo?</div><div class="ec-ops">
       <button class="${!S.recoger&&!S.sumar?'on':''}" onclick="elegirEntrega('dhl')"><i class="fa-solid fa-plane-up"></i><span><b>Envío DHL Express</b><small>${tD?fmt(tD.costo)+' · '+kg().toFixed(2)+' kg':'a cotizar'}</small></span></button>
       ${pq&&!lleno?`<button class="${S.sumar?'on':''}" onclick="elegirEntrega('sumar')"><i class="fa-solid fa-box-archive"></i><span><b>Sumar a mi resguardo</b><small>solo la diferencia</small></span></button>`:''}
       <button class="${S.recoger?'on':''}" onclick="elegirEntrega('recoger')"><i class="fa-solid fa-store"></i><span><b>Recoger en Monterrey</b><small>Gratis</small></span></button></div></div>`:'';
   const etE=S.recoger?'Recoges en Monterrey':S.sumar?'Diferencia de envío':`Envío DHL${n?` (${kg().toFixed(2)} kg)`:''}`;
-  document.getElementById('tot').innerHTML=`${ent}<div class="f"><span>Subtotal · ${n} pzas</span><span>${fmt(sub())}</span></div>
+  document.getElementById('tot').innerHTML=`${ent}<div class="f"><span>Subtotal · ${n} pzas</span><span>${fmt(subB())}</span></div>${bfOn()&&n?(()=>{ const g=bfGratis(), fa=(4-(g.pz%4))%4; return (g.n?`<div class="bf-f"><span>Buen Fin 4x3 · ${g.n} gratis</span><span>−${fmt(g.desc)}</span></div>`:'')+`<div class="bf-nota"><b>BUEN FIN 4x3</b> ${g.pz<4?`Con ${4-g.pz} más, la de menor precio es gratis.`:(fa?`Con ${fa} más te llevas otra gratis.`:'Por cada 4 piezas, la de menor precio es gratis.')}</div>`; })():''}
     <div class="f"><span>${etE}</span><span>${n?(e.costo===null?'a cotizar':(e.modo==='recoger'||e.costo===0?'gratis':fmt(e.costo))):'—'}</span></div>
     <div class="f total"><span>Total</span><span>${fmt(total())} <small style="font-size:12px;font-weight:600">MXN</small></span></div>
-    ${n?`<div class="ganancia"><span>💰 Ganas entre <b>${fmt(sub())}</b> y <b>${fmt(sub()*2)}</b> (×2–×3)</span><a href="#calculadora" onclick="toggleCarritoM(false);irSeccion('calculadora');return false" style="color:var(--verde);font-weight:800">calcular</a></div>`:''}
+    ${n?`<div class="ganancia"><span>💰 Ganas entre <b>${fmt(subB()+bfGratis().desc)}</b> y <b>${fmt(subB()*2+bfGratis().desc)}</b> (×2–×3)</span><a href="#calculadora" onclick="toggleCarritoM(false);irSeccion('calculadora');return false" style="color:var(--verde);font-weight:800">calcular</a></div>`:''}
     <button class="comprar" ${ok?'':'disabled'} onclick="abrirCheckout()">${ok?'Pagar ahora →':`Faltan ${MIN-n} piezas para pagar`}</button><button class="seguir" onclick="toggleCarritoM(false);if(S.vista!=='catalogo')irVista('catalogo')">Seguir comprando</button>
     ${n?'<div class="libera">⏱ Tus piezas quedan apartadas 15 minutos. Si no terminas, regresan solas al inventario.</div>':''}`;
   document.getElementById('bmTot').textContent=fmt(total());
@@ -504,7 +510,7 @@ function renderCheckout(){
       ${S.sumar||S.recoger?'':`<label class="check"><input type="checkbox" ${S.resguardar?'checked':''} onchange="S.resguardar=this.checked"><div><b>Resguardar mi paquete</b><small>Lo guardamos para juntarlo con tus próximos pedidos (hasta 3) y que todo salga en un envío; solo se cobra la diferencia si cambia la tarifa.</small></div></label>`}
       <label class="check"><input type="checkbox" ${S.factura?'checked':''} onchange="S.factura=this.checked;renderCheckout();renderCarrito()"><div><b>Necesito factura</b><small>Se agrega 16% de IVA. Te pedimos tus datos fiscales por WhatsApp.</small></div></label></div>
     <div class="bloq"><div class="tt"><span>3</span>Paga</div>
-      <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${S.factura?` · IVA ${fmt(iva())}`:''} · ${e.costo===null?'envío a cotizar':(e.modo==='recoger'?'recoges gratis':(e.modo==='sumar'?'diferencia de envío ':'envío DHL ')+fmt(e.costo))}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
+      <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${bfGratis().n?` (4x3: ${bfGratis().n} gratis)`:''}${S.factura?` · IVA ${fmt(iva())}`:''} · ${e.costo===null?'envío a cotizar':(e.modo==='recoger'?'recoges gratis':(e.modo==='sumar'?'diferencia de envío ':'envío DHL ')+fmt(e.costo))}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
       <div class="pagos"><button class="pago tarjeta" id="btnTarjeta" onclick="pagar('tarjeta')"><b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe; Marvea nunca ve tu tarjeta.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span><span>Crédito y débito</span></div></button>
       <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 6 h.</small></button></div>
       <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">Al pagar aceptas los <a href="legal.html#terminos" target="_blank" style="color:var(--coral)">términos y condiciones</a> y el <a href="legal.html#privacidad" target="_blank" style="color:var(--coral)">aviso de privacidad</a>.</p></div>`;
@@ -524,7 +530,7 @@ function validar(){ let ok=true;
   if(!ok) toast(S.crearCuenta&&!S.cliente?'Completa tus datos; la contraseña debe tener 8 caracteres y coincidir.':(S.recoger?'Escribe tu nombre y tu teléfono.':'Completa tus datos de envío.'),'alerta'); return ok; }
 function mensajeWA(folio){ const c=S.form,e=envio();
   return `Hola Marvea 👋 Pedido web *${folio}*\n\n`+Object.entries(S.cart).map(([k,q])=>`• ${q} × ${prod(k).n} — ${fmt(prod(k).p*q)}`).join('\n')+
-  `\n\nPiezas: ${pzs()}\nSubtotal: ${fmt(sub())}${S.factura?`\nIVA 16%: ${fmt(iva())}`:''}\n${S.recoger?'Recojo gratis en Monterrey':(S.sumar?'Se suma a mi resguardo · envío ya pagado':S.resguardar?'Resguardar paquete · envío DHL':'Envío DHL')+': '+(e.costo===null?'a cotizar':fmt(e.costo))}\n*Total: ${fmt(total())} MXN*\n\nPago por transferencia · ${c.nombre}${S.recoger?'':`\n${c.dir}, ${c.cp?'CP '+c.cp+', ':''}${c.ciudad}, ${c.estado||''}${c.ref?`\nReferencias: ${c.ref}`:''}`}`; }
+  `\n\nPiezas: ${pzs()}\nSubtotal: ${fmt(subB())}${bfGratis().n?`\nBuen Fin 4x3 · ${bfGratis().n} gratis (las de menor precio): −${fmt(bfGratis().desc)}`:''}${S.factura?`\nIVA 16%: ${fmt(iva())}`:''}\n${S.recoger?'Recojo gratis en Monterrey':(S.sumar?'Se suma a mi resguardo · envío ya pagado':S.resguardar?'Resguardar paquete · envío DHL':'Envío DHL')+': '+(e.costo===null?'a cotizar':fmt(e.costo))}\n*Total: ${fmt(total())} MXN*\n\nPago por transferencia · ${c.nombre}${S.recoger?'':`\n${c.dir}, ${c.cp?'CP '+c.cp+', ':''}${c.ciudad}, ${c.estado||''}${c.ref?`\nReferencias: ${c.ref}`:''}`}`; }
 async function guardarDatosCuenta(){ // la clienta editó sus datos en el pago → quedan en su ficha para la próxima vez
   if(!S.cliente||!sbc) return; const f=S.form; const cambios={nombre:f.nombre||S.cliente.nombre,whatsapp:dig10(f.wa||S.cliente.wa),correo:f.mail||'',negocio:f.negocio||'',direccion:f.dir||'',ciudad:f.ciudad||'',estado:f.estado||'',cp:f.cp||'',referencias:f.ref||'',actualizado:new Date().toISOString()};
   try{ const { error } = await sbc.from('clientas').update(cambios).eq('id',S.cliente.id); if(!error){ Object.assign(S.cliente,{nombre:cambios.nombre,wa:cambios.whatsapp,mail:cambios.correo,negocio:cambios.negocio,dir:cambios.direccion,ciudad:cambios.ciudad,estado:cambios.estado,cp:cambios.cp,ref:cambios.referencias}); S.editar=false; } }catch(_){}
@@ -605,7 +611,7 @@ function regresoStripe(){
 }
 function finalizar(metodo,folio,registrado){
   const c=S.cliente||{wa:dig10(S.form.wa||''),nombre:S.form.nombre||'',negocio:S.form.negocio||'',mail:S.form.mail||'',dir:S.form.dir||'',ciudad:S.form.ciudad||'',estado:S.form.estado||'',cp:S.form.cp||'',ref:S.form.ref||''}; const nueva=!S.cliente;
-  const e=envio(),items={...S.cart},n=pzs(),sub0=sub(),tot=total(),k=kg(),fac=S.factura,ivaV=iva();
+  const e=envio(),items={...S.cart},n=pzs(),sub0=subB(),tot=total(),k=kg(),fac=S.factura,ivaV=iva(),bfT=bfGratis();
   Object.entries(items).forEach(([cd,q])=>{ prod(cd).v+=q; });
   if(S.cliente){ if(S.sumar&&c.paquete){c.paquete.piezas+=n;c.paquete.kg+=k;c.paquete.folios.push(folio);if(e.t)c.paquete.tarifa=e.t.id;} else if(S.resguardar){c.paquete={piezas:n,kg:k,tarifa:(e.t||TARIFAS[1]).id,folios:[folio]};} c.ultimo={folio,items}; c.pedidos=(c.pedidos||0)+1; }
   const resg=S.sumar||S.resguardar;
@@ -629,7 +635,7 @@ function finalizar(metodo,folio,registrado){
       <h3 style="font-size:22px;color:var(--ciruela);margin:6px 0">Con este pedido puedes ganar <b>entre ${fmt(sub0)} y ${fmt(sub0*2)}</b></h3>
       <p class="sub" style="font-size:12.5px;margin:6px 0 0">El pedido ya aparece en Mis pedidos; ahí sigues tu guía DHL, registras lo que vendes y descargas tu catálogo con el nombre de tu negocio.</p></div>`}
     <div class="bloq tk"><div class="tt"><span>✓</span>Ticket</div>
-      ${Object.entries(items).map(([cd,q])=>`<div class="r"><span>${q} × ${esc(prod(cd).n)}</span><b>${fmt(prod(cd).p*q)}</b></div>`).join('')}
+      ${Object.entries(items).map(([cd,q])=>`<div class="r"><span>${q} × ${esc(prod(cd).n)}</span><b>${fmt(prod(cd).p*q)}</b></div>`).join('')}${bfT.n?`<div class="r bf-r"><span>Buen Fin 4x3 · ${bfT.n} gratis</span><b>−${fmt(bfT.desc)}</b></div>`:''}
       <div class="r"><span>${S.recoger?'Recoger en Monterrey':S.sumar?(e.costo?'Diferencia de envío DHL':'Envío (ya pagado en tu resguardo)'):'Envío DHL'}</span><b>${S.recoger?'Gratis':e.costo===null?'a cotizar':fmt(e.costo)}</b></div>${fac?`<div class="r"><span>IVA 16%</span><b>${fmt(ivaV)}</b></div>`:''}
       <div class="tt2"><span>Total</span><span>${fmt(tot)} MXN</span></div>
       <p class="sub" style="font-size:12.5px;margin:10px 0 0">📧 ${c.mail?`Te enviamos este ticket a <b>${esc(c.mail)}</b>.`:'Sin correo: tu ticket queda en tu Business Club y por WhatsApp.'}</p></div>
@@ -853,7 +859,7 @@ function renderCheckout(){
       <label class="check"><input type="checkbox" ${S.factura?'checked':''} onchange="S.factura=this.checked;renderCheckout();renderCarrito()"><div><b>Necesito factura</b><small>Se agrega 16% de IVA. Te pedimos tus datos fiscales por WhatsApp.</small></div></label></div>
     <div class="bloq"><div class="tt"><span>2</span>${S.recoger?'¿Quién recoge?':'¿A quién le enviamos?'}</div>${quien}</div>
     <div class="bloq"><div class="tt"><span>3</span>Paga</div>
-      <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${S.factura?` · IVA ${fmt(iva())}`:''} · ${envTxt}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
+      <div class="resumen-m"><div class="det"><b>${pzs()} piezas</b> · ${fmt(sub())}${bfGratis().n?` (4x3: ${bfGratis().n} gratis)`:''}${S.factura?` · IVA ${fmt(iva())}`:''} · ${envTxt}</div><div class="gran">${fmt(total())} <small style="font-size:13px;font-family:Urbanist;color:var(--tinta-2)">MXN</small></div></div>
       <div class="pagos"><button class="pago tarjeta" id="btnTarjeta" onclick="pagar('tarjeta')"><b>💳 Pagar con tarjeta</b><small>Se confirma al instante. Pago seguro con Stripe; Marvea nunca ve tu tarjeta.</small><div class="wallets"><span>Apple Pay</span><span>Google Pay</span><span>Visa · Mastercard · Amex</span><span>Crédito y débito</span></div></button>
       <button class="pago wa" onclick="pagar('transfer')"><b>🏦 Transferencia bancaria</b><small>Te mandamos tu pedido a WhatsApp con los datos bancarios. Apartado 6 h.</small></button></div>
       <p class="sub" style="font-size:12px;margin:12px 0 0;text-align:center">Al pagar aceptas los <a href="legal.html#terminos" target="_blank" style="color:var(--coral)">términos y condiciones</a> y el <a href="legal.html#privacidad" target="_blank" style="color:var(--coral)">aviso de privacidad</a>.</p></div>`;
