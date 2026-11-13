@@ -3752,7 +3752,7 @@ function cartSummary(c,l){
 }
 async function copyText(text){ try{ await navigator.clipboard.writeText(text); toast("Resumen copiado"); }catch(e){ const ta=h("textarea",{style:"position:fixed;left:-9999px"},text); document.body.append(ta); ta.select(); try{ document.execCommand("copy"); toast("Resumen copiado"); }catch(e2){ toast("Selecciona y copia el texto manualmente",true);} ta.remove(); } }
 function searchProducts(q){ q=q.trim().toLowerCase(); if(!q) return []; const qn=normaliza(q); const all=[...state.products.values()]; const exact=all.filter(p=>p.codigo.toLowerCase()===q||normaliza(p.palabra)===qn); const rest=all.filter(p=>!exact.includes(p)&&(p.codigo.toLowerCase().includes(q)||p.nombre.toLowerCase().includes(q)||(p.material||"").toLowerCase().includes(q)||normaliza(p.palabra).includes(qn))).sort((a,b)=>(b.existencia>0)-(a.existencia>0)||a.nombre.localeCompare(b.nombre)); return [...exact,...rest].slice(0,8); }
-function thumb(p){ const t=h("div",{class:"th"}); if(p&&p.fotoId){ const im=h("img",{src:miniUrl(p.fotoId),alt:"",loading:"lazy",decoding:"async"}); im.addEventListener("error",()=>{ const full=blobUrl(p.fotoId); if(im.getAttribute("src")!==full){ im.src=full; return; } t.replaceChildren(placeholderPh(p)); }); t.append(im);} else t.append(placeholderPh(p||{nombre:"?"})); return t; }
+function thumb(p){ const t=h("div",{class:"th"}); /* mvFG */ if(p&&p.codigo) t.dataset.cod=p.codigo; if(p&&p.fotoId){ const im=h("img",{src:miniUrl(p.fotoId),alt:"",loading:"lazy",decoding:"async"}); im.addEventListener("error",()=>{ const full=blobUrl(p.fotoId); if(im.getAttribute("src")!==full){ im.src=full; return; } t.replaceChildren(placeholderPh(p)); }); t.append(im);} else t.append(placeholderPh(p||{nombre:"?"})); return t; }
 
 function renderLive(keepFocus){
   const host=$("#liveHost"); if(!host) return;
@@ -6174,5 +6174,190 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   document.addEventListener("click",function(e){ var b=e.target&&e.target.closest&&e.target.closest("nav.tabs [role=tab]"); if(b) setTimeout(pintar,30); },true);
   document.addEventListener("click",function(e){ var b=e.target&&e.target.closest&&e.target.closest("nav.tabs [role=tab]"); if(b) try{ pintar(); }catch(x){} },false);
 })();
+</script>
+<style id="mv-pausa-css">
+/* mvPausa · pausar la tienda en línea por ventas en live (13-nov-2026) */
+.mvp-card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius,16px);padding:16px 18px;margin:0 0 16px;box-shadow:var(--shadow-sm,0 2px 8px rgba(0,0,0,.05))}
+.mvp-card.on{border-color:#DB4A66;background:linear-gradient(180deg,rgba(219,74,102,.09),rgba(219,74,102,.02)),var(--surface)}
+.mvp-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mvp-card .mvp-ic{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#E7F5EC;color:#2E9C6A}
+.mvp-card.on .mvp-ic{background:#DB4A66;color:#fff;animation:mvpLat 1.8s ease-in-out infinite}
+.mvp-card .mvp-ic svg{width:24px;height:24px}
+@keyframes mvpLat{0%,100%{box-shadow:0 0 0 0 rgba(219,74,102,.45)}60%{box-shadow:0 0 0 10px rgba(219,74,102,0)}}
+.mvp-tx{flex:1 1 280px;min-width:0}
+.mvp-estado{font-weight:800;font-size:16.5px;color:var(--fg);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.mvp-chip{font-size:11px;letter-spacing:.08em;font-weight:800;border-radius:999px;padding:3px 10px;background:#E7F5EC;color:#1F7A4D}
+.mvp-chip.on{background:#DB4A66;color:#fff}
+.mvp-sub{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.mvp-srv{font-size:12.5px;font-weight:700;margin-top:4px;min-height:0}
+.mvp-srv:empty{display:none}.mvp-srv.ok{color:#1F7A4D}.mvp-srv.esp{color:#B8651B}.mvp-srv.mal{color:#B23A3A}
+.mvp-btn{flex:none;font:inherit;font-weight:800;font-size:15px;border:0;border-radius:999px;padding:13px 22px;cursor:pointer;background:#5A2748;color:#fff;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.mvp-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 20px rgba(90,39,72,.28)}
+.mvp-btn.seguro{background:#DB4A66}
+.mvp-btn.reanudar{background:#2E9C6A}
+.mvp-btn:disabled{opacity:.5;cursor:default}
+.mvp-links{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.mvp-lt{font-size:13px;color:var(--muted);margin-bottom:8px}.mvp-lt b{color:var(--fg)}
+.mvp-campos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center}
+.mvp-inp{font:inherit;font-size:14px;min-width:0;width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);color:var(--fg)}
+.mvp-inp:focus{outline:0;border-color:#5A2748;box-shadow:0 0 0 3px rgba(90,39,72,.12)}
+.mvp-btn2{font:inherit;font-weight:700;font-size:13.5px;border:1.5px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:10px 16px;cursor:pointer;white-space:nowrap}
+.mvp-btn2.on{border-color:#5A2748;background:#5A2748;color:#fff}
+.mvp-btn2:disabled{cursor:default}
+.mvp-nota{font-size:12.5px;color:var(--muted);margin-top:6px}.mvp-nota:empty{display:none}
+/* franja en todas las pestañas mientras la tienda está pausada */
+.mvp-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#DB4A66;color:#fff;border-radius:14px;padding:9px 14px;margin:0 0 12px;font-size:13.5px}
+.mvp-bar[hidden]{display:none}
+.mvp-bar .mvp-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff;animation:mvpDot 1.4s ease-in-out infinite}
+@keyframes mvpDot{50%{opacity:.25}}
+.mvp-bartx{flex:1 1 200px;min-width:0}
+.mvp-barbtn,.mvp-barver{font:inherit;font-weight:800;font-size:13px;border-radius:999px;padding:6px 14px;cursor:pointer;border:1.5px solid #fff}
+.mvp-barbtn{background:#fff;color:#B23A3A}.mvp-barver{background:transparent;color:#fff}
+.mvp-barbtn:disabled{opacity:.6}
+#tab-web.mvp-tabon{position:relative}
+#tab-web.mvp-tabon::after{content:"";position:absolute;top:4px;right:6px;width:9px;height:9px;border-radius:50%;background:#DB4A66;box-shadow:0 0 0 2px var(--surface,#fff)}
+@media(max-width:820px){ .mvp-campos{grid-template-columns:1fr} .mvp-btn{width:100%} .mvp-btn2{justify-self:start} }
+@media(prefers-reduced-motion:reduce){ .mvp-card.on .mvp-ic,.mvp-bar .mvp-dot{animation:none} }
+</style>
+<script id="mv-pausa-js">
+/* ===== mvPausa · pausar la tienda en línea por ventas en live (13-nov-2026) =====
+   Botón en la pestaña «Tienda en línea» (Mac y sistema en línea). Guarda el documento config/tiendaPausa:
+     { pausada, links:[3], desde, por, actualizado }
+   La página (web/pausa.js) lo consulta cada 20 s y muestra «Compras Online Pausadas por Ventas en Live» con los links
+   llenos; el servidor (stripe/pausa_tienda.sql) no deja apartar ni pagar mientras esté pausada.
+   Mientras está pausada, en TODAS las pestañas sale una franja con «Reanudar» para que no se quede pausada por olvido. */
+(function(){
+  const W=window, RUTA="config/tiendaPausa", FRASE="Compras Online Pausadas por Ventas en Live";
+  let D={pausada:false,links:["","",""],desde:""}, cargado=false, unsub=null, srv=null, tSrv=null, intentos=0, ocupado=false, armado=null, tArm=null;
+  let card=null, bar=null, inps=[], elEstado=null, elSub=null, btn=null, elSrv=null, btnLinks=null, elNota=null;
+  const sb=()=>W.MarveaNube&&W.MarveaNube.sb;
+  const esVendedor=()=>{ try{ return document.body.classList.contains("rol-vendedor")||(W.MarveaNube&&W.MarveaNube.rol&&W.MarveaNube.rol()==="vendedor"); }catch(e){ return false; } };
+  const hora=iso=>{ try{ const d=new Date(iso); if(isNaN(d)) return ""; const hoy=new Date().toDateString()===d.toDateString(); return (hoy?"":d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+" ")+d.toLocaleTimeString("es-MX",{hour:"numeric",minute:"2-digit"}); }catch(e){ return ""; } };
+  function normLink(v){ v=String(v||"").trim(); if(!v) return ""; if(!/^https?:\/\//i.test(v)) v="https://"+v.replace(/^\/+/,"");
+    try{ const u=new URL(v); if(!/^https?:$/.test(u.protocol)||!/\.[a-z]{2,}$/i.test(u.hostname)||/[\s<>"']/.test(v)||v.length>400) return null; return u.href; }catch(e){ return null; } }
+  function leeLinks(avisa){ const out=[]; for(let i=0;i<3;i++){ const n=normLink(inps[i]?inps[i].value:D.links[i]); if(n===null){ if(avisa){ toast("El link "+(i+1)+" no parece una dirección válida. Pégalo completo (https://…) o déjalo vacío.",true); try{ inps[i].focus(); inps[i].select(); }catch(e){} } return null; } out.push(n); } return out; }
+  const usuario=()=>{ try{ const n=W.__marveaNube; if(n&&n.perfil&&n.perfil.usuario) return n.perfil.usuario; }catch(e){} return ""; };
+
+  async function guardar(cambios){
+    const st=W.state||(typeof state!=="undefined"?state:null); if(!st||!st.db){ toast("Todavía no hay conexión con los datos de Marvea.",true); return false; }
+    if(esVendedor()){ toast("Solo un administrador puede pausar o reanudar la tienda en línea.",true); return false; }
+    if(ocupado) return false; ocupado=true; pinta();
+    const ahora=new Date().toISOString(); const nuevo=Object.assign({pausada:!!D.pausada,links:D.links.slice(0,3),desde:D.desde||""},cambios,{actualizado:ahora,por:usuario()});
+    try{ await st.db.doc(RUTA).set(nuevo); D={pausada:!!nuevo.pausada,links:nuevo.links.slice(),desde:nuevo.desde||""}; cargado=true; ocupado=false; srv=null; intentos=0; pinta(); comprobar(700); return true; }
+    catch(e){ ocupado=false; pinta(); console.error("pausa",e); toast("No se pudo guardar: "+((e&&e.message)||e),true); return false; }
+  }
+  async function pausar(){ const l=leeLinks(true); if(!l) return; if(await guardar({pausada:true,links:l,desde:new Date().toISOString()})) toast("Tienda en línea PAUSADA · la página ya muestra el aviso"+(l.filter(Boolean).length?" con "+l.filter(Boolean).length+" link"+(l.filter(Boolean).length===1?"":"s"):"")); }
+  async function reanudar(){ const l=leeLinks(false)||D.links; if(await guardar({pausada:false,links:l,desde:""})) toast("Tienda en línea ACTIVA otra vez · las clientas ya pueden comprar"); }
+  async function guardarLinks(){ const l=leeLinks(true); if(!l) return; if(await guardar({links:l})) toast(D.pausada?"Links actualizados en la página":"Links guardados · se mostrarán cuando pauses la tienda"); }
+
+  /* lo que de verdad está viendo la página (consulta la misma función que usa la tienda) */
+  function comprobar(ms){ clearTimeout(tSrv); tSrv=setTimeout(async()=>{ const s=sb(); if(!s){ srv={sin:true}; pinta(); return; }
+      try{ const r=await s.rpc("marvea_web_pausa"); srv=r.error?{error:r.error}:(r.data||{pausada:false}); }catch(e){ srv={error:e}; }
+      pinta(); if(srv&&!srv.error&&!srv.sin&&!!srv.pausada!==!!D.pausada&&intentos<8){ intentos++; comprobar(2500); } },ms||0); }
+
+  function armar(){
+    const host=document.getElementById("view-web"); if(!host||card) return;
+    const svg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></svg>';
+    const ic=h("div",{class:"mvp-ic"}); ic.innerHTML=svg;
+    elEstado=h("div",{class:"mvp-estado"}); elSub=h("div",{class:"mvp-sub"}); elSrv=h("div",{class:"mvp-srv","aria-live":"polite"});
+    btn=h("button",{type:"button",class:"mvp-btn",onclick:()=>{ if(ocupado) return; if(D.pausada){ reanudar(); return; }
+      if(armado){ clearTimeout(tArm); armado=false; pausar(); } else { armado=true; pinta(); clearTimeout(tArm); tArm=setTimeout(()=>{ armado=false; pinta(); },5000); } }});
+    inps=[0,1,2].map(i=>h("input",{type:"url",inputmode:"url",class:"mvp-inp",placeholder:"Link del live "+(i+1)+" (opcional)",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","aria-label":"Link del live "+(i+1),oninput:pintaLinks,onkeydown:e=>{ if(e.key==="Enter"){ e.preventDefault(); guardarLinks(); } }}));
+    btnLinks=h("button",{type:"button",class:"mvp-btn2",onclick:guardarLinks},"Guardar links");
+    elNota=h("div",{class:"mvp-nota"});
+    card=h("div",{id:"mvPausaCard",class:"mvp-card"},
+      h("div",{class:"mvp-top"},ic,h("div",{class:"mvp-tx"},elEstado,elSub,elSrv),btn),
+      h("div",{class:"mvp-links"},h("div",{class:"mvp-lt"},h("b",null,"Links del live"),h("span",null," · hasta 3; en la página solo salen los que llenes (Facebook, TikTok, Instagram…)")),
+        h("div",{class:"mvp-campos"},...inps,btnLinks),elNota));
+    host.insertBefore(card,host.firstChild);
+    bar=h("div",{id:"mvPausaBar",class:"mvp-bar",hidden:true,role:"status"});
+    const nav=document.querySelector("nav.tabs"); if(nav&&nav.parentNode) nav.parentNode.insertBefore(bar,nav.nextSibling);
+  }
+  function pintaLinks(){ if(!btnLinks) return; const cambio=[0,1,2].some(i=>String(inps[i].value||"").trim()!==String(D.links[i]||"")); btnLinks.classList.toggle("on",cambio); btnLinks.textContent=cambio?"Guardar links":"Links guardados ✓"; btnLinks.disabled=!cambio||ocupado||esVendedor(); }
+  function pinta(){
+    armar(); if(!card) return; const p=!!D.pausada, vend=esVendedor(), n=D.links.filter(Boolean).length;
+    card.classList.toggle("on",p);
+    elEstado.replaceChildren(h("span",{class:"mvp-chip"+(p?" on":"")},p?"PAUSADA":"ACTIVA"),p?"Tienda en línea pausada"+(D.desde&&hora(D.desde)?" desde las "+hora(D.desde):""):"Tienda en línea activa");
+    elSub.textContent=p?"La página muestra «"+FRASE+"»"+(n?" con "+n+" link"+(n===1?"":"s")+" del live":" (sin links)")+". Nadie puede agregar piezas ni pagar hasta que la reanudes."
+      :"Las clientas pueden comprar en www.marveamayoreo.com. Si vas a vender por fuera (live), pausa la tienda para que no se crucen las piezas.";
+    btn.className="mvp-btn"+(p?" reanudar":armado?" seguro":""); btn.disabled=ocupado||vend||!cargado;
+    btn.textContent=ocupado?"Guardando…":p?"▶  Reanudar tienda en línea":armado?"¿Pausar? Toca otra vez para confirmar":"⏸  Pausar tienda en línea";
+    btn.title=vend?"Solo un administrador puede pausar la tienda":"";
+    for(let i=0;i<3;i++){ if(document.activeElement!==inps[i]&&!btnLinks.classList.contains("on")) inps[i].value=D.links[i]||""; inps[i].disabled=vend; }
+    pintaLinks();
+    elNota.textContent=vend?"Solo un administrador puede pausar la tienda o cambiar los links.":"";
+    let t="",cls="";
+    if(srv&&srv.sin){ t=""; }
+    else if(srv&&srv.error){ const m=String((srv.error&&(srv.error.message||srv.error.code))||""); if(/PGRST202|does not exist|not find|schema cache/i.test(m)){ t="⚠ Falta activar la pausa en el servidor (stripe/pausa_tienda.sql): la página todavía no puede leer este botón."; cls="mal"; } else if(p){ t="No se pudo comprobar la página (sin conexión). Si este equipo no tiene internet, la pausa llega en cuanto regrese."; cls="mal"; } }
+    else if(srv){ if(!!srv.pausada===p){ t=p?"✓ Comprobado: la página ya está en pausa.":""; cls="ok"; } else { t=p?"Enviando la pausa a la página… (si tarda, revisa el internet de este equipo)":"Reactivando la página…"; cls="esp"; } }
+    elSrv.textContent=t; elSrv.className="mvp-srv "+cls;
+    if(bar){ bar.hidden=!p; if(p){ const b=h("button",{type:"button",class:"mvp-barbtn",disabled:ocupado||vend,onclick:reanudar},"▶ Reanudar"); const ver=h("button",{type:"button",class:"mvp-barver",onclick:()=>{ try{ setView("web"); }catch(e){} try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){} }},"Ver");
+        bar.replaceChildren(h("span",{class:"mvp-dot"}),h("span",{class:"mvp-bartx"},h("b",null,"Tienda en línea PAUSADA"),h("span",null,(D.desde&&hora(D.desde)?" desde las "+hora(D.desde):"")+" · las clientas no pueden comprar en la página")),ver,b); } }
+    const tab=document.getElementById("tab-web"); if(tab) tab.classList.toggle("mvp-tabon",p);
+    document.body.classList.toggle("mv-tienda-pausada",p);
+  }
+  function conectar(){ const st=W.state||(typeof state!=="undefined"?state:null); if(unsub||!st||!st.db) return !!unsub;
+    try{ unsub=st.db.doc(RUTA).onSnapshot(s=>{ const x=(s&&s.exists&&s.data())||{}; const l=Array.isArray(x.links)?x.links.slice(0,3).map(v=>String(v||"")):[]; while(l.length<3) l.push("");
+        const antes=D.pausada; D={pausada:x.pausada===true,links:l,desde:String(x.desde||"")}; cargado=true; if(btnLinks) btnLinks.classList.remove("on"); pinta(); if(antes!==D.pausada||!srv){ intentos=0; comprobar(600); } },e=>console.warn("pausa",e)); }
+    catch(e){ console.warn("pausa sub",e); }
+    return !!unsub; }
+  function inicio(){ pinta(); if(conectar()) return; const t=setInterval(()=>{ if(conectar()) clearInterval(t); },700); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",inicio); else inicio();
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&cargado) comprobar(300); });
+  W.__mvPausa={estado:()=>Object.assign({},D,{srv}),pausar,reanudar};
+})();
+/* ===== fin mvPausa ===== */
+</script>
+<style id="mv-fotogrande-css">
+/* mvFG · foto en grande al tocar el nombre de la pieza en un carrito (13-nov-2026) */
+.it .tn,.vd-it .tn,.web-it .tn,.mvl-it .mvl-itx b,.vx-it .vx-iti>b{cursor:zoom-in}
+.it .tn:hover,.vd-it .tn:hover,.web-it .tn:hover,.mvl-it .mvl-itx b:hover{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.mvfg{position:fixed;inset:0;z-index:100000;background:rgba(24,12,16,.88);display:grid;place-items:center;padding:max(18px,env(safe-area-inset-top,0px)) 18px max(18px,env(safe-area-inset-bottom,0px));cursor:zoom-out;animation:mvfgIn .16s ease}
+@keyframes mvfgIn{from{opacity:0}to{opacity:1}}
+.mvfg-marco{position:relative;display:grid;place-items:center;max-width:100%;max-height:100%;min-width:0;min-height:0}
+.mvfg-img{display:block;width:min(92vw,86vh,900px);height:auto;max-width:92vw;max-height:88vh;max-height:88dvh;object-fit:contain;border-radius:16px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.55);cursor:default}
+.mvfg.cargando .mvfg-img{min-width:220px;min-height:220px}
+.mvfg-x{position:fixed;top:max(14px,env(safe-area-inset-top,0px));right:14px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.95);color:#1d1d1f;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.mvfg-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#1d1d1f;font-size:26px;line-height:1;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.mvfg-nav.prev{left:8px}.mvfg-nav.next{right:8px}
+</style>
+<script id="mv-fotogrande-js">
+/* ===== mvFG · foto en grande al tocar el nombre de la pieza en un carrito (13-nov-2026) =====
+   En Venta, Buen Fin, Live y carritos, la ventana del pedido de Tienda en línea, las listas y Marvea Vende:
+   al dar clic en el NOMBRE de la pieza se abre una ventana emergente solo con la foto del producto.
+   Se cierra con ✕, Esc o clic fuera de la foto. Si el producto tiene 2 fotos, se cambia con las flechas.
+   (thumb()/foto() le ponen data-cod a la miniatura del renglón: de ahí se sabe qué producto es.) */
+(function(){
+  const NOMBRE=".it .tn,.vd-it .tn,.web-it .tn,.mvl-it .mvl-itx b,.vx-it .vx-iti>b", FILA=".it,.vd-it,.web-it,.mvl-it,.vx-it";
+  let caja=null;
+  const st=()=>window.state||(typeof state!=="undefined"?state:null);
+  function cerrar(){ if(caja){ caja.remove(); caja=null; window.removeEventListener("keydown",tecla,true); } }
+  function tecla(e){ if(!caja) return; if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); cerrar(); } else if(caja.__ir&&(e.key==="ArrowLeft"||e.key==="ArrowRight")){ e.preventDefault(); e.stopPropagation(); caja.__ir(e.key==="ArrowLeft"?-1:1); } }
+  function abrir(p){
+    const ids=[p.fotoId,p.fotoId2].filter(Boolean); if(!ids.length) return false; cerrar();
+    let k=0, vueltas=0; const img=document.createElement("img"); img.alt=p.nombre||""; img.className="mvfg-img";
+    const pon=()=>{ const id=ids[k]; let u=""; try{ u=blobUrl(id)||""; }catch(e){} if(!u){ try{ u=miniUrl(id)||""; }catch(e){} }
+      if(u){ if(img.getAttribute("src")!==u) img.src=u; caja&&caja.classList.remove("cargando"); } else if(vueltas++<12){ caja&&caja.classList.add("cargando"); setTimeout(()=>{ if(caja&&caja.__img===img) pon(); },500); } };
+    img.addEventListener("error",()=>{ let m=""; try{ m=miniUrl(ids[k])||""; }catch(e){} if(m&&img.getAttribute("src")!==m) img.src=m; });
+    const x=document.createElement("button"); x.type="button"; x.className="mvfg-x"; x.setAttribute("aria-label","Cerrar"); x.textContent="✕"; x.onclick=cerrar;
+    caja=document.createElement("div"); caja.id="mvFG"; caja.className="mvfg"; caja.setAttribute("role","dialog"); caja.setAttribute("aria-modal","true"); caja.setAttribute("aria-label","Foto de "+(p.nombre||"la pieza")); caja.__img=img;
+    const marco=document.createElement("div"); marco.className="mvfg-marco"; marco.append(img);
+    if(ids.length>1){ const fl=(d,t,c)=>{ const b=document.createElement("button"); b.type="button"; b.className="mvfg-nav "+c; b.setAttribute("aria-label",t); b.textContent=d<0?"‹":"›"; b.onclick=e=>{ e.stopPropagation(); caja.__ir(d); }; return b; };
+      caja.__ir=d=>{ k=(k+d+ids.length)%ids.length; vueltas=0; pon(); }; marco.append(fl(-1,"Foto anterior","prev"),fl(1,"Foto siguiente","next")); }
+    caja.append(marco,x);
+    caja.addEventListener("click",e=>{ if(e.target===caja||e.target===marco) cerrar(); });
+    document.body.append(caja); window.addEventListener("keydown",tecla,true); pon(); // en window: gana a la ventana del pedido (su Esc no debe cerrarse también) try{ x.focus({preventScroll:true}); }catch(e){}
+    return true;
+  }
+  document.addEventListener("click",e=>{
+    const t=e.target; if(!t||!t.closest) return; const n=t.closest(NOMBRE); if(!n) return;
+    const fila=n.closest(FILA); if(!fila) return; const th=fila.querySelector("[data-cod]"); const s=st();
+    const p=th&&s&&s.products?s.products.get(th.dataset.cod):null;
+    if(!p){ try{ toast("Esta pieza ya no está en el inventario: no hay foto que mostrar",true); }catch(x){} return; }
+    if(!abrir(p)){ try{ toast("«"+(p.nombre||p.codigo)+"» todavía no tiene foto",true); }catch(x){} }
+  });
+  window.__mvFotoGrande=abrir;
+})();
+/* ===== fin mvFG ===== */
 </script>
 </body></html>
