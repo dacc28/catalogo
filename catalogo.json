@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T01:02:47.684Z",
+ "actualizado": "2026-11-13T01:49:13.701Z",
  "categorias": [
   {
    "p": "ANI",
@@ -471,7 +471,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2daa3d6bce3789a8aa2f151c96416fe2.jpg",
    "creado": "2026-10-20T23:14:48.191Z",
@@ -795,7 +795,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/aa5a183e06ad7ef94b45eb575b2d1ab1.jpg",
    "creado": "2026-11-01T21:39:40.125Z",
@@ -2367,7 +2367,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "Inspo Cartier",
    "foto": "fotos/f27414dd5c5d3960c6e668f7c6faccc3.jpg",
    "creado": "2026-10-20T18:04:33.226Z",
