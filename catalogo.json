@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T18:11:43.817Z",
+ "actualizado": "2026-11-13T18:59:12.443Z",
  "categorias": [
   {
    "p": "ANI",
@@ -79,18 +79,6 @@
    "notas": "",
    "foto": "fotos/4e73772b0f9a89ff699895fb2dcd0fcd.jpg",
    "creado": "2026-10-27T00:44:06.875Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00014",
-   "nombre": "Anillo Ajustable Corte Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
-   "creado": "2026-10-27T00:46:37.184Z",
    "disponible": true
   },
   {
@@ -211,18 +199,6 @@
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00003",
-   "nombre": "Aretes Ferragamo plateados",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "Inspo Ferragamo",
-   "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
-   "creado": "2026-10-19T01:46:11.478Z",
    "disponible": true
   },
   {
@@ -694,18 +670,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00057",
-   "nombre": "Arete Vanc Rojo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
-   "creado": "2026-11-01T20:09:55.282Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00058",
    "nombre": "Arete Vanc Azul",
    "categoria": "ARE",
@@ -715,18 +679,6 @@
    "notas": "",
    "foto": "fotos/ccf036c9dc7867fd1e356758244d42e4.jpg",
    "creado": "2026-11-01T20:11:39.625Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00059",
-   "nombre": "Arete Vanc Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
-   "creado": "2026-11-01T20:13:25.629Z",
    "disponible": true
   },
   {
@@ -1222,18 +1174,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00002",
-   "nombre": "Gargantilla Omega para Dije",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/0b6db2b11aeae8d4a7e3a3880bef36b8.jpg",
-   "creado": "2026-10-20T21:15:39.255Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00003",
    "nombre": "Cadena Torzal Dorado 45cm",
    "categoria": "CAD",
@@ -1546,18 +1486,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00012",
-   "nombre": "Collar de Elefante",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6222ed6eef62c76a46f54c74c257d287.jpg",
-   "creado": "2026-10-19T01:31:31.189Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00013",
    "nombre": "Collar de Cuentas y Perla",
    "categoria": "COL",
@@ -1623,7 +1551,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
    "creado": "2026-10-19T02:29:34.252Z",
@@ -1639,18 +1567,6 @@
    "notas": "",
    "foto": "fotos/5942efcb03bf096723cb137b86e8c9f8.jpg",
    "creado": "2026-10-19T02:30:54.417Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00029",
-   "nombre": "Collar Tenis Blanco",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
-   "creado": "2026-10-19T02:40:37.445Z",
    "disponible": true
   },
   {
@@ -1671,7 +1587,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
    "creado": "2026-10-20T16:17:20.278Z",
@@ -1683,7 +1599,7 @@
    "categoria": "COL",
    "material": "Cuentas con Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
    "creado": "2026-10-20T16:26:54.835Z",
@@ -1795,18 +1711,6 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00056",
-   "nombre": "Collar Vanc Lila",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/fb51e6c7cc5ba4abfb7453b8f1c3678e.jpg",
-   "creado": "2026-11-01T20:23:14.478Z",
    "disponible": true
   },
   {
@@ -2002,18 +1906,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00001",
-   "nombre": "Pulsera de Acero con Piedras Multicolor",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eb63e97b63ad32d3166f4119372b658c.jpg",
-   "creado": "2026-10-19T01:17:13.969Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00002",
    "nombre": "Pulsera Colorida",
    "categoria": "PUL",
@@ -2074,24 +1966,12 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00009",
-   "nombre": "Pulsera Diamante mini Dorado",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/7e55cc082db3a8387ec6e2b645285399.jpg",
-   "creado": "2026-10-20T16:09:55.248Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00010",
    "nombre": "Pulsera Diamante mini Plateado",
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ad5a6749b9e98b29c332da4acc05b757.jpg",
    "creado": "2026-10-20T16:14:22.048Z",
@@ -2227,18 +2107,6 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00025",
-   "nombre": "Pulsera Vanc Turquesa",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c3db719050c8971bf1263ea29c1d4e7d.jpg",
-   "creado": "2026-11-01T20:29:22.921Z",
    "disponible": true
   },
   {
@@ -2415,7 +2283,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/99a37839c8994b0d55e8f7c60197aec7.jpg",
    "creado": "2026-11-01T21:21:38.272Z",
