@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T19:16:56.031Z",
+ "actualizado": "2026-11-13T19:31:17.537Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1543,6 +1543,18 @@
    "notas": "",
    "foto": "fotos/56f9ead535a6a0f2cdb9848922fb0297.jpg",
    "creado": "2026-10-19T02:28:24.093Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00026",
+   "nombre": "Cadena Panza de Vibora",
+   "categoria": "CAD",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
+   "creado": "2026-10-19T02:29:34.252Z",
    "disponible": true
   },
   {
