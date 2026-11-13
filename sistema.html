@@ -3244,18 +3244,18 @@ function ticketDraw(pdf,c,l,medir){
     F("bold",7.8); const nm=pdf.splitTextToSize(it.cant+" × "+it.nombre,CW-PW).slice(0,2);
     T(nm,M,y); T(imp,R,y,{align:"right"});
     y+=nm.length*3.2;
-    F("normal",6.3); T(one((it.palabra?it.palabra+" · ":"")+it.codigo+" · "+it.cant+" × "+money(it.precio),CW-PW),M,y);
+    F("normal",6.3); T(one((it.palabra?it.palabra+" · ":"")+it.codigo+" · "+it.cant+" × "+money(it.precio),CW-PW),M,y); /* mvBFT */ { const nb=Math.min(Number(it.cant)||0,cartPromoGratis(c).por[it.codigo]||0); if(nb>0){ y+=3; F("bold",6.3); T("Buen Fin 4x3 · "+(nb>=it.cant?"GRATIS":nb+" de "+it.cant+" gratis"),M,y); T("- "+money(nb*(Number(it.precio)||0)),R,y,{align:"right"}); } }
     y+=3.7;
   });
   y-=1; dash(y); y+=3.6;
   // totales
   const fila=(a,b)=>{ T(a,M,y); T(b,R,y,{align:"right"}); y+=3.8; };
   F("normal",7.3);
-  fila(cartPieces(c)+" piezas · "+items.length+" artículos",money(cartBruto(c))); { const gbf=cartPromoGratis(c); if(gbf.n) fila("Buen Fin 4x3 · "+gbf.n+" pieza"+(gbf.n===1?"":"s")+" gratis","- "+money(gbf.desc)); }
+  fila(cartPieces(c)+" piezas · "+items.length+" artículos",money(cartBruto(c))); { const gbf=cartPromoGratis(c); if(gbf.n){ F("bold",7.3); fila("Descuento Buen Fin 4x3 · "+gbf.n+" gratis","- "+money(gbf.desc)); F("normal",7.3); fila("Mercancía con descuento",money(cartTotal(c))); } }
   if(c.envio) fila(one(c.envio.nombre+(c.envioPrevio?" (ya pagó "+money(c.envioPrevio.precio)+")":""),CW-PW),money(cartShip(c)));
   if(c.factura) fila("IVA "+Math.round(IVA_TASA*100)+"% (con factura)",money(cartIva(c)));
   y-=1; line(y,0.4); y+=4.6;
-  F("bold",11); T("TOTAL",M,y); T(money(cartGrand(c))+" MXN",R,y,{align:"right"}); y+=1.6;
+  F("bold",11); T("TOTAL",M,y); T(money(cartGrand(c))+" MXN",R,y,{align:"right"}); y+=1.6; { const gbf=cartPromoGratis(c); if(gbf.n){ y+=3.2; F("normal",6.3); T("Buen Fin 4x3: por cada 4 piezas, la de menor precio es gratis.",M,y); y+=3.1; F("bold",7.3); T("Con el Buen Fin ahorraste "+money(gbf.desc)+" MXN",M,y); y+=1.2; } }
   if(c.nueva||cartAnticipos(c)>0){
     if(c.nueva){ y+=3.6; F("normal",7.3); T("Depósito clienta nueva (a tu favor)",M,y); T("- "+money(cartDeposito(c)),R,y,{align:"right"}); }
     for(const a of (c.anticipos||[])){ if(!(Number(a&&a.monto)>0)) continue; y+=3.6; F("normal",7.3); T(one("Anticipo / abono · "+(a.medio||"")+(a.fecha?" · "+new Date(a.fecha).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""),CW-PW),M,y); T("- "+money(a.monto),R,y,{align:"right"}); }
@@ -4161,6 +4161,7 @@ function renderVenta(keepFocus){
         mas,
         (f||sinNombre)?h("div",{class:"vd-aviso"},[sinNombre?"Falta el nombre de la clienta.":null,f?`Compra mínima ${MIN_PIEZAS} piezas · faltan ${f} (puedes cerrar de todos modos).`:null].filter(Boolean).join(" ")):null,
         h("button",{class:"btn primary big vd-cerrar",id:"ventaCobrar",type:"button",...(puede?{}:{disabled:true,title:sinNombre?"Falta el nombre de la clienta":"Agrega piezas"}),onclick:()=>cerrar(true)},"Cerrar venta e imprimir ticket"),
+        ((state.bf||c.promo==="4x3")&&c.items.length)?h("div",{class:"vd-sec bf-tk"},h("span",{class:"bf-tkt"},"Ticket sin cerrar la cuenta:"),(NATIVE()&&NATIVE().printPdf)?h("button",{class:"btn",type:"button",onclick:()=>printTicket(c,{nombre:"Venta directa"})},"Imprimir ticket"):null,h("button",{class:"btn",type:"button",onclick:()=>downloadTicket(c,{nombre:"Venta directa"})},"Descargar ticket (PDF)")):null,
         h("div",{class:"vd-sec"},h("button",{class:"btn",type:"button",...(puede?{}:{disabled:true}),onclick:()=>cerrar(false)},"Cerrar sin ticket"),
           h("button",{class:"btn ghost",type:"button",onclick:()=>{ state.ventaCartId=null; state.ventaCliForm=false; renderVenta(); toast("Venta dejada abierta · la ves en la lista de ventas"); }},"Dejar abierta"),
           h("button",{class:"btn ghost danger",type:"button",onclick:()=>{ delBox.replaceChildren(h("div",{class:"confirm"},"¿Cancelar esta venta? Las piezas regresan al inventario. ",h("button",{class:"btn sm danger",type:"button",onclick:()=>cancelarVenta(c)},"Sí, cancelar"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>delBox.replaceChildren()},"No"))); }},"Cancelar venta")),
@@ -6082,6 +6083,7 @@ button.dg-f.mvr-a{cursor:pointer}
 </script>
 <style id="mvBF">
 /* ===== Marvea · BUEN FIN 4x3 (13-nov-2026) ===== */
+.bf-tk{margin:2px 0 4px;padding:10px 12px;border:1px dashed #e3061a55;border-radius:12px;background:#fff7f7}.bf-tkt{font-size:12.5px;font-weight:700;color:#8a1020;margin-right:4px}
 nav.tabs #tab-bf{color:#B5121B;font-weight:800}
 nav.tabs #tab-bf[aria-selected="true"],nav.tabs #tab-bf[data-grupo-on="1"]{background:#B5121B!important;color:#fff!important;border-color:transparent!important}
 nav.tabs #tab-bf[aria-selected="true"] svg,nav.tabs #tab-bf[data-grupo-on="1"] svg{color:#fff!important}
