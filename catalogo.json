@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T02:02:47.614Z",
+ "actualizado": "2026-11-13T02:14:51.043Z",
  "categorias": [
   {
    "p": "ANI",
@@ -838,18 +838,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00066",
-   "nombre": "Arracadas Eslabón Trebol",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
-   "creado": "2026-11-01T21:49:51.697Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00067",
    "nombre": "Arete Ballena",
    "categoria": "ARE",
@@ -1606,18 +1594,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00014",
-   "nombre": "Collar Colgante de Cuero con Dije",
-   "categoria": "COL",
-   "material": "Cuero con Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
-   "creado": "2026-10-19T01:36:03.511Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00015",
    "nombre": "Collar de Cuentas",
    "categoria": "COL",
@@ -1731,7 +1707,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
@@ -1791,7 +1767,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b9e0be65694defd3ac5afe7bf1915b2d.jpg",
    "creado": "2026-10-20T16:01:35.239Z",
