@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T21:02:27.527Z",
+ "actualizado": "2026-11-13T21:24:35.584Z",
  "categorias": [
   {
    "p": "ANI",
@@ -195,7 +195,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -387,7 +387,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
    "creado": "2026-10-20T23:12:55.345Z",
@@ -567,7 +567,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -1491,7 +1491,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3c25079a35ed2c3722551ea0b1cbe94e.jpg",
    "creado": "2026-10-19T02:19:59.321Z",
@@ -1563,7 +1563,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e5f33abfaa3ad264f1d121c00106763c.jpg",
    "creado": "2026-10-20T16:08:07.319Z",
@@ -2119,18 +2119,6 @@
    "notas": "",
    "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
    "creado": "2026-11-01T20:31:42.070Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00027",
-   "nombre": "Pulsera Vanc Roja",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a236579e1decdfddc8891281786e2114.jpg",
-   "creado": "2026-11-01T20:33:23.399Z",
    "disponible": true
   },
   {
