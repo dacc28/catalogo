@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T19:31:17.537Z",
+ "actualizado": "2026-11-13T19:43:21.172Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1135,18 +1135,6 @@
    "notas": "",
    "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
    "creado": "2026-11-07T21:48:20.046Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00098",
-   "nombre": "Huggies Noche",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/885a41c74dc22ff99b73d82a47aee232.jpg",
-   "creado": "2026-11-07T21:50:10.865Z",
    "disponible": true
   },
   {
