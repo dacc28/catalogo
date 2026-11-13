@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-12T21:41:25.621Z",
+ "actualizado": "2026-11-13T00:45:29.751Z",
  "categorias": [
   {
    "p": "ANI",
@@ -231,7 +231,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -2283,7 +2283,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/af153da1fe82f1a82b6259f755891e3c.jpg",
    "creado": "2026-10-19T02:49:33.420Z",
