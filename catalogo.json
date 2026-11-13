@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T19:43:21.172Z",
+ "actualizado": "2026-11-13T20:17:43.640Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1954,15 +1954,15 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00010",
-   "nombre": "Pulsera Diamante mini Plateado",
+   "codigo": "PUL-00009",
+   "nombre": "Pulsera Diamante mini Dorado",
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
    "etiqueta": "Últimas piezas",
    "notas": "",
-   "foto": "fotos/ad5a6749b9e98b29c332da4acc05b757.jpg",
-   "creado": "2026-10-20T16:14:22.048Z",
+   "foto": "fotos/7e55cc082db3a8387ec6e2b645285399.jpg",
+   "creado": "2026-10-20T16:09:55.248Z",
    "disponible": true
   },
   {
@@ -1999,6 +1999,18 @@
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00015",
+   "nombre": "Plusera Cart",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "Inspo Cartier",
+   "foto": "fotos/f27414dd5c5d3960c6e668f7c6faccc3.jpg",
+   "creado": "2026-10-20T18:04:33.226Z",
    "disponible": true
   },
   {
