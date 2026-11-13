@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T17:14:43.188Z",
+ "actualizado": "2026-11-13T17:30:38.556Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1587,7 +1587,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6222ed6eef62c76a46f54c74c257d287.jpg",
    "creado": "2026-10-19T01:31:31.189Z",
@@ -1603,30 +1603,6 @@
    "notas": "",
    "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
    "creado": "2026-10-19T01:33:02.110Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00014",
-   "nombre": "Collar Colgante de Cuero con Dije",
-   "categoria": "COL",
-   "material": "Cuero con Chapa de Oro",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/38c7e3d66bcaee2573bc7455193e5381.jpg",
-   "creado": "2026-10-19T01:36:03.511Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00015",
-   "nombre": "Collar de Cuentas",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
-   "creado": "2026-10-19T01:37:56.830Z",
    "disponible": true
   },
   {
@@ -1723,78 +1699,6 @@
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00030",
-   "nombre": "Cadena con Aro para Dijes",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 32,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2e3f14cf401b37554bd067cac599494c.jpg",
-   "creado": "2026-10-19T02:46:28.359Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00031",
-   "nombre": "Collar Piedra Coral",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/585e7a9a408c4a31caf9fff3fdba7491.jpg",
-   "creado": "2026-10-19T02:52:30.399Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00033",
-   "nombre": "Collar Piedra Rosa",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ecc61ef5a04a69060df75498659d889b.jpg",
-   "creado": "2026-10-19T02:54:22.152Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00034",
-   "nombre": "Collar Piedra Azul",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9bca811e9aa1c2ff0d6cd90a10406e28.jpg",
-   "creado": "2026-10-19T02:55:03.192Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00035",
-   "nombre": "Collar Omega con Piedra Dorado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/b9e0be65694defd3ac5afe7bf1915b2d.jpg",
-   "creado": "2026-10-20T16:01:35.239Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00036",
-   "nombre": "Collar Omega con Piedra Plateada",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7387cebd88240733a07d30cacd5d63a1.jpg",
-   "creado": "2026-10-20T16:03:36.822Z",
    "disponible": true
   },
   {
@@ -1966,18 +1870,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00055",
-   "nombre": "Collar Vanc",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2804a2c47e46a4b0589c3479ed8efbc3.jpg",
-   "creado": "2026-11-01T20:21:28.845Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00056",
    "nombre": "Collar Vanc Lila",
    "categoria": "COL",
@@ -2035,18 +1927,6 @@
    "notas": "",
    "foto": "fotos/e6ba5d92d9a683ce532574e893d8c98d.jpg",
    "creado": "2026-10-20T15:54:35.837Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00006",
-   "nombre": "Dije de Perla",
-   "categoria": "DIJ",
-   "material": "Perla con Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "Aprox 2x2cm",
-   "foto": "fotos/3c91f6fdc26c01029927d60c5ee936d5.jpg",
-   "creado": "2026-10-20T17:22:12.976Z",
    "disponible": true
   },
   {
@@ -2338,18 +2218,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00015",
-   "nombre": "Plusera Cart",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "Inspo Cartier",
-   "foto": "fotos/f27414dd5c5d3960c6e668f7c6faccc3.jpg",
-   "creado": "2026-10-20T18:04:33.226Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00016",
    "nombre": "Pulsera de Perlitas",
    "categoria": "PUL",
@@ -2475,7 +2343,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a236579e1decdfddc8891281786e2114.jpg",
    "creado": "2026-11-01T20:33:23.399Z",
