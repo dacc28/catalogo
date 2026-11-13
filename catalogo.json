@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-13T20:48:10.220Z",
+ "actualizado": "2026-11-13T21:02:27.527Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2119,6 +2119,18 @@
    "notas": "",
    "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
    "creado": "2026-11-01T20:31:42.070Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00027",
+   "nombre": "Pulsera Vanc Roja",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/a236579e1decdfddc8891281786e2114.jpg",
+   "creado": "2026-11-01T20:33:23.399Z",
    "disponible": true
   },
   {
