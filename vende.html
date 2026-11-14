@@ -589,15 +589,14 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     let desdeVende = false;
     try { if (new URLSearchParams(location.search).get("desde") === "vende") sessionStorage.setItem("marvea.desdeVende", "1"); desdeVende = sessionStorage.getItem("marvea.desdeVende") === "1"; } catch (e) {}
     if (desdeVende && !document.getElementById("btnVende")) {
-      const v = document.createElement("a"); v.id = "btnVende"; v.href = "vende.html"; v.className = "btn sm"; v.textContent = "‹ Volver a Vender";
+      const v = document.createElement("a"); v.id = "btnVende"; v.href = "vende.html"; v.className = "btn sm"; v.textContent = "‹ Vender"; v.title = "Volver a Marvea Vende";
       v.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
       host.prepend(v);
-      const fl = document.createElement("a"); fl.id = "btnVendeFlota"; fl.href = "vende.html"; fl.textContent = "‹ Vender"; fl.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
-      document.body.append(fl);
+      /* mvVD: el botón flotante de abajo estorbaba la barra de pestañas; ahora «‹ Vender» va arriba, también en el celular */
       const st2 = document.createElement("style");
-      st2.textContent = "#btnVende{text-decoration:none;font-weight:700;color:#1D1D1F!important;background:#fff!important}" +
-        "#btnVendeFlota{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9500;text-decoration:none;font:700 15px -apple-system,BlinkMacSystemFont,sans-serif;color:#fff;background:rgba(29,29,31,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);padding:12px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25)}" +
-        "@media (min-width:900px){#btnVendeFlota{display:none}}";
+      st2.textContent = "#btnVende{text-decoration:none;font-weight:700;color:#1D1D1F!important;background:#fff!important;white-space:nowrap}" +
+        "@media (max-width:900px){header.top #btnVende{display:inline-flex!important;align-items:center;height:40px;padding:0 13px!important;border-radius:999px!important;font-size:14px!important;border:1px solid rgba(0,0,0,.1)!important;box-shadow:0 2px 8px rgba(0,0,0,.06)}}" +
+        "@media (max-width:400px){header.top .word{display:none!important}}";
       document.head.append(st2);
     }
     const st = document.createElement("style");
@@ -3510,7 +3509,7 @@ async function fotosRevenderPdf(){
   const prods=todos.filter(p=>p.fotoId); const sinFoto=todos.length-prods.length;
   if(!prods.length){ toast("Ningún producto tiene foto todavía",true); return; }
   toast("Preparando "+prods.length+" fotos…");
-  const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,2000,0.95)));
+  const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,window.__mvFotoPx||2000,window.__mvFotoQ||0.95)));
   const pdf=new J({orientation:"p",unit:"mm",format:"a4",compress:true}); const W=210,H=297;
   const M=10, gap=6, cols=2, rows=3; const cw=(W-M*2-gap)/cols, ch=(H-M*2-gap*2)/rows; const side=Math.min(cw,ch-9);
   pdf.setFont("helvetica","normal"); let n=0;
@@ -6378,7 +6377,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(script):not(style):not(.ctxmenu){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(script):not(style):not(.ctxmenu){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
@@ -6777,6 +6776,22 @@ body.vx-on #vxCamWrap{display:block!important}
 /* Buen Fin 4x3 */
 .vx-bf{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 
+/* mvVD · Catálogo y Fotos para clientas en Inventario (14-nov-2026) */
+.vx-docs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 6px}
+.vx-docs button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid rgba(0,0,0,.08);border-radius:18px;background:#fff;color:#1D1D1F;padding:13px 14px;text-align:left;font:inherit;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.vx-docs button b{font-size:15.5px}.vx-docs button small{font-size:12.5px;color:#8E8E93}
+.vx-docs button:active{transform:scale(.98)}
+.vx-docbg{z-index:9800}
+.vx-docsheet{text-align:center;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.vx-doct{margin:6px 0 10px;font-size:21px}
+.vx-docgiro{width:34px;height:34px;margin:6px auto 12px;border-radius:50%;border:3.5px solid rgba(0,0,0,.1);border-top-color:#1D1D1F;animation:vxDocGiro .8s linear infinite}
+@keyframes vxDocGiro{to{transform:rotate(360deg)}}
+.vx-docmsg{margin:0 0 14px;color:#6E6E73;font-size:15px}
+.vx-docacc{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.vx-docacc small{color:#8E8E93;font-size:12.5px;line-height:1.35}
+.vx-docabrir{border:0;border-radius:16px;background:#1D1D1F;color:#fff;font:inherit;font-size:18px;font-weight:700;padding:16px}
+.vx-doccerrar{margin-top:12px;border:0;background:none;color:#6E6E73;font:inherit;font-weight:700;font-size:15px;padding:10px}
+
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
    Usa la misma lógica y los mismos datos que "Venta directa" del sistema (en vivo con la Mac y la página). */
@@ -7060,6 +7075,33 @@ body.vx-on #vxCamWrap{display:block!important}
   const grande = (txt, extra) => el("div", { class: "vx-hola vx-large" }, el("h1", null, txt), extra || null);
   const buscador = (id, val, ph, on) => { const i = el("input", { id, class: "vx-input vx-search", type: "search", placeholder: ph, value: val, autocomplete: "off", spellcheck: "false" }); i.addEventListener("input", () => { on(i.value); render(); }); return i; };
 
+  /* mvVD */ /* ---------- Catálogo y Fotos para clientas: preparar el PDF y abrirlo con el menú del iPhone ---------- */
+  let docBusy = false;
+  async function abrirDoc(file) {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: file.name }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    try { const u = URL.createObjectURL(file); const a = document.createElement("a"); a.href = u; a.target = "_blank"; a.rel = "noopener"; a.download = file.name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 120000); }
+    catch (e) { toast("No se pudo abrir en este dispositivo", true); }
+  }
+  async function docPdf(tipo) {
+    if (docBusy) return; docBusy = true;
+    const titulo = tipo === "cat" ? "Catálogo" : "Fotos para clientas";
+    const msg = el("p", { class: "vx-docmsg" }, "Preparando… puede tardar un momento. No cierres la app."); const acc = el("div", { class: "vx-docacc" });
+    const bg = el("div", { id: "vxDoc", class: "vx-sheetbg vx-docbg" }); const cerrar = () => bg.remove();
+    bg.append(el("div", { class: "vx-sheet vx-docsheet" }, el("div", { class: "vx-grip" }), el("h3", { class: "vx-doct" }, titulo), el("div", { class: "vx-docgiro" }), msg, acc, el("button", { type: "button", class: "vx-doccerrar", onclick: cerrar }, "Cerrar")));
+    bg.addEventListener("click", e => { if (e.target === bg && !docBusy) cerrar(); });
+    document.body.append(bg);
+    const real = state.downloads; let file = null;
+    state.downloads = { save: async o => { const b = o.data instanceof Blob ? o.data : new Blob([o.data], { type: "application/pdf" }); file = new File([b], String(o.filename || "marvea.pdf"), { type: "application/pdf" }); return { status: "saved" }; } };
+    window.__mvFotoPx = 1400; window.__mvFotoQ = 0.88;
+    try { await (tipo === "cat" ? catalogoPdf() : fotosRevenderPdf()); } catch (e) { console.error("doc", e); }
+    finally { state.downloads = real; try { delete window.__mvFotoPx; delete window.__mvFotoQ; } catch (e) {} try { state.imgCache.clear(); } catch (e) {} docBusy = false; }
+    bg.querySelector(".vx-docgiro").remove();
+    if (!file) { msg.textContent = "No se pudo preparar. Revisa tu conexión e inténtalo de nuevo."; return; }
+    try { toast(titulo + " listo · toca Abrir"); } catch (e) {}
+    const mb = file.size / 1048576; msg.textContent = "Listo · " + (mb >= 1 ? mb.toFixed(mb >= 10 ? 0 : 1) + " MB" : Math.max(1, Math.round(file.size / 1024)) + " KB");
+    acc.append(el("button", { type: "button", class: "vx-docabrir", onclick: () => abrirDoc(file) }, "Abrir"),
+      el("small", null, "Se abre el menú del iPhone: ahí puedes verlo, guardarlo en Archivos o mandarlo por WhatsApp."));
+  }
   /* ---------- Inventario (ver todo) ---------- */
   function inventario() {
     const cats = state.cats || [];
@@ -7073,6 +7115,7 @@ body.vx-on #vxCamWrap{display:block!important}
       ...cats.filter(c => todos.some(p => p.categoria === c.p)).map(c => el("button", { type: "button", class: V.invCat === c.p ? "on" : "", onclick: () => { V.invCat = c.p; render(); } }, c.n)));
     return el("main", { class: "vx-main vx-contabs", "data-k": "inv" }, grande("Inventario", el("button", { class: "vx-plus", type: "button", "aria-label": "Añadir producto", onclick: () => abrirAlta(null) }, "+")),
       el("button", { type: "button", class: "vx-alta-cta", onclick: () => abrirAlta(null) }, el("span", { class: "vx-alta-ctai" }, "📷"), el("span", null, el("b", null, "Añadir producto"), el("small", null, "Registro paso a paso · llega al instante a la Mac")), el("em", null, "›")),
+      el("div", { class: "vx-docs" }, el("button", { type: "button", onclick: () => docPdf("cat") }, el("b", null, "Catálogo"), el("small", null, "PDF con precios")), el("button", { type: "button", onclick: () => docPdf("fotos") }, el("b", null, "Fotos para clientas"), el("small", null, "PDF sin precios"))),
       el("section", { class: "vx-stats" }, el("div", null, el("b", null, todos.length), el("span", null, "modelos")), el("div", null, el("b", null, piezas.toLocaleString("es-MX")), el("span", null, "piezas")),
         el("div", null, el("b", null, precio(valor)), el("span", null, "a precio")), el("div", null, el("b", null, precio(costo)), el("span", null, "costo")), agot ? el("div", { class: "rojo" }, el("b", null, agot), el("span", null, "agotados")) : null),
       buscador("vxInvQ", V.invQ, "Buscar por nombre, palabra o código", v => V.invQ = v), chips,

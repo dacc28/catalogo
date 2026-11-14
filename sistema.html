@@ -589,15 +589,14 @@ body.rol-vendedor #tab-dash,body.rol-vendedor #tab-inv,body.rol-vendedor #tab-ne
     let desdeVende = false;
     try { if (new URLSearchParams(location.search).get("desde") === "vende") sessionStorage.setItem("marvea.desdeVende", "1"); desdeVende = sessionStorage.getItem("marvea.desdeVende") === "1"; } catch (e) {}
     if (desdeVende && !document.getElementById("btnVende")) {
-      const v = document.createElement("a"); v.id = "btnVende"; v.href = "vende.html"; v.className = "btn sm"; v.textContent = "‹ Volver a Vender";
+      const v = document.createElement("a"); v.id = "btnVende"; v.href = "vende.html"; v.className = "btn sm"; v.textContent = "‹ Vender"; v.title = "Volver a Marvea Vende";
       v.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
       host.prepend(v);
-      const fl = document.createElement("a"); fl.id = "btnVendeFlota"; fl.href = "vende.html"; fl.textContent = "‹ Vender"; fl.addEventListener("click", () => { try { sessionStorage.removeItem("marvea.desdeVende"); } catch (e) {} });
-      document.body.append(fl);
+      /* mvVD: el botón flotante de abajo estorbaba la barra de pestañas; ahora «‹ Vender» va arriba, también en el celular */
       const st2 = document.createElement("style");
-      st2.textContent = "#btnVende{text-decoration:none;font-weight:700;color:#1D1D1F!important;background:#fff!important}" +
-        "#btnVendeFlota{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9500;text-decoration:none;font:700 15px -apple-system,BlinkMacSystemFont,sans-serif;color:#fff;background:rgba(29,29,31,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);padding:12px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25)}" +
-        "@media (min-width:900px){#btnVendeFlota{display:none}}";
+      st2.textContent = "#btnVende{text-decoration:none;font-weight:700;color:#1D1D1F!important;background:#fff!important;white-space:nowrap}" +
+        "@media (max-width:900px){header.top #btnVende{display:inline-flex!important;align-items:center;height:40px;padding:0 13px!important;border-radius:999px!important;font-size:14px!important;border:1px solid rgba(0,0,0,.1)!important;box-shadow:0 2px 8px rgba(0,0,0,.06)}}" +
+        "@media (max-width:400px){header.top .word{display:none!important}}";
       document.head.append(st2);
     }
     const st = document.createElement("style");
@@ -3510,7 +3509,7 @@ async function fotosRevenderPdf(){
   const prods=todos.filter(p=>p.fotoId); const sinFoto=todos.length-prods.length;
   if(!prods.length){ toast("Ningún producto tiene foto todavía",true); return; }
   toast("Preparando "+prods.length+" fotos…");
-  const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,2000,0.95)));
+  const imgs=await Promise.all(prods.map(p=>imageDataUrl(p.fotoId,window.__mvFotoPx||2000,window.__mvFotoQ||0.95)));
   const pdf=new J({orientation:"p",unit:"mm",format:"a4",compress:true}); const W=210,H=297;
   const M=10, gap=6, cols=2, rows=3; const cw=(W-M*2-gap)/cols, ch=(H-M*2-gap*2)/rows; const side=Math.min(cw,ch-9);
   pdf.setFont("helvetica","normal"); let n=0;
