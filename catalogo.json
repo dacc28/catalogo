@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-14T03:14:32.084Z",
+ "actualizado": "2026-11-14T16:02:48.009Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1491,7 +1491,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3c25079a35ed2c3722551ea0b1cbe94e.jpg",
    "creado": "2026-10-19T02:19:59.321Z",
@@ -1543,18 +1543,6 @@
    "notas": "",
    "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
    "creado": "2026-10-19T02:29:34.252Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00027",
-   "nombre": "Corbatín Dorado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5942efcb03bf096723cb137b86e8c9f8.jpg",
-   "creado": "2026-10-19T02:30:54.417Z",
    "disponible": true
   },
   {
@@ -2107,18 +2095,6 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00026",
-   "nombre": "Pulsera Vanc Blanca",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
-   "creado": "2026-11-01T20:31:42.070Z",
    "disponible": true
   },
   {
