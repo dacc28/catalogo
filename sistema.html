@@ -3202,15 +3202,30 @@ function cartProfit(c){ return cartTotal(c)-cartCost(c); }
 function cartPieces(c){ return (c.items||[]).reduce((s,i)=>s+(Number(i.cant)||0),0); }
 function nuevaReferencia(){ const usadas=new Set([...state.carts.values()].map(c=>String(c.referencia||""))); for(let i=0;i<50;i++){ const r=String(100000+Math.floor(Math.random()*900000)); if(!usadas.has(r)) return r; } return String(Date.now()).slice(-6); }
 function cartNumber(c){ const pool=(state.ventaCarts&&state.ventaCarts.has(c.id)&&!state.carts.has(c.id))?state.ventaCarts:state.carts; const all=[...pool.values()].sort((a,b)=>String(a.creado).localeCompare(String(b.creado))); return all.findIndex(x=>x.id===c.id)+1; }
+/* ===== mvFS · fotos para los PDF cuando el sistema corre en internet (13-nov-2026) ===== */
+const mvFS={n:0,cola:[],max:4};
+function mvFSTurno(){ if(NATIVE()) return Promise.resolve(()=>{}); return new Promise(ok=>{ const sale=()=>{ mvFS.n--; const s=mvFS.cola.shift(); if(s) s(); }; const entra=()=>{ mvFS.n++; ok(sale); }; if(mvFS.n<mvFS.max) entra(); else mvFS.cola.push(entra); }); }
+async function mvFotoSrc(id){
+  let u=""; try{ u=blobUrl(id)||""; }catch(e){}
+  let remoto=false; try{ remoto=!NATIVE()&&(!u||new URL(u,location.href).origin!==location.origin); }catch(e){}
+  if(!remoto) return {url:u,libera(){}};
+  let b=null; const sb=window.MarveaNube&&window.MarveaNube.sb;
+  if(sb&&sb.storage){ for(let i=0;i<2&&!b;i++){ try{ const r=await sb.storage.from("marvea-fotos").download(id); if(r&&!r.error&&r.data) b=r.data; }catch(e){} } }
+  if(!b&&u){ try{ const r=await fetch(u,{mode:"cors"}); if(r.ok) b=await r.blob(); }catch(e){} }
+  if(!b) return {url:u,libera(){}};
+  const o=URL.createObjectURL(b); return {url:o,libera(){ try{ URL.revokeObjectURL(o); }catch(e){} }};
+}
+/* ===== fin mvFS ===== */
 async function imageDataUrl(fotoId,size=300,quality=0.8){
   const key=fotoId+"@"+size; if(!fotoId) return null; if(state.imgCache.has(key)) return state.imgCache.get(key);
   const p=(async()=>{
+    const sale=await mvFSTurno(); /* mvFS */
     try{
-      const img=await new Promise((ok,err)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=()=>err(new Error("img")); i.src=blobUrl(fotoId); });
+      const fs_=await mvFotoSrc(fotoId); let img; try{ img=await new Promise((ok,err)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=()=>err(new Error("img")); i.src=fs_.url; }); } finally { fs_.libera(); }
       const s=Math.min(1,size/Math.max(img.naturalWidth,img.naturalHeight)); const c=document.createElement("canvas"); c.width=Math.max(1,Math.round(img.naturalWidth*s)); c.height=Math.max(1,Math.round(img.naturalHeight*s));
       const ctx=c.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(img,0,0,c.width,c.height);
       return c.toDataURL("image/jpeg",quality);
-    }catch(e){ return null; }
+    }catch(e){ state.imgCache.delete(key); return null; } finally { sale(); }
   })();
   state.imgCache.set(key,p); return p;
 }
