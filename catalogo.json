@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-14T16:02:48.009Z",
+ "actualizado": "2026-11-14T19:42:22.824Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1011,
+ "piezas": 999,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1742,7 +1742,7 @@
    "nombre": "Juego Xuping Flor Naranja",
    "categoria": "JUE",
    "material": "Acero Inoxidable",
-   "precio": 35,
+   "precio": 40,
    "etiqueta": "",
    "notas": "",
    "foto": "fotos/52bb18e76073c368115dbc2a49f14221.jpg",
@@ -1754,7 +1754,7 @@
    "nombre": "Juego Xuping Flor Azul",
    "categoria": "JUE",
    "material": "Acero Inoxidable",
-   "precio": 35,
+   "precio": 40,
    "etiqueta": "",
    "notas": "",
    "foto": "fotos/9aee905aba49c9a06fceabe454c9758d.jpg",
