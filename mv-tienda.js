@@ -137,7 +137,7 @@ function abrirFicha(c){
      <div class="gana">💰 Si la vendes entre <b>${fmt(x.p*2)}</b> y <b>${fmt(x.p*3)}</b>, ganas de <b>${fmt(x.p)}</b> a <b>${fmt(x.p*2)}</b> por pieza.</div>
      ${x.notas?`<div class="notas">${esc(x.notas)}</div>`:''}
      <div class="ctl" id="ficha-ctl" data-c="${esc(c)}" style="margin-top:16px"></div>
-     <div class="ben"><span><i class="fa-solid fa-lock"></i> Al agregarla queda apartada 15 minutos para ti</span><span><i class="fa-solid fa-gem"></i> Mínimo 12 piezas en total, combinando modelos</span><span><i class="fa-solid fa-plane-up"></i> Envío DHL Express con guía de rastreo</span></div>
+     <div class="ben"><span><i class="fa-solid fa-lock"></i> Tienes 30 minutos en total para pagar tu carrito</span><span><i class="fa-solid fa-gem"></i> Mínimo 12 piezas en total, combinando modelos</span><span><i class="fa-solid fa-plane-up"></i> Envío DHL Express con guía de rastreo</span></div>
     </div></div></div>`,'grande');
   pintarFichaCtl(c);
 }
@@ -183,7 +183,7 @@ async function enviarApartado(){
       if(!SRV.pend.has(c)){ if(tiene) S.cart[c]=tiene; else delete S.cart[c]; }
       SRV.cart[c]=tiene; S.stock[c].ex=Number(o.nivel)||0; if(o.parcial&&tiene<quiso) parciales.push(tiene?`${prod(c).n}: solo había ${tiene}`:`${prod(c).n}: ya no hay`);
       patch(c); setInp(c,S.cart[c]||0); });
-    SRV.rev++; if(d.expira){ medirReloj(d.expira); const t=finLocal(d.expira); if(t>Date.now()) S.timerFin=t; }
+    SRV.rev++; if(d.expira){ medirReloj(d.expira,d.ahora); const t=finLocal(d.expira); if(t>Date.now()) S.timerFin=t; }
     if(parciales.length&&SRV.avisar) toast('Se ajustó tu carrito a lo que queda en inventario: '+parciales.join(' · '),'alerta');
     SRV.avisar=true; actualizar(); guardarCarritoLocal();
   }catch(err){
@@ -195,7 +195,7 @@ function add(c,n=1,silencio){
   const d=disp(c); if(d<=0){ if(!silencio) toast(`Ya no hay piezas disponibles de <b>${esc(prod(c).n)}</b>.`,'alerta'); return 0; }
   const h=Math.min(n,d); S.cart[c]=(S.cart[c]||0)+h;
   if(h<n&&!silencio) toast(`Agregamos las últimas piezas de <b>${esc(prod(c).n)}</b>; ya no hay más disponibles.`,'alerta');
-  S.timerFin=Date.now()+15*60000; patch(c); flash(c); if(!silencio){ bump(); if(S.cart[c]===h) toast(`<b>${esc(prod(c).n)}</b> en tu carrito · ${pzs()} pza${pzs()===1?'':'s'}${pzs()<MIN?` (faltan ${MIN-pzs()} para el mínimo)`:' ✓'} <u style="cursor:pointer" onclick="verCarrito()">ver</u>`,'ok'); } actualizar(); programar(c);
+  relojCarrito(pzs()===h); patch(c); flash(c); if(!silencio){ bump(); if(S.cart[c]===h) toast(`<b>${esc(prod(c).n)}</b> en tu carrito · ${pzs()} pza${pzs()===1?'':'s'}${pzs()<MIN?` (faltan ${MIN-pzs()} para el mínimo)`:' ✓'} <u style="cursor:pointer" onclick="verCarrito()">ver</u>`,'ok'); } actualizar(); programar(c);
   return h;
 }
 function setQty(c,v){
@@ -203,7 +203,7 @@ function setQty(c,v){
   if(v>max){toast(`Ya no hay más piezas disponibles de <b>${esc(prod(c).n)}</b>; te dejamos las últimas.`,'alerta'); v=max;}
   if(v) S.cart[c]=v; else delete S.cart[c];
   setInp(c,v);
-  S.timerFin=Date.now()+15*60000; patch(c); flash(c); bump(); actualizar(); programar(c);
+  relojCarrito(!actual&&pzs()===v); patch(c); flash(c); bump(); actualizar(); programar(c);
 }
 function quitar1(c){if(!S.cart[c])return;S.cart[c]--;if(!S.cart[c])delete S.cart[c];patch(c);actualizar();programar(c);}
 async function liberarTodo(){ const cs=Object.keys(S.cart); S.cart={}; SRV.cart={}; SRV.pend.clear(); cs.forEach(patch); actualizar(); guardarCarritoLocal(); try{ await stockApi('liberar'); }catch(_){} }
@@ -235,7 +235,7 @@ function renderCarrito(){
     <div class="f total"><span>Total</span><span>${fmt(total())} <small style="font-size:12px;font-weight:600">MXN</small></span></div>
     ${n?`<div class="ganancia"><span>💰 Ganas entre <b>${fmt(subB()+bfGratis().desc)}</b> y <b>${fmt(subB()*2+bfGratis().desc)}</b> (×2–×3)</span><a href="#calculadora" onclick="toggleCarritoM(false);irSeccion('calculadora');return false" style="color:var(--verde);font-weight:800">calcular</a></div>`:''}
     <button class="comprar" ${ok?'':'disabled'} onclick="abrirCheckout()">${ok?'Pagar ahora →':`Faltan ${MIN-n} piezas para pagar`}</button><button class="seguir" onclick="toggleCarritoM(false);if(S.vista!=='catalogo')irVista('catalogo')">Seguir comprando</button>
-    ${n?'<div class="libera">⏱ Tus piezas quedan apartadas 15 minutos. Si no terminas, regresan solas al inventario.</div>':''}`;
+    ${n?'<div class="libera">⏱ Tienes <b>30 minutos en total</b> para pagar tu carrito, contados desde tu primera pieza. Agregar más piezas no reinicia el tiempo. Si se termina, el carrito se vacía y las piezas regresan al inventario.</div>':''}`;
   document.getElementById('bmTot').textContent=fmt(total());
   document.getElementById('bmPz').textContent=`${n} piezas${ok?'':` · faltan ${MIN-n}`} · ver pedido`;
   document.getElementById('bmBtn').disabled=!ok;
@@ -251,8 +251,8 @@ function actualizar(){renderCarrito();}
 setInterval(()=>{
   const t=document.getElementById('timer');
   if(!pzs()) t.textContent=''; else { const ms=S.timerFin-Date.now();
-    if(ms<=0){ const antes=Object.assign({},S.cart); liberarTodo(); anotarSalidas(antes,{},'tiempo',true); toast('Se terminó el tiempo de tu apartado y tus piezas regresaron al inventario. En tu carrito están anotadas para que las vuelvas a agregar.','alerta',9000); if(innerWidth<=980) toggleCarritoM(true); }
-    else t.textContent=`⏱ apartadas ${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms%60000/1000)).padStart(2,'0')}`; }
+    if(ms<=0){ const antes=Object.assign({},S.cart); liberarTodo(); anotarSalidas(antes,{},'tiempo',true); toast('Se terminaron los 30 minutos de tu carrito: se vació y tus piezas regresaron al inventario. Quedaron anotadas en tu carrito por si quieres volver a agregarlas.','alerta',9000); if(innerWidth<=980) toggleCarritoM(true); }
+    else { aviso5(ms); t.textContent=`⏱ apartadas ${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms%60000/1000)).padStart(2,'0')}`; } }
 },1000);
 setInterval(refrescarEstado,60000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refrescarEstado(); });
@@ -565,7 +565,7 @@ async function pagarTransfer(folio,wWA){
     const manda=tk=>fetch(TRANSFER.fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':TRANSFER.anon,'Authorization':'Bearer '+tk},body:JSON.stringify(payload),signal:ctrl.signal});
     try{ r=await manda(tokenAuth); if(r.status===401&&tokenAuth!==TRANSFER.anon) r=await manda(TRANSFER.anon); /* si no acepta el token de su cuenta, entra como invitada: la app la reconoce por su WhatsApp */ try{ d=await r.json(); }catch(_){ d={}; } } finally{ clearTimeout(tm); }
   }catch(_){ r=null; }
-  if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null,'agot'); S.timerFin=Date.now()+15*60000; cerrarModal(); const fl=d.faltan||[];
+  if(r&&r.status===409&&d&&d.carrito){ cierra(); rest(); sincronizarCarrito(d.carrito,null,'agot'); relojCarrito(false); cerrarModal(); const fl=d.faltan||[];
     toast(textoFaltan(d.error||'Se acabaron algunas piezas',fl),'alerta',10000); if(innerWidth<=980) toggleCarritoM(true); return; }
   if(r&&(r.status===400||r.status===409||r.status===429)&&d&&d.error){ cierra(); rest(); toast(d.error,'alerta'); return; }
   const registrado=!!(r&&r.ok&&d&&d.ok); if(registrado&&d.folio) folio=d.folio; // si la nube no contestó, el pedido sale solo por WhatsApp (como antes)
@@ -590,7 +590,7 @@ async function pagarStripe(folio){
   catch(err){ clearTimeout(tm); throw new Error('sin conexión con la función de pago'); }
   clearTimeout(tm);
   let d={}; try{ d=await r.json(); }catch(_){}
-  if(r.status===409&&d.carrito){ sincronizarCarrito(d.carrito,null,'agot'); S.timerFin=Date.now()+15*60000; const e2=new Error(d.error||'Se acabaron algunas piezas'); e2.faltan=d.faltan||[]; throw e2; }
+  if(r.status===409&&d.carrito){ sincronizarCarrito(d.carrito,null,'agot'); relojCarrito(false); const e2=new Error(d.error||'Se acabaron algunas piezas'); e2.faltan=d.faltan||[]; throw e2; }
   if(!r.ok||!d.url) throw new Error(d.error||('función de pago no disponible ('+r.status+')'));
   medir('add_payment_info',{valor:total()}); try{ localStorage.setItem('marvea.enpago',JSON.stringify({folio:d.folio||folio,t:Date.now()})); }catch(_){} location.href=d.url;
 }
@@ -602,7 +602,7 @@ function regresoStripe(){
     if(pago!=='ok') stockApi('reactivar').then(d=>{ aplicarDisp(d.disponibilidad); sincronizarCarrito(d.carrito,d.expira,false); }).catch(()=>{}); return; }
   const cart={}; Object.entries(sn.cart||{}).forEach(([c,q2])=>{ if(prod(c)) cart[c]=q2; });
   Object.assign(S,{cart,form:sn.form||{},tarifa:sn.tarifa,recoger:!!sn.recoger,sumar:!!sn.sumar,resguardar:!!sn.resguardar,factura:!!sn.factura,crearCuenta:!!sn.crearCuenta});
-  S.timerFin=Date.now()+15*60000;
+  relojCarrito(false);
   if(sn.cliente&&!S.cliente){ setCliente(sn.cliente); }
   Object.keys(cart).forEach(patch); actualizar();
   if(pago==='ok'){ try{localStorage.removeItem('marvea.pedido');}catch(_){} if(pzs()>=MIN){ abrirCheckout(); finalizar('tarjeta',sn.folio); } else toast('Pago recibido ✓','ok'); medir('purchase',{folio:sn.folio}); }
@@ -712,12 +712,11 @@ let __anchoTop=window.innerWidth; window.addEventListener('resize',()=>{ if(wind
 function pintarBarra(cnt,foto,cats){
   const enCat=S.vista==='catalogo', f=document.getElementById('filtros');
   f.innerHTML=`<button class="b-todo ${MEGA.abierto?'abierto':''}" id="btnMega" onclick="toggleMega()" aria-expanded="${MEGA.abierto}"><i class="fa-solid fa-bars-staggered"></i><span>Todo el catálogo</span><i class="fa-solid fa-chevron-down fl"></i></button>`
-    +`<div class="b-cats">`+AYUDA_BARRA.map(([t,ic,n])=>`<button class="b-cat b-info ${S.vista==='ayuda'&&S._ay===t?'on':''}" onclick="irAyuda('${t}')"><span class="ic"><i class="${ic}"></i></span><span>${n}</span></button>`).join('')+`</div>`
+    +`<div class="b-cats">`+AYUDA_BARRA.map(([t,ic,n])=>`<button class="b-cat b-info ${S.vista==='ayuda'&&(S._ay===t||(t==='cuidados'&&S._ay==='cambios'))?'on':''}" onclick="irAyuda('${t}')"><span class="ic"><i class="${ic}"></i></span><span>${n}</span></button>`).join('')+`</div>`
     +`<button class="b-arma" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Arma mi paquete</span></button>`;
-  const on=f.querySelector('.b-cat.on'); if(on) centrarH(on,'nearest');
 }
 const MEGA={abierto:false,cat:null};
-const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['lives','fa-solid fa-video','Lives'],['cambios','fa-solid fa-shield-heart','Garantía'],['contacto','fa-brands fa-whatsapp','Contacto']];
+const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados y garantía'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['lives','fa-solid fa-video','Lives'],['contacto','fa-brands fa-whatsapp','Contacto']];
 function toggleMega(v){ MEGA.abierto=v===undefined?!MEGA.abierto:!!v; const m=document.getElementById('mega'); if(!m) return;
   if(MEGA.abierto){ pintarMega(); m.classList.add('on'); document.body.classList.add('mega-on'); medir('menu_catalogo'); } else { m.classList.remove('on'); document.body.classList.remove('mega-on'); }
   const b=document.getElementById('btnMega'); if(b){ b.classList.toggle('abierto',MEGA.abierto); b.setAttribute('aria-expanded',MEGA.abierto); } }
@@ -987,7 +986,9 @@ async function registrarInline(){
    · El reloj del apartado se mide contra el servidor, no contra la hora del celular. */
 S.salieron={};
 const MOTIVO_SALIO={venc:'Se venció el tiempo del apartado',tiempo:'Se terminó el tiempo del apartado',agot:'Ya no alcanzó: se vendió antes de tu pago'};
-function medirReloj(exp){ const k=new Date(exp).getTime()-15*60000-Date.now(); if(isFinite(k)){ SRV.reloj=k; try{ localStorage.setItem('marvea.reloj',String(Math.round(k))); }catch(_){} } } // diferencia servidor − celular
+function relojCarrito(nuevo){ if(nuevo||!(S.timerFin>Date.now())) S.timerFin=Date.now()+30*60000; } // 30 min GENERALES: solo arranca con un carrito nuevo; el servidor manda la hora exacta
+function aviso5(ms){ if(ms>5*60000){ S._aviso5=false; return; } if(S._aviso5) return; S._aviso5=true; toast('Te quedan <b>menos de 5 minutos</b> para pagar tu carrito. Si se termina el tiempo, se vacía y las piezas regresan al inventario.','alerta',9000); }
+function medirReloj(exp,ahora){ const k=ahora?new Date(ahora).getTime()-Date.now():new Date(exp).getTime()-15*60000-Date.now(); if(isFinite(k)){ SRV.reloj=k; try{ localStorage.setItem('marvea.reloj',String(Math.round(k))); }catch(_){} } } // diferencia servidor − celular
 function finLocal(exp){ return new Date(exp).getTime()-(SRV.reloj||0)-5000; } // 5 s de margen: el reloj de la clienta nunca dura más que el del servidor
 function anotarSalidas(antes,ahora,motivo,callado){ const l=[];
   Object.entries(antes||{}).forEach(([c,q])=>{ const x=prod(c), d=Number(q)-(Number((ahora||{})[c])||0); if(!x||!(d>0)) return; const s=S.salieron[c]; S.salieron[c]={q:(s?s.q:0)+d,m:motivo||'venc'}; l.push(`<b>${esc(x.n)}</b>${d>1?' ×'+d:''}`); });
@@ -1009,7 +1010,7 @@ add=(function(o){ return function(c){ const h=o.apply(this,arguments); const s=S
 renderCarrito=(function(o){ return function(){ const r=o.apply(this,arguments); try{ const n=document.getElementById('notis'); if(n) n.insertAdjacentHTML('beforeend',htmlSalieron()); }catch(_){} return r; }; })(renderCarrito);
 /* --- regreso de Stripe sin pagar --- */
 function enPago(){ try{ const o=JSON.parse(localStorage.getItem('marvea.enpago')||'null'); if(o&&o.t&&Date.now()-o.t<40*60000) return o; if(o) localStorage.removeItem('marvea.enpago'); }catch(_){} return null; }
-function avisoRecuperado(){ toast('No se completó el pago. <b>Tus piezas siguen apartadas</b> en tu carrito 15 minutos más.','ok',8000); }
+function avisoRecuperado(){ toast('No se completó el pago. <b>Tus piezas siguen apartadas</b> en tu carrito; revisa arriba el tiempo que te queda.','ok',8000); }
 async function recuperarPago(){ if(!enPago()||SRV.recuperando) return; SRV.recuperando=true; const rev=SRV.rev;
   try{ const d=await stockApi('reactivar'); try{ localStorage.removeItem('marvea.enpago'); }catch(_){}
     aplicarDisp(d.disponibilidad);
@@ -1017,9 +1018,9 @@ async function recuperarPago(){ if(!enPago()||SRV.recuperando) return; SRV.recup
   }catch(_){} finally{ SRV.recuperando=false; }
   try{ const b=document.getElementById('btnTarjeta'); if(b&&b.disabled&&document.getElementById('coBody')){ if(pzs()>=MIN) renderCheckout(); else cerrarModal(); } }catch(_){} }
 window.addEventListener('pageshow',e=>{ if(e.persisted) refrescarEstado(); }); // el navegador regresó la página "congelada" (botón atrás desde Stripe)
-/* --- al abrir «Finalizar compra» el apartado se renueva: 15 minutos completos para llenar datos y pagar --- */
+/* --- al abrir «Finalizar compra» se confirma el apartado con el servidor (el tiempo NO se renueva: 30 min generales) --- */
 abrirCheckout=(function(o){ return function(){ const r=o.apply(this,arguments);
-  try{ if(!S._regreso&&pzs()>=MIN&&document.getElementById('coBody')){ S.timerFin=Date.now()+15*60000; SRV.avisar=true; Object.keys(S.cart).forEach(c=>SRV.pend.add(c)); SRV.rev++; clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,180); } }catch(_){}
+  try{ if(!S._regreso&&pzs()>=MIN&&document.getElementById('coBody')){ SRV.avisar=true; Object.keys(S.cart).forEach(c=>SRV.pend.add(c)); SRV.rev++; clearTimeout(SRV.timer); SRV.timer=setTimeout(enviarApartado,180); } }catch(_){}
   return r; }; })(abrirCheckout);
 
 /* ============================================================ ARRANQUE */

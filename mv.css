@@ -886,3 +886,20 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 /* lives (13-nov-2026) */
 .ay-lives-redes{grid-template-columns:repeat(2,minmax(0,1fr));max-width:900px;margin-bottom:14px}
 @media(max-width:700px){.ay-lives-redes{grid-template-columns:1fr}}
+
+/* barra de accesos fija (13-nov-2026): no se desliza ni se mueve; se compacta si la pantalla es angosta */
+@media(min-width:821px){
+  .b-cats{overflow:hidden;mask-image:none;-webkit-mask-image:none;padding:2px 0;gap:2px;justify-content:space-between}
+}
+@media(min-width:1241px) and (max-width:1320px){.cats-bar .b-info{font-size:13px}.b-cat.b-info{gap:6px;padding:5px 8px 5px 5px!important}}
+@media(min-width:821px) and (max-width:1240px){.b-info .ic{display:none}.b-cat.b-info{padding:7px 9px!important}.b-cat.b-info::after{left:9px;right:9px}}
+@media(min-width:821px) and (max-width:1080px){.cats-bar .b-info{font-size:12.5px}.b-cat.b-info{padding:7px 5px!important}.cats-bar .b-arma span{display:none}}
+@media(min-width:821px) and (max-width:900px){.cats-bar .b-info{font-size:12px}.b-cat.b-info{padding:7px 3px!important}.cats-bar .b-todo span{display:none}}
+/* cómo comprar: también por WhatsApp */
+.ay-wa-comprar{display:flex;gap:14px;align-items:flex-start;margin-top:20px;background:#e9f9ef;border-radius:16px;padding:18px 20px}
+.ay-wa-comprar>i{font-size:28px;color:#1fa855;flex:none;margin-top:2px}
+.ay-wa-comprar h4{margin:0 0 4px;color:var(--ciruela);font-size:16px}
+.ay-wa-comprar p{margin:0;color:var(--tinta-2);font-size:14px}
+.ay-wa-comprar .ay-acc{margin-top:12px}
+.btn.wa{background:#1fa855;color:#fff}.btn.wa:hover{background:#178a45;box-shadow:0 8px 20px rgba(31,168,85,.3)}
+@media(max-width:700px){.ay-wa-comprar{padding:16px}.ay-wa-comprar .btn.wa{width:100%;justify-content:center}}
