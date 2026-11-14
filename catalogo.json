@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-14T00:32:12.012Z",
+ "actualizado": "2026-11-14T00:32:18.287Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1011,
+ "piezas": 1238,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1103,7 +1103,7 @@
   },
   {
    "codigo": "ARE-00095",
-   "nombre": "Aretes Corazon Esmeralda",
+   "nombre": "Aretes Corazon azul",
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
@@ -1154,7 +1154,7 @@
    "nombre": "Cadena Bibiana",
    "categoria": "CAD",
    "material": "Acero Inoxidable",
-   "precio": 30,
+   "precio": 20,
    "etiqueta": "",
    "notas": "",
    "foto": "fotos/71eba3f6f6ac76279dcd1e1c52e99b45.jpg",
@@ -1967,7 +1967,7 @@
   },
   {
    "codigo": "PUL-00011",
-   "nombre": "Pulsera Cart Dorada",
+   "nombre": "Pulsera Cart",
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
@@ -2003,7 +2003,7 @@
   },
   {
    "codigo": "PUL-00015",
-   "nombre": "Plusera Cart Plateada",
+   "nombre": "Plusera Cart",
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
