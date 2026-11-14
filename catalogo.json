@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-14T19:42:22.824Z",
+ "actualizado": "2026-11-14T20:36:57.053Z",
  "categorias": [
   {
    "p": "ANI",
@@ -195,7 +195,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -387,7 +387,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
    "creado": "2026-10-20T23:12:55.345Z",
@@ -567,7 +567,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -1227,7 +1227,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/01a297677cf10c88c82740fc8ec795fc.jpg",
    "creado": "2026-11-07T20:11:37.497Z",
