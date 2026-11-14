@@ -882,3 +882,7 @@ html.bloq,html.bloq body{overscroll-behavior:none}
 .carrito .bf-nota b{display:inline-block;background:#D7141F;color:#fff;font-size:10.5px;letter-spacing:.06em;padding:1px 7px;border-radius:999px;margin-right:6px}
 .bf-g{display:inline-block;background:#FDE8E9;color:#B5121B;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px;white-space:nowrap}
 .tk .r.bf-r span,.tk .r.bf-r b{color:#B5121B;font-weight:800}
+
+/* lives (13-nov-2026) */
+.ay-lives-redes{grid-template-columns:repeat(2,minmax(0,1fr));max-width:900px;margin-bottom:14px}
+@media(max-width:700px){.ay-lives-redes{grid-template-columns:1fr}}

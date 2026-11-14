@@ -17,10 +17,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script>/* auto-actualización: si hay versión nueva publicada, la página se recarga sola */
-window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
-<link rel="stylesheet" href="mv.css?v=20261113c">
-<link rel="stylesheet" href="bf.css?v=20261113c">
-<link rel="stylesheet" href="pausa.css?v=20261113c">
+window.MV_VER="20261113d";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<link rel="stylesheet" href="mv.css?v=20261113d">
+<link rel="stylesheet" href="bf.css?v=20261113d">
+<link rel="stylesheet" href="pausa.css?v=20261113d">
 </head>
 <body>
 
@@ -117,6 +117,8 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <details><summary>¿Hay monto mínimo de compra?</summary><p>No. El mínimo es de 12 piezas surtidas a tu gusto, sin monto mínimo en pesos.</p></details>
         <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio.</p><p>Al crear una cuenta (Google, correo o WhatsApp), guardamos tu domicilio y activamos tu MARVEA Business Club: tus pedidos, precios de compra, tus precios de venta, ganancias y tu propio catálogo en un solo lugar.</p></details>
         <details><summary>¿Cómo pago?</summary><p>Tarjeta de crédito o débito, Apple Pay o Google Pay (se confirma al instante y tu ticket llega por correo) o transferencia bancaria: tu pedido queda apartado 6 horas mientras nos mandas tu comprobante.</p></details>
+        <details><summary>¿Podemos hacer pedidos por WhatsApp?</summary><p>Sí, nos puedes mandar mensaje para hacer tu pedido con capturas de pantalla (screenshots) de nuestra página, o puedes solicitar el catálogo en PDF y el catálogo sin nuestros precios para que tú lo uses.</p><p>Escríbenos por WhatsApp:<br><a href="https://wa.me/528132380573" target="_blank" rel="noopener">Marvea 1: 81 3238 0573</a><br><a href="https://wa.me/528132660673" target="_blank" rel="noopener">Marvea 2: 81 3266 0673</a></p></details>
+        <details><summary>¿Hacen lives de venta?</summary><p>¡Sí! En nuestras páginas de <a href="https://www.facebook.com/share/1DgmBQrhBy/" target="_blank" rel="noopener">Facebook: Marvea</a> y <a href="https://www.tiktok.com/@marveamayoreo" target="_blank" rel="noopener">TikTok: Marveamayoreo</a>. Avisamos en nuestras redes y grupo de WhatsApp. La tienda en línea permanece cerrada durante los lives. <a href="#/ayuda/lives" onclick="irAyuda('lives');return false">Todo sobre los lives</a></p></details>
         <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, por DHL Express aéreo: hasta 2 kg $240 y hasta 5 kg $305 MXN; el peso final lo determina DHL. En Monterrey recoges gratis. Internacional, a cotizar.</p></details>
         <details><summary>¿Puedo juntar varios pedidos en un envío? (Resguardo)</summary><p>Sí. Al pagar elige <b>Resguardo</b>: guardamos tu pedido ya pagado y en tus siguientes compras <b>inicias sesión</b> y tu carrito lo suma solo a tu paquete, sin volver a pagar envío. Juntas hasta 3 pedidos y salen en una sola caja: pagas el envío una sola vez. Si al juntarse la caja pasa de 2 kg, el envío podría subir: te avisamos por WhatsApp antes de enviarlo. Es aparte de recoger en Monterrey. <a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Cómo funciona</a></p></details>
         <details><summary>¿Qué materiales manejan y cómo los cuido?</summary><p>Acero inoxidable, oro laminado y chapa de oro. Mantenlas secas, ponte perfume y cremas antes, nada de cloro ni detergentes, límpialas con paño seco y guárdalas separadas. <a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Ver todos los cuidados</a>.</p></details>
@@ -157,6 +159,7 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
       <button data-ay="pagos"><i class="fa-regular fa-credit-card"></i> Pagos</button>
       <button data-ay="cuidados"><i class="fa-solid fa-gem"></i> Cuidados</button>
       <button data-ay="preguntas"><i class="fa-regular fa-circle-question"></i> Preguntas frecuentes</button>
+      <button data-ay="lives"><i class="fa-solid fa-video"></i> Lives</button>
       <button data-ay="cambios"><i class="fa-solid fa-rotate"></i> Cambios y garantía</button>
       <button data-ay="contacto"><i class="fa-brands fa-whatsapp"></i> Contacto</button>
     </nav>
@@ -229,6 +232,8 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
       <div class="faq">
         <details open><summary>¿Hay monto mínimo de compra?</summary><p>No manejamos monto mínimo monetario. El mínimo de compra es de 12 piezas surtidas a tu gusto. Tú eliges tu capital de inversión.</p></details>
         <details><summary>¿Cómo puedo hacer mi pedido?</summary><p>Directo en nuestra tienda en línea: agregas tus piezas al carrito (o contestas 3 preguntas y te armamos un paquete), pagas y listo. Si tienes dudas, escríbenos a <a href="https://wa.me/528132660673" target="_blank" rel="noopener">Pedidos (81 3266 0673)</a> y te ayudamos.</p></details>
+        <details><summary>¿Podemos hacer pedidos por WhatsApp?</summary><p>Sí, nos puedes mandar mensaje para hacer tu pedido con capturas de pantalla (screenshots) de nuestra página, o puedes solicitar el catálogo en PDF y el catálogo sin nuestros precios para que tú lo uses.</p><p>Escríbenos por WhatsApp:<br><a href="https://wa.me/528132380573" target="_blank" rel="noopener">Marvea 1: 81 3238 0573</a><br><a href="https://wa.me/528132660673" target="_blank" rel="noopener">Marvea 2: 81 3266 0673</a></p></details>
+        <details><summary>¿Hacen lives de venta?</summary><p>¡Sí! En nuestras páginas de <a href="https://www.facebook.com/share/1DgmBQrhBy/" target="_blank" rel="noopener">Facebook: Marvea</a> y <a href="https://www.tiktok.com/@marveamayoreo" target="_blank" rel="noopener">TikTok: Marveamayoreo</a>. Avisamos en nuestras redes y grupo de WhatsApp. La tienda en línea permanece cerrada durante los lives. <a href="#/ayuda/lives" onclick="irAyuda('lives');return false">Todo sobre los lives</a></p></details>
         <details><summary>¿Necesito cuenta para comprar?</summary><p>No. Puedes comprar como invitada con tu nombre, teléfono, correo y domicilio.</p><p>Al crear una cuenta (Google, correo o WhatsApp), guardamos tu domicilio y activamos tu MARVEA Business Club: tus pedidos, precios de compra, tus precios de venta, ganancias y tu propio catálogo en un solo lugar.</p></details>
         <details><summary>¿Hacen envíos a todo México?</summary><p>Sí, a todo México por DHL Express aéreo, con guía de rastreo: donde hay oficina de DHL normalmente llega en 1 a 2 días hábiles (según el día y la hora de tu pedido); en zonas extendidas, de 2 a 3 días hábiles. Costo: hasta 2 kg por $240 MXN y hasta 5 kg por $305 MXN; el peso final lo determina DHL. Para envíos internacionales, el costo es a cotizar.</p></details>
         <details><summary>¿Qué día sale y cuándo llega mi pedido?</summary><p>Los envíos salen de lunes a jueves y llegan al día siguiente (si hay oficina de DHL cerca de ti). Los que salen viernes o sábado, o en días festivos, llegan en 2 a 3 días hábiles.</p></details>
@@ -243,6 +248,21 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <details><summary>¿Qué pasa si recibo una pieza con algún defecto?</summary><p>Escríbenos por WhatsApp con evidencia dentro de las 48 horas posteriores a la recepción y lo revisamos acorde a nuestras políticas de garantía.</p></details>
         <details><summary>¿Son un proveedor nuevo? ¿Dónde se ubican?</summary><p>Somos empresa hermana de VJ Joyería, con más de 6 años en el mercado mayorista. Somos tienda en línea en Monterrey, Nuevo León.</p></details>
       </div>
+    </div>
+
+    <div class="ay-panel" id="ay-lives">
+      <h2>Lives de <i>Marvea</i></h2><p class="sub">Vendemos en vivo: así puedes pedir en nuestros lives.</p>
+      <div class="ay-g3 ay-lives-redes">
+        <a class="ay-card link" href="https://www.facebook.com/share/1DgmBQrhBy/" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i><h4>Facebook · Marvea</h4><p>Ver nuestros lives en Facebook.</p></a>
+        <a class="ay-card link" href="https://www.tiktok.com/@marveamayoreo" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><h4>TikTok · Marveamayoreo</h4><p>Ver nuestros lives en TikTok.</p></a>
+      </div>
+      <div class="faq">
+        <details open><summary>¿Hacen lives de venta?</summary><p>¡Sí! En nuestras páginas:</p><p><a href="https://www.facebook.com/share/1DgmBQrhBy/" target="_blank" rel="noopener">Facebook: Marvea</a><br><a href="https://www.tiktok.com/@marveamayoreo" target="_blank" rel="noopener">TikTok: Marveamayoreo</a></p><p>Avisamos en nuestras redes y grupo de WhatsApp.</p></details>
+        <details open><summary>¿Puedo pedir en el live si soy cliente nuevo?</summary><p>¡Claro! Necesitas hacer un depósito de $200 que se bonificará en tu cuenta final. Esto con el fin de asegurar tus piezas.</p></details>
+        <details open><summary>¿Dónde puedo depositar esos $200?</summary><p>Pide la cuenta para depositar por WhatsApp:</p><p><a href="https://wa.me/528132380573" target="_blank" rel="noopener">Marvea 1: 81 3238 0573</a><br><a href="https://wa.me/528132660673" target="_blank" rel="noopener">Marvea 2: 81 3266 0673</a></p></details>
+        <details open><summary>¿Puedo pedir en el live y completar del catálogo/página?</summary><p>Sí, junta tus 12 piezas en ambas dinámicas. Puedes juntar hasta 3 pedidos resguardados antes de que te mandemos en 1 solo envío de DHL Express Aéreo en $240.</p></details>
+      </div>
+      <p class="ay-nota"><i class="fa-solid fa-circle-info"></i> La tienda en línea permanecerá cerrada durante los lives.</p>
     </div>
 
     <div class="ay-panel" id="ay-cambios">
@@ -416,7 +436,7 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
       <div><a class="logo" href="#/" onclick="irVista('inicio');return false"><img src="logo-marvea-m.png" alt="" width="44" height="34">Marvea</a><p>Mayoreo de joyería para quienes emprenden. Donde emprendes tu negocio. Empresa hermana de VJ Joyería · Monterrey, N.L.</p></div>
       <div><h4>Compra</h4><a href="#/catalogo" onclick="irVista('catalogo');return false">Catálogo completo</a><a href="#" onclick="abrirArmar();return false">Arma mi paquete</a><a href="#calculadora" onclick="irSeccion('calculadora');return false">Calculadora</a><a href="#envios" onclick="irSeccion('envios');return false">Envíos y rastreo</a></div>
       <div><h4>Mi cuenta</h4><a href="#/cuenta" onclick="abrirCuenta();return false">Entrar / crear cuenta</a><a href="#/cuenta/pedidos" onclick="abrirCuenta('pedidos');return false">Mis pedidos</a><a href="#/cuenta/negocio" onclick="abrirCuenta('negocio');return false">Business Club</a></div>
-      <div><h4>Ayuda</h4><a href="#/ayuda/comprar" onclick="irAyuda('comprar');return false">Cómo comprar</a><a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Envíos y rastreo</a><a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Cuidados de tus piezas</a><a href="#/ayuda/preguntas" onclick="irAyuda('preguntas');return false">Preguntas frecuentes</a><a href="#/ayuda/cambios" onclick="irAyuda('cambios');return false">Cambios y garantía</a></div>
+      <div><h4>Ayuda</h4><a href="#/ayuda/comprar" onclick="irAyuda('comprar');return false">Cómo comprar</a><a href="#/ayuda/envios" onclick="irAyuda('envios');return false">Envíos y rastreo</a><a href="#/ayuda/cuidados" onclick="irAyuda('cuidados');return false">Cuidados de tus piezas</a><a href="#/ayuda/preguntas" onclick="irAyuda('preguntas');return false">Preguntas frecuentes</a><a href="#/ayuda/lives" onclick="irAyuda('lives');return false">Lives de Marvea</a><a href="#/ayuda/cambios" onclick="irAyuda('cambios');return false">Cambios y garantía</a></div>
       <div><h4>Contacto</h4><a href="https://wa.me/528132660673" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Ventas · 81 3266 0673</a><a href="https://wa.me/528132380573" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Atención al cliente · 81 3238 0573</a><a href="mailto:contacto@marveamayoreo.com"><i class="fa-regular fa-envelope"></i> contacto@marveamayoreo.com</a>
         <div class="redes"><a href="https://www.instagram.com/marveamayoreo?vrfl=MXg1YTVmYzVsd2s3eg==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="https://www.tiktok.com/@marveamayoreo?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a><a href="https://www.facebook.com/share/1DgmBQrhBy/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a></div></div>
     </div>
@@ -451,8 +471,8 @@ window.MV_VER="20261113c";(function(){try{fetch("version.json?t="+Date.now(),{ca
 
 <script src="supabase-2.45.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="mv-tienda.js?v=20261113c"></script>
-<script src="mv-cuenta.js?v=20261113c"></script>
+<script src="mv-tienda.js?v=20261113d"></script>
+<script src="mv-cuenta.js?v=20261113d"></script>
 <script>/* portada: las fotos de joyería pasan como video (sin deformar: object-fit cover). Se pausa fuera de pantalla, con "reducir movimiento" o ahorro de datos */
 (function(){var v=document.getElementById("heroVid");if(!v)return;var c=navigator.connection||{};
 if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||c.saveData){v.removeAttribute("autoplay");v.preload="none";try{v.pause()}catch(e){}return;}
@@ -460,7 +480,7 @@ v.addEventListener("playing",function(){v.classList.add("on")});v.addEventListen
 var p=v.play();if(p&&p.catch)p.catch(function(){});
 if("IntersectionObserver"in window)new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var q=v.play();if(q&&q.catch)q.catch(function(){})}else v.pause()})},{threshold:.15}).observe(v);
 document.addEventListener("visibilitychange",function(){if(document.hidden)v.pause();else if(v.classList.contains("on")){var q=v.play();if(q&&q.catch)q.catch(function(){})}});})();</script>
-<script src="bf.js?v=20261113c"></script>
-<script src="pausa.js?v=20261113c"></script>
+<script src="bf.js?v=20261113d"></script>
+<script src="pausa.js?v=20261113d"></script>
 </body>
 </html>

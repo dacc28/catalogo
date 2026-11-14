@@ -717,7 +717,7 @@ function pintarBarra(cnt,foto,cats){
   const on=f.querySelector('.b-cat.on'); if(on) centrarH(on,'nearest');
 }
 const MEGA={abierto:false,cat:null};
-const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['cambios','fa-solid fa-shield-heart','Garantía'],['contacto','fa-brands fa-whatsapp','Contacto']];
+const AYUDA_BARRA=[['comprar','fa-solid fa-bag-shopping','Cómo comprar'],['envios','fa-solid fa-truck-fast','Envíos'],['pagos','fa-regular fa-credit-card','Pagos'],['cuidados','fa-solid fa-gem','Cuidados'],['preguntas','fa-regular fa-circle-question','Preguntas frecuentes'],['lives','fa-solid fa-video','Lives'],['cambios','fa-solid fa-shield-heart','Garantía'],['contacto','fa-brands fa-whatsapp','Contacto']];
 function toggleMega(v){ MEGA.abierto=v===undefined?!MEGA.abierto:!!v; const m=document.getElementById('mega'); if(!m) return;
   if(MEGA.abierto){ pintarMega(); m.classList.add('on'); document.body.classList.add('mega-on'); medir('menu_catalogo'); } else { m.classList.remove('on'); document.body.classList.remove('mega-on'); }
   const b=document.getElementById('btnMega'); if(b){ b.classList.toggle('abierto',MEGA.abierto); b.setAttribute('aria-expanded',MEGA.abierto); } }
