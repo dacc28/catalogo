@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T17:13:07.698Z",
+ "actualizado": "2026-11-16T17:30:53.446Z",
  "categorias": [
   {
    "p": "ANI",
@@ -315,7 +315,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2d1fcdd35deb42a3c9d3b4639301ac8d.jpg",
    "creado": "2026-10-20T23:07:57.724Z",
@@ -466,18 +466,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00038",
-   "nombre": "Aretes Xuping Flor Blanca",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/5f92a243c03a9ad385f4aa8ca209dbc8.jpg",
-   "creado": "2026-10-20T23:22:51.496Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00039",
    "nombre": "Aretes Xuping  Color Ladrillo",
    "categoria": "ARE",
@@ -555,7 +543,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eedac4bcec2b2dc74fb397d63721c473.jpg",
    "creado": "2026-10-20T23:30:52.953Z",
@@ -2295,7 +2283,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/32e70fdbc1d022eeae8eb1bd1fa2c997.jpg",
    "creado": "2026-11-01T21:26:29.927Z",
