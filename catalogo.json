@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T20:31:35.611Z",
+ "actualizado": "2026-11-16T20:51:18.745Z",
  "categorias": [
   {
    "p": "ANI",
@@ -259,18 +259,6 @@
    "notas": "",
    "foto": "fotos/53fa4c2c86504cd7d9f5e4f2154b6d15.jpg",
    "creado": "2026-10-20T15:52:10.573Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00020",
-   "nombre": "Aretes Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cebd5465ddd9f3e65b6c6b6d3bd5c47.jpg",
-   "creado": "2026-10-20T17:20:14.987Z",
    "disponible": true
   },
   {
@@ -1114,18 +1102,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00098",
-   "nombre": "Huggies Noche",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "New in",
-   "notas": "",
-   "foto": "fotos/885a41c74dc22ff99b73d82a47aee232.jpg",
-   "creado": "2026-11-07T21:50:10.865Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00099",
    "nombre": "Cadena Barbada Gruesa",
    "categoria": "ARE",
@@ -1147,18 +1123,6 @@
    "notas": "",
    "foto": "fotos/71eba3f6f6ac76279dcd1e1c52e99b45.jpg",
    "creado": "2026-10-20T16:13:15.587Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00002",
-   "nombre": "Gargantilla Omega para Dije",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/0b6db2b11aeae8d4a7e3a3880bef36b8.jpg",
-   "creado": "2026-10-20T21:15:39.255Z",
    "disponible": true
   },
   {
@@ -1474,18 +1438,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00012",
-   "nombre": "Collar de Elefante",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6222ed6eef62c76a46f54c74c257d287.jpg",
-   "creado": "2026-10-19T01:31:31.189Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00013",
    "nombre": "Collar de Cuentas y Perla",
    "categoria": "COL",
@@ -1522,18 +1474,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00023",
-   "nombre": "Collar Rainbow",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d5cfff539d1d0c1ad201d8d78945fd48.jpg",
-   "creado": "2026-10-19T02:24:00.818Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00024",
    "nombre": "Cadena Mini",
    "categoria": "CAD",
@@ -1563,22 +1503,10 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
    "creado": "2026-10-19T02:29:34.252Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00029",
-   "nombre": "Collar Tenis Blanco",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
-   "creado": "2026-10-19T02:40:37.445Z",
    "disponible": true
   },
   {
@@ -1587,22 +1515,10 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e5f33abfaa3ad264f1d121c00106763c.jpg",
    "creado": "2026-10-20T16:08:07.319Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00038",
-   "nombre": "Collar Dupe 3 puntos",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "Dupe Messika",
-   "foto": "fotos/d596cecc8a7b45d40d37388dc24d18cf.jpg",
-   "creado": "2026-10-20T16:09:00.792Z",
    "disponible": true
   },
   {
@@ -1639,18 +1555,6 @@
    "notas": "",
    "foto": "fotos/67e9cfb8071fcbdab64cd4180946deb6.jpg",
    "creado": "2026-10-20T16:33:54.094Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00047",
-   "nombre": "Collar Eslabon Bicolor",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f00dfda5ee12a80f157ee39513df8793.jpg",
-   "creado": "2026-10-20T17:26:38.885Z",
    "disponible": true
   },
   {
@@ -1995,7 +1899,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
@@ -2007,7 +1911,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2045f9af20bd679902ad952b04ca913d.jpg",
    "creado": "2026-10-20T18:00:37.205Z",
@@ -2215,18 +2119,6 @@
    "notas": "",
    "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00036",
-   "nombre": "Pulsera Colores Ajustable Pasteles",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c16e08e4c92481c78fd820eafd78aa18.jpg",
-   "creado": "2026-11-01T21:13:59.616Z",
    "disponible": true
   },
   {
