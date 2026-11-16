@@ -6387,7 +6387,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .mvp-n{min-width:20px;padding:1px 7px;border-radius:999px;background:rgba(0,0,0,.08);font-size:12px;font-weight:700;line-height:18px}
 .mvp-tabs button.on .mvp-n{background:#1D1D1F;color:#fff}
 .mvp-body{display:flex;flex-direction:column;gap:10px;min-width:0}
-.mvp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:5px}
+.mvp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px}
 .mvp-kpis>div{background:rgba(0,0,0,.035);border-radius:10px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
 .mvp-kpis b{font-size:13.5px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mvp-kpis span{font-size:11px;color:#86868B}
@@ -6399,7 +6399,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .mvp-row{display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:center;gap:4px;border-radius:13px;background:#fff;border:1px solid rgba(0,0,0,.07)}
 .mvp-row.on{border-color:#1D1D1F;box-shadow:0 0 0 1px #1D1D1F inset}
 .mvp-row:hover{border-color:rgba(0,0,0,.18)}
-.mvp-main{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 4px 10px 10px;min-width:0}
+.mvp-main{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:10px 4px 10px 10px;min-width:0}
 .mvp-main:focus-visible{outline:2px solid #1D1D1F;border-radius:12px}
 .mvp-av{width:34px;height:34px;border-radius:50%;background:#F2E6EC;color:#6B3A55;font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex:none;letter-spacing:.02em}
 .mvp-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -6419,8 +6419,8 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .mvp-more:hover{background:rgba(0,0,0,.06);color:#1D1D1F}
 .mvp-grupo{border-radius:14px;background:rgba(0,0,0,.035);border:1px solid rgba(0,0,0,.06);padding:4px;display:flex;flex-direction:column;gap:4px}
 .mvp-grupo.on{border-color:rgba(0,0,0,.3)}
-.mvp-ghead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 38px 6px 8px}
-.mvp-row.hijo .mvp-main{grid-template-columns:minmax(0,1fr) auto;padding-left:12px}
+.mvp-ghead{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 38px 6px 8px}
+.mvp-row.hijo .mvp-main{grid-template-columns:minmax(0,1fr);padding-left:12px}
 .mvp-row.hijo .mvp-name{font-size:13.5px}
 .mvp-dia{display:flex;align-items:center;gap:8px;font-size:13px;color:#86868B}
 .mvp-dia select{flex:1;min-width:0}
@@ -6438,6 +6438,11 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .mvp-ir{font-size:12.5px;font-weight:650;color:#1D1D1F;white-space:nowrap}
 @media (max-width:560px){ .mvp-cli .mvp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .mvp-cc{grid-template-columns:minmax(0,1fr) auto} .mvp-ir{display:none} }
 .mvp-dia select{appearance:none;-webkit-appearance:none;border:1px solid rgba(0,0,0,.1);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2386868B' fill='none' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;border-radius:10px;padding:7px 28px 7px 10px;font:inherit;font-size:13.5px;color:#1D1D1F}
+.mvp-l1{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.mvp-l1 .mvp-name{flex:1;min-width:0}
+.mvp-l1 .mvp-amt{flex:none}
+.mvp-tags{display:flex;flex-wrap:wrap;align-items:center;gap:4px 5px}
+.mvp-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 </style>
 <script id="mv-pedidos-js">
 /* ===== mvPED · Venta › panel «Pedidos» + Clientas › ir a cada carrito (16-nov-2026) =====
@@ -6451,7 +6456,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   const dinero = n => "$" + fmtMoney(n);
   const redondo = n => "$" + Math.round(Number(n) || 0).toLocaleString("es-MX");
   const poner = (el, ...k) => el.replaceChildren(...k.flat().filter(x => x != null && x !== false));
-  const hora = iso => { try { return new Date(iso).toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }); } catch (e) { return ""; } };
+  const hora = iso => { try { return new Date(iso).toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }).replace(/\s*([ap])\.?\s*m\.?/i, (m, a) => " " + a.toLowerCase() + "m").replace(/\u00a0/g, " "); } catch (e) { return ""; } };
   const diaCorto = iso => { try { const d = new Date(iso); return hoyKey(d) === hoyKey() ? "Hoy" : d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }); } catch (e) { return ""; } };
   const sinAcentos = t => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
   const iniciales = n => { const p = String(n || "?").trim().split(/\s+/).filter(Boolean); return ((p[0] || "?")[0] + (p[1] ? p[1][0] : "")).toUpperCase(); };
@@ -6481,18 +6486,16 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   function renglon(x, o, opt) {
     opt = opt || {};
     const st = estadoDe(x), activo = x.id === S().ventaCartId;
-    const meta = [diaCorto(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)) + " · " + hora(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)),
+    const meta = [diaCorto(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)) + " " + hora(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)),
                   cartPieces(x) + (cartPieces(x) === 1 ? " pza" : " pzas")];
     if (opt.numero) meta.unshift("#" + cartNumber(x));
     return h("div", { class: "mvp-row" + (activo ? " on" : "") + (opt.hijo ? " hijo" : ""), oncontextmenu: e => ventaMenu(e, x) },
       h("button", { type: "button", class: "mvp-main", title: "Abrir este carrito", onclick: () => o.abrir(x) },
         opt.hijo ? null : h("span", { class: "mvp-av", "aria-hidden": "true" }, iniciales(o.nombreDe(x))),
         h("span", { class: "mvp-txt" },
-          h("span", { class: "mvp-name" }, opt.titulo || o.nombreDe(x)),
-          h("span", { class: "mvp-meta" }, meta.join(" · "), ...etiquetas(x))),
-        h("span", { class: "mvp-right" },
-          h("span", { class: "mvp-amt" }, dinero(cartGrand(x))),
-          h("span", { class: "mvp-st " + st.k }, st.t))),
+          h("span", { class: "mvp-l1" }, h("span", { class: "mvp-name" }, opt.titulo || o.nombreDe(x)), h("span", { class: "mvp-amt" }, dinero(cartGrand(x)))),
+          h("span", { class: "mvp-meta" }, meta.join(" · ")),
+          h("span", { class: "mvp-tags" }, h("span", { class: "mvp-st " + st.k }, st.t), ...etiquetas(x)))),
       h("button", { type: "button", class: "mvp-more", title: "Opciones: ticket, cancelar, eliminar…", "aria-label": "Opciones", onclick: e => ventaMenu(e, x) }, "⋯"));
   }
 
@@ -6518,9 +6521,9 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       h("div", { class: "mvp-ghead" },
         h("span", { class: "mvp-av", "aria-hidden": "true" }, iniciales(nombre)),
         h("span", { class: "mvp-txt" },
-          h("span", { class: "mvp-name" }, nombre),
-          h("span", { class: "mvp-meta" }, carts.length + " carritos abiertos · " + carts.reduce((s, x) => s + cartPieces(x), 0) + " pzas")),
-        h("span", { class: "mvp-right" }, h("span", { class: "mvp-amt" }, dinero(total)), h("span", { class: "mvp-st " + st.k }, st.t))),
+          h("span", { class: "mvp-l1" }, h("span", { class: "mvp-name" }, nombre), h("span", { class: "mvp-amt" }, dinero(total))),
+          h("span", { class: "mvp-meta" }, carts.length + " carritos abiertos · " + carts.reduce((s, x) => s + cartPieces(x), 0) + " pzas"),
+          h("span", { class: "mvp-tags" }, h("span", { class: "mvp-st " + st.k }, st.t)))),
       ...carts.slice().sort((a, b) => String(a.creado).localeCompare(String(b.creado))).map((x, i) => renglon(x, o, { hijo: true, titulo: "Carrito " + (i + 1) })));
   }
 
@@ -6620,7 +6623,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     return h("button", { type: "button", class: "mvp-cc", title: "Abrir este carrito", onclick: () => window.mvIrACarrito(x) },
       h("span", { class: "mvp-txt" },
         h("span", { class: "mvp-name" }, f.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) + " · " + hora(f)),
-        h("span", { class: "mvp-meta" }, donde + " · " + cartPieces(x) + " pzas", ...etiquetas(x))),
+        h("span", { class: "mvp-meta" }, donde + " · " + cartPieces(x) + " pzas"), etiquetas(x).length ? h("span", { class: "mvp-tags" }, ...etiquetas(x)) : null),
       h("span", { class: "mvp-right" }, h("span", { class: "mvp-amt" }, dinero(cartGrand(x))), h("span", { class: "mvp-st " + st.k }, st.t)),
       h("span", { class: "mvp-ir", "aria-hidden": "true" }, "Abrir ›"));
   }
