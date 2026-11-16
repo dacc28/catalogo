@@ -4247,7 +4247,7 @@ function renderVenta(keepFocus){
     (medTxt||R.porCobrar)?h("div",{class:"vd-chips"},medTxt?h("span",{class:"vd-muted"},medTxt):null,R.porCobrar?h("span",{class:"chip unpaid"},"Por cobrar $"+fmtMoney(R.porCobrar)+" ("+R.pendientes+")"):null):null,
     h("div",{class:"cartlist"},...(historial.length?historial.map(fila):[h("div",{class:"vd-vacio"},"Aún no hay ventas cerradas este día.")])),
     ventaLiveActual()?h("div",{class:"vd-sec",style:"margin-top:12px"},h("button",{class:"btn sm",type:"button",onclick:()=>liveExcel(ventaLiveActual(),state.ventaCarts)},"Excel del día"),h("button",{class:"btn sm",type:"button",onclick:()=>livePdf(ventaLiveActual(),state.ventaCarts)},"PDF del día")):null);
-  const lado=h("div",{class:"vd-ladocol"},panelAb,panelHist);
+  const lado=(typeof mvPedidosLado==="function")?mvPedidosLado({abiertas,historial,abrir,nombreDe,daySel,R,medTxt}):h("div",{class:"vd-ladocol"},panelAb,panelHist); /* mvPED */
 
   const cab=h("div",{class:"vd-cab"},h("div",null,h("h3",null,state.bf?"Venta · Buen Fin 4x3":"Venta"),h("div",{class:"vd-muted"},(!ventaLiveActual()||ventaLiveActual().dia===hoyKey())?new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}):(esHoy?"Venta abierta de ":"Consultando: ")+String((ventaLiveActual()||{}).nombre||"").replace("Ventas directas · ",""),c?" · Venta #"+cartNumber(c)+" · "+new Date(c.creado).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}):"")),
     h("button",{class:"btn primary vd-nueva",type:"button",onclick:()=>{ if(ventaLiveActual()&&ventaLiveActual().dia!==hoyKey()){ const lh=ventaLiveHoy(); ventaSubscribe(lh?lh.id:null); } state.ventaCartId=null; state.ventaCliForm=false; state.ventaPagoForm=false; renderVenta(); setTimeout(()=>{ const i=$("#ventaCli"); if(i) i.focus(); },30); }},"+ Nueva venta"));
@@ -6373,6 +6373,290 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   window.__mvFotoGrande=abrir;
 })();
 /* ===== fin mvFG ===== */
+</script>
+<style id="mv-pedidos-css">
+/* ===== mvPED · panel «Pedidos» de Venta y carritos en la ficha de la clienta (16-nov-2026) ===== */
+.mvp-panel{padding:18px 16px 14px!important;display:flex;flex-direction:column;gap:12px}
+.mvp-head{display:flex;flex-direction:column;gap:10px}
+.mvp-head h3{margin:0;font-size:20px;letter-spacing:-.01em}
+.mvp-buscar{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.08);background:rgba(0,0,0,.035);border-radius:11px;padding:9px 12px;font:inherit;font-size:14px;color:inherit;outline:none}
+.mvp-buscar:focus{background:#fff;border-color:rgba(0,0,0,.25)}
+.mvp-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:rgba(0,0,0,.05)}
+.mvp-tabs button{border:0;background:transparent;border-radius:9px;padding:8px 6px;font:inherit;font-size:14px;font-weight:600;color:#6E6E73;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.mvp-tabs button.on{background:#fff;color:#1D1D1F;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mvp-n{min-width:20px;padding:1px 7px;border-radius:999px;background:rgba(0,0,0,.08);font-size:12px;font-weight:700;line-height:18px}
+.mvp-tabs button.on .mvp-n{background:#1D1D1F;color:#fff}
+.mvp-body{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mvp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:5px}
+.mvp-kpis>div{background:rgba(0,0,0,.035);border-radius:10px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
+.mvp-kpis b{font-size:13.5px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvp-kpis span{font-size:11px;color:#86868B}
+.mvp-kpis>div.debe b{color:#C9302C}
+.mvp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.mvp-chip{border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:12.5px;color:#3A3A3C;cursor:pointer}
+.mvp-chip.on{background:#1D1D1F;border-color:#1D1D1F;color:#fff}
+.mvp-list{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 330px);min-height:120px;overflow:auto;margin:0 -4px;padding:0 4px}
+.mvp-row{display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:center;gap:4px;border-radius:13px;background:#fff;border:1px solid rgba(0,0,0,.07)}
+.mvp-row.on{border-color:#1D1D1F;box-shadow:0 0 0 1px #1D1D1F inset}
+.mvp-row:hover{border-color:rgba(0,0,0,.18)}
+.mvp-main{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 4px 10px 10px;min-width:0}
+.mvp-main:focus-visible{outline:2px solid #1D1D1F;border-radius:12px}
+.mvp-av{width:34px;height:34px;border-radius:50%;background:#F2E6EC;color:#6B3A55;font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex:none;letter-spacing:.02em}
+.mvp-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mvp-name{font-weight:650;font-size:14.5px;color:#1D1D1F;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.mvp-meta{font-size:12px;color:#86868B;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.mvp-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;white-space:nowrap}
+.mvp-amt{font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums;color:#1D1D1F}
+.mvp-st{font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:999px;line-height:16px}
+.mvp-st.ok{background:#E6F6EC;color:#1E7B45}
+.mvp-st.debe{background:#FDECEC;color:#C9302C}
+.mvp-st.nada{background:#F1F1F3;color:#6E6E73}
+.mvp-st.cancel{background:#F1F1F3;color:#8E8E93;text-decoration:line-through}
+.mvp-tag{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:6px;background:#F1F1F3;color:#48484A;line-height:15px}
+.mvp-tag.t4x3{background:#FDE7E3;color:#C0392B}
+.mvp-tag.tres{background:#EEE7FB;color:#5B3BB0}
+.mvp-more{all:unset;cursor:pointer;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8E8E93;font-size:18px;font-weight:700;line-height:1}
+.mvp-more:hover{background:rgba(0,0,0,.06);color:#1D1D1F}
+.mvp-grupo{border-radius:14px;background:rgba(0,0,0,.035);border:1px solid rgba(0,0,0,.06);padding:4px;display:flex;flex-direction:column;gap:4px}
+.mvp-grupo.on{border-color:rgba(0,0,0,.3)}
+.mvp-ghead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 38px 6px 8px}
+.mvp-row.hijo .mvp-main{grid-template-columns:minmax(0,1fr) auto;padding-left:12px}
+.mvp-row.hijo .mvp-name{font-size:13.5px}
+.mvp-dia{display:flex;align-items:center;gap:8px;font-size:13px;color:#86868B}
+.mvp-dia select{flex:1;min-width:0}
+.mvp-medios{font-size:12px;color:#86868B}
+.mvp-desc{display:flex;gap:6px;flex-wrap:wrap}
+.mvp-vacio{color:#86868B;font-size:13px;padding:18px 6px;text-align:center}
+.mvp-nota{margin:0;font-size:11.5px;color:#A1A1A6}
+/* ficha de la clienta */
+.mvp-cli{display:flex;flex-direction:column;gap:6px}
+.mvp-cli .mvp-kpis{margin-bottom:4px}
+.mvp-sub{font-size:12px;font-weight:700;color:#86868B;text-transform:uppercase;letter-spacing:.04em;margin:8px 2px 0}
+.mvp-cc{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,.08)}
+.mvp-cc:hover{border-color:#1D1D1F}
+.mvp-cc:focus-visible{outline:2px solid #1D1D1F}
+.mvp-ir{font-size:12.5px;font-weight:650;color:#1D1D1F;white-space:nowrap}
+@media (max-width:560px){ .mvp-cli .mvp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .mvp-cc{grid-template-columns:minmax(0,1fr) auto} .mvp-ir{display:none} }
+.mvp-dia select{appearance:none;-webkit-appearance:none;border:1px solid rgba(0,0,0,.1);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2386868B' fill='none' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;border-radius:10px;padding:7px 28px 7px 10px;font:inherit;font-size:13.5px;color:#1D1D1F}
+</style>
+<script id="mv-pedidos-js">
+/* ===== mvPED · Venta › panel «Pedidos» + Clientas › ir a cada carrito (16-nov-2026) =====
+   Reemplaza las dos columnas «Carritos abiertos» e «Historial» por un solo panel con dos pestañas:
+     · Abiertos  → todos los carritos sin cerrar (de cualquier día), agrupados por clienta.
+     · Cerrados  → las ventas cerradas o canceladas del día que elijas.
+   Cada carrito muestra UN solo estado claro: Pagado · Debe $X · Sin pago · Por cobrar · Cancelada.
+   No cambia datos: solo la forma de verlos. Clic = abrir · «⋯» o clic derecho = opciones (ticket, cancelar, eliminar…). */
+(function(){
+  const S = () => state;
+  const dinero = n => "$" + fmtMoney(n);
+  const redondo = n => "$" + Math.round(Number(n) || 0).toLocaleString("es-MX");
+  const poner = (el, ...k) => el.replaceChildren(...k.flat().filter(x => x != null && x !== false));
+  const hora = iso => { try { return new Date(iso).toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }); } catch (e) { return ""; } };
+  const diaCorto = iso => { try { const d = new Date(iso); return hoyKey(d) === hoyKey() ? "Hoy" : d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }); } catch (e) { return ""; } };
+  const sinAcentos = t => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const iniciales = n => { const p = String(n || "?").trim().split(/\s+/).filter(Boolean); return ((p[0] || "?")[0] + (p[1] ? p[1][0] : "")).toUpperCase(); };
+
+  /* Un solo estado por carrito */
+  function estadoDe(x) {
+    const saldo = cartSaldo(x), pagado = cartPagado(x);
+    if (x.estado === "cancelado") return { k: "cancel", t: "Cancelada" };
+    if (x.estado === "final") {
+      if (x.pago || saldo <= 0.005) return { k: "ok", t: saldo < -0.005 ? "Pagada · a favor " + dinero(-saldo) : "Pagada" };
+      return { k: "debe", t: "Por cobrar " + dinero(saldo) };
+    }
+    if (!x.items.length) return { k: "nada", t: "Vacío" };
+    if (pagado > 0 && saldo <= 0.005) return { k: "ok", t: saldo < -0.005 ? "Pagado · a favor " + dinero(-saldo) : "Pagado" };
+    if (pagado > 0) return { k: "debe", t: "Debe " + dinero(saldo) };
+    return { k: "nada", t: "Sin pago" };
+  }
+  window.mvpEstadoDe = estadoDe;
+
+  function etiquetas(x) {
+    return [x.promo === "4x3" ? h("span", { class: "mvp-tag t4x3" }, "4x3") : null,
+            x.resguardo ? h("span", { class: "mvp-tag tres" }, "Resguardo") : null,
+            x.entregaMty ? h("span", { class: "mvp-tag" }, "Recoge en Mty") : null].filter(Boolean);
+  }
+
+  /* Renglón de un carrito */
+  function renglon(x, o, opt) {
+    opt = opt || {};
+    const st = estadoDe(x), activo = x.id === S().ventaCartId;
+    const meta = [diaCorto(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)) + " · " + hora(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado)),
+                  cartPieces(x) + (cartPieces(x) === 1 ? " pza" : " pzas")];
+    if (opt.numero) meta.unshift("#" + cartNumber(x));
+    return h("div", { class: "mvp-row" + (activo ? " on" : "") + (opt.hijo ? " hijo" : ""), oncontextmenu: e => ventaMenu(e, x) },
+      h("button", { type: "button", class: "mvp-main", title: "Abrir este carrito", onclick: () => o.abrir(x) },
+        opt.hijo ? null : h("span", { class: "mvp-av", "aria-hidden": "true" }, iniciales(o.nombreDe(x))),
+        h("span", { class: "mvp-txt" },
+          h("span", { class: "mvp-name" }, opt.titulo || o.nombreDe(x)),
+          h("span", { class: "mvp-meta" }, meta.join(" · "), ...etiquetas(x))),
+        h("span", { class: "mvp-right" },
+          h("span", { class: "mvp-amt" }, dinero(cartGrand(x))),
+          h("span", { class: "mvp-st " + st.k }, st.t))),
+      h("button", { type: "button", class: "mvp-more", title: "Opciones: ticket, cancelar, eliminar…", "aria-label": "Opciones", onclick: e => ventaMenu(e, x) }, "⋯"));
+  }
+
+  /* Agrupa los carritos abiertos por clienta (misma ficha o mismo nombre) */
+  function agrupar(lista, nombreDe) {
+    const m = new Map();
+    for (const x of lista) {
+      const key = x.clienteId ? "id:" + x.clienteId : "n:" + sinAcentos(nombreDe(x));
+      if (!m.has(key)) m.set(key, []);
+      m.get(key).push(x);
+    }
+    return [...m.values()];
+  }
+
+  function grupo(carts, o) {
+    if (carts.length === 1) return renglon(carts[0], o);
+    const nombre = o.nombreDe(carts[0]);
+    const total = carts.reduce((s, x) => s + cartGrand(x), 0);
+    const debe = carts.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0);
+    const pagado = carts.reduce((s, x) => s + cartPagado(x), 0);
+    const st = debe <= 0.005 ? { k: "ok", t: "Todo pagado" } : (pagado > 0 ? { k: "debe", t: "Debe " + dinero(debe) } : { k: "nada", t: "Sin pago" });
+    return h("div", { class: "mvp-grupo" + (carts.some(x => x.id === S().ventaCartId) ? " on" : "") },
+      h("div", { class: "mvp-ghead" },
+        h("span", { class: "mvp-av", "aria-hidden": "true" }, iniciales(nombre)),
+        h("span", { class: "mvp-txt" },
+          h("span", { class: "mvp-name" }, nombre),
+          h("span", { class: "mvp-meta" }, carts.length + " carritos abiertos · " + carts.reduce((s, x) => s + cartPieces(x), 0) + " pzas")),
+        h("span", { class: "mvp-right" }, h("span", { class: "mvp-amt" }, dinero(total)), h("span", { class: "mvp-st " + st.k }, st.t))),
+      ...carts.slice().sort((a, b) => String(a.creado).localeCompare(String(b.creado))).map((x, i) => renglon(x, o, { hijo: true, titulo: "Carrito " + (i + 1) })));
+  }
+
+  const FILTROS = [["todos", "Todos"], ["debe", "Deben"], ["nada", "Sin pago"], ["ok", "Pagados"], ["res", "Resguardo"]];
+  const pasaFiltro = (x, f) => f === "todos" ? true : f === "res" ? !!x.resguardo : estadoDe(x).k === f;
+  const pasaBusqueda = (x, q, nombreDe) => !q || sinAcentos(nombreDe(x)).includes(q) || String(cartNumber(x)) === q.replace("#", "");
+
+  /* Panel completo. o = {abiertas, historial, abrir, nombreDe, daySel, R, medTxt} que arma renderVenta */
+  window.mvPedidosLado = function (o) {
+    const st = S();
+    const teniaFoco = document.activeElement && document.activeElement.id === "mvpBuscar";
+    const ab = o.abiertas.filter(x => x.items.length || x.id === st.ventaCartId);
+    if (!st.mvpTab) st.mvpTab = "abiertos";
+    if (!st.mvpFiltro) st.mvpFiltro = "todos";
+    const q = sinAcentos(st.mvpQ || "");
+
+    const tabs = h("div", { class: "mvp-tabs", role: "tablist" },
+      h("button", { type: "button", role: "tab", class: st.mvpTab === "abiertos" ? "on" : "", "aria-selected": String(st.mvpTab === "abiertos"), onclick: () => { st.mvpTab = "abiertos"; renderVenta(); } },
+        "Abiertos", h("span", { class: "mvp-n" }, String(ab.filter(x => x.items.length).length))),
+      h("button", { type: "button", role: "tab", class: st.mvpTab === "cerrados" ? "on" : "", "aria-selected": String(st.mvpTab === "cerrados"), onclick: () => { st.mvpTab = "cerrados"; renderVenta(); } },
+        "Cerrados", h("span", { class: "mvp-n" }, String(o.historial.length))));
+
+    const buscar = h("input", { id: "mvpBuscar", class: "mvp-buscar", type: "search", placeholder: "Buscar clienta o # de venta", value: st.mvpQ || "", autocomplete: "off", "aria-label": "Buscar clienta" });
+    const cuerpo = h("div", { class: "mvp-body" });
+
+    const pintar = () => {
+      const q2 = sinAcentos(st.mvpQ || "");
+      if (st.mvpTab === "abiertos") {
+        const conPz = ab.filter(x => x.items.length);
+        const porCobrar = conPz.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0);
+        const resumen = h("div", { class: "mvp-kpis" },
+          h("div", null, h("b", null, String(conPz.length)), h("span", null, conPz.length === 1 ? "carrito" : "carritos")),
+          h("div", null, h("b", null, String(conPz.reduce((s, x) => s + cartPieces(x), 0))), h("span", null, "piezas")),
+          h("div", null, h("b", null, redondo(conPz.reduce((s, x) => s + cartGrand(x), 0))), h("span", null, "en carritos")),
+          h("div", { class: porCobrar > 0.005 ? "debe" : "" }, h("b", null, redondo(porCobrar)), h("span", null, "por cobrar")));
+        const chips = h("div", { class: "mvp-chips" }, ...FILTROS.map(([k, t]) => {
+          const n = conPz.filter(x => pasaFiltro(x, k)).length;
+          if (k !== "todos" && !n) return null;
+          return h("button", { type: "button", class: "mvp-chip" + (st.mvpFiltro === k ? " on" : ""), onclick: () => { st.mvpFiltro = k; renderVenta(); } }, t + " · " + n);
+        }));
+        if (st.mvpFiltro !== "todos" && !conPz.some(x => pasaFiltro(x, st.mvpFiltro))) st.mvpFiltro = "todos";
+        const lista = ab.filter(x => x.id === st.ventaCartId || (pasaFiltro(x, st.mvpFiltro) && pasaBusqueda(x, q2, o.nombreDe)));
+        const grupos = agrupar(lista, o.nombreDe);
+        poner(cuerpo, resumen, chips,
+          h("div", { class: "mvp-list" }, ...(grupos.length ? grupos.map(g => grupo(g, o))
+            : [h("div", { class: "mvp-vacio" }, q2 ? "Ninguna clienta coincide con «" + (st.mvpQ || "") + "»." : "No hay carritos abiertos.")])),
+          h("p", { class: "mvp-nota" }, "Incluye los carritos sin cerrar de todos los días. Clic para abrir · «⋯» para ticket, cancelar o eliminar."));
+      } else {
+        const R = o.R;
+        const lista = o.historial.filter(x => pasaBusqueda(x, q2, o.nombreDe));
+        poner(cuerpo,
+          h("div", { class: "mvp-dia" }, h("span", null, "Día"), o.daySel),
+          h("div", { class: "mvp-kpis" },
+            h("div", null, h("b", null, redondo(R.total)), h("span", null, "vendido")),
+            h("div", null, h("b", null, String(R.ventas)), h("span", null, R.ventas === 1 ? "venta" : "ventas")),
+            h("div", null, h("b", null, String(R.piezas)), h("span", null, "piezas")),
+            h("div", { class: R.porCobrar > 0.005 ? "debe" : "" }, h("b", null, redondo(R.porCobrar)), h("span", null, "por cobrar"))),
+          o.medTxt ? h("div", { class: "mvp-medios" }, "Cobrado: " + o.medTxt) : null,
+          h("div", { class: "mvp-list" }, ...(lista.length ? lista.map(x => renglon(x, o, { numero: true }))
+            : [h("div", { class: "mvp-vacio" }, q2 ? "Ninguna venta coincide." : "Aún no hay ventas cerradas este día.")])),
+          ventaLiveActual() ? h("div", { class: "mvp-desc" },
+            h("button", { class: "btn sm", type: "button", onclick: () => liveExcel(ventaLiveActual(), st.ventaCarts) }, "Excel del día"),
+            h("button", { class: "btn sm", type: "button", onclick: () => livePdf(ventaLiveActual(), st.ventaCarts) }, "PDF del día")) : null);
+      }
+    };
+    buscar.addEventListener("input", () => { st.mvpQ = buscar.value; pintar(); });
+    buscar.addEventListener("keydown", e => { if (e.key === "Escape") { st.mvpQ = ""; buscar.value = ""; pintar(); } });
+    pintar();
+    if (teniaFoco) setTimeout(() => { const b = document.getElementById("mvpBuscar"); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 0);
+
+    return h("div", { class: "vd-ladocol mvp-col" },
+      h("div", { class: "panel vd-lado mvp-panel" },
+        h("div", { class: "mvp-head" }, h("h3", null, "Pedidos"), buscar),
+        tabs, cuerpo));
+  };
+
+  /* ===== Clientas › ficha: sus carritos, cada uno con botón para abrirlo ===== */
+  async function carritosDe(id) {
+    try { const s = await S().db.collection("carritos").where("clienteId", "==", id).get(); return s.docs.map(d => cartFromDoc(d.id, d.data() || {})).sort((a, b) => String(b.creado).localeCompare(String(a.creado))); }
+    catch (e) { return null; }
+  }
+  window.mvIrACarrito = function (x) {
+    const st = S(); const l = st.lives.find(v => v.id === x.liveId);
+    closeDrawer();
+    if (l && l.tipo !== "mostrador") { setView("live"); selectLive(l.id); st.cartId = x.id; renderLive(true); return; }
+    setView("venta");
+    if (st.ventaLiveId !== x.liveId) ventaSubscribe(x.liveId);
+    st.ventaCartId = x.id; st.ventaCliForm = false; st.ventaPagoForm = false;
+    st.mvpTab = x.estado === "abierto" ? "abiertos" : "cerrados"; st.mvpQ = ""; st.mvpFiltro = "todos";
+    renderVenta();
+    setTimeout(() => { const m = document.querySelector("#ventaHost .vd-main"); if (m && m.scrollIntoView) m.scrollIntoView({ block: "start", behavior: "smooth" }); }, 60);
+  };
+  function filaCliente(x) {
+    const st = estadoDe(x); const l = S().lives.find(v => v.id === x.liveId);
+    const donde = l ? (l.tipo === "mostrador" ? "Venta directa" : "Live «" + l.nombre + "»") : (x.origen === "web" ? "Tienda en línea" : "Venta");
+    const f = new Date(x.estado === "abierto" ? x.creado : (x.finalizado || x.creado));
+    return h("button", { type: "button", class: "mvp-cc", title: "Abrir este carrito", onclick: () => window.mvIrACarrito(x) },
+      h("span", { class: "mvp-txt" },
+        h("span", { class: "mvp-name" }, f.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) + " · " + hora(f)),
+        h("span", { class: "mvp-meta" }, donde + " · " + cartPieces(x) + " pzas", ...etiquetas(x))),
+      h("span", { class: "mvp-right" }, h("span", { class: "mvp-amt" }, dinero(cartGrand(x))), h("span", { class: "mvp-st " + st.k }, st.t)),
+      h("span", { class: "mvp-ir", "aria-hidden": "true" }, "Abrir ›"));
+  }
+  async function seccionCarritos(id) {
+    const host = document.querySelector("#drawerHost aside.drawer");
+    if (!host) return;
+    const sec = [...host.querySelectorAll(".section")].find(s => { const t = s.querySelector("h4"); return t && t.textContent.trim() === "Compras"; });
+    if (!sec) return;
+    const rows = await carritosDe(id);
+    if (!rows || !document.body.contains(sec)) return; // si falla, se queda la lista de antes
+    const abiertos = rows.filter(x => x.estado === "abierto" && x.items.length);
+    const cerrados = rows.filter(x => x.estado !== "abierto");
+    const validos = rows.filter(x => x.estado === "final" || (x.estado === "abierto" && x.items.length));
+    const debe = validos.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0);
+    sec.classList.add("mvp-cli");
+    const guias = host.querySelector(".section.guias"); if (guias && guias.parentNode === sec.parentNode) sec.parentNode.insertBefore(sec, guias); // carritos primero
+    poner(sec,
+      h("h4", null, "Carritos"),
+      h("div", { class: "mvp-kpis" },
+        h("div", null, h("b", null, String(abiertos.length)), h("span", null, abiertos.length === 1 ? "abierto" : "abiertos")),
+        h("div", null, h("b", null, String(cerrados.filter(x => x.estado === "final").length)), h("span", null, "cerrados")),
+        h("div", null, h("b", null, redondo(validos.reduce((s, x) => s + cartGrand(x), 0))), h("span", null, "comprado")),
+        h("div", { class: debe > 0.005 ? "debe" : "" }, h("b", null, redondo(debe)), h("span", null, "por cobrar"))),
+      abiertos.length ? h("div", { class: "mvp-sub" }, "Abiertos") : null,
+      ...abiertos.map(filaCliente),
+      cerrados.length ? h("div", { class: "mvp-sub" }, "Cerrados y cancelados") : null,
+      ...cerrados.map(filaCliente),
+      rows.length ? null : h("div", { class: "mvp-vacio" }, "Todavía no tiene carritos."));
+  }
+  if (typeof openClienta === "function" && !openClienta.__mvp) {
+    const orig = openClienta;
+    const nuevo = async function (id) { await orig(id); try { await seccionCarritos(id); } catch (e) { console.warn("mvPED", e); } };
+    nuevo.__mvp = true;
+    openClienta = nuevo; // eslint-disable-line no-func-assign
+  }
+})();
 </script>
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
