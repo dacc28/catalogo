@@ -4009,7 +4009,7 @@ function ventaMenu(e,c){
     c.items.length&&c.estado!=="cancelado"?{label:"Descargar ticket (PDF)",run:()=>downloadTicket(c,L)}:null,
     "-",
     c.estado==="final"&&!c.pago?{label:"Registrar pago",run:()=>{ state.ventaCartId=c.id; state.ventaPagoForm=true; renderVenta(); }}:null,
-    c.estado==="final"&&c.pago?{label:"Marcar como pendiente de pago",run:()=>setPagoVenta(c,null)}:null,
+    c.estado==="final"&&(c.pago||cartAnticipos(c)>0)?{label:"Marcar como pendiente de pago",run:()=>(typeof mvxMarcarPendiente==="function"?mvxMarcarPendiente(c):setPagoVenta(c,null))}:null,
     esHoy&&c.estado==="abierto"&&c.items.length?{label:"Cerrar venta",run:()=>{ state.ventaCartId=c.id; renderVenta(); setTimeout(()=>{ const b=$("#ventaCobrar"); if(b) b.focus(); },30); }}:null,
     esHoy&&(c.estado==="final"||c.estado==="cancelado")?{label:c.estado==="cancelado"?"Reabrir venta":"Editar venta (reabrir)",run:()=>reabrirVenta(c)}:null,
     esHoy&&c.estado==="abierto"&&c.items.length?{label:"Cancelar venta (devolver piezas)",danger:true,confirm:"¿Cancelar la venta y devolver las piezas al inventario?",options:[{label:"Sí, cancelar",run:()=>cancelarVenta(c)}]}:null,
@@ -4194,7 +4194,7 @@ function renderVenta(keepFocus){
         totalBox,
         antBox(true),
         h("div",{class:"vd-field"},h("span",null,"Al cerrar, el pago queda:"),estadoBtns),
-        pf?h("div",{class:"vd-pagobox"},pf):h("div",{class:"mvx-aviso-pend"},h("b",null,"Se cerrará como POR COBRAR"),"Si dejó algo, anótalo en «Anticipos y abonos». Cuando pague el resto, ábrela en «Por cobrar» y toca «Registrar pago»."),
+        pf?h("div",{class:"vd-pagobox"},pf):(cartPagado(c)>0.005?h("div",{class:"mvx-aviso-pend"},h("b",null,cartSaldo(c)>0.005?"Ya abonó $"+fmtMoney(cartPagado(c))+" · se cerrará POR COBRAR (debe $"+fmtMoney(cartSaldo(c))+")":"Ojo: ya tiene $"+fmtMoney(cartPagado(c))+" registrados como pagados, por eso quedará PAGADA"),cartSaldo(c)>0.005?"Cuando pague el resto, ábrela en «Por cobrar» y toca «Registrar pago».":"Si en realidad no ha pagado, quita ese pago con la × en «Anticipos y abonos»."):h("div",{class:"mvx-aviso-pend"},h("b",null,"Se cerrará como POR COBRAR"),"Si dejó algo, anótalo en «Anticipos y abonos». Cuando pague, ábrela en «Por cobrar» y toca «Registrar pago».")),
         mas,
         (f||sinNombre)?h("div",{class:"vd-aviso"},[sinNombre?"Falta el nombre de la clienta.":null,f?`Compra mínima ${MIN_PIEZAS} piezas · faltan ${f} (puedes cerrar de todos modos).`:null].filter(Boolean).join(" ")):null,
         h("button",{class:"btn primary big vd-cerrar",id:"ventaCobrar",type:"button",...(puede?{}:{disabled:true,title:sinNombre?"Falta el nombre de la clienta":"Agrega piezas"}),onclick:()=>cerrar(true)},(state.ventaPagado?"Cerrar venta PAGADA e imprimir ticket":"Cerrar venta POR COBRAR e imprimir ticket")),
@@ -4214,7 +4214,7 @@ function renderVenta(keepFocus){
           c.items.length&&c.estado!=="cancelado"&&NATIVE()&&NATIVE().printPdf?h("button",{class:"btn"+(c.pago?" primary":""),type:"button",onclick:()=>printTicket(c,L)},"Imprimir ticket"):null,
           c.items.length&&c.estado!=="cancelado"?h("button",{class:"btn",type:"button",onclick:()=>downloadTicket(c,L)},"Descargar ticket"):null,
           (c.estado==="final"||c.estado==="cancelado")?h("button",{class:"btn",type:"button",title:"La venta vuelve a quedar abierta (activa) para agregar o quitar piezas",onclick:()=>reabrirVenta(c)},"↺ Reabrir venta (activa)"):null,
-          cerrada&&c.pago?h("button",{class:"btn ghost",type:"button",onclick:()=>setPagoVenta(c,null)},"Marcar pendiente de pago"):null,
+          cerrada&&(c.pago||cartAnticipos(c)>0)?h("button",{class:"btn ghost",type:"button",onclick:()=>(typeof mvxMarcarPendiente==="function"?mvxMarcarPendiente(c):setPagoVenta(c,null))},"Marcar pendiente de pago"):null,
           h("button",{class:"btn ghost danger",type:"button",onclick:()=>{ delBox.replaceChildren(h("div",{class:"confirm"},"¿Eliminar esta venta del histórico?"+(c.items.length&&c.estado!=="cancelado"?" Sus "+cartPieces(c)+" piezas regresan al inventario. ":" "),h("button",{class:"btn sm danger",type:"button",onclick:()=>eliminarVenta(c)},"Sí, eliminar"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>delBox.replaceChildren()},"No"))); }},"Eliminar")),
         delBox);
     }
@@ -6731,6 +6731,25 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     if (teniaFoco && !enVenta) setTimeout(() => { const b = document.getElementById("mvxBuscar"); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 0);
     return [st.bf ? bfBanner() : null, pantalla].filter(Boolean);
   };
+
+  /* ---------- Marcar una venta como PENDIENTE DE PAGO: quita el pago Y los anticipos (antes solo quitaba el pago) ---------- */
+  window.mvxMarcarPendiente = async function (c) {
+    const st = S(); if (!c || !st.db || st.busy) return;
+    const lista = [].concat(c.pago ? [{ monto: c.pago.monto, medio: c.pago.medio, fecha: c.pago.fecha }] : [], (c.anticipos || []).map(a => ({ monto: a.monto, medio: a.medio, fecha: a.fecha })));
+    if (!lista.length) { toast("Esta venta no tiene pagos registrados"); return; }
+    const txt = lista.map(p => dinero(p.monto) + " " + (p.medio || "") + (p.fecha ? " (" + new Date(p.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + ")" : "")).join(", ");
+    if (!confirm("¿Marcar la venta de " + nombreDe(c) + " como PENDIENTE DE PAGO?\n\nSe quitarán los pagos registrados: " + txt + ".\nQuedan anotados en la nota de la venta para que no se pierda el dato.")) return;
+    const antes = { pago: c.pago, anticipos: c.anticipos, nota: c.nota };
+    const hoy = new Date().toLocaleString("es-MX", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+    c.nota = ((c.nota || "").trim() + (c.nota ? " · " : "") + "Pagos quitados el " + hoy + ": " + txt).trim();
+    c.pago = null; c.anticipos = [];
+    st.busy = true;
+    try { await saveCart(c); toast(nombreDe(c) + " quedó pendiente de pago · debe " + dinero(cartSaldo(c))); }
+    catch (e) { Object.assign(c, antes); toast("No se pudo guardar", true); }
+    finally { st.busy = false; }
+    try { renderAll(); } catch (e) {} renderVenta();
+  };
+
   /* ===== Clientas › ficha: sus ventas, cada una con «Abrir» ===== */
   async function carritosDe(id) {
     try { const s = await S().db.collection("carritos").where("clienteId", "==", id).get(); return s.docs.map(d => cartFromDoc(d.id, d.data() || {})).sort((a, b) => String(b.creado).localeCompare(String(a.creado))); }
