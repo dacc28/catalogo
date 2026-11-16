@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T21:47:49.598Z",
+ "actualizado": "2026-11-16T22:26:44.625Z",
  "categorias": [
   {
    "p": "ANI",
@@ -123,7 +123,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/c6f964a310519362d4bbd0ef49814291.jpg",
    "creado": "2026-10-27T00:56:39.983Z",
@@ -135,7 +135,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eb93848b4f40fbc55faea2bf728dfd3a.jpg",
    "creado": "2026-10-27T00:58:35.688Z",
@@ -171,7 +171,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
    "creado": "2026-11-01T20:55:43.795Z",
@@ -483,7 +483,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
    "creado": "2026-10-20T23:30:07.673Z",
@@ -615,7 +615,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/33b88b2c34b8b743a847da5acc2a5b7e.jpg",
    "creado": "2026-11-01T21:36:28.348Z",
@@ -639,7 +639,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/536114b266ecb169b40be13c3bbb0ca6.jpg",
    "creado": "2026-11-01T21:41:48.587Z",
@@ -783,22 +783,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3c3763a0e9813ff0da2296c2d6127f83.jpg",
    "creado": "2026-11-07T21:08:06.512Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00076",
-   "nombre": "Aretes Corazón Rosa",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/44e3418c3de667e657355ac5710996ad.jpg",
-   "creado": "2026-11-07T21:09:11.467Z",
    "disponible": true
   },
   {
@@ -1047,7 +1035,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
    "creado": "2026-11-07T21:48:20.046Z",
@@ -1147,18 +1135,6 @@
    "notas": "",
    "foto": "fotos/03490ffb2e9838a9e4bc35d450bda731.jpg",
    "creado": "2026-11-07T20:21:44.468Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00011",
-   "nombre": "Cadena planchada 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/cdc2488d8b86c0d6abb1d9a30d7c87d3.jpg",
-   "creado": "2026-11-07T20:22:38.246Z",
    "disponible": true
   },
   {
@@ -1263,7 +1239,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/054361c2c5e97d2c21d8b4a675e14573.jpg",
    "creado": "2026-11-07T20:38:34.240Z",
@@ -1426,18 +1402,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00037",
-   "nombre": "Collar abstracto",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e5f33abfaa3ad264f1d121c00106763c.jpg",
-   "creado": "2026-10-20T16:08:07.319Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00043",
    "nombre": "Collar de Chicle Azul",
    "categoria": "COL",
@@ -1587,7 +1551,7 @@
    "categoria": "DIJ",
    "material": "Chapa de oro",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e6ba5d92d9a683ce532574e893d8c98d.jpg",
    "creado": "2026-10-20T15:54:35.837Z",
@@ -1654,18 +1618,6 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00006",
-   "nombre": "Juego Oval Oscuro",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e43aef036bf3025c03dacd1c01bd9ad6.jpg",
-   "creado": "2026-11-01T21:52:40.145Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00007",
    "nombre": "Juego Corazón Rojo",
    "categoria": "JUE",
@@ -1678,24 +1630,12 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00008",
-   "nombre": "Juego Corazón Verde",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3f99ce687132c0523bf37766d5707992.jpg",
-   "creado": "2026-11-01T21:57:26.087Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00009",
    "nombre": "Juego Doble Corazón con rojo",
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/aaaa08b805ca7a3a593583847b94fa70.jpg",
    "creado": "2026-11-01T21:59:58.579Z",
@@ -1711,18 +1651,6 @@
    "notas": "",
    "foto": "fotos/ad0fe3faa81b57d79d6b6caf73404941.jpg",
    "creado": "2026-11-01T22:01:35.363Z",
-   "disponible": true
-  },
-  {
-   "codigo": "JUE-00011",
-   "nombre": "Juego Dos Corazones Blanco y Negro",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/984ea7e638e6ace737cb273c3e73f912.jpg",
-   "creado": "2026-11-01T22:03:25.682Z",
    "disponible": true
   },
   {
@@ -1935,7 +1863,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4928ea672b4410f9a25e20e0dcdd974a.jpg",
    "creado": "2026-11-01T20:26:58.096Z",
@@ -2050,18 +1978,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00039",
-   "nombre": "Pulsera Ajustable Tonos Rosas",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/cc1f9221f2b717c61b19523aa5d6515d.jpg",
-   "creado": "2026-11-01T21:18:39.152Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00040",
    "nombre": "Pulsera Ajustable Tonos Neutros",
    "categoria": "PUL",
@@ -2071,18 +1987,6 @@
    "notas": "",
    "foto": "fotos/f56876f35eea3b66f6f0462372fd0672.jpg",
    "creado": "2026-11-01T21:20:47.493Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00042",
-   "nombre": "Pulsera Ajustable Coral",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ac19faa8c3db4255c26e36f1a896efb6.jpg",
-   "creado": "2026-11-01T21:23:18.880Z",
    "disponible": true
   },
   {
