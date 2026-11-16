@@ -6653,9 +6653,25 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       ...cerrados.map(filaCliente),
       rows.length ? null : h("div", { class: "mvp-vacio" }, "Todavía no tiene carritos."));
   }
+  /* Botón «Carrito» de la lista de Clientas y de la ficha: va a su carrito abierto en Venta (antes buscaba un live) */
+  if (typeof abrirCarritoDe === "function" && !abrirCarritoDe.__mvp) {
+    const ir = async function (k) {
+      if (!k || !k.id) return;
+      const rows = await carritosDe(k.id);
+      const ab = (rows || []).filter(x => x.estado === "abierto" && x.items.length);
+      if (ab.length === 1) { window.mvIrACarrito(ab[0]); return; }
+      if (ab.length > 1) { toast(k.nombre + " tiene " + ab.length + " carritos abiertos · elige cuál abrir"); openClienta(k.id); return; }
+      toast(k.nombre + " no tiene carritos abiertos"); openClienta(k.id);
+    };
+    ir.__mvp = true;
+    abrirCarritoDe = ir; // eslint-disable-line no-func-assign
+  }
   if (typeof openClienta === "function" && !openClienta.__mvp) {
     const orig = openClienta;
-    const nuevo = async function (id) { await orig(id); try { await seccionCarritos(id); } catch (e) { console.warn("mvPED", e); } };
+    const nuevo = async function (id) {
+      const p = orig.apply(this, arguments);
+      try { const dr = document.querySelector("#drawerHost aside.drawer"); const b = dr && [...dr.querySelectorAll("button")].find(x => x.textContent.trim() === "Abrir carrito en el live"); if (b) { b.textContent = "Ir a su carrito abierto"; b.title = "Abre en Venta su carrito sin cerrar"; } } catch (e) {}
+      await p; try { await seccionCarritos(id); } catch (e) { console.warn("mvPED", e); } };
     nuevo.__mvp = true;
     openClienta = nuevo; // eslint-disable-line no-func-assign
   }
