@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T18:20:24.944Z",
+ "actualizado": "2026-11-16T18:32:28.903Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1515,22 +1515,10 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e5f33abfaa3ad264f1d121c00106763c.jpg",
    "creado": "2026-10-20T16:08:07.319Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00040",
-   "nombre": "Collar Perlita",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a360c43c3ad08132f2b1b362ef2a7331.jpg",
-   "creado": "2026-10-20T16:17:20.278Z",
    "disponible": true
   },
   {
@@ -2067,7 +2055,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 60,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
@@ -2103,7 +2091,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 70,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
    "creado": "2026-11-01T21:06:01.761Z",
@@ -2199,7 +2187,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ac19faa8c3db4255c26e36f1a896efb6.jpg",
    "creado": "2026-11-01T21:23:18.880Z",
