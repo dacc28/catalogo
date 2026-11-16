@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T17:42:57.282Z",
+ "actualizado": "2026-11-16T17:56:44.584Z",
  "categorias": [
   {
    "p": "ANI",
@@ -631,18 +631,6 @@
    "notas": "",
    "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
    "creado": "2026-10-20T23:37:14.343Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00055",
-   "nombre": "Arete Vanc Dupe Blanco",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3b852249f31a4ac28a28c5538673d5b5.jpg",
-   "creado": "2026-11-01T20:07:45.241Z",
    "disponible": true
   },
   {
@@ -1443,7 +1431,7 @@
    "categoria": "COL",
    "material": "Hematitas y Chapa de Oro",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/c0bc6f02eb03fd277535aa05afa91a4c.jpg",
    "creado": "2026-10-19T01:14:56.657Z",
@@ -1743,7 +1731,7 @@
    "categoria": "JUE",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/9aee905aba49c9a06fceabe454c9758d.jpg",
    "creado": "2026-10-20T23:44:10.400Z",
@@ -1791,7 +1779,7 @@
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/e43aef036bf3025c03dacd1c01bd9ad6.jpg",
    "creado": "2026-11-01T21:52:40.145Z",
@@ -2239,18 +2227,6 @@
    "notas": "",
    "foto": "fotos/f56876f35eea3b66f6f0462372fd0672.jpg",
    "creado": "2026-11-01T21:20:47.493Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00041",
-   "nombre": "Pulsera Ajustable Rosa",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/99a37839c8994b0d55e8f7c60197aec7.jpg",
-   "creado": "2026-11-01T21:21:38.272Z",
    "disponible": true
   },
   {
