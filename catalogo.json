@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T18:32:28.903Z",
+ "actualizado": "2026-11-16T18:56:10.525Z",
  "categorias": [
   {
    "p": "ANI",
@@ -2067,7 +2067,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 66,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6e876022e29d41c4c3b11d0eee09e6ce.jpg",
    "creado": "2026-11-01T21:00:45.810Z",
@@ -2119,18 +2119,6 @@
    "notas": "",
    "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00035",
-   "nombre": "Pulsera Colores Ajustable",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/439f6cf1bb826d391c16e8137d523d15.jpg",
-   "creado": "2026-11-01T21:13:04.105Z",
    "disponible": true
   },
   {
