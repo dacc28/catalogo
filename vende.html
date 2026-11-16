@@ -6506,7 +6506,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   .vx-num,.vx-fecha{text-align:left} .vx-num::before,.vx-fecha::before{content:attr(data-l);display:block;font-size:11px;color:var(--vx-mut);text-transform:uppercase}
 }
 /* ===== v3: tabla centrada + columna Estatus + acciones del cobro + diálogo ===== */
-.vx-tr{grid-template-columns:minmax(200px,1.4fr) 92px 64px 104px 104px 104px 108px 130px!important;gap:10px!important}
+.vx-tr{grid-template-columns:minmax(190px,1.4fr) 88px 58px 100px 100px 100px 104px 124px 70px!important;gap:8px!important}
 .vx-th span{text-align:center!important} .vx-th span:first-child{text-align:left!important}
 .vx-fecha,.vx-num,.vx-est,.vx-sts{text-align:center!important;justify-self:center}
 .vx-fecha{align-items:center}
@@ -6516,7 +6516,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .vx-st2.res{background:#EEE7FB;color:#5B3BB0} .vx-st2.por{background:#FFF1DC;color:#9A5B00} .vx-st2.esp{background:#FDECEC;color:#C42B2B}
 .vx-st2.env{background:#E8EFFD;color:#1F5FD1} .vx-st2.ok{background:#E3F5E9;color:#1E7B45} .vx-st2.nada{background:#F5F5F7;color:#8E8E93}
 .vx-st2.grande{font-size:13.5px;padding:5px 12px;border-radius:999px}
-@media (max-width:1100px){ .vx-tr{grid-template-columns:minmax(170px,1.3fr) 84px 54px 96px 96px 96px 100px 116px!important;gap:6px!important;padding:12px!important} }
+@media (max-width:1100px){ .vx-tr{grid-template-columns:minmax(160px,1.3fr) 80px 50px 92px 92px 92px 98px 112px 62px!important;gap:6px!important;padding:12px!important} }
 @media (max-width:820px){ .vx-tr{grid-template-columns:1fr 1fr 1fr!important} .vx-sts{grid-column:1/-1;align-items:flex-start} .vx-fecha,.vx-num,.vx-est{justify-self:start;text-align:left!important} }
 /* acciones del cobro */
 .vx-acc{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--vx-line)}
@@ -6540,6 +6540,27 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 .vx-modal-bot .vx-b2{background:#fff!important;border:1px solid #E5E5EA!important;color:#1D1D1F!important}
 #ventaHost .vx-acc .btn.vx-b3{background:none!important;border:0!important;box-shadow:none!important;color:#C42B2B!important;font-size:13.5px!important;font-weight:600!important;padding:6px 4px!important;text-decoration:underline!important;text-underline-offset:3px}
 #ventaHost .vx-acc .btn.vx-b2{background:#fff!important;border:1px solid #E5E5EA!important;color:#1D1D1F!important;box-shadow:none!important}
+/* ===== v6: Ticket, envío en venta cerrada, contador de piezas ===== */
+.vx-tk{display:flex;justify-content:center}
+.vx-tkb{all:unset;cursor:pointer;font-size:12.5px;font-weight:650;color:#1D1D1F;border:1px solid #E5E5EA;background:#fff;border-radius:8px;padding:5px 9px;white-space:nowrap}
+.vx-tkb:hover{border-color:#1D1D1F}
+.vx-tkb:disabled{cursor:not-allowed;opacity:.35}
+.vx-envc{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid #E5E5EA;border-radius:14px;padding:12px 14px}
+.vx-envc label{display:flex;align-items:center;gap:10px}
+.vx-envc label span{font-size:13px;font-weight:700;color:#6E6E73;text-transform:uppercase;letter-spacing:.04em}
+.vx-envsel{flex:1;border:1px solid #E5E5EA;border-radius:10px;padding:9px 10px;font:inherit;font-size:14.5px;background:#fff;color:#1D1D1F}
+.vx-envc small{font-size:12px;color:#8E8E93}
+/* contador − 1 + : una sola cápsula alineada */
+#ventaHost .vd-it{grid-template-columns:44px minmax(0,1fr) 112px 84px 28px!important;grid-template-areas:none!important;row-gap:0!important}
+#ventaHost .vd-it .qc{display:inline-flex!important;align-items:center;justify-content:space-between;gap:0!important;width:104px;height:36px;justify-self:center;border:1px solid #E5E5EA;border-radius:999px;background:#fff;overflow:hidden;padding:0!important}
+#ventaHost .vd-it .qc button{all:unset;box-sizing:border-box;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;line-height:1;color:#1D1D1F;cursor:pointer;border-radius:0!important}
+#ventaHost .vd-it .qc button:hover{background:#F5F5F7}
+#ventaHost .vd-it .qc button:active{background:#E5E5EA}
+#ventaHost .vd-it .qc .q{flex:1;min-width:0!important;padding:0!important;text-align:center;font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;line-height:34px}
+#ventaHost .vd-it .qc:not(:has(button)){border-color:transparent;background:transparent}
+#ventaHost .vd-it .vd-sub{text-align:right;justify-self:end}
+#ventaHost .vd-it .vd-x{justify-self:center}
+@media (max-width:700px){ #ventaHost .vd-it{grid-template-columns:40px minmax(0,1fr) 104px!important;grid-template-areas:"f i i" "f q s"!important;row-gap:6px!important} }
 </style>
 <script id="mv-ventas-js">
 /* ===== mvVX · VENTAS rediseñada (16-nov-2026) =====
@@ -6639,13 +6660,17 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   const fechaDe = x => etapa(x) === "armando" ? x.creado : fechaCierre(x);
   const fechaLarga = iso => { const d = new Date(iso), t = diaCorto(iso); return (t !== "Hoy" && t !== "Ayer" && d.getFullYear() !== new Date().getFullYear()) ? t + " " + d.getFullYear() : t; };
   /* número de venta dentro de su día (mismo orden que el ticket) */
+  let numCache = null;
   function numero(x) {
-    const st = S(); const m = new Map();
-    for (const src of [st.mvxCerr, st.ventaAbiertas, st.ventaCarts]) for (const y of (src || new Map()).values()) if (y.liveId === x.liveId) m.set(y.id, y);
-    m.set(x.id, x);
-    const l = [...m.values()].sort((a, b) => String(a.creado).localeCompare(String(b.creado)));
-    return l.findIndex(y => y.id === x.id) + 1;
+    if (numCache && numCache.has(x.id)) return numCache.get(x.id);
+    const st = S(); const por = new Map();
+    for (const src of [st.mvxCerr, st.ventaAbiertas, st.ventaCarts]) for (const y of (src || new Map()).values()) { if (!por.has(y.liveId)) por.set(y.liveId, new Map()); por.get(y.liveId).set(y.id, y); }
+    if (!por.has(x.liveId)) por.set(x.liveId, new Map()); por.get(x.liveId).set(x.id, x);
+    numCache = new Map();
+    for (const m of por.values()) [...m.values()].sort((a, b) => String(a.creado).localeCompare(String(b.creado))).forEach((y, k) => numCache.set(y.id, k + 1));
+    return numCache.get(x.id) || 0;
   }
+
 
   function todasLasVentas(o) {
     const st = S();
@@ -6658,6 +6683,39 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   }
 
   const kpi = (v, t, cls) => h("div", { class: "mvx-kpi" + (cls ? " " + cls : "") }, h("b", null, v), h("span", null, t));
+
+  /* ---------- ver el ticket (PDF) de cualquier venta, cerrada o no: se guarda en Marvea/tickets y se abre ---------- */
+  function verTicket(x) { const l = S().lives.find(v => v.id === x.liveId); downloadTicket(x, { nombre: typeof lugarDe === "function" ? lugarDe(x) : (l ? l.nombre : "Venta") }); }
+  function botonTicket(x, grande) {
+    const sin = !x.items.length;
+    return h("button", { type: "button", class: grande ? "btn vx-b2 vx-tkb-g" : "vx-tkb", ...(sin ? { disabled: true, title: "Aún no tiene piezas" } : { title: "Ver el ticket en PDF" }),
+      onclick: ev => { ev.stopPropagation(); if (!sin) verTicket(x); } }, grande ? "📄 Ver ticket (PDF)" : "📄 Ver");
+  }
+
+  /* ---------- envío en una venta ya cerrada (sin reabrirla) ---------- */
+  function envioCerrada(c) {
+    if (!c || c.estado !== "final") return null;
+    const st = S();
+    const sel = h("select", { "aria-label": "Envío", class: "vx-envsel" }, h("option", { value: "" }, "Sin envío"), ...(st.ship || []).map(o => h("option", { value: o.id }, o.nombre + " — " + dinero(o.precio))));
+    if (c.envio && !(st.ship || []).some(o => o.id === c.envio.id)) sel.append(h("option", { value: c.envio.id }, c.envio.nombre + " — " + dinero(c.envio.precio)));
+    sel.value = c.envio ? c.envio.id : "";
+    sel.addEventListener("change", async () => {
+      const id = sel.value; const opt = (st.ship || []).find(o => o.id === id) || (c.envio && c.envio.id === id ? c.envio : null);
+      const nuevo = opt ? { id: opt.id, nombre: opt.nombre, precio: Number(opt.precio) || 0 } : null;
+      const antes = cartGrand(c), despues = cartGrand(Object.assign({}, c, { envio: nuevo }));
+      sel.value = c.envio ? c.envio.id : "";
+      const falta = Math.round((despues - cartPagado(c)) * 100) / 100;
+      const r = await dialogo(nuevo ? "¿Agregar " + nuevo.nombre + "?" : "¿Quitar el envío?",
+        nombreDe(c) + " · la venta sigue cerrada. El total pasa de " + dinero(antes) + " a " + dinero(despues) + "." + (falta > 0.005 ? " Quedará por cobrar " + dinero(falta) + "." : ""),
+        [["si", nuevo ? "Sí, agregar envío" : "Sí, quitar envío", "primary"], [null, "Cancelar", "vx-b2"]]);
+      if (r !== "si") return;
+      const prev = c.envio; c.envio = nuevo;
+      try { await saveCart(c); toast(nuevo ? "Envío agregado · total " + dinero(cartGrand(c)) : "Envío quitado · total " + dinero(cartGrand(c))); }
+      catch (e) { c.envio = prev; toast("No se pudo guardar el envío", true); }
+      renderVenta();
+    });
+    return h("div", { class: "vx-envc" }, h("label", null, h("span", null, "Envío"), sel), h("small", null, "Puedes agregarlo o cambiarlo sin reabrir la venta."));
+  }
 
   /* ---------- PANTALLA 1: lista de ventas (tabla) ---------- */
   function pantallaLista(o, nuevaBtn) {
@@ -6699,7 +6757,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
         liveDia ? h("span", { class: "vx-rep" }, "Reporte del día: ",
           h("a", { href: "#", onclick: ev => { ev.preventDefault(); liveExcel(liveDia, mapaDelDia(liveDia.id)); } }, "Excel"), " · ",
           h("a", { href: "#", onclick: ev => { ev.preventDefault(); livePdf(liveDia, mapaDelDia(liveDia.id)); } }, "PDF")) : null);
-      const cab = h("div", { class: "vx-tr vx-th" }, ...["Clienta", "Fecha", "Piezas", "Total", "Pagado", "Falta", "Estado", "Estatus"].map(t => h("span", null, t)));
+      const cab = h("div", { class: "vx-tr vx-th" }, ...["Clienta", "Fecha", "Piezas", "Total", "Pagado", "Falta", "Estado", "Estatus", "Ticket"].map(t => h("span", null, t)));
       const filas = lista.map(x => {
         const e = etapa(x), saldo = cartSaldo(x), pagado = cartPagado(x);
         const k = x.clienteId || sinAcentos(nombreDe(x)), varios = e === "armando" && (abiertosPor.get(k) || 0) > 1;
@@ -6715,7 +6773,8 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
           h("span", { class: "vx-num" + (pagado > 0.005 ? " ok" : " cero"), "data-l": "Pagado" }, pagado > 0.005 ? dinero(pagado) : "—"),
           h("span", { class: "vx-num" + (saldo > 0.005 && e !== "cancel" ? " debe" : " cero"), "data-l": "Falta" }, saldo > 0.005 && e !== "cancel" ? dinero(saldo) : "—"),
           h("span", { class: "vx-est" }, pill(x)),
-          (() => { const z = estatus(x); return h("span", { class: "vx-sts" }, h("span", { class: "vx-st2 " + z.k }, z.t), z.s ? h("small", null, z.s) : null); })());
+          (() => { const z = estatus(x); return h("span", { class: "vx-sts" }, h("span", { class: "vx-st2 " + z.k }, z.t), z.s ? h("small", null, z.s) : null); })(),
+          h("span", { class: "vx-tk" }, botonTicket(x)));
       });
       const vacio = q() ? "Ninguna venta coincide con «" + (st.mvxQ || "") + "»" + (st.mvxTab !== "todos" || st.mvxRango !== "todo" ? " en esta pestaña y fechas. Prueba en «Todas» y «Todas las fechas»." : ".") : "No hay ventas aquí.";
       poner(tablaHost, cab, ...(filas.length ? filas : [h("div", { class: "vx-vacio" }, vacio)]));
@@ -6763,7 +6822,13 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     } else {
       cabeza = h("div", { class: "vx-vhead" }, h("div", { class: "vx-vtit" }, h("div", { class: "vx-vnom" }, h("h2", null, "Nueva venta")), h("div", { class: "vx-vmeta" }, "Escribe el nombre de la clienta y escanea sus piezas.")));
     }
-    if (c && o.paso3) ordenarAcciones(o.paso3, c);
+    if (c && o.paso3) {
+      ordenarAcciones(o.paso3, c);
+      const env = envioCerrada(c); if (env) { const tb = o.paso3.querySelector(".vd-total"); if (tb) tb.parentNode.insertBefore(env, tb); else o.paso3.append(env); }
+      const acc = o.paso3.querySelector(".vx-acc");
+      const yaTk = acc && [...acc.querySelectorAll("button")].some(b => /ticket/i.test(b.textContent));
+      if (!yaTk && c.items.length) { const tk = botonTicket(c, true); if (acc) { let sec = acc.querySelector(".vx-acc-sec"); if (!sec) { sec = h("div", { class: "vx-acc-sec" }); const pel = acc.querySelector(".vx-acc-pel"); acc.insertBefore(sec, pel || null); } sec.prepend(tk); } else o.paso3.append(h("div", { class: "vx-acc" }, h("div", { class: "vx-acc-sec" }, tk))); }
+    }
     const cuerpo = (c && o.paso3)
       ? h("div", { class: "vx-vgrid" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2), h("div", { class: "vx-vder" }, o.paso3))
       : h("div", { class: "vx-vgrid sola" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2));
@@ -6779,7 +6844,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     const peligro = b => /^Eliminar$|^Cancelar venta$/.test(txt(b));
     const keep = btns.filter(b => !fuera(b));
     const prim = keep.filter(primario), dang = keep.filter(peligro), sec = keep.filter(b => !primario(b) && !peligro(b));
-    for (const b of sec) { const t = txt(b); if (/^Descargar ticket/.test(t)) b.textContent = "⬇ Descargar ticket (PDF)"; else if (/Reabrir venta/.test(t)) b.textContent = "↺ Reabrir para editar"; else if (t === "Dejar abierta") b.textContent = "Guardar y salir (sigue abierta)"; }
+    for (const b of sec) { const t = txt(b); if (/^Descargar ticket/.test(t)) b.textContent = "📄 Ver ticket (PDF)"; else if (/Reabrir venta/.test(t)) b.textContent = "↺ Reabrir para editar"; else if (t === "Dejar abierta") b.textContent = "Guardar y salir (sigue abierta)"; }
     for (const b of dang) { if (txt(b) === "Eliminar") b.textContent = "Eliminar venta"; }
     const caja = h("div", { class: "vx-acc" },
       prim.length ? h("div", { class: "vx-acc-prim" }, ...prim) : null,
@@ -6827,7 +6892,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 
   /* Entrada desde renderVenta. o = {main, cab, paso1, paso2, paso3, c, abiertas, abrir, R} */
   window.mvVentaPantalla = function (o) {
-    const st = S(); asegurarCerradas();
+    const st = S(); asegurarCerradas(); numCache = null;
     const teniaFoco = document.activeElement && document.activeElement.id === "mvxBuscar";
     const orig = o.cab && o.cab.querySelector(".vd-nueva");
     const nueva = h("button", { type: "button", class: "btn primary vx-nueva", onclick: () => { st.mvxVer = "nueva"; if (orig) orig.click(); else { st.ventaCartId = null; renderVenta(); } } }, "+ Nueva venta");
@@ -6855,6 +6920,24 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     finally { st.busy = false; }
     try { renderAll(); } catch (e) {} renderVenta();
   };
+
+  /* ===== Velocidad: varias peticiones de redibujar en el mismo momento se juntan en una (la primera es inmediata) ===== */
+  function juntar(nombre) {
+    const f = window[nombre]; if (typeof f !== "function" || f.__mvxJ) return;
+    let pend = false, arg = false, enCurso = false, ultimo = 0;
+    const w = function (a) {
+      const ahora = performance.now();
+      if (!enCurso && !pend && ahora - ultimo > 40) { enCurso = true; try { return f.apply(this, arguments); } finally { enCurso = false; ultimo = performance.now(); } }
+      arg = arg || a; if (pend) return; pend = true;
+      const correr = () => { if (!pend) return; pend = false; const x = arg; arg = false; enCurso = true; try { f.call(window, x); } finally { enCurso = false; ultimo = performance.now(); } };
+      requestAnimationFrame(correr); setTimeout(correr, 120); // por si la ventana está oculta
+    };
+    w.__mvxJ = true; w.__orig = f;
+    try { window[nombre] = w; } catch (e) {}
+    return w;
+  }
+  { const w = juntar("renderVenta"); if (w) renderVenta = w; } // eslint-disable-line no-func-assign
+  { const w = juntar("renderLogistica"); if (w && typeof renderLogistica === "function") renderLogistica = w; } // eslint-disable-line no-func-assign
 
   /* ===== Clientas › ficha: sus ventas, cada una con «Abrir» ===== */
   async function carritosDe(id) {
