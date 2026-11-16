@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T21:27:08.100Z",
+ "actualizado": "2026-11-16T21:47:49.598Z",
  "categorias": [
   {
    "p": "ANI",
@@ -63,7 +63,7 @@
    "categoria": "ANI",
    "material": "Chapa de oro",
    "precio": 40,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
    "creado": "2026-10-27T00:43:11.368Z",
@@ -87,7 +87,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/1eab262050ee871c532cab1735fc580e.jpg",
    "creado": "2026-10-27T00:50:27.444Z",
@@ -99,7 +99,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/217c111b5684d27d294608257c003243.jpg",
    "creado": "2026-10-27T00:51:49.839Z",
@@ -130,18 +130,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00023",
-   "nombre": "Anillo Ajustable Solitario Brillante Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/820477d64c799213e99cf70d2cb985f5.jpg",
-   "creado": "2026-10-27T00:57:41.433Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00024",
    "nombre": "Anillo Ajustable Baguettes Dorado",
    "categoria": "ANI",
@@ -163,18 +151,6 @@
    "notas": "",
    "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00026",
-   "nombre": "Anillo Ajustable Pera Plata",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6afb0a443ef412cb3a11ae2b64c4bb31.jpg",
-   "creado": "2026-10-27T01:01:34.661Z",
    "disponible": true
   },
   {
@@ -219,7 +195,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
    "creado": "2026-10-19T01:56:07.969Z",
@@ -231,7 +207,7 @@
    "categoria": "ARE",
    "material": "Chapa de Oro",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/08d6b9c371127b6cb8f688eb4e91e996.jpg",
    "creado": "2026-10-19T02:08:54.968Z",
@@ -423,7 +399,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6ade6fee90079227dd32884db1bdff79.jpg",
    "creado": "2026-10-20T23:18:36.806Z",
@@ -627,7 +603,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/410c933c1b9b6772d10cc0ae09059afd.jpg",
    "creado": "2026-11-01T21:30:47.072Z",
@@ -1138,18 +1114,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00006",
-   "nombre": "Cadena punto y coma 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7ff148ea836321ca517746f22b29090f.jpg",
-   "creado": "2026-11-07T20:08:11.497Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00007",
    "nombre": "Cadena cola de raton 45cm",
    "categoria": "CAD",
@@ -1159,18 +1123,6 @@
    "notas": "",
    "foto": "fotos/157afdbd6adca1e337f5e9a6f0f5bfda.jpg",
    "creado": "2026-11-07T20:10:51.567Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00008",
-   "nombre": "Cadena de corazón 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/01a297677cf10c88c82740fc8ec795fc.jpg",
-   "creado": "2026-11-07T20:11:37.497Z",
    "disponible": true
   },
   {
@@ -1203,7 +1155,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/cdc2488d8b86c0d6abb1d9a30d7c87d3.jpg",
    "creado": "2026-11-07T20:22:38.246Z",
@@ -1371,7 +1323,7 @@
    "categoria": "COL",
    "material": "Chapa de Oro",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/ff8325a9d93f7d8a140c5b61b0b56968.jpg",
    "creado": "2026-10-19T01:00:48.001Z",
@@ -1399,18 +1351,6 @@
    "notas": "",
    "foto": "fotos/c0bc6f02eb03fd277535aa05afa91a4c.jpg",
    "creado": "2026-10-19T01:14:56.657Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00008",
-   "nombre": "Collar de Luna",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/0b209269940a6425897ba5b968d49f6b.jpg",
-   "creado": "2026-10-19T01:18:46.039Z",
    "disponible": true
   },
   {
@@ -1743,7 +1683,7 @@
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3f99ce687132c0523bf37766d5707992.jpg",
    "creado": "2026-11-01T21:57:26.087Z",
