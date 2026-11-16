@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T23:39:52.684Z",
+ "actualizado": "2026-11-16T23:54:52.892Z",
  "categorias": [
   {
    "p": "ANI",
@@ -58,18 +58,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00011",
-   "nombre": "Anillo Ajustable Corte Pera Plata",
-   "categoria": "ANI",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4b0f02a7bb44356cae88188719c905c1.jpg",
-   "creado": "2026-10-27T00:43:11.368Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00012",
    "nombre": "Anillo Ajustable Corte Pera Dorado",
    "categoria": "ANI",
@@ -94,30 +82,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00018",
-   "nombre": "Anillo Ajustable Corte Marquesa flor",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/217c111b5684d27d294608257c003243.jpg",
-   "creado": "2026-10-27T00:51:49.839Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00024",
-   "nombre": "Anillo Ajustable Baguettes Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eb93848b4f40fbc55faea2bf728dfd3a.jpg",
-   "creado": "2026-10-27T00:58:35.688Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00025",
    "nombre": "Anillo Ajustable Esmeralda Plata",
    "categoria": "ANI",
@@ -127,18 +91,6 @@
    "notas": "",
    "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00027",
-   "nombre": "Anillo Ajustable Pera Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/08010c30d8a2c9f3a0f1da1f5b8ab283.jpg",
-   "creado": "2026-10-27T01:02:28.963Z",
    "disponible": true
   },
   {
@@ -502,18 +454,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00060",
-   "nombre": "Huggie Eslabón",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/410c933c1b9b6772d10cc0ae09059afd.jpg",
-   "creado": "2026-11-01T21:30:47.072Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00061",
    "nombre": "Arracada Diamante de Figuras",
    "categoria": "ARE",
@@ -523,18 +463,6 @@
    "notas": "",
    "foto": "fotos/33b88b2c34b8b743a847da5acc2a5b7e.jpg",
    "creado": "2026-11-01T21:36:28.348Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00062",
-   "nombre": "Aretes Flor de Colores",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/aa5a183e06ad7ef94b45eb575b2d1ab1.jpg",
-   "creado": "2026-11-01T21:39:40.125Z",
    "disponible": true
   },
   {
@@ -747,7 +675,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/bc366e415e49d8be1e90d691c48f22b9.jpg",
    "creado": "2026-11-07T21:16:01.080Z",
@@ -1162,18 +1090,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00004",
-   "nombre": "Collar de Hongo",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ff8325a9d93f7d8a140c5b61b0b56968.jpg",
-   "creado": "2026-10-19T01:00:48.001Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00005",
    "nombre": "Collar Yakli Azul",
    "categoria": "COL",
@@ -1231,18 +1147,6 @@
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00026",
-   "nombre": "Cadena Panza de Vibora",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e32e9ea73b07542aff3741ce9dd637e6.jpg",
-   "creado": "2026-10-19T02:29:34.252Z",
    "disponible": true
   },
   {
@@ -1378,18 +1282,6 @@
    "disponible": true
   },
   {
-   "codigo": "DIJ-00005",
-   "nombre": "Dije de Cruz con circonia",
-   "categoria": "DIJ",
-   "material": "Chapa de oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e6ba5d92d9a683ce532574e893d8c98d.jpg",
-   "creado": "2026-10-20T15:54:35.837Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00001",
    "nombre": "Juego Xuping Flor Naranja",
    "categoria": "JUE",
@@ -1431,7 +1323,7 @@
    "categoria": "JUE",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2816ce06ccfb90d85eaa143061ce501c.jpg",
    "creado": "2026-10-20T23:45:49.520Z",
@@ -1695,7 +1587,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/694bd31652db4561770b30a91b227f6e.jpg",
    "creado": "2026-11-01T21:03:09.591Z",
