@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T21:01:48.570Z",
+ "actualizado": "2026-11-16T21:27:08.100Z",
  "categorias": [
   {
    "p": "ANI",
@@ -310,18 +310,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00025",
-   "nombre": "Aretes Xuping  Bisel Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2d1fcdd35deb42a3c9d3b4639301ac8d.jpg",
-   "creado": "2026-10-20T23:07:57.724Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00026",
    "nombre": "Aretes Xuping  Corazón Negro",
    "categoria": "ARE",
@@ -490,18 +478,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00041",
-   "nombre": "Aretes Xuping  Marrón",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a267cea574d036fdf2cb20169de8763b.jpg",
-   "creado": "2026-10-20T23:26:21.628Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00042",
    "nombre": "Aretes Xuping  Espiga Ambar",
    "categoria": "ARE",
@@ -627,7 +603,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
    "creado": "2026-10-20T23:37:14.343Z",
@@ -2131,18 +2107,6 @@
    "notas": "",
    "foto": "fotos/3d8629c01d507f9b362d2ccc645510d7.jpg",
    "creado": "2026-11-01T21:15:44.503Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00038",
-   "nombre": "Pulsera Ajustable Celeste",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d20d59a30b1f16d83ca1e558ac35cf01.jpg",
-   "creado": "2026-11-01T21:17:39.133Z",
    "disponible": true
   },
   {
