@@ -6375,135 +6375,136 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 /* ===== fin mvFG ===== */
 </script>
 <style id="mv-ventas-css">
-/* ===== mvVX · VENTAS rediseñada (16-nov-2026) ===== */
-#ventaHost{--vx-fg:#1D1D1F;--vx-mut:#86868B;--vx-line:rgba(0,0,0,.08);--vx-soft:#F5F5F7;
-  --vx-ok:#1E7B45;--vx-ok-bg:#E7F6EC;--vx-debe:#C9302C;--vx-debe-bg:#FDECEC;--vx-par:#9A5B00;--vx-par-bg:#FFF2DB;
-  --vx-arm:#1F5FD1;--vx-arm-bg:#E9F0FD}
-.mvx-top{display:flex;align-items:center;gap:16px;margin:4px 0 16px;flex-wrap:wrap}
-.mvx-ttl{display:flex;flex-direction:column;gap:2px;margin-right:auto}
-.mvx-ttl h2{margin:0;font-size:28px;letter-spacing:-.02em;color:var(--vx-fg)}
-.mvx-ttl span{font-size:13px;color:var(--vx-mut)}
-.mvx-buscar{flex:0 1 380px;min-width:220px;box-sizing:border-box;border:1px solid var(--vx-line);background:#fff;border-radius:12px;padding:11px 14px;font:inherit;font-size:14.5px;color:var(--vx-fg);outline:none}
-.mvx-buscar:focus{border-color:#1D1D1F;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
-.mvx-top .vd-nueva{white-space:nowrap}
-.mvx{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;align-items:start}
-/* ---- lista ---- */
-.mvx-col{position:sticky;top:86px;max-height:calc(100vh - 104px);display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--vx-line);border-radius:20px;padding:12px;box-sizing:border-box;min-width:0}
-.mvx-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--vx-soft);border-radius:14px;padding:4px}
-.mvx-tab{all:unset;box-sizing:border-box;cursor:pointer;border-radius:11px;padding:7px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;color:#6E6E73}
-.mvx-tab span{font-size:11.5px;font-weight:600;white-space:nowrap}
-.mvx-tab b{font-size:18px;line-height:1.15;font-variant-numeric:tabular-nums;color:#3A3A3C}
-.mvx-tab:hover{background:rgba(255,255,255,.6)}
-.mvx-tab.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);color:var(--vx-fg)}
-.mvx-tab.on.armando b{color:var(--vx-arm)} .mvx-tab.on.cobrar b{color:var(--vx-debe)} .mvx-tab.on.pagada b{color:var(--vx-ok)} .mvx-tab.on.cancel b{color:var(--vx-mut)}
-.mvx-tab:focus-visible{outline:2px solid #1D1D1F}
-.mvx-lbody{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1;overflow:auto;margin:0 -6px;padding:0 6px 2px}
-.mvx-rango{display:flex;flex-wrap:wrap;gap:5px}
-.mvx-chip{border:1px solid var(--vx-line);background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:12.5px;color:#3A3A3C;cursor:pointer}
-.mvx-chip.on{background:#1D1D1F;border-color:#1D1D1F;color:#fff}
-.mvx-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px}
-.mvx-kpis.dos{grid-template-columns:1fr 1fr} .mvx-kpis.tres{grid-template-columns:1.3fr 1fr 1fr}
-.mvx-kpi{background:var(--vx-soft);border-radius:11px;padding:7px 9px;display:flex;flex-direction:column;min-width:0}
-.mvx-kpi b{font-size:15px;font-variant-numeric:tabular-nums;color:var(--vx-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mvx-kpi span{font-size:11px;color:var(--vx-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mvx-kpi.debe b{color:var(--vx-debe)}
-.mvx-list{display:flex;flex-direction:column;gap:6px}
-.mvx-row{display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;border-radius:14px;background:#fff;border:1px solid var(--vx-line);transition:border-color .12s,box-shadow .12s}
-.mvx-row:hover{border-color:rgba(0,0,0,.2)}
-.mvx-row.on{border-color:#1D1D1F;box-shadow:0 0 0 1px #1D1D1F inset;background:#FAFAFB}
-.mvx-main{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:10px 2px 10px 10px;min-width:0}
-.mvx-main:focus-visible{outline:2px solid #1D1D1F;border-radius:12px}
-.mvx-av{width:34px;height:34px;border-radius:50%;background:#EFE7EC;color:#5E3550;font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex:none}
-.mvx-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
-.mvx-l1{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
-.mvx-name{flex:1;min-width:0;font-weight:650;font-size:14.5px;color:var(--vx-fg);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mvx-amt{flex:none;font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums;color:var(--vx-fg)}
-.mvx-meta{font-size:12px;color:var(--vx-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mvx-tags{display:flex;flex-wrap:wrap;align-items:center;gap:4px 5px}
-.mvx-st,.mvx-etapa{font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:999px;line-height:16px;white-space:nowrap}
-.mvx-st.ok{background:var(--vx-ok-bg);color:var(--vx-ok)}
-.mvx-st.debe{background:var(--vx-debe-bg);color:var(--vx-debe)}
-.mvx-st.parcial{background:var(--vx-par-bg);color:var(--vx-par)}
-.mvx-st.nada{background:#F1F1F3;color:#6E6E73}
-.mvx-st.cancel{background:#F1F1F3;color:#8E8E93;text-decoration:line-through}
-.mvx-etapa{background:#fff;border:1px solid currentColor}
-.mvx-etapa.armando{color:var(--vx-arm)} .mvx-etapa.cobrar{color:var(--vx-debe)} .mvx-etapa.pagada{color:var(--vx-ok)} .mvx-etapa.cancel{color:var(--vx-mut)}
-.mvx-tag{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:6px;background:#F1F1F3;color:#48484A;line-height:15px}
-.mvx-tag.t4x3{background:#FDE7E3;color:#C0392B} .mvx-tag.tres{background:#EEE7FB;color:#5B3BB0} .mvx-tag.tweb{background:var(--vx-arm-bg);color:var(--vx-arm)}
-.mvx-more{all:unset;cursor:pointer;width:26px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8E8E93;font-size:18px;font-weight:700;line-height:1}
-.mvx-more:hover{background:rgba(0,0,0,.06);color:var(--vx-fg)}
-.mvx-more.grande{width:36px;height:36px;border:1px solid var(--vx-line);border-radius:10px;align-self:flex-start}
-.mvx-grupo{border-radius:15px;background:var(--vx-soft);border:1px solid var(--vx-line);padding:4px;display:flex;flex-direction:column;gap:4px}
-.mvx-grupo.on{border-color:rgba(0,0,0,.35)}
-.mvx-ghead{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 32px 6px 8px}
-.mvx-row.hijo .mvx-main{grid-template-columns:minmax(0,1fr);padding-left:12px}
-.mvx-row.hijo .mvx-name{font-size:13.5px}
-.mvx-vacio{color:var(--vx-mut);font-size:13px;padding:26px 8px;text-align:center}
-.mvx-nota{margin:2px 2px 0;font-size:11.5px;color:#A1A1A6;line-height:1.35}
-.mvx-buscando{font-size:12.5px;color:var(--vx-mut);padding:0 2px}
-.mvx-desc{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--vx-mut)}
-/* ---- la venta ---- */
-.mvx-det{background:#fff;border:1px solid var(--vx-line);border-radius:20px;padding:18px;min-width:0;box-sizing:border-box}
-.mvx-dhead{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:16px;align-items:start;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--vx-line)}
-.mvx-dhead.simple{grid-template-columns:1fr}
-.mvx-dtit{display:flex;flex-direction:column;gap:6px;min-width:0}
-.mvx-dname{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--vx-fg);line-height:1.15;overflow-wrap:anywhere}
-.mvx-dsub{font-size:13px;color:var(--vx-mut)}
-.mvx-dtit .mvx-st,.mvx-dtit .mvx-etapa{font-size:12.5px;padding:3px 10px}
-.mvx-dtot{display:flex;flex-direction:column;align-items:flex-end;gap:2px;white-space:nowrap}
-.mvx-dtot>span:first-child{font-size:12px;color:var(--vx-mut);text-transform:uppercase;letter-spacing:.06em}
-.mvx-dtot b{font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--vx-fg)}
-.mvx-falta{font-size:14px;font-weight:700;color:var(--vx-debe)}
-.mvx-pagado{font-size:14px;font-weight:700;color:var(--vx-ok)}
-.mvx-dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
-.mvx-dgrid.sola{grid-template-columns:minmax(0,1fr)}
-.mvx-dizq,.mvx-dder{display:flex;flex-direction:column;gap:14px;min-width:0}
-.mvx-dder{border-radius:16px}
-/* los pasos dentro de la venta: planos y compactos */
-.mvx .vd-paso{margin:0!important;padding:14px!important;border-radius:16px!important;border:1px solid var(--vx-line)!important;box-shadow:none!important;background:#fff!important}
-.mvx .vd-pasohead{margin-bottom:10px!important}
-.mvx .vd-pasohead h4{font-size:15px!important}
-.mvx .vd-num{width:22px!important;height:22px!important;font-size:12px!important}
-.mvx-dder .vd-paso{background:#FAFAFB!important}
-.mvx .vd-items{gap:6px!important}
-.mvx .vd-it{padding:7px 10px!important;min-height:0!important;border-radius:12px!important}
-.mvx .vd-it .th{width:40px!important;height:40px!important}
-.mvx .vd-it .tn{font-size:13.5px!important}
-.mvx .vd-it .ts,.mvx .vd-it .it-mat{font-size:11.5px!important}
+/* ===== mvVX · VENTAS (16-nov-2026, v2): lista en tabla + venta en pantalla propia ===== */
+#ventaHost{--vx-fg:#1D1D1F;--vx-mut:#6E6E73;--vx-mut2:#8E8E93;--vx-line:#E5E5EA;--vx-soft:#F5F5F7;
+  --vx-ok:#1E7B45;--vx-ok-bg:#E3F5E9;--vx-debe:#C42B2B;--vx-debe-bg:#FDECEC;--vx-arm:#1F5FD1;--vx-arm-bg:#E8EFFD;--vx-can-bg:#EFEFF2}
+.vx{display:flex;flex-direction:column;gap:14px}
+.vx-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.vx-ttl h2{margin:0;font-size:30px;letter-spacing:-.025em;color:var(--vx-fg);line-height:1.1}
+.vx-ttl span{display:block;margin-top:4px;font-size:14px;color:var(--vx-mut)}
+.vx-nueva{font-size:15px!important;padding:12px 22px!important}
+.vx-card{background:#fff;border:1px solid var(--vx-line);border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);overflow:hidden}
+/* pestañas de texto */
+.vx-tabs{display:flex;gap:4px;padding:0 18px;border-bottom:1px solid var(--vx-line);overflow-x:auto}
+.vx-tab{all:unset;cursor:pointer;display:flex;align-items:center;gap:7px;padding:16px 12px 14px;font-size:15px;font-weight:600;color:var(--vx-mut);border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.vx-tab:hover{color:var(--vx-fg)}
+.vx-tab.on{color:var(--vx-fg);border-bottom-color:var(--vx-fg)}
+.vx-tab:focus-visible{outline:2px solid var(--vx-fg);border-radius:6px}
+.vx-n{font-size:12.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--vx-soft);color:var(--vx-mut);font-variant-numeric:tabular-nums}
+.vx-tab.on .vx-n{background:var(--vx-fg);color:#fff}
+.vx-tab.alerta .vx-n{background:var(--vx-debe-bg);color:var(--vx-debe)}
+.vx-tab.alerta.on .vx-n{background:var(--vx-debe);color:#fff}
+/* filtros y resumen */
+.vx-filtros{display:flex;gap:10px;padding:14px 18px 6px;flex-wrap:wrap}
+.vx-buscar{flex:1 1 320px;min-width:200px;box-sizing:border-box;border:1px solid var(--vx-line);background:var(--vx-soft);border-radius:11px;padding:11px 14px;font:inherit;font-size:15px;color:var(--vx-fg);outline:none}
+.vx-buscar:focus{background:#fff;border-color:var(--vx-fg)}
+.vx-select{flex:0 0 auto;border:1px solid var(--vx-line);background:#fff;border-radius:11px;padding:10px 12px;font:inherit;font-size:14.5px;color:var(--vx-fg)}
+.vx-resumen{display:flex;flex-wrap:wrap;gap:6px 22px;padding:10px 18px 14px;font-size:14px;color:var(--vx-mut)}
+.vx-resumen b{color:var(--vx-fg);font-variant-numeric:tabular-nums}
+.vx-resumen b.ok{color:var(--vx-ok)} .vx-resumen b.debe{color:var(--vx-debe)}
+.vx-rep a{color:var(--vx-fg);font-weight:600}
+/* tabla */
+.vx-tabla{border-top:1px solid var(--vx-line)}
+.vx-tr{display:grid;grid-template-columns:minmax(220px,1fr) 104px 70px 112px 112px 112px 116px;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--vx-line);font-size:14.5px;color:var(--vx-fg)}
+.vx-tr:last-child{border-bottom:0}
+.vx-th{background:var(--vx-soft);font-size:12px;font-weight:700;color:var(--vx-mut);text-transform:uppercase;letter-spacing:.04em;padding-top:10px;padding-bottom:10px}
+.vx-th span:nth-child(n+3){text-align:right} .vx-th span:last-child{text-align:left}
+.vx-tr[role=button]{cursor:pointer;transition:background .1s}
+.vx-tr[role=button]:hover{background:#FAFAFC}
+.vx-tr[role=button]:focus-visible{outline:2px solid var(--vx-fg);outline-offset:-2px}
+.vx-tr.cancel{color:var(--vx-mut2)} .vx-tr.cancel .vx-cli b{text-decoration:line-through}
+.vx-cli{display:flex;flex-direction:column;gap:3px;min-width:0}
+.vx-cli b{font-size:15px;font-weight:650;line-height:1.25;overflow-wrap:anywhere}
+.vx-cli small{font-size:12.5px;color:var(--vx-mut)}
+.vx-cli em{font-style:normal;font-weight:700;color:var(--vx-arm)}
+.vx-fecha{display:flex;flex-direction:column;font-size:14px}
+.vx-fecha small{font-size:12.5px;color:var(--vx-mut)}
+.vx-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vx-num.fuerte{font-weight:700}
+.vx-num.ok{color:var(--vx-ok)} .vx-num.debe{color:var(--vx-debe);font-weight:700} .vx-num.cero{color:#C7C7CC}
+.vx-pill{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.vx-pill.arm{background:var(--vx-arm-bg);color:var(--vx-arm)}
+.vx-pill.debe{background:var(--vx-debe-bg);color:var(--vx-debe)}
+.vx-pill.ok{background:var(--vx-ok-bg);color:var(--vx-ok)}
+.vx-pill.can{background:var(--vx-can-bg);color:var(--vx-mut)}
+.vx-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.vx-tag{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--vx-soft);color:#48484A}
+.vx-tag.t4x3{background:#FDE7E3;color:#B4302A} .vx-tag.tres{background:#EEE7FB;color:#5B3BB0} .vx-tag.tweb{background:var(--vx-arm-bg);color:var(--vx-arm)}
+.vx-vacio{padding:40px 18px;text-align:center;color:var(--vx-mut);font-size:14.5px}
+/* ---- pantalla de la venta ---- */
+.vx-atras{all:unset;cursor:pointer;font-size:15px;font-weight:650;color:var(--vx-fg);padding:8px 14px 8px 10px;border-radius:10px;border:1px solid var(--vx-line);background:#fff}
+.vx-atras:hover{border-color:var(--vx-fg)}
+.vx-cargando{padding:40px;text-align:center;color:var(--vx-mut)}
+.vx-vcard{padding:22px 24px 24px;overflow:visible}
+.vx-vhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--vx-line)}
+.vx-vtit{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1 1 360px}
+.vx-vnom{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.vx-vnom h2{margin:0;font-size:28px;letter-spacing:-.025em;line-height:1.15;color:var(--vx-fg);overflow-wrap:anywhere}
+.vx-vnom .vx-pill{font-size:13.5px;padding:5px 13px}
+.vx-vmeta{font-size:14px;color:var(--vx-mut)}
+.vx-vnums{display:flex;gap:10px;flex-wrap:wrap}
+.vx-vnums>div{min-width:118px;border:1px solid var(--vx-line);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.vx-vnums span{font-size:12px;font-weight:700;color:var(--vx-mut);text-transform:uppercase;letter-spacing:.05em}
+.vx-vnums b{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--vx-fg);white-space:nowrap}
+.vx-vnums b.ok{color:var(--vx-ok)}
+.vx-falta.debe{background:var(--vx-debe-bg);border-color:transparent!important} .vx-falta.debe b,.vx-falta.debe span{color:var(--vx-debe)}
+.vx-falta.ok{background:var(--vx-ok-bg);border-color:transparent!important} .vx-falta.ok b,.vx-falta.ok span{color:var(--vx-ok)}
+.vx-vgrid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:22px;align-items:start}
+.vx-vgrid.sola{grid-template-columns:minmax(0,1fr)}
+.vx-vizq,.vx-vder{display:flex;flex-direction:column;gap:18px;min-width:0}
+.vx-vder{position:sticky;top:90px}
+/* las secciones (clienta, piezas, cobro) planas y limpias */
+.vx-venta .vd-paso{margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important}
+.vx-venta .vd-num{display:none!important}
+.vx-venta .vd-pasohead{margin:0 0 10px!important;padding:0!important}
+.vx-venta .vd-pasohead h4{font-size:13px!important;font-weight:700!important;color:var(--vx-mut)!important;text-transform:uppercase;letter-spacing:.05em;margin:0!important}
+.vx-venta .vx-vder>.vd-paso{background:var(--vx-soft)!important;border-radius:16px!important;padding:18px!important}
+.vx-venta .vd-it{border-radius:12px!important;padding:8px 12px!important}
+.vx-venta .vd-sec{display:flex;flex-wrap:wrap;gap:6px 14px!important;align-items:center}
+.vx-venta .vd-sec .btn:not(.primary){background:none!important;border:0!important;box-shadow:none!important;padding:6px 2px!important;font-size:14px!important;text-decoration:underline;text-underline-offset:3px;color:var(--vx-fg)!important}
+.vx-venta .vd-sec .btn.danger,.vx-venta .vd-sec .btn.ghost.danger{color:var(--vx-debe)!important}
+.vx-venta .vd-cerrar{width:100%;font-size:16px!important;padding:15px!important}
+.vx-venta .bf-tk{background:none!important;border:0!important;padding:0!important}
 /* cobro: pendiente / pagado, imposible de confundir */
-.mvx .mvx-seg{width:100%;max-width:440px;display:grid!important;grid-template-columns:1fr 1fr;gap:6px!important;background:none!important;padding:0!important;border:0!important}
-.mvx .mvx-seg button{border:1.5px solid var(--vx-line)!important;background:#fff!important;color:#3A3A3C!important;border-radius:12px!important;padding:11px 8px!important;font-weight:650!important;box-shadow:none!important}
-.mvx .mvx-seg button:first-child.on{border-color:var(--vx-debe)!important;background:var(--vx-debe-bg)!important;color:var(--vx-debe)!important}
-.mvx .mvx-seg button:last-child.on{border-color:var(--vx-ok)!important;background:var(--vx-ok-bg)!important;color:var(--vx-ok)!important}
-.mvx .vd-cerrar{width:100%}
-.mvx-aviso-pend{border-radius:12px;background:var(--vx-debe-bg);color:var(--vx-debe);padding:10px 12px;font-size:13px;line-height:1.35}
-.mvx-aviso-pend b{display:block;font-size:13.5px}
-/* Buen Fin: barra más discreta */
-#ventaHost>.bf-banner{margin-bottom:12px!important;padding:10px 14px!important}
-/* ficha de la clienta */
+.vx-venta .mvx-seg{width:100%;display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important;background:none!important;padding:0!important;border:0!important}
+.vx-venta .mvx-seg button{border:1.5px solid var(--vx-line)!important;background:#fff!important;color:#3A3A3C!important;border-radius:12px!important;padding:12px 8px!important;font-weight:650!important;font-size:14.5px!important;box-shadow:none!important}
+.vx-venta .mvx-seg button:first-child.on{border-color:var(--vx-debe)!important;background:var(--vx-debe-bg)!important;color:var(--vx-debe)!important}
+.vx-venta .mvx-seg button:last-child.on{border-color:var(--vx-ok)!important;background:var(--vx-ok-bg)!important;color:var(--vx-ok)!important}
+.mvx-aviso-pend{border-radius:12px;background:var(--vx-debe-bg,#FDECEC);color:var(--vx-debe,#C42B2B);padding:11px 13px;font-size:13.5px;line-height:1.4}
+.mvx-aviso-pend b{display:block;font-size:14px}
+#ventaHost>.bf-banner{margin-bottom:14px!important;padding:12px 16px!important}
+#ventaHost>.bf-banner small{display:none}
+/* ficha de la clienta (Clientas) */
 .mvx-cli{display:flex;flex-direction:column;gap:6px}
-.mvx-cli .mvx-kpis{margin-bottom:4px}
-.mvx-sub{font-size:12px;font-weight:700;color:var(--vx-mut,#86868B);text-transform:uppercase;letter-spacing:.04em;margin:8px 2px 0}
+.mvx-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;margin-bottom:4px}
+.mvx-kpi{background:#F5F5F7;border-radius:11px;padding:7px 9px;display:flex;flex-direction:column;min-width:0}
+.mvx-kpi b{font-size:15px;font-variant-numeric:tabular-nums;color:#1D1D1F;white-space:nowrap}
+.mvx-kpi span{font-size:11px;color:#86868B}
+.mvx-kpi.debe b{color:#C42B2B}
+.mvx-sub{font-size:12px;font-weight:700;color:#86868B;text-transform:uppercase;letter-spacing:.04em;margin:8px 2px 0}
 .mvx-cc{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,.08)}
 .mvx-cc:hover{border-color:#1D1D1F}
-.mvx-cc:focus-visible{outline:2px solid #1D1D1F}
-.mvx-cli .mvx-kpi{background:#F5F5F7} .mvx-cli .mvx-kpi.debe b{color:#C9302C}
-.mvx-cli .mvx-st.ok{background:#E7F6EC;color:#1E7B45} .mvx-cli .mvx-st.debe{background:#FDECEC;color:#C9302C} .mvx-cli .mvx-st.parcial{background:#FFF2DB;color:#9A5B00}
-.mvx-cli .mvx-etapa.armando{color:#1F5FD1} .mvx-cli .mvx-etapa.cobrar{color:#C9302C} .mvx-cli .mvx-etapa.pagada{color:#1E7B45} .mvx-cli .mvx-etapa.cancel{color:#86868B}
+.mvx-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mvx-l1{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.mvx-name{font-weight:650;font-size:14px;color:#1D1D1F}
+.mvx-amt{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.mvx-meta{font-size:12px;color:#86868B}
+.mvx-tags{display:flex;flex-wrap:wrap;gap:4px}
+.mvx-st,.mvx-etapa{font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:999px}
+.mvx-st.ok{background:#E3F5E9;color:#1E7B45} .mvx-st.debe{background:#FDECEC;color:#C42B2B} .mvx-st.parcial{background:#FFF2DB;color:#9A5B00} .mvx-st.nada,.mvx-st.cancel{background:#F1F1F3;color:#6E6E73}
+.mvx-etapa{background:#fff;border:1px solid currentColor}
+.mvx-etapa.armando{color:#1F5FD1} .mvx-etapa.cobrar{color:#C42B2B} .mvx-etapa.pagada{color:#1E7B45} .mvx-etapa.cancel{color:#86868B}
+.mvx-cli .vx-tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;background:#F5F5F7;color:#48484A}
 .mvx-ir{font-size:12.5px;font-weight:650;color:#1D1D1F;white-space:nowrap}
-@media (min-width:1600px){ .mvx-dgrid:not(.sola){grid-template-columns:minmax(0,1fr) 380px} .mvx-dder{position:sticky;top:86px;max-height:calc(100vh - 104px);overflow:auto} }
-@media (max-width:900px){ .mvx{grid-template-columns:minmax(0,1fr)} .mvx-col{position:static;max-height:none} .mvx-lbody{overflow:visible} .mvx-dhead{grid-template-columns:1fr auto} .mvx-dhead .mvx-more.grande{display:none} }
-@media (max-width:560px){ .mvx-cc{grid-template-columns:minmax(0,1fr)} .mvx-ir{display:none} .mvx-tab span{font-size:10.5px} }
-.mvx-ircobro{all:unset;cursor:pointer;font-size:12.5px;font-weight:650;color:#1D1D1F;border:1px solid var(--vx-line);border-radius:999px;padding:4px 11px;margin-top:4px;background:#fff}
-.mvx-ircobro:hover{border-color:#1D1D1F}
-.mvx-pzs{border:1px solid var(--vx-line);border-radius:16px;background:#fff}
-.mvx-pzs>summary{cursor:pointer;padding:13px 16px;font-weight:650;font-size:14px;color:var(--vx-fg);list-style:none}
-.mvx-pzs>summary::-webkit-details-marker{display:none}
-.mvx-pzs>summary::after{content:"▾";float:right;color:var(--vx-mut)}
-.mvx-pzs[open]>summary::after{content:"▴"}
-.mvx-pzs>.vd-paso{border:0!important;border-top:1px solid var(--vx-line)!important;border-radius:0 0 16px 16px!important}
-.mvx-det.cerrada .vd-add{display:none!important}
-#ventaHost>.bf-banner small{display:none}
+.mvx-vacio{color:#86868B;font-size:13px;padding:16px;text-align:center}
+@media (max-width:1180px){ .vx-vgrid{grid-template-columns:minmax(0,1fr)} .vx-vder{position:static} }
+@media (max-width:1020px){ .vx-tr{grid-template-columns:minmax(180px,1fr) 92px 56px 100px 100px 100px 104px;gap:8px;padding:12px 14px} }
+@media (max-width:820px){
+  .vx-th{display:none}
+  .vx-tr{grid-template-columns:1fr 1fr 1fr;gap:6px 10px}
+  .vx-cli{grid-column:1/-1} .vx-est{grid-column:1/-1}
+  .vx-num,.vx-fecha{text-align:left} .vx-num::before,.vx-fecha::before{content:attr(data-l);display:block;font-size:11px;color:var(--vx-mut);text-transform:uppercase}
+}
 </style>
 <script id="mv-ventas-js">
 /* ===== mvVX · VENTAS rediseñada (16-nov-2026) =====
@@ -6578,107 +6579,110 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     return new Date(fechaCierre(x)).getTime() >= lim.getTime();
   }
 
-  /* ---------- renglones de la lista ---------- */
+  /* ---------- etiquetas pequeñas (promo, resguardo, entrega, página) ---------- */
   function etiquetas(x) {
-    return [x.promo === "4x3" ? h("span", { class: "mvx-tag t4x3" }, "4x3") : null,
-            x.resguardo ? h("span", { class: "mvx-tag tres" }, "Resguardo") : null,
-            x.entregaMty ? h("span", { class: "mvx-tag" }, "Recoge en Mty") : null,
-            x.origen === "web" ? h("span", { class: "mvx-tag tweb" }, "Página") : null].filter(Boolean);
+    return [x.promo === "4x3" ? h("span", { class: "vx-tag t4x3" }, "Buen Fin 4x3") : null,
+            x.resguardo ? h("span", { class: "vx-tag tres" }, "Resguardo") : null,
+            x.entregaMty ? h("span", { class: "vx-tag" }, "Recoge en Monterrey") : (x.envio ? h("span", { class: "vx-tag" }, x.envio.nombre) : null),
+            x.origen === "web" ? h("span", { class: "vx-tag tweb" }, "Pedido de la página") : null].filter(Boolean);
   }
-  function renglon(x, o, opt) {
-    opt = opt || {};
-    const p = pago(x), e = etapa(x), activo = x.id === S().ventaCartId;
-    const f = e === "armando" ? x.creado : fechaCierre(x);
-    const meta = diaCorto(f) + " " + hora(f) + " · " + cartPieces(x) + (cartPieces(x) === 1 ? " pza" : " pzas");
-    return h("div", { class: "mvx-row" + (activo ? " on" : "") + (opt.hijo ? " hijo" : ""), oncontextmenu: ev => menuDe(ev, x, o) },
-      h("button", { type: "button", class: "mvx-main", onclick: () => o.abrir(x) },
-        opt.hijo ? null : h("span", { class: "mvx-av", "aria-hidden": "true" }, iniciales(nombreDe(x))),
-        h("span", { class: "mvx-txt" },
-          h("span", { class: "mvx-l1" }, h("span", { class: "mvx-name" }, opt.titulo || nombreDe(x)), h("span", { class: "mvx-amt" }, dinero(cartGrand(x)))),
-          h("span", { class: "mvx-meta" }, meta),
-          h("span", { class: "mvx-tags" }, h("span", { class: "mvx-st " + p.k }, (opt.conEtapa ? ETQ[e] + " · " : "") + p.t), ...etiquetas(x)))),
-      h("button", { type: "button", class: "mvx-more", title: "Opciones: ticket, cobrar, cancelar, eliminar…", "aria-label": "Opciones", onclick: ev => menuDe(ev, x, o) }, "⋯"));
+  const ESTADO = { armando: ["Armando", "arm"], cobrar: ["Por cobrar", "debe"], pagada: ["Pagado", "ok"], cancel: ["Cancelado", "can"] };
+  const pill = x => { const [t, k] = ESTADO[etapa(x)]; return h("span", { class: "vx-pill " + k }, t); };
+  const TABS = [["todos", "Todas"], ["armando", "Armando"], ["cobrar", "Por cobrar"], ["pagada", "Pagadas"], ["cancel", "Canceladas"]];
+  const FECHAS = [["todo", "Todas las fechas"], ["hoy", "Hoy"], ["ayer", "Ayer"], ["7", "Últimos 7 días"], ["30", "Últimos 30 días"]];
+  const fechaDe = x => etapa(x) === "armando" ? x.creado : fechaCierre(x);
+  const fechaLarga = iso => { const d = new Date(iso), t = diaCorto(iso); return (t !== "Hoy" && t !== "Ayer" && d.getFullYear() !== new Date().getFullYear()) ? t + " " + d.getFullYear() : t; };
+  /* número de venta dentro de su día (mismo orden que el ticket) */
+  function numero(x) {
+    const st = S(); const m = new Map();
+    for (const src of [st.mvxCerr, st.ventaAbiertas, st.ventaCarts]) for (const y of (src || new Map()).values()) if (y.liveId === x.liveId) m.set(y.id, y);
+    m.set(x.id, x);
+    const l = [...m.values()].sort((a, b) => String(a.creado).localeCompare(String(b.creado)));
+    return l.findIndex(y => y.id === x.id) + 1;
   }
-  function menuDe(ev, x, o) { ev.preventDefault(); const xy = { clientX: ev.clientX, clientY: ev.clientY, preventDefault() {} }; if (S().ventaCartId !== x.id) o.abrir(x); setTimeout(() => ventaMenu(xy, x), 0); }
-  function agrupar(lista) {
-    const m = new Map();
-    for (const x of lista) { const k = x.clienteId ? "id:" + x.clienteId : "n:" + sinAcentos(nombreDe(x)); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }
+
+  function todasLasVentas(o) {
+    const st = S();
+    const ab = o.abiertas.filter(x => x.items.length || x.id === st.ventaCartId);
+    const m = new Map(); for (const x of ab.concat(cerradas())) m.set(x.id, x); // sin repetidos
     return [...m.values()];
   }
-  function grupo(carts, o) {
-    if (carts.length === 1) return renglon(carts[0], o);
-    const total = carts.reduce((s, x) => s + cartGrand(x), 0), falta = carts.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0), pagado = carts.reduce((s, x) => s + cartPagado(x), 0);
-    const p = falta <= 0.005 ? { k: "ok", t: "Todo pagado" } : pagado > 0.005 ? { k: "parcial", t: "Falta " + dinero(falta) } : { k: "nada", t: "Sin pago" };
-    return h("div", { class: "mvx-grupo" + (carts.some(x => x.id === S().ventaCartId) ? " on" : "") },
-      h("div", { class: "mvx-ghead" },
-        h("span", { class: "mvx-av", "aria-hidden": "true" }, iniciales(nombreDe(carts[0]))),
-        h("span", { class: "mvx-txt" },
-          h("span", { class: "mvx-l1" }, h("span", { class: "mvx-name" }, nombreDe(carts[0])), h("span", { class: "mvx-amt" }, dinero(total))),
-          h("span", { class: "mvx-meta" }, carts.length + " carritos · " + carts.reduce((s, x) => s + cartPieces(x), 0) + " pzas"),
-          h("span", { class: "mvx-tags" }, h("span", { class: "mvx-st " + p.k }, p.t)))),
-      ...carts.slice().sort((a, b) => String(a.creado).localeCompare(String(b.creado))).map((x, i) => renglon(x, o, { hijo: true, titulo: "Carrito " + (i + 1) })));
-  }
+
   const kpi = (v, t, cls) => h("div", { class: "mvx-kpi" + (cls ? " " + cls : "") }, h("b", null, v), h("span", null, t));
 
-  /* ---------- columna izquierda: lista ---------- */
-  function columnaLista(o) {
+  /* ---------- PANTALLA 1: lista de ventas (tabla) ---------- */
+  function pantallaLista(o, nuevaBtn) {
     const st = S();
-    const abiertas = o.abiertas.filter(x => x.items.length || x.id === st.ventaCartId);
-    const todas = abiertas.concat(cerradas());
-    const por = { armando: [], cobrar: [], pagada: [], cancel: [] };
-    for (const x of todas) por[etapa(x)].push(x);
-    if (!st.mvxTab) st.mvxTab = por.cobrar.length && !por.armando.length ? "cobrar" : "armando";
-    if (!st.mvxRango) st.mvxRango = "hoy";
-    const q = sinAcentos(st.mvxQ || "");
-    const conRango = st.mvxTab === "pagada" || st.mvxTab === "cancel";
-    const cuenta = k => k === "pagada" || k === "cancel" ? por[k].filter(x => enRango(x, st.mvxRango)).length : por[k].filter(x => x.items.length).length;
+    if (!st.mvxTab) st.mvxTab = "todos";
+    if (!st.mvxRango) st.mvxRango = "todo";
+    const todas = todasLasVentas(o);
+    const enTab = (x, k) => k === "todos" || etapa(x) === k;
+    const pasaFecha = x => enRango(x, st.mvxRango);
+    const q = () => sinAcentos(st.mvxQ || "");
+    const pasaQ = x => { const t = q(); return !t || sinAcentos(nombreDe(x)).includes(t) || ("#" + numero(x)) === t || String(numero(x)) === t.replace("#", "") || String(x.referencia || "") === t; };
+    // cuántos carritos abiertos tiene cada clienta (para avisar cuando son varios)
+    const abiertosPor = new Map(); for (const x of todas) if (etapa(x) === "armando" && x.items.length) { const k = x.clienteId || sinAcentos(nombreDe(x)); abiertosPor.set(k, (abiertosPor.get(k) || 0) + 1); }
 
-    const tabs = h("div", { class: "mvx-tabs", role: "tablist" }, ...ETAPAS.map(([k, t]) =>
-      h("button", { type: "button", role: "tab", class: "mvx-tab " + k + (st.mvxTab === k ? " on" : ""), "aria-selected": String(st.mvxTab === k), onclick: () => { st.mvxTab = k; st.mvxQ = ""; renderVenta(); } },
-        h("span", null, t), h("b", null, String(cuenta(k))))));
+    const buscar = h("input", { id: "mvxBuscar", class: "vx-buscar", type: "search", placeholder: "Buscar por clienta, # de venta o referencia", value: st.mvxQ || "", autocomplete: "off", "aria-label": "Buscar venta" });
+    const fecha = h("select", { class: "vx-select", "aria-label": "Fechas" }, ...FECHAS.map(([v, t]) => h("option", { value: v }, t)));
+    fecha.value = st.mvxRango; fecha.addEventListener("change", () => { st.mvxRango = fecha.value; renderVenta(); });
 
-    const cuerpo = h("div", { class: "mvx-lbody" });
-    let lista, resumen = null, extra = null;
+    const tabs = h("div", { class: "vx-tabs", role: "tablist" }, ...TABS.map(([k, t]) => {
+      const n = todas.filter(x => enTab(x, k) && pasaFecha(x)).length;
+      return h("button", { type: "button", role: "tab", class: "vx-tab" + (st.mvxTab === k ? " on" : "") + (k === "cobrar" && n ? " alerta" : ""), "aria-selected": String(st.mvxTab === k), onclick: () => { st.mvxTab = k; renderVenta(); } }, t, h("span", { class: "vx-n" }, String(n)));
+    }));
+
+    const resumen = h("div", { class: "vx-resumen" });
+    const tablaHost = h("div", { class: "vx-tabla" });
     const pintar = () => {
-      const q2 = sinAcentos(st.mvxQ || "");
-      if (q2) { // búsqueda: en TODAS las etapas
-        const r = todas.filter(x => sinAcentos(nombreDe(x)).includes(q2) || ("#" + cartNumber(x)) === q2 || String(x.referencia || "") === q2)
-          .sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
-        return poner(cuerpo, h("div", { class: "mvx-buscando" }, r.length + (r.length === 1 ? " venta" : " ventas") + " de «" + (st.mvxQ || "") + "» en todas las etapas"),
-          h("div", { class: "mvx-list" }, ...(r.length ? r.slice(0, 80).map(x => renglon(x, o, { conEtapa: true })) : [h("div", { class: "mvx-vacio" }, "Nada coincide.")])));
-      }
-      const k = st.mvxTab; let l = por[k].slice();
-      if (k === "armando") {
-        l = l.filter(x => x.items.length || x.id === st.ventaCartId).sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
-        const conPz = l.filter(x => x.items.length);
-        resumen = h("div", { class: "mvx-kpis" }, kpi(String(conPz.length), conPz.length === 1 ? "carrito" : "carritos"), kpi(String(conPz.reduce((s, x) => s + cartPieces(x), 0)), "piezas"),
-          kpi(redondo(conPz.reduce((s, x) => s + cartGrand(x), 0)), "total"), kpi(redondo(conPz.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0)), "falta cobrar", "debe"));
-        lista = agrupar(l).map(g => grupo(g, o));
-        extra = h("p", { class: "mvx-nota" }, "Carritos que todavía se están armando, de cualquier día. Al cerrarlos pasan a «Por cobrar» o a «Pagadas».");
-      } else if (k === "cobrar") {
-        l.sort((a, b) => String(fechaCierre(b)).localeCompare(String(fechaCierre(a))));
-        resumen = h("div", { class: "mvx-kpis dos" }, kpi(String(l.length), l.length === 1 ? "venta por cobrar" : "ventas por cobrar"), kpi(redondo(l.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0)), "falta cobrar", "debe"));
-        lista = l.map(x => renglon(x, o));
-        extra = h("p", { class: "mvx-nota" }, "Ventas cerradas que aún deben dinero, de cualquier día. Ábrela y toca «Registrar pago» cuando pague.");
-      } else {
-        l = l.filter(x => enRango(x, st.mvxRango)).sort((a, b) => String(fechaCierre(b)).localeCompare(String(fechaCierre(a))));
-        resumen = k === "pagada"
-          ? h("div", { class: "mvx-kpis tres" }, kpi(redondo(l.reduce((s, x) => s + cartGrand(x), 0)), "vendido"), kpi(String(l.length), l.length === 1 ? "venta" : "ventas"), kpi(String(l.reduce((s, x) => s + cartPieces(x), 0)), "piezas"))
-          : null;
-        lista = l.map(x => renglon(x, o));
-        const dia = st.mvxRango === "hoy" ? hoyKey() : st.mvxRango === "ayer" ? (() => { const d = new Date(); d.setDate(d.getDate() - 1); return hoyKey(d); })() : null;
-        const liveDia = dia ? S().lives.find(v => v.tipo === "mostrador" && v.dia === dia) : null;
-        extra = (k === "pagada" && liveDia) ? h("div", { class: "mvx-desc" }, h("span", null, "Reporte del día:"),
-          h("button", { class: "btn sm", type: "button", onclick: () => liveExcel(liveDia, mapaDelDia(liveDia.id)) }, "Excel"),
-          h("button", { class: "btn sm", type: "button", onclick: () => livePdf(liveDia, mapaDelDia(liveDia.id)) }, "PDF")) : null;
-      }
-      const rango = conRango ? h("div", { class: "mvx-rango" }, ...RANGOS.map(([r, t]) => h("button", { type: "button", class: "mvx-chip" + (st.mvxRango === r ? " on" : ""), onclick: () => { st.mvxRango = r; renderVenta(); } }, t))) : null;
-      const vacio = { armando: "No hay carritos armándose.", cobrar: "No hay ventas por cobrar. ¡Todo cobrado!", pagada: "No hay ventas pagadas en este periodo.", cancel: "No hay ventas canceladas en este periodo." }[k];
-      poner(cuerpo, rango, resumen, h("div", { class: "mvx-list" }, ...(lista.length ? lista : [h("div", { class: "mvx-vacio" }, vacio)])), extra);
+      const lista = todas.filter(x => enTab(x, st.mvxTab) && pasaFecha(x) && pasaQ(x))
+        .sort((a, b) => String(fechaDe(b)).localeCompare(String(fechaDe(a))));
+      const validas = lista.filter(x => etapa(x) !== "cancel");
+      const total = validas.reduce((s, x) => s + cartGrand(x), 0), cobrado = validas.reduce((s, x) => s + Math.min(cartPagado(x), cartGrand(x)), 0), falta = validas.reduce((s, x) => s + Math.max(0, cartSaldo(x)), 0);
+      const dia = st.mvxRango === "hoy" ? hoyKey() : st.mvxRango === "ayer" ? (() => { const d = new Date(); d.setDate(d.getDate() - 1); return hoyKey(d); })() : null;
+      const liveDia = dia ? st.lives.find(v => v.tipo === "mostrador" && v.dia === dia) : null;
+      poner(resumen,
+        h("span", null, h("b", null, String(lista.length)), lista.length === 1 ? " venta" : " ventas"),
+        h("span", null, h("b", null, String(validas.reduce((s, x) => s + cartPieces(x), 0))), " piezas"),
+        h("span", null, "Total ", h("b", null, dinero(total))),
+        h("span", null, "Cobrado ", h("b", { class: "ok" }, dinero(cobrado))),
+        h("span", null, "Falta por cobrar ", h("b", { class: falta > 0.005 ? "debe" : "" }, dinero(falta))),
+        liveDia ? h("span", { class: "vx-rep" }, "Reporte del día: ",
+          h("a", { href: "#", onclick: ev => { ev.preventDefault(); liveExcel(liveDia, mapaDelDia(liveDia.id)); } }, "Excel"), " · ",
+          h("a", { href: "#", onclick: ev => { ev.preventDefault(); livePdf(liveDia, mapaDelDia(liveDia.id)); } }, "PDF")) : null);
+      const cab = h("div", { class: "vx-tr vx-th" }, ...["Clienta", "Fecha", "Piezas", "Total", "Pagado", "Falta", "Estado"].map(t => h("span", null, t)));
+      const filas = lista.map(x => {
+        const e = etapa(x), saldo = cartSaldo(x), pagado = cartPagado(x);
+        const k = x.clienteId || sinAcentos(nombreDe(x)), varios = e === "armando" && (abiertosPor.get(k) || 0) > 1;
+        return h("div", { class: "vx-tr" + (e === "cancel" ? " cancel" : ""), role: "button", tabindex: "0", title: "Abrir esta venta",
+            onclick: () => o.abrir(x), onkeydown: ev => { if (ev.key === "Enter") o.abrir(x); }, oncontextmenu: ev => ventaMenu(ev, x) },
+          h("span", { class: "vx-cli" },
+            h("b", null, nombreDe(x)),
+            h("small", null, "Venta #" + numero(x) + (x.referencia ? " · Ref. " + x.referencia : "") + (varios ? " · " : ""), varios ? h("em", null, abiertosPor.get(k) + " carritos abiertos") : null),
+            etiquetas(x).length ? h("span", { class: "vx-tags" }, ...etiquetas(x)) : null),
+          h("span", { class: "vx-fecha", "data-l": "Fecha" }, fechaLarga(fechaDe(x)), h("small", null, hora(fechaDe(x)))),
+          h("span", { class: "vx-num", "data-l": "Piezas" }, String(cartPieces(x))),
+          h("span", { class: "vx-num fuerte", "data-l": "Total" }, dinero(cartGrand(x))),
+          h("span", { class: "vx-num" + (pagado > 0.005 ? " ok" : " cero"), "data-l": "Pagado" }, pagado > 0.005 ? dinero(pagado) : "—"),
+          h("span", { class: "vx-num" + (saldo > 0.005 && e !== "cancel" ? " debe" : " cero"), "data-l": "Falta" }, saldo > 0.005 && e !== "cancel" ? dinero(saldo) : "—"),
+          h("span", { class: "vx-est" }, pill(x)));
+      });
+      const vacio = q() ? "Ninguna venta coincide con «" + (st.mvxQ || "") + "»" + (st.mvxTab !== "todos" || st.mvxRango !== "todo" ? " en esta pestaña y fechas. Prueba en «Todas» y «Todas las fechas»." : ".") : "No hay ventas aquí.";
+      poner(tablaHost, cab, ...(filas.length ? filas : [h("div", { class: "vx-vacio" }, vacio)]));
     };
     pintar();
-    o.alBuscar = () => pintar();
-    return h("aside", { class: "mvx-col" }, tabs, cuerpo);
+    buscar.addEventListener("input", () => { st.mvxQ = buscar.value; pintar(); });
+    buscar.addEventListener("keydown", ev => { if (ev.key === "Escape") { st.mvxQ = ""; buscar.value = ""; pintar(); } });
+
+    return h("div", { class: "vx" },
+      h("div", { class: "vx-top" },
+        h("div", { class: "vx-ttl" }, h("h2", null, st.bf ? "Ventas · Buen Fin 4x3" : "Ventas"), h("span", null, st.bf ? "Solo las ventas con 4x3" : "Todas las ventas: directas, de la página y de lives")),
+        nuevaBtn),
+      h("div", { class: "vx-card" },
+        tabs,
+        h("div", { class: "vx-filtros" }, buscar, fecha),
+        resumen,
+        tablaHost));
   }
   function mapaDelDia(liveId) {
     const m = new Map();
@@ -6686,51 +6690,47 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     return m;
   }
 
-  /* ---------- columna derecha: la venta ---------- */
-  function cabezaVenta(c) {
-    const e = etapa(c), p = pago(c), saldo = cartSaldo(c);
-    const l = S().lives.find(v => v.id === c.liveId);
-    const donde = l ? (l.tipo === "mostrador" ? "Venta directa" : "Live «" + l.nombre + "»") : "Venta";
-    return h("div", { class: "mvx-dhead" },
-      h("div", { class: "mvx-dtit" },
-        h("div", { class: "mvx-dname" }, nombreDe(c)),
-        h("div", { class: "mvx-dsub" }, "Venta #" + cartNumber(c) + " · " + donde + " · " + new Date(c.creado).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " " + hora(c.creado) + " · " + cartPieces(c) + " pzas"),
-        h("div", { class: "mvx-tags" }, h("span", { class: "mvx-etapa " + e }, ETQ[e]), h("span", { class: "mvx-st " + p.k }, p.t), ...etiquetas(c))),
-      h("div", { class: "mvx-dtot" }, h("span", null, "Total"), h("b", null, dinero(cartGrand(c))),
-        e !== "cancel" ? (saldo > 0.005 ? h("span", { class: "mvx-falta" }, "Falta " + dinero(saldo)) : h("span", { class: "mvx-pagado" }, saldo < -0.005 ? "A favor " + dinero(-saldo) : "Pagado completo")) : null,
-        c.estado !== "abierto" ? null : h("button", { type: "button", class: "mvx-ircobro", onclick: () => { const z = document.querySelector("#ventaHost .mvx-dder"); if (z) z.scrollIntoView({ block: "start", behavior: "smooth" }); } }, "Ir a cobro y cierre ↓")),
-      h("button", { type: "button", class: "mvx-more grande", title: "Opciones", "aria-label": "Opciones de la venta", onclick: ev => ventaMenu(ev, c) }, "⋯"));
+  /* ---------- PANTALLA 2: la venta ---------- */
+  function volver() { const st = S(); st.ventaCartId = null; st.ventaCliForm = false; st.ventaPagoForm = false; st.mvxVer = "lista"; renderVenta(); window.scrollTo({ top: 0 }); }
+  function pantallaVenta(o) {
+    const st = S(), c = o.c;
+    const atras = h("button", { type: "button", class: "vx-atras", onclick: volver }, "← Ventas");
+    if (!c && st.ventaCartId) return h("div", { class: "vx" }, h("div", { class: "vx-top" }, atras), h("div", { class: "vx-card vx-cargando" }, "Abriendo la venta…"));
+    let cabeza;
+    if (c) {
+      const e = etapa(c), saldo = cartSaldo(c), pagado = cartPagado(c);
+      const l = st.lives.find(v => v.id === c.liveId);
+      const donde = c.origen === "web" ? "Pedido de la página" : l ? (l.tipo === "mostrador" ? "Venta directa" : "Live «" + l.nombre + "»") : "Venta";
+      cabeza = h("div", { class: "vx-vhead" },
+        h("div", { class: "vx-vtit" },
+          h("div", { class: "vx-vnom" }, h("h2", null, nombreDe(c)), pill(c)),
+          h("div", { class: "vx-vmeta" }, "Venta #" + numero(c) + " · " + donde + " · " + new Date(c.creado).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) + ", " + hora(c.creado) + (c.referencia ? " · Ref. " + c.referencia : "")),
+          etiquetas(c).length ? h("div", { class: "vx-tags" }, ...etiquetas(c)) : null),
+        h("div", { class: "vx-vnums" },
+          h("div", null, h("span", null, "Total"), h("b", null, dinero(cartGrand(c)))),
+          h("div", null, h("span", null, "Pagado"), h("b", { class: pagado > 0.005 ? "ok" : "" }, dinero(pagado))),
+          e === "cancel" ? null : h("div", { class: "vx-falta" + (saldo > 0.005 ? " debe" : " ok") }, h("span", null, saldo < -0.005 ? "A favor" : "Falta"), h("b", null, dinero(Math.abs(saldo))))));
+    } else {
+      cabeza = h("div", { class: "vx-vhead" }, h("div", { class: "vx-vtit" }, h("div", { class: "vx-vnom" }, h("h2", null, "Nueva venta")), h("div", { class: "vx-vmeta" }, "Escribe el nombre de la clienta y escanea sus piezas.")));
+    }
+    const cuerpo = (c && o.paso3)
+      ? h("div", { class: "vx-vgrid" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2), h("div", { class: "vx-vder" }, o.paso3))
+      : h("div", { class: "vx-vgrid sola" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2));
+    return h("div", { class: "vx vx-venta" + (c && c.estado !== "abierto" ? " cerrada" : "") }, h("div", { class: "vx-top" }, atras), h("div", { class: "vx-card vx-vcard" }, cabeza, cuerpo));
   }
 
-  /* Pantalla completa. o = {main, cab, paso1, paso2, paso3, c, abiertas, abrir, R} */
+  /* Entrada desde renderVenta. o = {main, cab, paso1, paso2, paso3, c, abiertas, abrir, R} */
   window.mvVentaPantalla = function (o) {
     const st = S(); asegurarCerradas();
     const teniaFoco = document.activeElement && document.activeElement.id === "mvxBuscar";
-    const nueva = o.cab && o.cab.querySelector(".vd-nueva");
-    const buscar = h("input", { id: "mvxBuscar", class: "mvx-buscar", type: "search", placeholder: "Buscar clienta, # de venta o referencia", value: st.mvxQ || "", autocomplete: "off", "aria-label": "Buscar venta" });
-    const top = h("div", { class: "mvx-top" },
-      h("div", { class: "mvx-ttl" }, h("h2", null, st.bf ? "Buen Fin 4x3" : "Ventas"), h("span", null, (t => t.charAt(0).toUpperCase() + t.slice(1))(new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })))),
-      buscar, nueva);
-    const col = columnaLista(o);
-    buscar.addEventListener("input", () => { st.mvxQ = buscar.value; o.alBuscar && o.alBuscar(); });
-    buscar.addEventListener("keydown", ev => { if (ev.key === "Escape") { st.mvxQ = ""; buscar.value = ""; o.alBuscar && o.alBuscar(); } });
-    if (teniaFoco) setTimeout(() => { const b = document.getElementById("mvxBuscar"); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 0);
-
-    const c = o.c; let det;
-    if (c) {
-      if (c.estado !== "abierto") { // venta cerrada: primero el cobro; las piezas, plegadas
-        const pz = h("details", { class: "mvx-pzs" }, h("summary", null, "Ver las " + cartPieces(c) + " piezas de esta venta"), o.paso2);
-        det = h("section", { class: "mvx-det cerrada" }, cabezaVenta(c), h("div", { class: "mvx-dgrid sola" }, h("div", { class: "mvx-dizq" }, o.paso3 ? h("div", { class: "mvx-dder" }, o.paso3) : null, o.paso1, pz)));
-      } else det = h("section", { class: "mvx-det" }, cabezaVenta(c),
-        h("div", { class: "mvx-dgrid" + (o.paso3 ? "" : " sola") }, h("div", { class: "mvx-dizq" }, o.paso1, o.paso2), o.paso3 ? h("div", { class: "mvx-dder" }, o.paso3) : null));
-    } else {
-      det = h("section", { class: "mvx-det nueva" },
-        h("div", { class: "mvx-dhead simple" }, h("div", { class: "mvx-dtit" }, h("div", { class: "mvx-dname" }, "Nueva venta"), h("div", { class: "mvx-dsub" }, "Escribe la clienta y escanea sus piezas. O elige una venta de la lista para verla."))),
-        h("div", { class: "mvx-dgrid sola" }, h("div", { class: "mvx-dizq" }, o.paso1, o.paso2)));
-    }
-    return [st.bf ? bfBanner() : null, top, h("div", { class: "mvx" + (st.bf ? " bf" : "") }, col, det)].filter(Boolean);
+    const orig = o.cab && o.cab.querySelector(".vd-nueva");
+    const nueva = h("button", { type: "button", class: "btn primary vx-nueva", onclick: () => { st.mvxVer = "nueva"; if (orig) orig.click(); else { st.ventaCartId = null; renderVenta(); } } }, "+ Nueva venta");
+    if (st.ventaCartId) st.mvxVer = "venta";
+    const enVenta = !!st.ventaCartId || st.mvxVer === "nueva";
+    const pantalla = enVenta ? pantallaVenta(o) : pantallaLista(o, nueva);
+    if (teniaFoco && !enVenta) setTimeout(() => { const b = document.getElementById("mvxBuscar"); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 0);
+    return [st.bf ? bfBanner() : null, pantalla].filter(Boolean);
   };
-
   /* ===== Clientas › ficha: sus ventas, cada una con «Abrir» ===== */
   async function carritosDe(id) {
     try { const s = await S().db.collection("carritos").where("clienteId", "==", id).get(); return s.docs.map(d => cartFromDoc(d.id, d.data() || {})).sort((a, b) => String(b.creado).localeCompare(String(a.creado))); }
@@ -6743,9 +6743,9 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     setView("venta");
     if (st.ventaLiveId !== x.liveId) ventaSubscribe(x.liveId);
     st.ventaCartId = x.id; st.ventaCliForm = false; st.ventaPagoForm = false;
-    const e = etapa(x); st.mvxTab = e; st.mvxQ = ""; if (e === "pagada" || e === "cancel") st.mvxRango = "todo";
+    st.mvxVer = "venta";
     renderVenta();
-    setTimeout(() => { const m = document.querySelector("#ventaHost .mvx-det"); if (m && m.scrollIntoView) m.scrollIntoView({ block: "start", behavior: "smooth" }); }, 60);
+    window.scrollTo({ top: 0 });
   };
   function filaCliente(x) {
     const p = pago(x), e = etapa(x); const l = S().lives.find(v => v.id === x.liveId);
@@ -6755,7 +6755,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       h("span", { class: "mvx-txt" },
         h("span", { class: "mvx-l1" }, h("span", { class: "mvx-name" }, f.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) + " · " + hora(f)), h("span", { class: "mvx-amt" }, dinero(cartGrand(x)))),
         h("span", { class: "mvx-meta" }, donde + " · " + cartPieces(x) + " pzas"),
-        h("span", { class: "mvx-tags" }, h("span", { class: "mvx-etapa " + e }, ETQ[e]), h("span", { class: "mvx-st " + p.k }, p.t), ...etiquetas(x))),
+        h("span", { class: "mvx-tags" }, h("span", { class: "mvx-etapa " + e }, ETQ[e]), (e === "armando" || e === "cobrar") ? h("span", { class: "mvx-st " + p.k }, p.t) : null, ...etiquetas(x))),
       h("span", { class: "mvx-ir", "aria-hidden": "true" }, "Abrir ›"));
   }
   async function seccionCarritos(id) {
