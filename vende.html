@@ -3568,7 +3568,7 @@ async function livePdf(l,cartsIn){
   try{ await state.downloads.save({filename:`live-${slug(l.nombre)}.pdf`,data:pdf.output("blob")}); toast("PDF del live descargado"); }catch(e){ if(!(e&&e.code==="declined")) toast("No se pudo descargar",true); }
 }
 function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"—"; }
-function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),origen:String(x.origen||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
+function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),estatusFijo:(x.estatusFijo&&typeof x.estatusFijo==="object"&&x.estatusFijo.t)?{t:String(x.estatusFijo.t),fecha:String(x.estatusFijo.fecha||"")}:null,origen:String(x.origen||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
 function subscribeCarts(liveId){
   if(state.cartsUnsub){ state.cartsUnsub(); state.cartsUnsub=null; }
   state.carts=new Map(); state.cartId=null;
@@ -3614,7 +3614,7 @@ async function createCart(name,clienteId){
   try{ const ref=await state.db.collection("carritos").add({liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],total:0,creado:now,actualizado:now}); state.carts.set(ref.id,{id:ref.id,liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],creado:now,actualizado:now}); state.cartId=ref.id; state.cartSearch=""; renderLive(true); setTimeout(()=>{ const i=$("#addInput"); if(i) i.focus(); },50); }
   catch(e){ toast("No se pudo crear el carrito",true); }
 }
-async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
+async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",estatusFijo:(c.estatusFijo&&c.estatusFijo.t)?{t:String(c.estatusFijo.t),fecha:String(c.estatusFijo.fecha||"")}:null,descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
 async function setStock(code,next){ const p=state.products.get(code); if(!p) return 0; next=Math.max(0,next); const cur=Math.max(0,Number(p.existencia)||0); const delta=next-cur; if(!delta) return 0;
   if(state.db&&typeof state.db.stock==="function"){ const r=await state.db.stock(code,delta); p.existencia=Number(r.existencia)||0; return Number(r.aplicado)||0; } // suma/resta segura (varios dispositivos a la vez)
   await state.db.doc("productos/"+code).update({existencia:next,actualizado:new Date().toISOString()}); p.existencia=next; return delta; }
@@ -6561,6 +6561,32 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 #ventaHost .vd-it .vd-sub{text-align:right;justify-self:end}
 #ventaHost .vd-it .vd-x{justify-self:center}
 @media (max-width:700px){ #ventaHost .vd-it{grid-template-columns:40px minmax(0,1fr) 104px!important;grid-template-areas:"f i i" "f q s"!important;row-gap:6px!important} }
+
+.vx-stb{border:0;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;transition:filter .12s}
+.vx-stb:hover{filter:brightness(.95)} .vx-stb.fijo{box-shadow:inset 0 0 0 1.5px currentColor}
+.vx-modal-bot .btn{min-width:0}
+
+/* pago editable desde la tabla */
+.vx-pgb{all:unset;cursor:pointer;padding:6px 10px;border-radius:10px;border:1px dashed #C7C7CC;color:#6E6E73;font-weight:600;font-size:13.5px;white-space:nowrap}
+.vx-pgb:hover{background:#F2F2F7;border-color:#8E8E93;color:#1D1D1F}
+.vx-pgb.ok{border:1px solid transparent;color:#1E8E3E;font-weight:700} .vx-pgb.ok:hover{border-color:#B7E1C1;background:#EEF8F0}
+.vx-pg{max-width:420px}
+.vx-pg-res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}
+.vx-pg-res div{background:#F5F5F7;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.vx-pg-res span{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8E8E93}
+.vx-pg-res b{font-size:17px;color:#1D1D1F} .vx-pg-res b.ok{color:#1E8E3E} .vx-pg-res .debe{background:#FDECEC} .vx-pg-res .debe b,.vx-pg-res .debe span{color:#C42B2B}
+.vx-pg-lista{border:1px solid #E5E5EA;border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.vx-pg-lt{font-size:12px;font-weight:700;color:#8E8E93;margin-bottom:4px}
+.vx-pg-li{display:flex;gap:10px;align-items:baseline;font-size:14px;padding:3px 0} .vx-pg-li span{color:#6E6E73;font-size:13px}
+.vx-pg-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.vx-pg-op{all:unset;cursor:pointer;border:1.5px solid #E5E5EA;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px;text-align:center}
+.vx-pg-op b{font-size:15px;color:#1D1D1F} .vx-pg-op span{font-size:13px;color:#6E6E73}
+.vx-pg-op.on{border-color:#1D1D1F;background:#F5F5F7;box-shadow:inset 0 0 0 1px #1D1D1F}
+.vx-pg-monto{margin-bottom:10px}
+.vx-pg-fila{display:grid;grid-template-columns:150px 1fr;gap:8px;margin-bottom:16px}
+.vx-pg-in{width:100%;box-sizing:border-box;height:42px;border:1px solid #E5E5EA;border-radius:12px;padding:0 12px;font:inherit;font-size:15px;background:#fff}
+.vx-pg-okt{color:#1E8E3E!important;font-weight:600}
+.vx-modal-bot .btn{justify-content:center!important;text-align:center!important}
 </style>
 <script id="mv-ventas-js">
 /* ===== mvVX · VENTAS rediseñada (16-nov-2026) =====
@@ -6642,9 +6668,13 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
             x.entregaMty ? h("span", { class: "vx-tag" }, "Recoge en Monterrey") : (x.envio ? h("span", { class: "vx-tag" }, x.envio.nombre) : null),
             x.origen === "web" ? h("span", { class: "vx-tag tweb" }, "Pedido de la página") : null].filter(Boolean);
   }
+  /* estatus elegido a mano: se respeta y queda fijo (ni el sistema ni nadie lo cambia) hasta que la venta esté pagada */
+  const FIJOS = [["Por enviar", "por"], ["Por entregar", "por"], ["En resguardo", "res"], ["Enviado", "env"], ["Entregado", "ok"]];
+  const fijoBloqueado = x => !!(x.estatusFijo && etapa(x) !== "pagada");
   function estatus(x) {
     const e = etapa(x);
     if (e === "cancel") return { t: "—", k: "nada" };
+    if (x.estatusFijo && x.estatusFijo.t) { const f = FIJOS.find(z => z[0] === x.estatusFijo.t); return { t: x.estatusFijo.t, k: f ? f[1] : "nada", s: (fijoBloqueado(x) ? "fijo hasta que pague" : "elegido a mano"), fijo: true }; }
     if (x.entregado) return { t: "Entregado", k: "ok", s: fechaLarga(x.entregado) };
     if (x.enviado) return { t: "Enviado", k: "env", s: x.guia ? (x.paqueteria ? x.paqueteria + " " : "") + x.guia : (typeof x.enviado === "string" ? fechaLarga(x.enviado) : "") };
     if (e === "armando") return x.resguardo ? { t: "En resguardo", k: "res", s: "armándose" } : (x.items.length ? { t: "Armándose", k: "nada" } : { t: "Sin piezas", k: "nada" });
@@ -6690,6 +6720,95 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     const sin = !x.items.length;
     return h("button", { type: "button", class: grande ? "btn vx-b2 vx-tkb-g" : "vx-tkb", ...(sin ? { disabled: true, title: "Aún no tiene piezas" } : { title: "Ver el ticket en PDF" }),
       onclick: ev => { ev.stopPropagation(); if (!sin) verTicket(x); } }, grande ? "📄 Ver ticket (PDF)" : "📄 Ver");
+  }
+
+  /* ---------- estatus editable desde la tabla ---------- */
+  function botonEstatus(x, z) {
+    if (etapa(x) === "cancel") return h("span", { class: "vx-st2 " + z.k }, z.t);
+    return h("button", { type: "button", class: "vx-st2 vx-stb " + z.k + (z.fijo ? " fijo" : ""), title: fijoBloqueado(x) ? "Fijo hasta que se pague" : "Cambiar estatus",
+      onclick: ev => { ev.stopPropagation(); elegirEstatus(x); } }, (fijoBloqueado(x) ? "🔒 " : "") + z.t + " ▾");
+  }
+  async function elegirEstatus(x) {
+    const st = S(); const c = (st.ventaCarts && st.ventaCarts.get(x.id)) || (st.ventaAbiertas && st.ventaAbiertas.get(x.id)) || x;
+    if (fijoBloqueado(c)) {
+      const r = await dialogo("Estatus fijo: " + c.estatusFijo.t, nombreDe(c) + " todavía no paga (falta " + dinero(cartSaldo(c)) + "), así que este estatus queda fijo hasta que se pague.",
+        [["ok", "Entendido", "primary"], ["corregir", "Me equivoqué, corregir", "vx-b2"]]);
+      if (r !== "corregir") return;
+    }
+    const actual = c.estatusFijo && c.estatusFijo.t;
+    const r = await dialogo("Estatus de " + nombreDe(c), "Elige el estatus. " + (etapa(c) === "pagada" ? "" : "Quedará fijo hasta que la venta esté pagada."),
+      [...FIJOS.map(([t]) => [t, (t === actual ? "✓ " : "") + t, t === actual ? "primary" : "vx-b2"]), ...(actual ? [["auto", "Que lo calcule el sistema", "vx-b2"]] : []), [null, "Cancelar", "vx-b2"]]);
+    if (r === null || r === actual) return;
+    if (r === "auto") delete c.estatusFijo; else c.estatusFijo = { t: r, fecha: new Date().toISOString() };
+    try { await saveCart(c); toast(r === "auto" ? "Estatus automático" : "Estatus: " + r); } catch (e) { toast("No se pudo guardar", true); return; }
+    renderVenta();
+  }
+
+
+  /* ---------- pago editable desde la tabla: ventana pequeña «pagó todo / pagó una parte» ---------- */
+  function botonPago(x) {
+    const e = etapa(x), pagado = cartPagado(x);
+    const txt = pagado > 0.005 ? dinero(pagado) : "—";
+    if (e === "cancel" || (!x.items.length && pagado <= 0.005)) return h("span", { class: "vx-num" + (pagado > 0.005 ? " ok" : " cero"), "data-l": "Pagado" }, txt);
+    return h("span", { class: "vx-num", "data-l": "Pagado" }, h("button", { type: "button", class: "vx-pgb" + (pagado > 0.005 ? " ok" : ""), title: "Registrar o revisar el pago",
+      onclick: ev => { ev.stopPropagation(); editarPago(x); } }, pagado > 0.005 ? txt : "+ Pago"));
+  }
+  function fresca(x) { const st = S(); return (st.ventaCarts && st.ventaCarts.get(x.id)) || (st.ventaAbiertas && st.ventaAbiertas.get(x.id)) || (st.mvxCerr && st.mvxCerr.get(x.id)) || x; }
+  function editarPago(x) {
+    const c = fresca(x);
+    const falta = Math.max(0, Math.round(cartSaldo(c) * 100) / 100);
+    const pagos = [].concat(cartDeposito(c) > 0.005 ? [{ monto: cartDeposito(c), medio: "Depósito de clienta nueva" }] : [], c.pago ? [c.pago] : [], c.anticipos || []);
+    const fondo = h("div", { class: "vx-modal-fondo" });
+    const cerrar = () => { fondo.remove(); document.removeEventListener("keydown", esc, true); };
+    const esc = ev => { if (ev.key === "Escape") { ev.stopPropagation(); cerrar(); } };
+    document.addEventListener("keydown", esc, true);
+    const fecha = f => f ? new Date(f).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : "";
+    let modo = falta > 0.005 ? "todo" : null;
+    const monto = h("input", { type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: "¿Cuánto pagó?", class: "vx-pg-in", "aria-label": "Monto" });
+    const medio = h("select", { class: "vx-pg-in", "aria-label": "Forma de pago" }, ...(typeof MEDIOS !== "undefined" ? MEDIOS : ["Transferencia", "Efectivo", "Depósito", "Tarjeta", "Otro"]).map(m => h("option", { value: m }, m)));
+    const cuenta = h("input", { type: "text", placeholder: "Cuenta donde cayó (opcional)", class: "vx-pg-in", "aria-label": "Cuenta" });
+    const bTodo = h("button", { type: "button", class: "vx-pg-op" }, h("b", null, "Pagó todo"), h("span", null, dinero(falta)));
+    const bParte = h("button", { type: "button", class: "vx-pg-op" }, h("b", null, "Pagó una parte"), h("span", null, "abono"));
+    const zonaMonto = h("div", { class: "vx-pg-monto" }, monto);
+    const guardar = h("button", { type: "button", class: "btn primary" }, "Guardar pago");
+    const pinta = () => {
+      bTodo.classList.toggle("on", modo === "todo"); bParte.classList.toggle("on", modo === "parte");
+      zonaMonto.style.display = modo === "parte" ? "" : "none";
+      guardar.textContent = modo === "todo" ? "Guardar · pagó " + dinero(falta) : "Guardar abono";
+    };
+    bTodo.onclick = () => { modo = "todo"; pinta(); };
+    bParte.onclick = () => { modo = "parte"; pinta(); setTimeout(() => monto.focus(), 0); };
+    guardar.onclick = async () => {
+      const m = modo === "todo" ? falta : Math.round((Number(monto.value) || 0) * 100) / 100;
+      if (!(m > 0)) { toast("Escribe cuánto pagó", true); monto.focus(); return; }
+      if (modo === "parte" && m > falta + 0.005 && !confirm("Escribiste " + dinero(m) + " y solo debe " + dinero(falta) + ". ¿Registrarlo así (quedará saldo a favor)?")) return;
+      guardar.disabled = true;
+      const cu = cuenta.value.trim();
+      try {
+        if (c.estado === "final" && !c.pago && m >= falta - 0.005) await setPagoVenta(c, { monto: m, medio: medio.value, cuenta: cu, fecha: new Date().toISOString() });
+        else await agregarAnticipo(c, m, medio.value, cu ? "Cuenta: " + cu : "Pago desde Ventas");
+      } catch (e) { toast("No se pudo guardar el pago", true); guardar.disabled = false; return; }
+      cerrar(); renderVenta();
+      toast(cartSaldo(c) <= 0.005 ? nombreDe(c) + " ya pagó todo" : "Abono registrado · falta " + dinero(cartSaldo(c)));
+    };
+    monto.addEventListener("keydown", ev => { if (ev.key === "Enter") guardar.click(); });
+    const lista = pagos.length ? h("div", { class: "vx-pg-lista" }, h("div", { class: "vx-pg-lt" }, "Pagos registrados"),
+      ...pagos.map(p => h("div", { class: "vx-pg-li" }, h("b", null, dinero(Number(p.monto) || 0)), h("span", null, [p.medio, fecha(p.fecha)].filter(Boolean).join(" · "))))) : null;
+    const quitar = (c.pago || (c.anticipos || []).length)
+      ? h("button", { type: "button", class: "btn vx-b2 vx-pg-quitar", onclick: async () => { cerrar(); await window.mvxMarcarPendiente(c); } }, "Quitar pagos (dejar pendiente)") : null;
+    fondo.append(h("div", { class: "vx-modal vx-pg", role: "dialog", "aria-modal": "true" },
+      h("h3", null, "Pago de " + nombreDe(c)),
+      h("div", { class: "vx-pg-res" },
+        h("div", null, h("span", null, "Total"), h("b", null, dinero(cartGrand(c)))),
+        h("div", null, h("span", null, "Pagado"), h("b", { class: "ok" }, dinero(cartPagado(c)))),
+        h("div", { class: falta > 0.005 ? "debe" : "" }, h("span", null, "Falta"), h("b", null, dinero(falta)))),
+      lista,
+      falta > 0.005 ? h("div", { class: "vx-pg-form" },
+        h("div", { class: "vx-pg-ops" }, bTodo, bParte), zonaMonto,
+        h("div", { class: "vx-pg-fila" }, medio, cuenta)) : h("p", { class: "vx-pg-okt" }, "✓ Esta venta ya está pagada."),
+      h("div", { class: "vx-modal-bot" }, falta > 0.005 ? guardar : null, quitar, h("button", { type: "button", class: "btn vx-b2", onclick: cerrar }, falta > 0.005 ? "Cancelar" : "Cerrar"))));
+    fondo.addEventListener("click", ev => { if (ev.target === fondo) cerrar(); });
+    document.body.append(fondo); pinta();
   }
 
   /* ---------- envío en una venta ya cerrada (sin reabrirla) ---------- */
@@ -6770,10 +6889,10 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
           h("span", { class: "vx-fecha", "data-l": "Fecha" }, fechaLarga(fechaDe(x)), h("small", null, hora(fechaDe(x)))),
           h("span", { class: "vx-num", "data-l": "Piezas" }, String(cartPieces(x))),
           h("span", { class: "vx-num fuerte", "data-l": "Total" }, dinero(cartGrand(x))),
-          h("span", { class: "vx-num" + (pagado > 0.005 ? " ok" : " cero"), "data-l": "Pagado" }, pagado > 0.005 ? dinero(pagado) : "—"),
+          botonPago(x),
           h("span", { class: "vx-num" + (saldo > 0.005 && e !== "cancel" ? " debe" : " cero"), "data-l": "Falta" }, saldo > 0.005 && e !== "cancel" ? dinero(saldo) : "—"),
           h("span", { class: "vx-est" }, pill(x)),
-          (() => { const z = estatus(x); return h("span", { class: "vx-sts" }, h("span", { class: "vx-st2 " + z.k }, z.t), z.s ? h("small", null, z.s) : null); })(),
+          (() => { const z = estatus(x); return h("span", { class: "vx-sts" }, botonEstatus(x, z), z.s ? h("small", null, z.s) : null); })(),
           h("span", { class: "vx-tk" }, botonTicket(x)));
       });
       const vacio = q() ? "Ninguna venta coincide con «" + (st.mvxQ || "") + "»" + (st.mvxTab !== "todos" || st.mvxRango !== "todo" ? " en esta pestaña y fechas. Prueba en «Todas» y «Todas las fechas»." : ".") : "No hay ventas aquí.";
