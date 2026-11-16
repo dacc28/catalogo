@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T23:01:01.800Z",
+ "actualizado": "2026-11-16T23:39:52.684Z",
  "categorias": [
   {
    "p": "ANI",
@@ -106,30 +106,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00020",
-   "nombre": "Anillo Cartier Talla 7",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
-   "creado": "2026-10-27T00:54:27.042Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00022",
-   "nombre": "Anillo Ajustable Solitario Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c6f964a310519362d4bbd0ef49814291.jpg",
-   "creado": "2026-10-27T00:56:39.983Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00024",
    "nombre": "Anillo Ajustable Baguettes Dorado",
    "categoria": "ANI",
@@ -147,7 +123,7 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
@@ -166,18 +142,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00029",
-   "nombre": "Anillo Ajustable Giratorio",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ed9bf5e19e9f63f7cea128fee2e56fd0.jpg",
-   "creado": "2026-11-01T20:55:43.795Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00004",
    "nombre": "Aretes Verde Manzana",
    "categoria": "ARE",
@@ -187,30 +151,6 @@
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00006",
-   "nombre": "Par Xuping Brillante",
-   "categoria": "ARE",
-   "material": "Chapa de Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8b3baae389b0e1ea013773230ababa40.jpg",
-   "creado": "2026-10-19T01:56:07.969Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00012",
-   "nombre": "Aretes Pera Xuping",
-   "categoria": "ARE",
-   "material": "Chapa de Oro",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/08d6b9c371127b6cb8f688eb4e91e996.jpg",
-   "creado": "2026-10-19T02:08:54.968Z",
    "disponible": true
   },
   {
@@ -370,18 +310,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00033",
-   "nombre": "Aretes Xuping  Marmol Oscuro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2daa3d6bce3789a8aa2f151c96416fe2.jpg",
-   "creado": "2026-10-20T23:14:48.191Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00034",
    "nombre": "Aretes Xuping  Marmol",
    "categoria": "ARE",
@@ -435,7 +363,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
    "creado": "2026-10-20T23:24:42.521Z",
@@ -490,24 +418,12 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00046",
-   "nombre": "Aretes Xuping  Oval Blanco",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eedac4bcec2b2dc74fb397d63721c473.jpg",
-   "creado": "2026-10-20T23:30:52.953Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00047",
    "nombre": "Aretes Xuping  Ladrillo Café",
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -574,18 +490,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00054",
-   "nombre": "Aretes Xuping Arracada Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
-   "creado": "2026-10-20T23:37:14.343Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00056",
    "nombre": "Arete Vanc Rosa",
    "categoria": "ARE",
@@ -631,18 +535,6 @@
    "notas": "",
    "foto": "fotos/aa5a183e06ad7ef94b45eb575b2d1ab1.jpg",
    "creado": "2026-11-01T21:39:40.125Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00063",
-   "nombre": "Arracadas de Estrella",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/536114b266ecb169b40be13c3bbb0ca6.jpg",
-   "creado": "2026-11-01T21:41:48.587Z",
    "disponible": true
   },
   {
@@ -775,18 +667,6 @@
    "notas": "",
    "foto": "fotos/a27f24ebc077f44e7ee24db996fd91b0.jpg",
    "creado": "2026-11-07T21:07:16.006Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00075",
-   "nombre": "Arracadas Espiral con Zirconia",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3c3763a0e9813ff0da2296c2d6127f83.jpg",
-   "creado": "2026-11-07T21:08:06.512Z",
    "disponible": true
   },
   {
@@ -1027,18 +907,6 @@
    "notas": "",
    "foto": "fotos/b89334e15ce3f3ba67bb195bccf35827.jpg",
    "creado": "2026-11-07T21:46:00.691Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00097",
-   "nombre": "Huggies Flor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
-   "creado": "2026-11-07T21:48:20.046Z",
    "disponible": true
   },
   {
@@ -1318,18 +1186,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00007",
-   "nombre": "Collar de Hematitas",
-   "categoria": "COL",
-   "material": "Hematitas y Chapa de Oro",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c0bc6f02eb03fd277535aa05afa91a4c.jpg",
-   "creado": "2026-10-19T01:14:56.657Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00013",
    "nombre": "Collar de Cuentas y Perla",
    "categoria": "COL",
@@ -1378,18 +1234,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00025",
-   "nombre": "Collar de Chicle Vino",
-   "categoria": "COL",
-   "material": "Yakli con Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/56f9ead535a6a0f2cdb9848922fb0297.jpg",
-   "creado": "2026-10-19T02:28:24.093Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00026",
    "nombre": "Cadena Panza de Vibora",
    "categoria": "CAD",
@@ -1407,7 +1251,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 60,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/18177cbdd1e1807fde3e8028d590f257.jpg",
    "creado": "2026-10-20T16:31:38.009Z",
@@ -1515,7 +1359,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 60,
-   "etiqueta": "new in",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b87b73b6db7f22d77c1a21a01581b373.jpg",
    "creado": "2026-11-06T17:42:58.863Z",
@@ -1531,18 +1375,6 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00004",
-   "nombre": "Mini Dije",
-   "categoria": "DIJ",
-   "material": "Acero Inoxidable",
-   "precio": 10,
-   "etiqueta": "",
-   "notas": "Dijes para cadena extrafina",
-   "foto": "fotos/0b15d1cf48eeb5098d9c81769047a4c6.jpg",
-   "creado": "2026-10-19T02:33:55.419Z",
    "disponible": true
   },
   {
@@ -1570,24 +1402,12 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00002",
-   "nombre": "Juego Xuping Flor Azul",
-   "categoria": "JUE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9aee905aba49c9a06fceabe454c9758d.jpg",
-   "creado": "2026-10-20T23:44:10.400Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00003",
    "nombre": "Juego Xuping Flor Roja",
    "categoria": "JUE",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/1d03dcce7650b12f57729df1087f902d.jpg",
    "creado": "2026-10-20T23:44:42.401Z",
@@ -1615,30 +1435,6 @@
    "notas": "",
    "foto": "fotos/2816ce06ccfb90d85eaa143061ce501c.jpg",
    "creado": "2026-10-20T23:45:49.520Z",
-   "disponible": true
-  },
-  {
-   "codigo": "JUE-00007",
-   "nombre": "Juego Corazón Rojo",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2a62a561aac36996ea13ce6a9d1af090.jpg",
-   "creado": "2026-11-01T21:54:21.362Z",
-   "disponible": true
-  },
-  {
-   "codigo": "JUE-00009",
-   "nombre": "Juego Doble Corazón con rojo",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/aaaa08b805ca7a3a593583847b94fa70.jpg",
-   "creado": "2026-11-01T21:59:58.579Z",
    "disponible": true
   },
   {
@@ -1719,7 +1515,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/af153da1fe82f1a82b6259f755891e3c.jpg",
    "creado": "2026-10-19T02:49:33.420Z",
@@ -1747,18 +1543,6 @@
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00013",
-   "nombre": "Pulsera Tennis rosa",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2045f9af20bd679902ad952b04ca913d.jpg",
-   "creado": "2026-10-20T18:00:37.205Z",
    "disponible": true
   },
   {
@@ -1906,18 +1690,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00030",
-   "nombre": "Pulsera Ajustable con Pedrería",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 66,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6e876022e29d41c4c3b11d0eee09e6ce.jpg",
-   "creado": "2026-11-01T21:00:45.810Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00031",
    "nombre": "Brazalete",
    "categoria": "PUL",
@@ -1942,39 +1714,15 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00033",
-   "nombre": "Brazalete Espirales",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7ad6cc30e6f6d878da3417ac3302193c.jpg",
-   "creado": "2026-11-01T21:07:28.853Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00034",
    "nombre": "Brazalete Media Luna",
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00037",
-   "nombre": "Pulsera Ajustable Colorida",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3d8629c01d507f9b362d2ccc645510d7.jpg",
-   "creado": "2026-11-01T21:15:44.503Z",
    "disponible": true
   },
   {
@@ -1987,18 +1735,6 @@
    "notas": "",
    "foto": "fotos/f56876f35eea3b66f6f0462372fd0672.jpg",
    "creado": "2026-11-01T21:20:47.493Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00043",
-   "nombre": "Brazalete con Brillo",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 66,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/4b2d48d574a6f715f6ddb03f4c06ddc2.jpg",
-   "creado": "2026-11-01T21:25:08.247Z",
    "disponible": true
   },
   {
