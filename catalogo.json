@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T17:56:44.584Z",
+ "actualizado": "2026-11-16T18:20:24.944Z",
  "categorias": [
   {
    "p": "ANI",
@@ -646,18 +646,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00058",
-   "nombre": "Arete Vanc Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ccf036c9dc7867fd1e356758244d42e4.jpg",
-   "creado": "2026-11-01T20:11:39.625Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00060",
    "nombre": "Huggie Eslabón",
    "categoria": "ARE",
@@ -1203,7 +1191,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/01a297677cf10c88c82740fc8ec795fc.jpg",
    "creado": "2026-11-07T20:11:37.497Z",
@@ -1546,18 +1534,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00041",
-   "nombre": "Chocker de Cuentas",
-   "categoria": "COL",
-   "material": "Cuentas con Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
-   "creado": "2026-10-20T16:26:54.835Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00043",
    "nombre": "Collar de Chicle Azul",
    "categoria": "COL",
@@ -1791,7 +1767,7 @@
    "categoria": "JUE",
    "material": "Oro Laminado",
    "precio": 55,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2a62a561aac36996ea13ce6a9d1af090.jpg",
    "creado": "2026-11-01T21:54:21.362Z",
@@ -1851,7 +1827,7 @@
    "categoria": "JUE",
    "material": "Laminado",
    "precio": 90,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4134a8db329b146e555e99c23a8a140b.jpg",
    "creado": "2026-11-03T20:23:09.385Z",
@@ -2071,18 +2047,6 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00027",
-   "nombre": "Pulsera Vanc Roja",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a236579e1decdfddc8891281786e2114.jpg",
-   "creado": "2026-11-01T20:33:23.399Z",
    "disponible": true
   },
   {
