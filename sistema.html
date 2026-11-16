@@ -3151,7 +3151,7 @@ function openTrash(){
   const confirmBox=h("div");
   const drawer=h("aside",{class:"drawer",id:"trashDrawer",role:"dialog","aria-label":"Papelera"},
     h("div",{class:"head"},h("h2",{style:"margin:0;font-size:22px"},"Papelera"),h("button",{class:"btn sm",onclick:closeDrawer},"Cerrar")),
-    h("p",{style:"margin:4px 0 12px;color:var(--muted);font-size:13px"},`Lo que eliminas se guarda aquí ${TRASH_DAYS} días y luego se borra solo. Al restaurar un carrito o un live, sus piezas se vuelven a descontar del inventario.`),
+    h("p",{style:"margin:4px 0 12px;color:var(--muted);font-size:13px"},`Lo que eliminas se queda aquí hasta que tú vacíes la papelera (ya no se borra sola). Al restaurar un carrito o un live, sus piezas se vuelven a descontar del inventario.`),
     items.length?h("div",{style:"display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"},h("button",{class:"btn sm danger",onclick:()=>{ confirmBox.replaceChildren(h("div",{class:"confirm"},"¿Vaciar la papelera? Se borra todo definitivamente.",h("button",{class:"btn sm danger",onclick:async()=>{ for(const t of items){ try{ await purgeTrashEntry(t); }catch(e){} } openTrash(); toast("Papelera vaciada"); }},"Sí, vaciar"),h("button",{class:"btn sm ghost",onclick:()=>confirmBox.replaceChildren()},"No"))); }},"Vaciar papelera"),confirmBox):null,
     ...(items.length?items.map(t=>{ const box=h("div"); return h("div",{class:"section",style:"margin-top:10px"},h("div",{class:"row",style:"align-items:flex-start"},h("div",{style:"min-width:0"},h("span",{class:"chip",style:"margin-bottom:4px"},trashLabel(t)),h("div",{style:"font-weight:700"},t.nombre||t.codigo||"—"),h("div",{style:"font-size:12px;color:var(--muted)"},(t.codigo&&t.tipo==="producto"?t.codigo+" · ":"")+(t.tipo==="carrito"&&t.liveNombre?t.liveNombre+" · ":"")+(t.tipo==="live"?t.carritos.length+" carritos · ":"")+"eliminado "+(t.eliminado?new Date(t.eliminado).toLocaleString("es-MX",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):""))),h("div",{style:"display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"},h("button",{class:"btn sm primary",onclick:()=>restoreTrash(t)},"Restaurar"),h("button",{class:"btn sm ghost danger",onclick:()=>{ box.replaceChildren(h("div",{class:"confirm",style:"margin-top:8px"},"¿Borrar definitivamente?",h("button",{class:"btn sm danger",onclick:async()=>{ try{ await purgeTrashEntry(t); openTrash(); toast("Borrado definitivamente"); }catch(e){ toast("No se pudo borrar",true); } }},"Sí"),h("button",{class:"btn sm ghost",onclick:()=>box.replaceChildren()},"No"))); }},"Borrar"))),box); }):[h("div",{class:"empty"},h("p",{style:"margin:0"},"La papelera está vacía."))]));
   host.replaceChildren(h("div",{class:"scrim",onclick:closeDrawer}),drawer); document.addEventListener("keydown",escClose);
@@ -4005,7 +4005,7 @@ function ventaMenu(e,c){
   e.preventDefault(); if(!c) return; const L={nombre:"Venta directa"}; const esHoy=esHoyVenta();
   showMenu(e.clientX,e.clientY,"Venta #"+cartNumber(c)+" · "+(c.cliente||"Sin nombre")+" · $"+fmtMoney(cartGrand(c)),[
     {label:"Ver venta",run:()=>{ state.ventaCartId=c.id; state.ventaCliForm=false; renderVenta(); }},
-    c.items.length&&c.estado!=="cancelado"&&NATIVE()&&NATIVE().printPdf?{label:"Imprimir ticket",run:()=>printTicket(c,L)}:null,
+    null, /* mvVX: sin imprimir */
     c.items.length&&c.estado!=="cancelado"?{label:"Descargar ticket (PDF)",run:()=>downloadTicket(c,L)}:null,
     "-",
     c.estado==="final"&&!c.pago?{label:"Registrar pago",run:()=>{ state.ventaCartId=c.id; state.ventaPagoForm=true; renderVenta(); }}:null,
@@ -4179,8 +4179,8 @@ function renderVenta(keepFocus){
     if(editable){
       if(state.ventaPagado==null||state.mvxPagoCart!==c.id){ state.ventaPagado=false; state.mvxPagoCart=c.id; } /* mvVX: siempre empieza pendiente */
       const sinNombre=!c.cliente.trim(); const puede=c.items.length>0&&!sinNombre;
-      const cerrar=imprimir=>{ if(!c.cliente.trim()){ toast("Escribe el nombre de la clienta antes de cerrar",true); $("#ventaCli").focus(); return; } const v=pf?pf.valores():{}; cerrarVenta(c,state.ventaPagado,v.medio,v.monto,v.cuenta,imprimir); };
-      const pf=state.ventaPagado?pagoFormVenta(c,()=>cerrar(true)):null;
+      const cerrar=imprimir=>{ if(!c.cliente.trim()){ toast("Escribe el nombre de la clienta antes de cerrar",true); $("#ventaCli").focus(); return; } const v=pf?pf.valores():{}; const pag=state.ventaPagado; Promise.resolve(typeof mvxAntesDeCerrar==="function"?mvxAntesDeCerrar(c,pag):true).then(ok=>{ if(ok) cerrarVenta(c,pag,v.medio,v.monto,v.cuenta,imprimir); }); };
+      const pf=state.ventaPagado?pagoFormVenta(c,()=>cerrar(false)):null;
       const estadoBtns=h("div",{class:"vd-seg mvx-seg"},h("button",{type:"button",class:!state.ventaPagado?"on":"",onclick:()=>{ state.ventaPagado=false; renderVenta(); }},"Pendiente de pago"),h("button",{type:"button",class:state.ventaPagado?"on":"",onclick:()=>{ state.ventaPagado=true; renderVenta(); }},"Ya pagó todo"));
       const shipSel=h("select",{"aria-label":"Envío"},h("option",{value:""},"Sin envío"),...state.ship.map(s=>h("option",{value:s.id},`${s.nombre} — $${fmtMoney(s.precio)}`))); shipSel.value=c.envio?c.envio.id:""; if(c.envio&&!state.ship.some(s=>s.id===c.envio.id)) shipSel.replaceChildren(h("option",{value:c.envio.id},`${c.envio.nombre} — $${fmtMoney(c.envio.precio)}`)); shipSel.addEventListener("change",async()=>{ await setShipping(c,shipSel.value); renderVenta(); });
       const chkF=h("input",{type:"checkbox",...(c.factura?{checked:true}:{})}); chkF.addEventListener("change",async()=>{ await setFactura(c,chkF.checked); renderVenta(); });
@@ -4197,7 +4197,7 @@ function renderVenta(keepFocus){
         pf?h("div",{class:"vd-pagobox"},pf):(cartPagado(c)>0.005?h("div",{class:"mvx-aviso-pend"},h("b",null,cartSaldo(c)>0.005?"Ya abonó $"+fmtMoney(cartPagado(c))+" · se cerrará POR COBRAR (debe $"+fmtMoney(cartSaldo(c))+")":"Ojo: ya tiene $"+fmtMoney(cartPagado(c))+" registrados como pagados, por eso quedará PAGADA"),cartSaldo(c)>0.005?"Cuando pague el resto, ábrela en «Por cobrar» y toca «Registrar pago».":"Si en realidad no ha pagado, quita ese pago con la × en «Anticipos y abonos»."):h("div",{class:"mvx-aviso-pend"},h("b",null,"Se cerrará como POR COBRAR"),"Si dejó algo, anótalo en «Anticipos y abonos». Cuando pague, ábrela en «Por cobrar» y toca «Registrar pago».")),
         mas,
         (f||sinNombre)?h("div",{class:"vd-aviso"},[sinNombre?"Falta el nombre de la clienta.":null,f?`Compra mínima ${MIN_PIEZAS} piezas · faltan ${f} (puedes cerrar de todos modos).`:null].filter(Boolean).join(" ")):null,
-        h("button",{class:"btn primary big vd-cerrar",id:"ventaCobrar",type:"button",...(puede?{}:{disabled:true,title:sinNombre?"Falta el nombre de la clienta":"Agrega piezas"}),onclick:()=>cerrar(true)},(state.ventaPagado?"Cerrar venta PAGADA e imprimir ticket":"Cerrar venta POR COBRAR e imprimir ticket")),
+        h("button",{class:"btn primary big vd-cerrar",id:"ventaCobrar",type:"button",...(puede?{}:{disabled:true,title:sinNombre?"Falta el nombre de la clienta":"Agrega piezas"}),onclick:()=>cerrar(false)},(state.ventaPagado?"Cerrar venta · PAGADA":"Cerrar venta · POR COBRAR")),
         ((state.bf||c.promo==="4x3")&&c.items.length)?h("div",{class:"vd-sec bf-tk"},h("span",{class:"bf-tkt"},"Ticket sin cerrar la cuenta:"),(NATIVE()&&NATIVE().printPdf)?h("button",{class:"btn",type:"button",onclick:()=>printTicket(c,{nombre:"Venta directa"})},"Imprimir ticket"):null,h("button",{class:"btn",type:"button",onclick:()=>downloadTicket(c,{nombre:"Venta directa"})},"Descargar ticket (PDF)")):null,
         h("div",{class:"vd-sec"},h("button",{class:"btn",type:"button",...(puede?{}:{disabled:true}),onclick:()=>cerrar(false)},"Cerrar sin ticket"),
           h("button",{class:"btn ghost",type:"button",onclick:()=>{ state.ventaCartId=null; state.ventaCliForm=false; renderVenta(); toast("Venta dejada abierta · la ves en la lista de ventas"); }},"Dejar abierta"),
@@ -4297,7 +4297,7 @@ async function boot(){
   if(!db){ $("#dbNotice").hidden=false; renderLive(); return; }
   db.doc("config/envios").onSnapshot(s=>{ const d=s.exists?s.data():null; if(d&&Array.isArray(d.lista)&&d.lista.length){ state.ship=d.lista.filter(o=>o&&typeof o.nombre==="string").map(o=>({id:String(o.id||o.nombre),nombre:String(o.nombre),precio:Number(o.precio)||0})); if(state.view==="live") renderLive(); } },e=>console.warn("envios",e));
   db.collection("clientas").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,{id:d.id,nombre:String(x.nombre||""),facebook:String(x.facebook||""),whatsapp:String(x.whatsapp||""),ciudad:String(x.ciudad||""),direccion:String(x.direccion||""),notas:String(x.notas||""),creado:x.creado||""}); } state.clientas=m; if(state.view==="cli") renderClientas(); if(state.view==="live") renderLive(); },e=>console.warn("clientas",e));
-  db.collection("papelera").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,{id:d.id,tipo:String(x.tipo||""),nombre:String(x.nombre||""),codigo:String(x.codigo||""),data:x.data||null,carritos:Array.isArray(x.carritos)?x.carritos:[],liveNombre:String(x.liveNombre||""),devuelto:x.devuelto!==false,eliminado:x.eliminado||""}); } state.trash=m; const tc=$("#trashCount"); if(tc) tc.textContent=m.size; purgeOldTrash(); const th=document.getElementById("trashDrawer"); if(th) openTrash(); },e=>console.warn("papelera",e));
+  db.collection("papelera").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,{id:d.id,tipo:String(x.tipo||""),nombre:String(x.nombre||""),codigo:String(x.codigo||""),data:x.data||null,carritos:Array.isArray(x.carritos)?x.carritos:[],liveNombre:String(x.liveNombre||""),devuelto:x.devuelto!==false,eliminado:x.eliminado||""}); } state.trash=m; const tc=$("#trashCount"); if(tc) tc.textContent=m.size; /* mvVX: ya no se borra sola */ const th=document.getElementById("trashDrawer"); if(th) openTrash(); },e=>console.warn("papelera",e));
   db.collection("lives").onSnapshot(s=>{
     state.lives=s.docs.map(d=>{ const x=d.data()||{}; return {id:d.id,nombre:String(x.nombre||""),estado:String(x.estado||"abierto"),creado:x.creado||"",cerrado:x.cerrado||"",inicial:(x.inicial&&typeof x.inicial==="object")?x.inicial:null,despachos:Array.isArray(x.despachos)?x.despachos:[],tipo:String(x.tipo||""),dia:String(x.dia||"")}; });
     if(!state.liveId){ const o=activeLive(); if(o) selectLive(o.id); }
@@ -6505,6 +6505,41 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   .vx-cli{grid-column:1/-1} .vx-est{grid-column:1/-1}
   .vx-num,.vx-fecha{text-align:left} .vx-num::before,.vx-fecha::before{content:attr(data-l);display:block;font-size:11px;color:var(--vx-mut);text-transform:uppercase}
 }
+/* ===== v3: tabla centrada + columna Estatus + acciones del cobro + diálogo ===== */
+.vx-tr{grid-template-columns:minmax(200px,1.4fr) 92px 64px 104px 104px 104px 108px 130px!important;gap:10px!important}
+.vx-th span{text-align:center!important} .vx-th span:first-child{text-align:left!important}
+.vx-fecha,.vx-num,.vx-est,.vx-sts{text-align:center!important;justify-self:center}
+.vx-fecha{align-items:center}
+.vx-sts{display:flex;flex-direction:column;align-items:center;gap:3px}
+.vx-sts small{font-size:11.5px;color:var(--vx-mut);text-align:center;line-height:1.25}
+.vx-st2{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap;background:#F1F1F3;color:#48484A}
+.vx-st2.res{background:#EEE7FB;color:#5B3BB0} .vx-st2.por{background:#FFF1DC;color:#9A5B00} .vx-st2.esp{background:#FDECEC;color:#C42B2B}
+.vx-st2.env{background:#E8EFFD;color:#1F5FD1} .vx-st2.ok{background:#E3F5E9;color:#1E7B45} .vx-st2.nada{background:#F5F5F7;color:#8E8E93}
+.vx-st2.grande{font-size:13.5px;padding:5px 12px;border-radius:999px}
+@media (max-width:1100px){ .vx-tr{grid-template-columns:minmax(170px,1.3fr) 84px 54px 96px 96px 96px 100px 116px!important;gap:6px!important;padding:12px!important} }
+@media (max-width:820px){ .vx-tr{grid-template-columns:1fr 1fr 1fr!important} .vx-sts{grid-column:1/-1;align-items:flex-start} .vx-fecha,.vx-num,.vx-est{justify-self:start;text-align:left!important} }
+/* acciones del cobro */
+.vx-acc{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--vx-line)}
+.vx-acc-prim{display:flex}
+.vx-acc-prim .btn{flex:1;font-size:16px!important;padding:14px!important;border-radius:14px!important}
+.vx-acc-sec{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vx-acc-sec .btn:only-child{grid-column:1/-1}
+.vx-venta .vx-acc .vx-b2{background:#fff!important;border:1px solid var(--vx-line)!important;color:var(--vx-fg)!important;text-decoration:none!important;border-radius:12px!important;padding:11px 10px!important;font-size:14px!important;font-weight:600!important;box-shadow:none!important;white-space:normal;line-height:1.25}
+.vx-venta .vx-acc .vx-b2:hover{border-color:var(--vx-fg)!important}
+.vx-acc-pel{display:flex;justify-content:center;gap:16px;padding-top:4px}
+.vx-venta .vx-acc .vx-b3{background:none!important;border:0!important;box-shadow:none!important;color:var(--vx-debe)!important;font-size:13.5px!important;font-weight:600!important;padding:6px 4px!important;text-decoration:underline;text-underline-offset:3px}
+.vx-venta .vd-detalle{display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:var(--vx-mut)}
+/* diálogo */
+.vx-modal-fondo{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.vx-modal{background:#fff;border-radius:20px;padding:24px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:inherit}
+.vx-modal h3{margin:0 0 8px;font-size:19px;color:#1D1D1F}
+.vx-modal p{margin:0 0 18px;font-size:14.5px;color:#48484A;line-height:1.45}
+.vx-modal-bot{display:flex;flex-direction:column;gap:8px}
+.vx-modal-bot .btn{width:100%;padding:12px!important;font-size:15px!important;border-radius:12px!important}
+.vx-modal-bot .vx-b3o{background:#FDECEC!important;color:#C42B2B!important;border:1px solid #F5C2C2!important}
+.vx-modal-bot .vx-b2{background:#fff!important;border:1px solid #E5E5EA!important;color:#1D1D1F!important}
+#ventaHost .vx-acc .btn.vx-b3{background:none!important;border:0!important;box-shadow:none!important;color:#C42B2B!important;font-size:13.5px!important;font-weight:600!important;padding:6px 4px!important;text-decoration:underline!important;text-underline-offset:3px}
+#ventaHost .vx-acc .btn.vx-b2{background:#fff!important;border:1px solid #E5E5EA!important;color:#1D1D1F!important;box-shadow:none!important}
 </style>
 <script id="mv-ventas-js">
 /* ===== mvVX · VENTAS rediseñada (16-nov-2026) =====
@@ -6553,7 +6588,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
   function asegurarCerradas() {
     const st = S(); if (st.mvxUnsub || !st.db) return;
     st.mvxCerr = new Map(); st.mvxUnsub = [];
-    for (const e of ["final", "cancelado"]) {
+    for (const e of ["final", "cancelado", "cerrado"]) {
       try {
         st.mvxUnsub.push(st.db.collection("carritos").where("estado", "==", e).onSnapshot(s => {
           for (const [id, x] of [...st.mvxCerr]) if (x.estado === e) st.mvxCerr.delete(id);
@@ -6567,7 +6602,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     const st = S(); const m = new Map(st.mvxCerr || []);
     for (const x of (st.ventaCarts || new Map()).values()) { if (x.estado === "abierto") m.delete(x.id); else m.set(x.id, x); } // lo del día en pantalla es lo más fresco
     for (const x of (st.ventaAbiertas || new Map()).values()) m.delete(x.id);
-    return [...m.values()].filter(x => x.items.length || x.estado === "cancelado").filter(x => !st.bf || x.promo === "4x3");
+    return [...m.values()].filter(x => !st.bf || x.promo === "4x3");
   }
   const RANGOS = [["hoy", "Hoy"], ["ayer", "Ayer"], ["7", "7 días"], ["30", "30 días"], ["todo", "Todo"]];
   function enRango(x, r) {
@@ -6586,6 +6621,17 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
             x.entregaMty ? h("span", { class: "vx-tag" }, "Recoge en Monterrey") : (x.envio ? h("span", { class: "vx-tag" }, x.envio.nombre) : null),
             x.origen === "web" ? h("span", { class: "vx-tag tweb" }, "Pedido de la página") : null].filter(Boolean);
   }
+  function estatus(x) {
+    const e = etapa(x);
+    if (e === "cancel") return { t: "—", k: "nada" };
+    if (x.entregado) return { t: "Entregado", k: "ok", s: fechaLarga(x.entregado) };
+    if (x.enviado) return { t: "Enviado", k: "env", s: x.guia ? (x.paqueteria ? x.paqueteria + " " : "") + x.guia : (typeof x.enviado === "string" ? fechaLarga(x.enviado) : "") };
+    if (e === "armando") return x.resguardo ? { t: "En resguardo", k: "res", s: "armándose" } : (x.items.length ? { t: "Armándose", k: "nada" } : { t: "Sin piezas", k: "nada" });
+    if (x.resguardo) return { t: "En resguardo", k: "res", s: e === "cobrar" ? "espera pago" : "" };
+    if (e === "cobrar") return x.entregaMty ? { t: "Por entregar", k: "por", s: "recoge en Mty · al pagar" } : { t: "Por enviar", k: "por", s: "al pagar" + (x.envio ? " · " + x.envio.nombre : "") };
+    if (x.entregaMty) return { t: "Por entregar", k: "por", s: "recoge en Monterrey" };
+    return { t: "Por enviar", k: "por", s: x.envio ? x.envio.nombre : "" };
+  }
   const ESTADO = { armando: ["Armando", "arm"], cobrar: ["Por cobrar", "debe"], pagada: ["Pagado", "ok"], cancel: ["Cancelado", "can"] };
   const pill = x => { const [t, k] = ESTADO[etapa(x)]; return h("span", { class: "vx-pill " + k }, t); };
   const TABS = [["todos", "Todas"], ["armando", "Armando"], ["cobrar", "Por cobrar"], ["pagada", "Pagadas"], ["cancel", "Canceladas"]];
@@ -6603,8 +6649,11 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
 
   function todasLasVentas(o) {
     const st = S();
-    const ab = o.abiertas.filter(x => x.items.length || x.id === st.ventaCartId);
-    const m = new Map(); for (const x of ab.concat(cerradas())) m.set(x.id, x); // sin repetidos
+    const m = new Map();
+    for (const x of (st.ventaAbiertas || new Map()).values()) if (!st.bf || x.promo === "4x3" || x.id === st.ventaCartId) m.set(x.id, x);
+    for (const x of o.abiertas) m.set(x.id, x);
+    for (const x of cerradas()) m.set(x.id, x);
+    for (const x of (st.ventaCarts || new Map()).values()) if (m.has(x.id) || x.estado === "abierto") { if (!st.bf || x.promo === "4x3" || x.id === st.ventaCartId) m.set(x.id, x); } // lo del día en pantalla es lo más fresco
     return [...m.values()];
   }
 
@@ -6650,7 +6699,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
         liveDia ? h("span", { class: "vx-rep" }, "Reporte del día: ",
           h("a", { href: "#", onclick: ev => { ev.preventDefault(); liveExcel(liveDia, mapaDelDia(liveDia.id)); } }, "Excel"), " · ",
           h("a", { href: "#", onclick: ev => { ev.preventDefault(); livePdf(liveDia, mapaDelDia(liveDia.id)); } }, "PDF")) : null);
-      const cab = h("div", { class: "vx-tr vx-th" }, ...["Clienta", "Fecha", "Piezas", "Total", "Pagado", "Falta", "Estado"].map(t => h("span", null, t)));
+      const cab = h("div", { class: "vx-tr vx-th" }, ...["Clienta", "Fecha", "Piezas", "Total", "Pagado", "Falta", "Estado", "Estatus"].map(t => h("span", null, t)));
       const filas = lista.map(x => {
         const e = etapa(x), saldo = cartSaldo(x), pagado = cartPagado(x);
         const k = x.clienteId || sinAcentos(nombreDe(x)), varios = e === "armando" && (abiertosPor.get(k) || 0) > 1;
@@ -6659,13 +6708,14 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
           h("span", { class: "vx-cli" },
             h("b", null, nombreDe(x)),
             h("small", null, "Venta #" + numero(x) + (x.referencia ? " · Ref. " + x.referencia : "") + (varios ? " · " : ""), varios ? h("em", null, abiertosPor.get(k) + " carritos abiertos") : null),
-            etiquetas(x).length ? h("span", { class: "vx-tags" }, ...etiquetas(x)) : null),
+            (() => { const t = etiquetas(x).filter(z => /4x3|página/i.test(z.textContent)); if (!x.items.length && etapa(x) === "armando") t.push(h("span", { class: "vx-tag" }, "Sin piezas")); return t.length ? h("span", { class: "vx-tags" }, ...t) : null; })()),
           h("span", { class: "vx-fecha", "data-l": "Fecha" }, fechaLarga(fechaDe(x)), h("small", null, hora(fechaDe(x)))),
           h("span", { class: "vx-num", "data-l": "Piezas" }, String(cartPieces(x))),
           h("span", { class: "vx-num fuerte", "data-l": "Total" }, dinero(cartGrand(x))),
           h("span", { class: "vx-num" + (pagado > 0.005 ? " ok" : " cero"), "data-l": "Pagado" }, pagado > 0.005 ? dinero(pagado) : "—"),
           h("span", { class: "vx-num" + (saldo > 0.005 && e !== "cancel" ? " debe" : " cero"), "data-l": "Falta" }, saldo > 0.005 && e !== "cancel" ? dinero(saldo) : "—"),
-          h("span", { class: "vx-est" }, pill(x)));
+          h("span", { class: "vx-est" }, pill(x)),
+          (() => { const z = estatus(x); return h("span", { class: "vx-sts" }, h("span", { class: "vx-st2 " + z.k }, z.t), z.s ? h("small", null, z.s) : null); })());
       });
       const vacio = q() ? "Ninguna venta coincide con «" + (st.mvxQ || "") + "»" + (st.mvxTab !== "todos" || st.mvxRango !== "todo" ? " en esta pestaña y fechas. Prueba en «Todas» y «Todas las fechas»." : ".") : "No hay ventas aquí.";
       poner(tablaHost, cab, ...(filas.length ? filas : [h("div", { class: "vx-vacio" }, vacio)]));
@@ -6703,7 +6753,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       const donde = c.origen === "web" ? "Pedido de la página" : l ? (l.tipo === "mostrador" ? "Venta directa" : "Live «" + l.nombre + "»") : "Venta";
       cabeza = h("div", { class: "vx-vhead" },
         h("div", { class: "vx-vtit" },
-          h("div", { class: "vx-vnom" }, h("h2", null, nombreDe(c)), pill(c)),
+          h("div", { class: "vx-vnom" }, h("h2", null, nombreDe(c)), pill(c), (() => { const z = estatus(c); return (z.t === "—" || (etapa(c) === "armando" && !c.resguardo)) ? null : h("span", { class: "vx-st2 grande " + z.k }, z.t + (z.s ? " · " + z.s : "")); })()),
           h("div", { class: "vx-vmeta" }, "Venta #" + numero(c) + " · " + donde + " · " + new Date(c.creado).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) + ", " + hora(c.creado) + (c.referencia ? " · Ref. " + c.referencia : "")),
           etiquetas(c).length ? h("div", { class: "vx-tags" }, ...etiquetas(c)) : null),
         h("div", { class: "vx-vnums" },
@@ -6713,11 +6763,67 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     } else {
       cabeza = h("div", { class: "vx-vhead" }, h("div", { class: "vx-vtit" }, h("div", { class: "vx-vnom" }, h("h2", null, "Nueva venta")), h("div", { class: "vx-vmeta" }, "Escribe el nombre de la clienta y escanea sus piezas.")));
     }
+    if (c && o.paso3) ordenarAcciones(o.paso3, c);
     const cuerpo = (c && o.paso3)
       ? h("div", { class: "vx-vgrid" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2), h("div", { class: "vx-vder" }, o.paso3))
       : h("div", { class: "vx-vgrid sola" }, h("div", { class: "vx-vizq" }, o.paso1, o.paso2));
     return h("div", { class: "vx vx-venta" + (c && c.estado !== "abierto" ? " cerrada" : "") }, h("div", { class: "vx-top" }, atras), h("div", { class: "vx-card vx-vcard" }, cabeza, cuerpo));
   }
+
+  function ordenarAcciones(p3, c) {
+    const secs = [...p3.children].filter(e => e.classList && e.classList.contains("vd-sec")); if (!secs.length) return;
+    const btns = secs.flatMap(sx => [...sx.querySelectorAll("button")]);
+    const txt = b => b.textContent.trim();
+    const fuera = b => /^Imprimir ticket/.test(txt(b)) || txt(b) === "Cerrar sin ticket";
+    const primario = b => /^Registrar pago$/.test(txt(b));
+    const peligro = b => /^Eliminar$|^Cancelar venta$/.test(txt(b));
+    const keep = btns.filter(b => !fuera(b));
+    const prim = keep.filter(primario), dang = keep.filter(peligro), sec = keep.filter(b => !primario(b) && !peligro(b));
+    for (const b of sec) { const t = txt(b); if (/^Descargar ticket/.test(t)) b.textContent = "⬇ Descargar ticket (PDF)"; else if (/Reabrir venta/.test(t)) b.textContent = "↺ Reabrir para editar"; else if (t === "Dejar abierta") b.textContent = "Guardar y salir (sigue abierta)"; }
+    for (const b of dang) { if (txt(b) === "Eliminar") b.textContent = "Eliminar venta"; }
+    const caja = h("div", { class: "vx-acc" },
+      prim.length ? h("div", { class: "vx-acc-prim" }, ...prim) : null,
+      sec.length ? h("div", { class: "vx-acc-sec" }, ...sec) : null,
+      dang.length ? h("div", { class: "vx-acc-pel" }, ...dang) : null);
+    for (const b of [...prim, ...sec, ...dang]) b.className = "btn " + (primario(b) ? "primary vx-b1" : peligro(b) ? "vx-b3" : "vx-b2");
+    const ancla = secs[secs.length - 1]; ancla.parentNode.insertBefore(caja, ancla);
+    for (const sx of secs) sx.remove();
+  }
+
+  /* Antes de cerrar: si eligió «Pendiente» pero ya hay pagos que cubren todo, preguntar (nada se marca pagado solo) */
+  function dialogo(titulo, texto, opciones) {
+    return new Promise(ok => {
+      const fondo = h("div", { class: "vx-modal-fondo" });
+      const cerrarCon = v => { fondo.remove(); document.removeEventListener("keydown", esc, true); ok(v); };
+      const esc = ev => { if (ev.key === "Escape") { ev.stopPropagation(); cerrarCon(null); } };
+      document.addEventListener("keydown", esc, true);
+      fondo.append(h("div", { class: "vx-modal", role: "dialog", "aria-modal": "true" }, h("h3", null, titulo), h("p", null, texto),
+        h("div", { class: "vx-modal-bot" }, ...opciones.map(([v, t, cls]) => h("button", { type: "button", class: "btn " + (cls || ""), onclick: () => cerrarCon(v) }, t)))));
+      fondo.addEventListener("click", ev => { if (ev.target === fondo) cerrarCon(null); });
+      document.body.append(fondo);
+    });
+  }
+  function quitarPagos(c) {
+    const lista = [].concat(c.pago ? [{ monto: c.pago.monto, medio: c.pago.medio, fecha: c.pago.fecha }] : [], (c.anticipos || []).map(a => ({ monto: a.monto, medio: a.medio, fecha: a.fecha })));
+    if (!lista.length) return "";
+    const txt = lista.map(p => dinero(p.monto) + " " + (p.medio || "") + (p.fecha ? " (" + new Date(p.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + ")" : "")).join(", ");
+    const hoy = new Date().toLocaleString("es-MX", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+    c.nota = ((c.nota || "").trim() + (c.nota ? " · " : "") + "Pagos quitados el " + hoy + ": " + txt).trim();
+    c.pago = null; c.anticipos = [];
+    return txt;
+  }
+  window.mvxAntesDeCerrar = async function (c, pagado) {
+    if (pagado || !c) return true;
+    const pag = cartPagado(c) - cartDeposito(c);
+    if (pag <= 0.005 || cartSaldo(c) > 0.005) return true; // sin pagos, o con abono parcial: queda por cobrar, sin preguntar
+    const lista = [].concat(c.pago ? [c.pago] : [], c.anticipos || []).map(p => dinero(p.monto) + " " + (p.medio || "") + (p.fecha ? " del " + new Date(p.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : "")).join(", ");
+    const r = await dialogo("¿Cómo queda el pago de " + nombreDe(c) + "?",
+      "Elegiste «Pendiente de pago», pero esta venta ya tiene registrado " + lista + ", que cubre el total de " + dinero(cartGrand(c)) + ".",
+      [["cobrar", "Cerrar POR COBRAR (quitar ese pago)", "vx-b3o"], ["pagada", "Sí pagó · cerrar PAGADA", "primary"], [null, "Cancelar", "vx-b2"]]);
+    if (r === null) return false;
+    if (r === "cobrar") { quitarPagos(c); try { await saveCart(c); } catch (e) { toast("No se pudo guardar", true); return false; } }
+    return true;
+  };
 
   /* Entrada desde renderVenta. o = {main, cab, paso1, paso2, paso3, c, abiertas, abrir, R} */
   window.mvVentaPantalla = function (o) {
