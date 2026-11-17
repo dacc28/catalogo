@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T00:52:19.562Z",
+ "actualizado": "2026-11-17T01:11:26.426Z",
  "categorias": [
   {
    "p": "ANI",
@@ -711,7 +711,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/b314fce6e9cbb187ad84487e72c7b3de.jpg",
    "creado": "2026-11-07T21:36:19.972Z",
@@ -1287,7 +1287,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
@@ -1323,7 +1323,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
@@ -1411,6 +1411,18 @@
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00031",
+   "nombre": "Brazalete",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/694bd31652db4561770b30a91b227f6e.jpg",
+   "creado": "2026-11-01T21:03:09.591Z",
    "disponible": true
   },
   {
