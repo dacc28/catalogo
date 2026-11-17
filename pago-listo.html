@@ -1,0 +1,37 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Marvea · Pago</title><link rel="icon" href="logo-m.png"><meta name="theme-color" content="#FBF6F2">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font:16px/1.5 Urbanist,-apple-system,system-ui,sans-serif;color:#2B1A26;
+ background:radial-gradient(120% 90% at 10% 0%,#F5C9D8 0%,transparent 55%),radial-gradient(100% 80% at 100% 100%,#F8EE9A 0%,transparent 55%),#FBF6F2}
+.card{width:100%;max-width:440px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(90,39,72,.12);border-radius:26px;padding:34px 28px;text-align:center;box-shadow:0 24px 60px rgba(90,39,72,.16)}
+.logo{width:64px;height:64px;margin:0 auto 6px;display:block}
+.marca{font:700 30px Fraunces,Georgia,serif;color:#5A2748;margin:0}
+.ico{width:74px;height:74px;border-radius:50%;margin:22px auto 14px;display:flex;align-items:center;justify-content:center;font-size:38px;color:#fff;background:#1E7B45}
+.ico.no{background:#C9A227}
+h1{font:700 24px Fraunces,Georgia,serif;color:#5A2748;margin:0 0 8px}
+p{margin:0 0 12px;color:#5E4757}
+.ref{display:inline-block;margin:4px 0 16px;padding:4px 12px;border-radius:999px;background:#F5C9D8;color:#5A2748;font-weight:700;font-size:14px}
+a.btn{display:inline-block;margin-top:8px;background:#F2653F;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px}
+a.sec{display:block;margin-top:14px;color:#5A2748;font-weight:600;font-size:14px}
+small{display:block;margin-top:20px;color:#8A7383;font-size:12.5px}
+</style></head><body>
+<main class="card">
+  <img class="logo" src="logo-marvea-m.png" alt="" onerror="this.remove()"><p class="marca">Marvea</p>
+  <div class="ico" id="ico">✓</div>
+  <h1 id="tit">¡Gracias! Tu pago quedó hecho</h1>
+  <span class="ref" id="ref" hidden></span>
+  <p id="txt">Recibimos tu pago con tarjeta. En un momento te confirmamos por WhatsApp y seguimos con tu pedido.</p>
+  <a class="btn" id="wa" href="https://wa.me/528132660673">Escribir a Marvea por WhatsApp</a>
+  <a class="sec" href="https://www.marveamayoreo.com">Ir a marveamayoreo.com</a>
+  <small>Marvea · Mayoreo de joyería · Monterrey, N.L.</small>
+</main>
+<script>
+(function(){ var q=new URLSearchParams(location.search), r=(q.get("r")||"").replace(/[^\w-]/g,""), no=q.get("cancelado");
+  if(r){ var e=document.getElementById("ref"); e.textContent="Pedido #"+r; e.hidden=false; }
+  if(no){ document.getElementById("ico").className="ico no"; document.getElementById("ico").textContent="!";
+    document.getElementById("tit").textContent="Tu pago no se completó";
+    document.getElementById("txt").textContent="No se hizo ningún cargo. Puedes volver a abrir el link que te mandamos para pagar, o escríbenos si necesitas ayuda."; }
+  document.getElementById("wa").href="https://wa.me/528132660673?text="+encodeURIComponent(no?("Hola, tuve un problema al pagar con tarjeta"+(r?" mi pedido #"+r:"")+"."):("Hola, ya pagué con tarjeta"+(r?" mi pedido #"+r:"")+"."));
+})();
+</script></body></html>

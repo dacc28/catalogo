@@ -1456,6 +1456,7 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
     <button role="tab" id="tab-live" aria-selected="false" data-view="live">Live y carritos</button>
     <button role="tab" id="tab-rapido" aria-selected="false" data-view="rapido">Live rápido</button>
     <button role="tab" id="tab-venta" aria-selected="false" data-view="venta">Venta</button>
+    <button role="tab" id="tab-cobro" aria-selected="false" data-view="cobro">Cobro con tarjeta</button>
     <button role="tab" id="tab-bf" aria-selected="false" data-view="bf" hidden>Buen Fin</button>
     <button role="tab" id="tab-web" aria-selected="false" data-view="web">Tienda en línea</button>
     <button role="tab" id="tab-logi" aria-selected="false" data-view="logi">Logística</button>
@@ -1503,6 +1504,10 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
   </section>
   <section class="view" id="view-venta" hidden>
     <div id="ventaHost"></div>
+  </section>
+  <!-- COBRO CON TARJETA (links de Stripe para ventas cerradas por cobrar) -->
+  <section class="view" id="view-cobro" hidden>
+    <div id="cobroHost"></div>
   </section>
 
   <!-- CLIENTAS -->
@@ -1969,11 +1974,12 @@ function setView(v){
   if(v==="logi") renderLogistica();
   if(v==="envios") renderEnvios();
   if(v==="venta") renderVenta();
+  if(v==="cobro"&&typeof renderCobro==="function") renderCobro(); /* mvCT */
   if(v==="web"&&typeof renderWeb==="function") renderWeb();
   if(v==="ajustes"&&typeof window.__renderAjustes==="function") window.__renderAjustes();
   try{ localStorage.setItem("marvea.view",state.bf?"bf":v); }catch(e){}
 }
-const TAB_ICONS={bf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>',ajustes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',venta:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1.2 12.3a1.5 1.5 0 0 1-1.5 1.7H6.3a1.5 1.5 0 0 1-1.5-1.7L6 7z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>',rapido:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',cli:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.5a5 5 0 0 1 6 4.8"/></svg>',dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="12" width="8" height="9" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/></svg>',
+const TAB_ICONS={cobro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg>',bf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>',ajustes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',venta:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1.2 12.3a1.5 1.5 0 0 1-1.5 1.7H6.3a1.5 1.5 0 0 1-1.5-1.7L6 7z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>',rapido:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',cli:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.5a5 5 0 0 1 6 4.8"/></svg>',dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="12" width="8" height="9" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/></svg>',
  live:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7"/></svg>',
  inv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5"/><path d="M12 12v8.5"/></svg>',
  new:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
@@ -7119,6 +7125,265 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       await p; try { await seccionCarritos(id); } catch (e) { console.warn("mvVX", e); } };
     nuevo.__mvx = true; openClienta = nuevo; // eslint-disable-line no-func-assign
   }
+})();
+</script>
+<style id="mv-cobro-css">
+/* ===== mvCT · COBRO CON TARJETA (16-nov-2026) ===== */
+#cobroHost{--vx-fg:#1D1D1F;--vx-mut:#6E6E73;--vx-line:#E5E5EA;--vx-soft:#F5F5F7;--vx-ok:#1E7B45;--vx-ok-bg:#E3F5E9;--vx-debe:#C42B2B;--vx-debe-bg:#FDECEC}
+body.rol-vendedor #tab-cobro{display:none!important}
+.ct .vx-filtros{align-items:center}
+.ct-rev{font-size:13px;color:var(--vx-mut)}
+.ct-lista{display:flex;flex-direction:column;border-top:1px solid var(--vx-line)}
+.ct-fila{display:grid;grid-template-columns:minmax(220px,1.5fr) 150px minmax(190px,1fr) 380px;gap:10px 18px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--vx-line)}
+.ct-fila.pagada{background:var(--vx-ok-bg)}
+.ct-cli b{display:block;font-size:15.5px;color:var(--vx-fg)}
+.ct-cli span{display:block;font-size:13px;color:var(--vx-mut);margin-top:2px}
+.ct-mon span{display:block;font-size:13px;color:var(--vx-mut)}
+.ct-mon b{display:block;font-size:15.5px;color:var(--vx-debe);font-variant-numeric:tabular-nums}
+.ct-acc{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ct-chip{display:inline-block;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--vx-soft);color:var(--vx-mut)}
+.ct-chip.ok{background:var(--vx-ok);color:#fff}
+.ct-chip.esp{background:#E8EFFD;color:#1F5FD1}
+.ct-chip.venc{background:#FFF4D6;color:#8A6100}
+.ct-x{color:var(--vx-debe)!important}
+.ct-vacio{padding:28px 18px;text-align:center;color:var(--vx-mut);border-top:1px solid var(--vx-line)}
+.ct-aviso{margin:12px 18px;padding:12px 14px;border-radius:12px;background:#FFF4D6;color:#5C4300;font-size:13.5px;display:flex;flex-direction:column;gap:4px}
+.ct-hist{padding:12px 18px 16px;font-size:14px}
+.ct-hist summary{cursor:pointer;font-weight:600;color:var(--vx-fg)}
+.ct-hfila{padding:7px 0;border-bottom:1px solid var(--vx-line)}
+.ct-hfila b{margin-right:8px}.ct-hfila span{color:var(--vx-mut)}
+.ct-modal .ct-lab{display:block;font-size:12.5px;font-weight:600;color:#48484A;margin:12px 0 4px}
+.ct-modal .vx-pg-in{width:100%;box-sizing:border-box}
+.ct-nota{font-size:13px!important;margin:12px 0 8px!important}
+.ct-err{color:#C42B2B;font-size:13px;min-height:16px;margin-bottom:8px}
+.ct-url{font:12.5px/1.4 "IBM Plex Mono",ui-monospace,monospace;background:#F5F5F7;border-radius:10px;padding:10px 12px;word-break:break-all;margin-bottom:14px;user-select:all}
+@media (max-width:900px){.ct-fila{grid-template-columns:1fr auto}.ct-est{grid-column:1/-1}.ct-acc{grid-column:1/-1;justify-content:flex-start}}
+</style>
+<script id="mv-cobro-js">
+/* ===== mvCT · COBRO CON TARJETA (16-nov-2026) =====
+   Pestaña para mandar un link de pago de Stripe a las clientas cuyo pedido YA ESTÁ CERRADO (armado) y sigue POR COBRAR.
+   · Solo aparecen ventas cerradas con saldo pendiente. Las que se están armando, pagadas o canceladas no salen.
+   · «Generar link»: crea un pago de Stripe por lo que falta (se puede cambiar el monto), vence en 24 h.
+   · El link se manda por WhatsApp (abre el chat con el mensaje listo) o se copia.
+   · El sistema revisa con Stripe si ya pagó. Cuando pagó, sale «Pagó con tarjeta» y el botón «Registrar pago en la venta»
+     (nada se marca pagado solo). Al registrarlo, la venta queda pagada con forma de pago «Tarjeta» y sale de la lista.
+   · Los links se guardan en la colección «cobrosTarjeta» (un documento por link). Nada se borra.
+   · Solo administradores (la función de Stripe revisa la sesión). */
+(function () {
+  const FN = "cobro-tarjeta", COL = "cobrosTarjeta";
+  const st = () => state;
+  const N = () => window.MarveaNube || null;
+  const dinero = n => "$" + fmtMoney(n);
+  const sinAcentos = t => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const fechaHora = iso => { try { const d = new Date(iso); return d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }); } catch (e) { return ""; } };
+  const dia = iso => { try { return new Date(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short" }); } catch (e) { return ""; } };
+  let ventas = new Map(), cobros = new Map(), subs = false, filtro = "", revisando = false, ultimaRevision = 0, timer = null;
+
+  function suscribir() {
+    if (subs || !st().db) return; subs = true;
+    st().db.collection("carritos").where("estado", "==", "final").onSnapshot(s => {
+      const m = new Map(); for (const d of s.docs) { const x = d.data(); if (x) m.set(d.id, cartFromDoc(d.id, x)); }
+      ventas = m; if (st().view === "cobro") pintarLista();
+    }, e => console.warn("cobro ventas", e));
+    st().db.collection(COL).onSnapshot(s => {
+      const m = new Map(); for (const d of s.docs) { const x = d.data(); if (x) m.set(d.id, Object.assign({ id: d.id }, x)); }
+      cobros = m; if (st().view === "cobro") pintarLista();
+    }, e => console.warn("cobro links", e));
+  }
+  const fresca = c => { const v = st().ventaCarts && st().ventaCarts.get(c.id); return v || ventas.get(c.id) || c; };
+  const clientaDe = c => { const cl = st().clientas; if (!cl) return null; if (c.clienteId && cl.get(c.clienteId)) return cl.get(c.clienteId); const n = sinAcentos(c.cliente); return [...cl.values()].find(k => sinAcentos(k.nombre) === n) || null; };
+  const linksDe = id => [...cobros.values()].filter(x => x.carrito === id).sort((a, b) => String(b.creado || "").localeCompare(String(a.creado || "")));
+  const vigente = l => l && (l.estado === "pendiente" || l.estado === "procesando") && new Date(l.expira).getTime() > Date.now();
+  const porRegistrar = l => l && l.estado === "pagado" && !l.registrado;
+  function pendientes() {
+    return [...ventas.values()].map(fresca).filter(c => c.estado === "final" && cartSaldo(c) > 0.005)
+      .sort((a, b) => String(b.finalizado || b.actualizado || b.creado || "").localeCompare(String(a.finalizado || a.actualizado || a.creado || "")));
+  }
+  function telWa(t) { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; else if (d.length === 13 && d.startsWith("521")) d = "52" + d.slice(3); return d.length >= 12 ? d : ""; }
+
+  /* ---------- llamada a la función de Stripe (con la sesión del usuario del sistema) ---------- */
+  async function llamar(body) {
+    const n = N(); if (!n || !n.sb) throw new Error("Sin conexión con la nube. Entra al sistema con tu usuario.");
+    const { data, error } = await n.conTiempo(n.sb.functions.invoke(FN, { body }), 30000);
+    if (error) {
+      let msg = error.message || String(error);
+      try { const j = await error.context.json(); if (j && j.error) msg = j.error; } catch (e) {}
+      if (/Failed to send|fetch|NetworkError|Load failed/i.test(msg)) msg = "Sin internet o la función de cobro aún no está instalada.";
+      throw new Error(msg);
+    }
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  }
+
+  /* ---------- revisar con Stripe si ya pagaron ---------- */
+  async function revisar(forzar) {
+    if (revisando || (!forzar && Date.now() - ultimaRevision < 20000)) return;
+    const abiertos = [...cobros.values()].filter(l => l.sesion && (l.estado === "pendiente" || l.estado === "procesando"));
+    if (!abiertos.length) return;
+    revisando = true; ultimaRevision = Date.now(); pintarEstadoRevision();
+    try {
+      const r = await llamar({ accion: "estado", ids: abiertos.map(l => l.sesion) });
+      for (const l of abiertos) {
+        const e = r && r.estados && r.estados[l.sesion]; if (!e || e.estado === "error" || e.estado === l.estado) continue;
+        const cambio = { estado: e.estado, revisado: new Date().toISOString() };
+        if (e.estado === "pagado") { cambio.montoPagado = Number(e.monto) || l.monto; cambio.pagadoEn = e.pagado_en || new Date().toISOString(); cambio.pagoStripe = e.pago || ""; if (e.correo) cambio.correo = e.correo; }
+        await st().db.doc(COL + "/" + l.id).set(Object.assign({}, limpio(l), cambio));
+        if (e.estado === "pagado") toast("💳 " + (l.cliente || "Una clienta") + " pagó " + dinero(cambio.montoPagado) + " con tarjeta");
+      }
+    } catch (e) { console.warn("cobro revisar", e); }
+    finally { revisando = false; pintarEstadoRevision(); }
+  }
+  const limpio = l => { const o = Object.assign({}, l); delete o.id; return o; };
+
+  /* ---------- acciones ---------- */
+  function mensajeWa(c, l) {
+    const nombre = String(c.cliente || "").trim().split(/\s+/)[0] || "";
+    return "Hola" + (nombre ? " " + nombre : "") + " 😊\n" +
+      "Te comparto el link para pagar con *tarjeta de crédito o débito* tu pedido Marvea" + (c.referencia ? " #" + c.referencia : "") + " por *" + dinero(l.monto) + " MXN*:\n\n" + l.url +
+      "\n\nEl pago es seguro con Stripe. El link vence en 24 horas. ¡Gracias por tu compra!";
+  }
+  function abrirWa(c, l, tel) {
+    const t = telWa(tel || (clientaDe(c) || {}).whatsapp);
+    const url = (t ? "https://wa.me/" + t : "https://wa.me/") + "?text=" + encodeURIComponent(mensajeWa(c, l));
+    window.open(url, "_blank");
+    if (!l.enviado) st().db.doc(COL + "/" + l.id).set(Object.assign({}, limpio(l), { enviado: new Date().toISOString() })).catch(() => {});
+  }
+  async function copiar(l) {
+    try { await navigator.clipboard.writeText(l.url); toast("Link copiado"); }
+    catch (e) { const ta = h("textarea", null, l.url); document.body.append(ta); ta.select(); try { document.execCommand("copy"); toast("Link copiado"); } catch (x) { toast("No se pudo copiar; selecciónalo a mano", true); } ta.remove(); }
+  }
+  function modal(titulo, ...hijos) {
+    const fondo = h("div", { class: "vx-modal-fondo" });
+    const cerrar = () => { fondo.remove(); document.removeEventListener("keydown", esc, true); };
+    const esc = ev => { if (ev.key === "Escape") { ev.stopPropagation(); cerrar(); } };
+    document.addEventListener("keydown", esc, true);
+    fondo.addEventListener("click", ev => { if (ev.target === fondo) cerrar(); });
+    fondo.append(h("div", { class: "vx-modal ct-modal", role: "dialog", "aria-modal": "true" }, h("h3", null, titulo), ...hijos));
+    document.body.append(fondo); return cerrar;
+  }
+  function generar(c0) {
+    const c = fresca(c0); const falta = Math.round(cartSaldo(c) * 100) / 100; const k = clientaDe(c);
+    const monto = h("input", { type: "number", min: "10", step: "0.01", inputmode: "decimal", class: "vx-pg-in", value: String(falta), "aria-label": "Monto a cobrar" });
+    const tel = h("input", { type: "tel", class: "vx-pg-in", value: (k && k.whatsapp) || "", placeholder: "WhatsApp (10 dígitos)", "aria-label": "WhatsApp de la clienta" });
+    const crear = h("button", { type: "button", class: "btn primary" }, "Crear link de pago");
+    const err = h("div", { class: "ct-err", role: "status" });
+    let cerrar;
+    crear.onclick = async () => {
+      const m = Math.round((Number(monto.value) || 0) * 100) / 100;
+      if (!(m >= 10)) { err.textContent = "Escribe el monto a cobrar (mínimo $10)."; monto.focus(); return; }
+      if (m > falta + 0.005 && !confirm("Vas a cobrar " + dinero(m) + " y solo debe " + dinero(falta) + ". ¿Seguir así?")) return;
+      crear.disabled = true; crear.textContent = "Creando link…"; err.textContent = "";
+      try {
+        const r = await llamar({ accion: "crear", carrito: c.id, referencia: c.referencia || "", cliente: c.cliente || "", piezas: cartPieces(c), monto: m });
+        const l = { carrito: c.id, cliente: c.cliente || "", referencia: c.referencia || "", monto: r.monto, url: r.url, sesion: r.id, folio: r.folio, expira: r.expira, estado: "pendiente", creado: new Date().toISOString(), por: quienSoy(), telefono: tel.value.trim(), enviado: "", registrado: "" };
+        // si había otro link sin pagar para esta venta, se vence para que no paguen dos veces
+        for (const v of linksDe(c.id).filter(vigente)) { try { await llamar({ accion: "cancelar", id: v.sesion }); await st().db.doc(COL + "/" + v.id).set(Object.assign({}, limpio(v), { estado: "cancelado", cancelado: new Date().toISOString(), motivo: "Se generó un link nuevo" })); } catch (e) {} }
+        await st().db.doc(COL + "/" + r.id).set(l); l.id = r.id; cobros.set(r.id, l);
+        cerrar(); listo(c, l); pintarLista();
+      } catch (e) { crear.disabled = false; crear.textContent = "Crear link de pago"; err.textContent = "No se pudo crear el link: " + (e.message || e); }
+    };
+    cerrar = modal("Link de pago para " + (c.cliente || "Sin nombre"),
+      h("div", { class: "vx-pg-res" },
+        h("div", null, h("span", null, "Total"), h("b", null, dinero(cartGrand(c)))),
+        h("div", null, h("span", null, "Pagado"), h("b", { class: "ok" }, dinero(cartPagado(c)))),
+        h("div", { class: "debe" }, h("span", null, "Falta"), h("b", null, dinero(falta)))),
+      h("label", { class: "ct-lab" }, "Monto a cobrar con tarjeta"), monto,
+      h("label", { class: "ct-lab" }, "WhatsApp de la clienta"), tel,
+      h("p", { class: "ct-nota" }, "El link es de Stripe, acepta tarjeta de crédito y débito y vence en 24 horas."),
+      err,
+      h("div", { class: "vx-modal-bot" }, crear, h("button", { type: "button", class: "btn vx-b2", onclick: () => cerrar() }, "Cancelar")));
+    setTimeout(() => monto.select(), 30);
+  }
+  function listo(c, l) {
+    let cerrar;
+    cerrar = modal("Link listo ✓",
+      h("p", null, "Link de " + dinero(l.monto) + " para " + (c.cliente || "la clienta") + ". Vence el " + fechaHora(l.expira) + "."),
+      h("div", { class: "ct-url" }, l.url),
+      h("div", { class: "vx-modal-bot" },
+        h("button", { type: "button", class: "btn primary", onclick: () => { abrirWa(c, l, l.telefono); cerrar(); } }, "Enviar por WhatsApp"),
+        h("button", { type: "button", class: "btn vx-b2", onclick: () => copiar(l) }, "Copiar link"),
+        h("button", { type: "button", class: "btn vx-b2", onclick: () => cerrar() }, "Cerrar")));
+  }
+  async function cancelarLink(l) {
+    if (!confirm("¿Cancelar el link de " + dinero(l.monto) + " de " + (l.cliente || "la clienta") + "? Ya no lo podrá pagar.")) return;
+    try { const r = await llamar({ accion: "cancelar", id: l.sesion });
+      const est = r && r.estado === "pagado" ? "pagado" : "cancelado";
+      await st().db.doc(COL + "/" + l.id).set(Object.assign({}, limpio(l), { estado: est, cancelado: est === "cancelado" ? new Date().toISOString() : "" }));
+      toast(est === "pagado" ? "Ese link ya estaba pagado" : "Link cancelado");
+    } catch (e) { toast("No se pudo cancelar: " + (e.message || e), true); }
+  }
+  async function registrar(c0, l) {
+    const c = fresca(c0); const m = Math.round((Number(l.montoPagado || l.monto) || 0) * 100) / 100; const falta = cartSaldo(c);
+    if (!(m > 0)) return;
+    try {
+      if (c.estado === "final" && !c.pago && m >= falta - 0.005) await setPagoVenta(c, { monto: m, medio: "Tarjeta", cuenta: "Stripe (link de pago)", fecha: l.pagadoEn || new Date().toISOString() });
+      else { const ok = await agregarAnticipo(c, m, "Tarjeta", "Link de pago Stripe" + (l.pagoStripe ? " · " + l.pagoStripe : "")); if (ok === false) throw new Error("no"); }
+      await st().db.doc(COL + "/" + l.id).set(Object.assign({}, limpio(l), { registrado: new Date().toISOString(), registradoPor: quienSoy() }));
+      toast((c.cliente || "La venta") + ": pago con tarjeta registrado");
+    } catch (e) { toast("No se pudo registrar el pago", true); }
+  }
+
+  /* ---------- pantalla ---------- */
+  let host = null, lista = null, estadoRev = null;
+  function pintarEstadoRevision() { if (estadoRev) estadoRev.textContent = revisando ? "Revisando pagos con Stripe…" : (ultimaRevision ? "Revisado " + new Date(ultimaRevision).toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }) : ""); }
+  function chipDe(l) {
+    if (!l) return h("span", { class: "ct-chip" }, "Sin link");
+    if (porRegistrar(l)) return h("span", { class: "ct-chip ok" }, "💳 Pagó " + dinero(l.montoPagado || l.monto) + " con tarjeta");
+    if (l.estado === "procesando") return h("span", { class: "ct-chip esp" }, "Pago en proceso");
+    if (vigente(l)) return h("span", { class: "ct-chip esp" }, (l.enviado ? "Link enviado" : "Link creado") + " · vence " + fechaHora(l.expira));
+    if (l.estado === "cancelado") return h("span", { class: "ct-chip" }, "Link cancelado");
+    if (l.estado === "pagado") return h("span", { class: "ct-chip ok" }, "Pagado con tarjeta");
+    return h("span", { class: "ct-chip venc" }, "Link vencido");
+  }
+  function fila(c) {
+    const ls = linksDe(c.id); const pagadoSinReg = ls.find(porRegistrar); const l = pagadoSinReg || ls[0] || null; const k = clientaDe(c);
+    const acciones = [];
+    if (pagadoSinReg) acciones.push(h("button", { type: "button", class: "btn primary sm", onclick: () => registrar(c, pagadoSinReg) }, "Registrar pago en la venta"));
+    else if (vigente(l)) acciones.push(
+      h("button", { type: "button", class: "btn primary sm", onclick: () => abrirWa(c, l, l.telefono) }, "Enviar por WhatsApp"),
+      h("button", { type: "button", class: "btn ghost sm", onclick: () => copiar(l) }, "Copiar link"),
+      h("button", { type: "button", class: "btn ghost sm ct-x", title: "Cancelar este link", onclick: () => cancelarLink(l) }, "Cancelar link"));
+    else acciones.push(h("button", { type: "button", class: "btn primary sm", onclick: () => generar(c) }, l ? "Generar link nuevo" : "Generar link de pago"));
+    return h("div", { class: "ct-fila" + (pagadoSinReg ? " pagada" : "") },
+      h("div", { class: "ct-cli" },
+        h("b", null, c.cliente || "Sin nombre"),
+        h("span", null, [c.referencia ? "#" + c.referencia : "", cartPieces(c) + " piezas", "cerrada " + dia(c.finalizado || c.actualizado || c.creado), k && k.whatsapp ? "WhatsApp " + k.whatsapp : "sin WhatsApp"].filter(Boolean).join(" · "))),
+      h("div", { class: "ct-mon" }, h("span", null, "Total " + dinero(cartGrand(c))), h("b", null, "Falta " + dinero(cartSaldo(c)))),
+      h("div", { class: "ct-est" }, chipDe(l)),
+      h("div", { class: "ct-acc" }, ...acciones));
+  }
+  function pintarLista() {
+    if (!lista) return;
+    const q = sinAcentos(filtro);
+    const ps = pendientes().filter(c => !q || sinAcentos(c.cliente).includes(q) || String(c.referencia || "").includes(q));
+    // pagos con tarjeta ya hechos cuya venta ya no está por cobrar (o ya registrados): historial
+    const hechos = [...cobros.values()].filter(l => l.estado === "pagado").sort((a, b) => String(b.pagadoEn || b.creado || "").localeCompare(String(a.pagadoEn || a.creado || ""))).slice(0, 20);
+    const sinReg = [...cobros.values()].filter(l => porRegistrar(l) && !ps.some(c => c.id === l.carrito));
+    const totalFalta = ps.reduce((t, c) => t + cartSaldo(c), 0);
+    lista.replaceChildren(...[
+      h("div", { class: "vx-resumen" }, h("span", null, h("b", null, String(ps.length)), " pedidos armados por cobrar"), h("span", null, "Por cobrar ", h("b", { class: "debe" }, dinero(totalFalta))),
+        h("span", null, h("b", null, String([...cobros.values()].filter(vigente).length)), " links esperando pago")),
+      ps.length ? h("div", { class: "ct-lista" }, ...ps.map(fila)) : h("div", { class: "ct-vacio" }, q ? "Ninguna venta por cobrar coincide con «" + filtro + "»." : "No hay pedidos armados pendientes de pago. 🎉"),
+      sinReg.length ? h("div", { class: "ct-aviso" }, h("b", null, "Pagos con tarjeta sin registrar en una venta que ya no está por cobrar:"),
+        ...sinReg.map(l => h("div", null, (l.cliente || "Sin nombre") + (l.referencia ? " #" + l.referencia : "") + " · " + dinero(l.montoPagado || l.monto) + " · " + fechaHora(l.pagadoEn || l.creado) + " — revisa la venta en «Venta»."))) : null,
+      hechos.length ? h("details", { class: "ct-hist" }, h("summary", null, "Pagos recibidos con tarjeta (" + hechos.length + ")"),
+        ...hechos.map(l => h("div", { class: "ct-hfila" }, h("b", null, l.cliente || "Sin nombre"), h("span", null, [l.referencia ? "#" + l.referencia : "", dinero(l.montoPagado || l.monto), fechaHora(l.pagadoEn || l.creado), l.registrado ? "registrado en la venta" : "falta registrar"].filter(Boolean).join(" · "))))) : null].filter(Boolean));
+  }
+  window.renderCobro = function () {
+    host = document.getElementById("cobroHost"); if (!host) return;
+    if (!st().db) { host.replaceChildren(h("p", null, "Cargando…")); setTimeout(() => { if (st().view === "cobro") window.renderCobro(); }, 800); return; }
+    suscribir();
+    const buscar = h("input", { type: "search", class: "vx-buscar", placeholder: "Buscar clienta o # de venta…", value: filtro, "aria-label": "Buscar" });
+    buscar.addEventListener("input", () => { filtro = buscar.value; pintarLista(); });
+    estadoRev = h("span", { class: "ct-rev" });
+    const btnRev = h("button", { type: "button", class: "btn ghost sm", onclick: () => revisar(true) }, "Revisar pagos ahora");
+    lista = h("div");
+    host.replaceChildren(h("div", { class: "vx ct" },
+      h("div", { class: "vx-top" }, h("div", { class: "vx-ttl" }, h("h2", null, "Cobro con tarjeta"), h("span", null, "Pedidos ya armados y pendientes de pago: genera un link de Stripe y mándalo por WhatsApp."))),
+      h("div", { class: "vx-card" }, h("div", { class: "vx-filtros" }, buscar, btnRev, estadoRev), lista)));
+    pintarLista(); pintarEstadoRevision(); revisar(true);
+    clearInterval(timer); timer = setInterval(() => { if (st().view === "cobro" && !document.hidden) revisar(false); else if (st().view !== "cobro") clearInterval(timer); }, 25000);
+  };
 })();
 </script>
 </body></html>
