@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T16:06:44.054Z",
+ "actualizado": "2026-11-17T16:20:38.162Z",
  "categorias": [
   {
    "p": "ANI",
@@ -46,18 +46,6 @@
  "piezas": 999,
  "productos": [
   {
-   "codigo": "ANI-00001",
-   "nombre": "Anillo Ajustable de Líneas",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/76b22a59776f6b1ad645d0d36ced9dbc.jpg",
-   "creado": "2026-10-19T01:12:42.851Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00002",
    "nombre": "Anillo Ajustable Chunky",
    "categoria": "ANI",
@@ -79,18 +67,6 @@
    "notas": "Dupe de Cartier",
    "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
    "creado": "2026-10-19T02:11:33.688Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00007",
-   "nombre": "Anillo Ajustable de Acero",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
-   "creado": "2026-10-19T02:47:25.972Z",
    "disponible": true
   },
   {
@@ -127,18 +103,6 @@
    "notas": "",
    "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00003",
-   "nombre": "Aretes Ferragamo plateados",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "Inspo Ferragamo",
-   "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
-   "creado": "2026-10-19T01:46:11.478Z",
    "disponible": true
   },
   {
@@ -1183,54 +1147,6 @@
    "notas": "",
    "foto": "fotos/5d9c078db8e30f32ea9249cc76180c63.jpg",
    "creado": "2026-10-19T01:04:03.209Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00007",
-   "nombre": "Collar de Hematitas",
-   "categoria": "COL",
-   "material": "Hematitas y Chapa de Oro",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c0bc6f02eb03fd277535aa05afa91a4c.jpg",
-   "creado": "2026-10-19T01:14:56.657Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00008",
-   "nombre": "Collar de Luna",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/0b209269940a6425897ba5b968d49f6b.jpg",
-   "creado": "2026-10-19T01:18:46.039Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00013",
-   "nombre": "Collar de Cuentas y Perla",
-   "categoria": "COL",
-   "material": "Cuenta y Perla Sintética con Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
-   "creado": "2026-10-19T01:33:02.110Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00015",
-   "nombre": "Collar de Cuentas",
-   "categoria": "COL",
-   "material": "Chapa de Oro",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
-   "creado": "2026-10-19T01:37:56.830Z",
    "disponible": true
   },
   {
