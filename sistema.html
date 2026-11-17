@@ -7199,6 +7199,16 @@ body.rol-vendedor #tab-cobro{display:none!important}
     return [...ventas.values()].map(fresca).filter(c => c.estado === "final" && cartSaldo(c) > 0.005)
       .sort((a, b) => String(b.finalizado || b.actualizado || b.creado || "").localeCompare(String(a.finalizado || a.actualizado || a.creado || "")));
   }
+  /* piezas de la venta para que salgan en el link (Stripe las muestra bajo el total); lo ya pagado y los descuentos van como un descuento */
+  function detalle(c) {
+    const m = new Map();
+    for (const i of c.items || []) { const k = i.codigo + "|" + (Number(i.precio) || 0); const x = m.get(k); if (x) x.cant += Number(i.cant) || 0; else m.set(k, { codigo: i.codigo, nombre: i.nombre || i.codigo, precio: Number(i.precio) || 0, cant: Number(i.cant) || 0 }); }
+    const extras = [];
+    const env = cartShip(c); if (env > 0.005) extras.push({ nombre: (c.envio && c.envio.nombre) || "Envío", monto: env });
+    const iva = cartIva(c); if (iva > 0.005) extras.push({ nombre: "IVA 16% (con factura)", monto: iva });
+    const partes = []; if (cartPagado(c) > 0.005) partes.push("Ya pagado"); if (cartDescPromo(c) > 0.005) partes.push("Promo 4x3");
+    return { items: [...m.values()].filter(i => i.cant > 0), extras, descuentoNombre: partes.join(" y ") || "Descuento" };
+  }
   function telWa(t) { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; else if (d.length === 13 && d.startsWith("521")) d = "52" + d.slice(3); return d.length >= 12 ? d : ""; }
 
   /* ---------- llamada a la función de Stripe (con la sesión del usuario del sistema) ---------- */
@@ -7274,7 +7284,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
       if (m > falta + 0.005 && !confirm("Vas a cobrar " + dinero(m) + " y solo debe " + dinero(falta) + ". ¿Seguir así?")) return;
       crear.disabled = true; crear.textContent = "Creando link…"; err.textContent = "";
       try {
-        const r = await llamar({ accion: "crear", carrito: c.id, referencia: c.referencia || "", cliente: c.cliente || "", piezas: cartPieces(c), monto: m });
+        const r = await llamar(Object.assign({ accion: "crear", carrito: c.id, referencia: c.referencia || "", cliente: c.cliente || "", piezas: cartPieces(c), monto: m }, detalle(c)));
         const l = { carrito: c.id, cliente: c.cliente || "", referencia: c.referencia || "", monto: r.monto, url: r.url, sesion: r.id, folio: r.folio, expira: r.expira, estado: "pendiente", creado: new Date().toISOString(), por: quienSoy(), telefono: tel.value.trim(), enviado: "", registrado: "" };
         // si había otro link sin pagar para esta venta, se vence para que no paguen dos veces
         for (const v of linksDe(c.id).filter(vigente)) { try { await llamar({ accion: "cancelar", id: v.sesion }); await st().db.doc(COL + "/" + v.id).set(Object.assign({}, limpio(v), { estado: "cancelado", cancelado: new Date().toISOString(), motivo: "Se generó un link nuevo" })); } catch (e) {} }

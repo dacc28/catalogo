@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T00:49:46.219Z",
+ "actualizado": "2026-11-17T00:52:19.562Z",
  "categorias": [
   {
    "p": "ANI",
@@ -243,7 +243,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2b15b4c579ac360eed115d2f14fb41de.jpg",
    "creado": "2026-10-20T23:16:18.376Z",
@@ -790,18 +790,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00001",
-   "nombre": "Cadena Bibiana",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/71eba3f6f6ac76279dcd1e1c52e99b45.jpg",
-   "creado": "2026-10-20T16:13:15.587Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00003",
    "nombre": "Cadena Torzal Dorado 45cm",
    "categoria": "CAD",
@@ -855,7 +843,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/49a30e288b58131c82f64f700ac4a1e1.jpg",
    "creado": "2026-11-07T20:12:30.531Z",
