@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script>/* auto-actualización: si hay versión nueva publicada, la página se recarga sola */
 window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
-<link rel="stylesheet" href="mv.css?v=20261117a">
+<link rel="stylesheet" href="mv.css?v=20261117b">
 <link rel="stylesheet" href="bf.css?v=20261113f">
 <link rel="stylesheet" href="pausa.css?v=20261113f">
 </head>
@@ -303,6 +303,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
         <nav id="tabs">
           <button data-p="inicio" class="on"><i class="fa-solid fa-house"></i> Resumen</button>
           <button data-p="pedidos" data-activo><i class="fa-solid fa-box-open"></i> Mis pedidos</button>
+          <button data-p="inventario" data-activo><i class="fa-solid fa-gem"></i> Mi inventario</button>
           <button data-p="negocio" data-activo><i class="fa-solid fa-tags"></i> Mis precios y ventas</button>
           <button data-p="catalogo" data-activo><i class="fa-solid fa-file-pdf"></i> Mi catálogo</button>
           <button data-p="calculadora"><i class="fa-solid fa-calculator"></i> Calculadora</button>
@@ -332,7 +333,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
             <div class="kpis">
               <div class="kpi"><small>Piezas compradas</small><b id="kPiezas">0</b><span id="kPedidos">0 pedidos</span></div>
               <div class="kpi"><small>Invertido en Marvea</small><b id="kInvertido">$0</b><span>a precio de mayoreo</span></div>
-              <div class="kpi"><small>Piezas vendidas</small><b id="kVendidas">0</b><span id="kDisponibles">0 disponibles</span></div>
+              <div class="kpi kpi-link" data-ir="inventario" role="button" tabindex="0"><small>Piezas vendidas</small><b id="kVendidas">0</b><span id="kDisponibles">0 disponibles</span></div>
               <div class="kpi acento"><small>Tu ganancia</small><b id="kGanancia">$0</b><span id="kIngresos">$0 en ventas</span></div>
             </div>
             <div class="dos">
@@ -355,6 +356,19 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
             <div class="cab"><div><h2>Mis pedidos</h2><p>Todo lo que has comprado en Marvea, con fotos y guía de envío. Toca una guía para rastrearla.</p></div></div>
             <div class="rastreo-uno"><form id="rastreoClub" autocomplete="off"><label for="guiaRapida"><i class="fa-solid fa-truck-fast"></i> Rastrea tu envío</label><input id="guiaRapida" placeholder="Pega tu número de guía" maxlength="40" enterkeyhint="go"><button class="btn sm" type="submit">Rastrear</button></form><div class="guias-rap" id="guiasRap"></div></div>
             <div id="listaPedidos"></div>
+          </div>
+        </div>
+
+        <div class="panel" id="p-inventario">
+          <div class="caja">
+            <div class="cab"><div><h2>Mi inventario</h2><p>Todas las piezas que has comprado en Marvea, con su foto. Mira cuántas te quedan y toca una para ver su ficha o anotar una venta.</p></div></div>
+            <div class="resumen" id="ivResumen"></div>
+            <div class="iv-barra">
+              <div class="iv-buscar"><i class="fa-solid fa-magnifying-glass"></i><input id="ivQ" type="search" placeholder="Buscar pieza o código" enterkeyhint="search" autocomplete="off"></div>
+              <div class="iv-seg" id="ivFiltro"><button type="button" data-f="disp" class="on">Disponibles</button><button type="button" data-f="todas">Todas</button><button type="button" data-f="agot">Agotadas</button></div>
+            </div>
+            <div class="iv-cats" id="ivCats"></div>
+            <div class="iv-grid" id="ivGrid"></div>
           </div>
         </div>
 
@@ -485,7 +499,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
 <script src="supabase-2.45.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="mv-tienda.js?v=20261117a"></script>
-<script src="mv-cuenta.js?v=20261117a"></script>
+<script src="mv-cuenta.js?v=20261117b"></script>
 <script>/* portada: las fotos de joyería pasan como video (sin deformar: object-fit cover). Se pausa fuera de pantalla, con "reducir movimiento" o ahorro de datos */
 (function(){var v=document.getElementById("heroVid");if(!v)return;var c=navigator.connection||{};
 if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||c.saveData){v.removeAttribute("autoplay");v.preload="none";try{v.pause()}catch(e){}return;}

@@ -1,4 +1,4 @@
-/* Marvea · Mi cuenta (pedidos, Business Club, catálogo, perfil) dentro de la página única · generado desde club.js v6 · mvC2 (17-nov-2026): inicio con pedido activo, tipografías y 2 colores en el catálogo */
+/* Marvea · Mi cuenta (pedidos, Business Club, catálogo, perfil) dentro de la página única · generado desde club.js v6 · mvC2 (17-nov-2026): inicio con pedido activo, tipografías y 2 colores en el catálogo · mvInv: Mi inventario */
 (() => {
   "use strict";
   const SB_URL = "https://kuuewntjxtjjktxbgxfk.supabase.co";
@@ -68,11 +68,11 @@
 
   /* ---------- pestañas ---------- */
   let actual = "inicio";
-  const ir = (p, sinHash) => { if (!$("#p-" + p)) p = "inicio"; if (!S.activo && ["pedidos", "negocio", "catalogo"].includes(p)) { toast("Se activa con tu primera compra"); p = "inicio"; } if (p === "catalogo") pintarCatalogo(); if (p === "inicio") pintarMiniCat(); if (p === "calculadora" && window.calcMontar) window.calcMontar("calcCuenta"); $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); actual = p; if (window.MV_S) window.MV_S._panel = p; if (!sinHash) { const h = "#/cuenta" + (p === "inicio" ? "" : "/" + p); if (location.hash !== h) history.replaceState(null, "", location.pathname + h); } window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const ir = (p, sinHash) => { if (!$("#p-" + p)) p = "inicio"; if (!S.activo && ["pedidos", "inventario", "negocio", "catalogo"].includes(p)) { toast("Se activa con tu primera compra"); p = "inicio"; } if (p === "catalogo") pintarCatalogo(); if (p === "inventario") pintarInventario(); if (p === "inicio") pintarMiniCat(); if (p === "calculadora" && window.calcMontar) window.calcMontar("calcCuenta"); $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.p === p)); $$(".panel").forEach(x => x.classList.toggle("on", x.id === "p-" + p)); medir("club_panel", { panel: p }); actual = p; if (window.MV_S) window.MV_S._panel = p; if (!sinHash) { const h = "#/cuenta" + (p === "inicio" ? "" : "/" + p); if (location.hash !== h) history.replaceState(null, "", location.pathname + h); } window.scrollTo({ top: 0, behavior: "smooth" }); };
   $$("#tabs button").forEach(b => b.addEventListener("click", () => ir(b.dataset.p)));
-  $$("[data-ir]").forEach(b => b.addEventListener("click", () => ir(b.dataset.ir)));
+  $$("[data-ir]").forEach(b => { b.addEventListener("click", () => ir(b.dataset.ir)); if (b.getAttribute("role") === "button") b.addEventListener("keydown", e => { if (e.key === "Enter") ir(b.dataset.ir); }); });
 
-  function pintarTodo() { pintarCabecera(); $$("#tabs button[data-activo]").forEach(b => b.classList.toggle("off", !S.activo)); $("#bloqueado").style.display = S.activo ? "none" : ""; $("#inicioActivo").style.display = S.activo ? "" : "none"; pintarInicio(); pintarPedidos(); pintarNegocio(); pintarCatalogo(); pintarPerfil(); }
+  function pintarTodo() { pintarCabecera(); $$("#tabs button[data-activo]").forEach(b => b.classList.toggle("off", !S.activo)); $("#bloqueado").style.display = S.activo ? "none" : ""; $("#inicioActivo").style.display = S.activo ? "" : "none"; pintarInicio(); pintarPedidos(); pintarInventario(); pintarNegocio(); pintarCatalogo(); pintarPerfil(); }
 
   function pintarCabecera() { const n = S.yo.nombre || "clienta"; $("#avatar").textContent = n.trim().charAt(0).toUpperCase() || "M"; $("#hola2").textContent = "Hola, " + n.split(" ")[0]; $("#subtitulo").textContent = (S.yo.catalogo.nombre || S.yo.negocio || "Marvea Business Club") + (S.yo.ciudad ? " · " + S.yo.ciudad : ""); }
 
@@ -148,6 +148,66 @@
     }
   }
 
+  /* ---------- mvInv · Mi inventario: sus piezas con foto, filtros y ficha con «Registrar venta» ---------- */
+  const IV = { f: "disp", cat: "", q: "" };
+  const fotoDe = r => (r.foto = r.foto || mvF(r.codigo)) || "logo-m.png";
+  const sinAc = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  function pintarInventario() {
+    const grid = $("#ivGrid"); if (!grid || !S.yo) return;
+    const disp = S.inv.reduce((s, r) => s + r.disponibles, 0), modelos = S.inv.filter(r => r.disponibles > 0).length;
+    const valor = S.inv.reduce((s, r) => s + r.disponibles * (r.precioVenta != null ? r.precioVenta : 0), 0), inv = S.inv.reduce((s, r) => s + r.disponibles * r.costo, 0);
+    $("#ivResumen").innerHTML = '<span class="chip"><i class="fa-solid fa-gem"></i> ' + disp + ' piezas disponibles</span><span class="chip"><i class="fa-solid fa-layer-group"></i> ' + modelos + (modelos === 1 ? ' modelo' : ' modelos') + ' con existencia</span><span class="chip prep"><i class="fa-solid fa-sack-dollar"></i> ' + mxn(inv) + ' invertido en lo que te queda</span>' + (valor ? '<span class="chip ent"><i class="fa-solid fa-tags"></i> ' + mxn(valor) + ' a tus precios</span>' : '');
+    const cats = [...new Set(S.inv.map(r => r.categoria || "Otros"))].sort((a, b) => a.localeCompare(b));
+    if (IV.cat && !cats.includes(IV.cat)) IV.cat = "";
+    $("#ivCats").innerHTML = cats.length > 1 ? ['<button type="button" data-c="" class="' + (IV.cat ? "" : "on") + '">Todas</button>'].concat(cats.map(c => '<button type="button" data-c="' + esc(c) + '" class="' + (IV.cat === c ? "on" : "") + '">' + esc(c) + '</button>')).join("") : "";
+    $$("#ivCats button").forEach(b => b.onclick = () => { IV.cat = b.dataset.c; pintarInventario(); });
+    const q = sinAc(IV.q.trim());
+    const lista = S.inv.filter(r => (IV.f === "todas" || (IV.f === "disp" ? r.disponibles > 0 : r.disponibles <= 0)) && (!IV.cat || (r.categoria || "Otros") === IV.cat) && (!q || sinAc([r.nombre, r.codigo, r.material, r.categoria].join(" ")).includes(q)))
+      .sort((a, b) => (b.disponibles > 0) - (a.disponibles > 0) || (a.nombre || "").localeCompare(b.nombre || ""));
+    if (!lista.length) { grid.innerHTML = '<div class="vacio" style="grid-column:1/-1"><b>' + (S.inv.length ? "No hay piezas con ese filtro" : "Todavía no hay piezas") + '</b>' + (S.inv.length ? "Prueba con «Todas» o borra la búsqueda." : "Cuando confirmemos tu primer pedido, aquí verás cada pieza con su foto.") + '</div>'; return; }
+    grid.innerHTML = lista.map(r => { const d = r.disponibles; const bd = d <= 0 ? '<span class="iv-bd cero">Agotada</span>' : '<span class="iv-bd' + (d <= 2 ? " poca" : "") + '">' + d + (d === 1 ? " disponible" : " disponibles") + '</span>';
+      return '<button type="button" class="iv-card' + (d <= 0 ? " agot" : "") + '" data-c="' + esc(r.codigo) + '"><span class="iv-ph"><img src="' + esc(fotoDe(r)) + '" alt="" loading="lazy" decoding="async"></span>' + bd
+        + '<span class="iv-tx"><b>' + esc(r.nombre || r.codigo) + '</b><small>' + esc([r.categoria, r.material].filter(Boolean).join(" · ")) + '</small><span class="iv-nums"><span>Compraste <em>' + r.comprado + '</em></span><span>Vendiste <em>' + r.vendido + '</em></span></span>'
+        + '<span class="iv-pr">Costo ' + mxn(r.costo) + (r.precioVenta != null ? ' · Tu precio <b>' + mxn(r.precioVenta) + '</b>' : ' · <span style="color:var(--coral);font-weight:800">sin precio</span>') + '</span></span></button>'; }).join("");
+    $$("#ivGrid .iv-card").forEach(b => b.addEventListener("click", () => fichaInv(b.dataset.c)));
+  }
+  let tQ = null;
+  $("#ivQ").addEventListener("input", e => { clearTimeout(tQ); tQ = setTimeout(() => { IV.q = e.target.value; pintarInventario(); }, 120); });
+  $$("#ivFiltro button").forEach(b => b.addEventListener("click", () => { IV.f = b.dataset.f; $$("#ivFiltro button").forEach(x => x.classList.toggle("on", x === b)); pintarInventario(); }));
+  function fichaInv(codigo) {
+    const r = S.inv.find(x => x.codigo === codigo); if (!r) return;
+    const peds = [...(S.pedidosWeb || []), ...S.pedidos].filter(p => (p.items || []).some(it => it.codigo === codigo));
+    const pv0 = r.precioVenta != null ? Math.round(r.precioVenta) : Math.round(r.costo * 2);
+    const st = { cant: 1, precio: pv0 };
+    window.abrirModal('<div class="m-cab"><h3>' + esc(r.nombre || r.codigo) + '</h3><button class="x-btn" onclick="cerrarModal()" aria-label="Cerrar">✕</button></div><div class="m-body">'
+      + '<p class="ivf-sub">' + esc([r.codigo, r.categoria, r.material].filter(Boolean).join(" · ")) + '</p>'
+      + '<div class="ivf-foto"><img src="' + esc(fotoDe(r)) + '" alt="' + esc(r.nombre || "") + '" id="ivfImg"></div>'
+      + '<div class="ivf-g"><div><small>Compraste</small><b>' + r.comprado + '</b></div><div><small>Vendiste</small><b>' + r.vendido + '</b></div><div><small>Te quedan</small><b style="color:' + (r.disponibles ? "var(--ciruela)" : "var(--rojo)") + '">' + r.disponibles + '</b></div></div>'
+      + '<div class="ivf-p"><span>Te costó <b style="color:var(--tinta)">' + mxn(r.costo) + '</b> c/u</span><span>' + (r.precioVenta != null ? 'Tu precio <b>' + mxn(r.precioVenta) + '</b>' : '<span style="color:var(--coral);font-weight:800">Aún sin precio de venta</span>') + '</span></div>'
+      + (r.vendido ? '<p class="ivf-ped"><i class="fa-solid fa-arrow-trend-up"></i> Con esta pieza ya ganaste <b style="color:var(--verde)">' + mxn(r.ganancia) + '</b></p>' : '')
+      + (peds.length ? '<p class="ivf-ped"><i class="fa-solid fa-box-open"></i> Llegó en: ' + peds.slice(0, 4).map(p => esc(p.titulo || "Pedido") + ' (' + fecha(p.fecha) + ')').join(", ") + '</p>' : '')
+      + (r.disponibles ? '<div class="ivf-v"><h4>¿La vendiste?</h4><div class="ivf-fila"><div class="stepper"><button type="button" id="ivfMenos" aria-label="una menos">−</button><span id="ivfCant">1</span><button type="button" id="ivfMas" aria-label="una más">+</button></div><span class="inp">$<input id="ivfPrecio" type="number" inputmode="numeric" min="0" step="1" value="' + pv0 + '" aria-label="precio por pieza"></span><span style="font-size:13px;color:var(--tinta-2)">c/u</span></div>'
+        + '<div class="ivf-gan" id="ivfGan"></div><div class="acc"><button class="c" id="ivfVender"><i class="fa-solid fa-plus"></i>&nbsp; Registrar venta</button></div></div>' : '<div class="ivf-v"><b>Ya no te quedan piezas de este modelo.</b><div class="acc"><button class="p" onclick="cerrarModal();irVista(\'catalogo\')">Volver a surtir en la tienda</button></div></div>')
+      + '<div class="acc"><button class="s" id="ivfPrecios">Cambiar mis precios</button></div></div>', "chico");
+    const m = $("#modal");
+    const gan = () => { const g = (st.precio - r.costo) * st.cant; const el = $("#ivfGan", m); if (el) el.innerHTML = 'Ganas <b>' + mxn(g) + '</b> <span style="color:var(--tinta-2)">(' + mxn(st.precio - r.costo) + ' por pieza)</span>'; };
+    const img = $("#ivfImg", m); if (img) img.addEventListener("click", () => window.open(img.src, "_blank", "noopener"));
+    $("#ivfPrecios", m).addEventListener("click", () => { window.cerrarModal(); ir("negocio"); });
+    if (!r.disponibles) return;
+    const pon = n => { st.cant = Math.max(1, Math.min(r.disponibles, n)); $("#ivfCant", m).textContent = st.cant; gan(); };
+    $("#ivfMenos", m).addEventListener("click", () => pon(st.cant - 1)); $("#ivfMas", m).addEventListener("click", () => pon(st.cant + 1));
+    $("#ivfPrecio", m).addEventListener("input", e => { st.precio = Math.max(0, Number(e.target.value) || 0); gan(); }); gan();
+    $("#ivfVender", m).addEventListener("click", async e => {
+      const b = e.currentTarget; if (st.precio <= 0) return toast("Escribe a cuánto la vendiste", true);
+      b.disabled = true;
+      const { data, error } = await sb.from("ventas").insert({ clienta_id: S.yo.id, codigo: r.codigo, cant: st.cant, precio_venta: st.precio }).select().single();
+      if (error) { b.disabled = false; return toast("No se registró: " + error.message, true); }
+      if (r.precioVenta == null) { try { await guardarPrecio(r, { precio_venta: st.precio }); } catch (x) {} }
+      S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); pintarInventario(); window.cerrarModal();
+      toast("Venta registrada: " + st.cant + " × " + mxn(st.precio) + " · ganaste " + mxn((st.precio - r.costo) * st.cant)); medir("club_venta", { desde: "inventario" });
+    });
+  }
+
   /* ---------- Mis precios y ventas: menudeo, mayoreo (desde N piezas, igual para todas), ventas registradas ----------
      Menudeo y "visible" van en la tabla precios. El precio de mayoreo de cada pieza y el "desde N piezas" van en
      clientas.catalogo.mayoreo = { desde, precios: { codigo: precio } } (la tabla precios no tiene esas columnas). */
@@ -179,7 +239,7 @@
   async function cancelarVenta(v) {
     const r = S.inv.find(x => x.codigo === v.codigo) || {}; if (!confirm("¿Cancelar esta venta?\n" + (r.nombre || v.codigo) + " · " + v.cant + " × " + mxn(v.precio_venta) + "\nLa pieza vuelve a tu inventario.")) return;
     const { error } = await sb.from("ventas").delete().eq("id", v.id); if (error) return toast("No se pudo cancelar: " + error.message, true);
-    S.ventas = S.ventas.filter(x => x.id !== v.id); calcular(); pintarNegocio(); pintarInicio(); toast("Venta cancelada · la pieza regresó a tu inventario");
+    S.ventas = S.ventas.filter(x => x.id !== v.id); calcular(); pintarNegocio(); pintarInicio(); pintarInventario(); toast("Venta cancelada · la pieza regresó a tu inventario");
   }
   function pintarVentasHechas() {
     let box = $("#ventasHechas"); if (!box) { box = document.createElement("div"); box.id = "ventasHechas"; box.className = "ventas-hechas"; $("#invVacio").parentNode.insertBefore(box, $("#invVacio").nextSibling); }
@@ -222,7 +282,7 @@
         const porMayoreo = pm != null && cant >= r.minMayoreo; if (porMayoreo) pv = pm; // venta por mayoreo
         if (pv == null) { const s = prompt("¿A cuánto vendiste cada pieza?", Math.round(r.costo * 2)); if (s == null) return; pv = Number(s) || 0; precioIn.value = pv; precioIn.dispatchEvent(new Event("change")); }
         const { data, error } = await sb.from("ventas").insert({ clienta_id: S.yo.id, codigo: r.codigo, cant, precio_venta: pv }).select().single(); if (error) return toast("No se registró: " + error.message, true);
-        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); toast("Venta registrada: " + cant + " × " + mxn(pv) + (porMayoreo ? " (precio de mayoreo)" : "") + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
+        S.ventas.unshift(data); calcular(); pintarNegocio(); pintarInicio(); pintarInventario(); toast("Venta registrada: " + cant + " × " + mxn(pv) + (porMayoreo ? " (precio de mayoreo)" : "") + " · si te equivocaste, puedes cancelarla"); medir("club_venta");
       });
       tb.append(tr);
     }
