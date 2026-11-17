@@ -1,4 +1,4 @@
-/* Marvea · Mi cuenta (pedidos, Business Club, catálogo, perfil) dentro de la página única · generado desde club.js v6 */
+/* Marvea · Mi cuenta (pedidos, Business Club, catálogo, perfil) dentro de la página única · generado desde club.js v6 · mvC2 (17-nov-2026): inicio con pedido activo, tipografías y 2 colores en el catálogo */
 (() => {
   "use strict";
   const SB_URL = "https://kuuewntjxtjjktxbgxfk.supabase.co";
@@ -51,9 +51,9 @@
     S.yo = yo; S.yo.catalogo = yo.catalogo || {}; S.pedidos = ped || []; S.ventas = ven || []; S.precios = {}; (pre || []).forEach(p => S.precios[p.codigo] = p);
     // pedidos de la tienda en línea (pagados) que todavía no pasan por la app: se muestran en Mis pedidos con su estado real
     try {
-      const { data: web } = await sb.from("pedidos_web").select("folio,estado,total,piezas,items,entrega,guia,pagado_en,creado,enviado_en,entregado_en").in("estado", ["pagado", "preparando", "enviado", "entregado"]).order("creado", { ascending: false });
+      const { data: web } = await sb.from("pedidos_web").select("*").in("estado", ["pagado", "preparando", "enviado", "entregado"]).order("creado", { ascending: false });
       const ya = new Set(S.pedidos.map(p => String(p.titulo || "")));
-      S.pedidosWeb = (web || []).filter(w => ![...ya].some(t => t.includes(w.folio))).map(w => ({ id: "web:" + w.folio, web: true, titulo: "Pedido web " + w.folio, fecha: w.pagado_en || w.creado, origen: "web", piezas: w.piezas, total: w.total, estado: w.estado === "pagado" ? "preparando" : w.estado, guia: w.guia || "", items: w.items || [], entrega: w.entrega || {} }));
+      S.pedidosWeb = (web || []).filter(w => ![...ya].some(t => t.includes(w.folio))).map(w => ({ id: "web:" + w.folio, web: true, titulo: "Pedido web " + w.folio, fecha: w.pagado_en || w.creado, origen: "web", piezas: w.piezas, total: w.total, estado: w.estado === "pagado" ? "preparando" : w.estado, guia: w.guia || "", items: w.items || [], entrega: w.entrega || {}, rastreo: w.rastreo || null }));
     } catch (x) { S.pedidosWeb = []; }
     S.activo = S.pedidos.length + S.pedidosWeb.length > 0;
     calcular();
@@ -78,6 +78,25 @@
 
   function estadoChip(p) { const e = p.estado || "preparando"; return e === "entregado" ? '<span class="chip ent"><i class="fa-solid fa-check"></i> Entregado</span>' : e === "enviado" ? '<span class="chip env"><i class="fa-solid fa-truck-fast"></i> En camino</span>' : '<span class="chip prep"><i class="fa-solid fa-box"></i> Preparando</span>'; }
   function origenChip(p) { if (p.origen === "web") return '<span class="chip wa"><i class="fa-solid fa-bag-shopping"></i> Tienda en línea</span>'; return p.origen === "whatsapp" ? '<span class="chip wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>' : '<span class="chip live"><i class="fa-solid fa-video"></i> Live</span>'; }
+  const PASOS = [["Recibido", "fa-check"], ["Preparando", "fa-box"], ["En camino", "fa-truck-fast"], ["Entregado", "fa-house-circle-check"]];
+  const pasoDe = p => p.estado === "entregado" ? 4 : p.estado === "enviado" ? 3 : 2;
+  function lineaTiempo(p) {
+    const k = pasoDe(p), pct = (k - 1) / 3 * 75;
+    const r = p.rastreo && typeof p.rastreo === "object" ? p.rastreo : null; const ult = r && r.eventos && r.eventos[0];
+    return '<div class="lt"><span class="lt-bar"></span><span class="lt-fill" style="width:' + pct + '%"></span>' + PASOS.map((s, i) => '<div class="st' + (i < k ? " hecho" : "") + (i === k - 1 && k < 4 ? " ahora" : "") + '"><i class="fa-solid ' + s[1] + '"></i>' + s[0] + '</div>').join("") + '</div>'
+      + (ult ? '<p class="lt-nota"><i class="fa-solid fa-truck-fast"></i> ' + esc(ult.texto || "") + (ult.fecha ? " · " + esc(fechaHora(ult.fecha)) : "") + '</p>' : "");
+  }
+  const fechaHora = s => { try { return new Date(s).toLocaleString("es-MX", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
+  function pintarActivo(todos) {
+    const box = $("#iActivo"); if (!box) return;
+    const p = todos.find(x => x.estado !== "entregado"); if (!p) { box.innerHTML = ""; return; }
+    const t = p.estado === "enviado" ? "Tu pedido va en camino" : "Estamos preparando tu pedido";
+    const g = (p.guia || "").trim();
+    box.innerHTML = '<div class="activo"><div class="a-top"><div><small>' + esc(p.titulo || "Pedido") + ' · ' + (p.piezas || 0) + ' piezas</small><b>' + t + '</b></div>' + estadoChip(p) + '</div>' + lineaTiempo(p)
+      + '<div class="a-acc">' + (g ? '<button class="btn coral sm" id="aRastrear"><i class="fa-solid fa-location-dot"></i> Rastrear guía ' + esc(g) + '</button>' : '') + '<button class="btn blanco sm" data-ir2="pedidos">Ver mis pedidos</button></div></div>';
+    const r = $("#aRastrear", box); if (r) r.addEventListener("click", () => abrirRastreo(g));
+    $$("[data-ir2]", box).forEach(b => b.addEventListener("click", () => ir(b.dataset.ir2)));
+  }
   function piezaHTML(it) { return '<div class="pz">' + ((it.foto = it.foto || mvF(it.codigo)) ? '<img src="' + esc(it.foto) + '" alt="" loading="lazy">' : '<img src="logo-m.png" alt="">') + '<div class="t"><b>' + esc(it.nombre || it.codigo) + '</b><span>' + (Number(it.cant) || 0) + ' pza' + (Number(it.cant) === 1 ? "" : "s") + ' · ' + mxn(it.precio) + ' c/u</span></div></div>'; }
 
   function pintarInicio() {
@@ -87,7 +106,7 @@
     $("#kPiezas").textContent = piezas; $("#kPedidos").textContent = todos.length + (todos.length === 1 ? " pedido" : " pedidos");
     $("#kInvertido").innerHTML = mxn(inv) + " <em>MXN</em>"; $("#kVendidas").textContent = vend; $("#kDisponibles").textContent = disp + " disponibles para vender";
     $("#kGanancia").innerHTML = mxn(gan) + " <em>MXN</em>"; $("#kIngresos").textContent = mxn(ing) + " en ventas registradas";
-    const u = todos[0];
+    pintarActivo(todos); const u = todos[0];
     if (u) { $("#uDesc").textContent = (u.titulo || "Pedido") + " · " + fecha(u.fecha) + " · " + (u.piezas || 0) + " piezas · " + mxn(u.total) + " MXN"; $("#uEstado").innerHTML = estadoChip(u); $("#uPiezas").innerHTML = (u.items || []).slice(0, 4).map(piezaHTML).join(""); }
     else { $("#uDesc").textContent = "Todavía no tienes pedidos. Cuando pagues tu primera compra, aparecerá aquí."; $("#uEstado").innerHTML = ""; $("#uPiezas").innerHTML = ""; }
     pintarMiniCat();
@@ -118,6 +137,7 @@
       const guiaTx = guia ? '<button type="button" class="g-link" title="Rastrear este envío">Guía <b>' + esc(guia) + '</b> <i class="fa-solid fa-arrow-up-right-from-square"></i></button>'
         : '<span class="g-sin">' + (p.estado === "entregado" ? "" : (p.web && ent.tipo === "recoger" ? "Te avisamos por WhatsApp para la entrega" : "Tu guía aparece aquí cuando salga tu paquete")) + '</span>';
       el.innerHTML = '<div class="top"><div><b>' + esc(p.titulo || "Pedido") + '</b><small>' + fecha(p.fecha) + ' · ' + (p.piezas || 0) + ' piezas · ' + mxn(p.total) + ' MXN' + (p.web ? ' · pagado' : '') + '</small></div><div class="der">' + origenChip(p) + estadoChip(p) + '</div></div>'
+        + lineaTiempo(p)
         + '<div class="pzs">' + (p.items || []).map(piezaHTML).join("") + '</div>'
         + (!p.web && !guia && p.estado === "entregado" ? '' : '<div class="ped-pie"><span class="tipo">' + tipo + '</span>' + guiaTx + (!p.web && p.estado !== "entregado" ? '<button class="btn cristal sm recibido"><i class="fa-solid fa-check"></i> Ya lo recibí</button>' : '') + '</div>')
         + (juntos.length > 1 ? '<div class="ped-junto"><i class="fa-solid fa-box-open"></i> Viaja en el mismo paquete que ' + (juntos.length === 2 ? 'tu otro pedido' : 'tus otros ' + (juntos.length - 1) + ' pedidos') + ': una sola guía para ' + (juntos.length === 2 ? 'los dos' : 'los ' + juntos.length) + '.</div>' : '');
@@ -232,8 +252,27 @@
   $("#minMayoreo").addEventListener("change", () => ponerDesde($("#minMayoreo").value, true));
 
   /* ---------- Mi catálogo: PDF con su nombre, logo y precios (sin links ni datos del proveedor) ---------- */
-  const COLORES = ["#2B2B2B", "#5A2748", "#B76E79", "#1F4E5A", "#8C6A3F", "#C2185B", "#3C5A40", "#1D3557"];
-  let colorSel = null;
+  const COLORES = ["#5A2748", "#F2653F", "#B5333F", "#C2185B", "#E7A6B8", "#F5C9D8", "#F8EE9A", "#DCE75A", "#3C5A40", "#2F6B5A", "#1F4E5A", "#1D3557", "#8E7CC3", "#C9A227", "#8C6A3F", "#2B2B2B"];
+  const FUENTES = [["Fraunces", "Elegante"], ["PlayfairDisplay", "Clásica"], ["Montserrat", "Moderna"], ["JosefinSans", "Minimal"], ["GreatVibes", "Romántica"]];
+  const famDe = f => "'MVC " + f + "',Georgia,serif";
+  let colorSel = null, color2Sel = null, fuenteSel = "Fraunces";
+  const luz = h => { const c = hexRgb(h || "#000000"); return (c[0] * 299 + c[1] * 587 + c[2] * 114) / 1000; };
+  const tinta = h => luz(h) > 160 ? "#2a1a24" : "#ffffff";
+  const acentoLegible = (a, p) => luz(a) > 185 ? (luz(p) > 185 ? "#2a1a24" : p) : a; // un acento muy claro no se lee sobre blanco
+  function pintarPrev() {
+    const box = $("#cPrev"); if (!box || !S.yo) return; const c = S.yo.catalogo || {};
+    const neg = $("#cNombre").value.trim() || S.yo.negocio || "Tu negocio", fr = $("#cFrase").value.trim();
+    const wa = telFmt(digitos($("#cWhats").value || S.yo.whatsapp || "")); const acc = acentoLegible(color2Sel, colorSel);
+    const ps = piezasCat().slice(0, 3); const modo = (document.querySelector('input[name=pm]:checked') || {}).value || "mios";
+    const mes = new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" });
+    const script = fuenteSel === "GreatVibes";
+    box.innerHTML = '<div class="cph" style="background:' + colorSel + ';color:' + tinta(colorSel) + '">' + (c.logo ? '<span class="lg"><img src="' + c.logo + '" alt=""></span>' : '')
+      + '<div style="min-width:0"><div class="nm" style="font-family:' + famDe(fuenteSel) + ';font-size:' + (script ? 32 : 24) + 'px">' + esc(neg) + '</div>' + (fr ? '<div class="fr" style="font-family:' + famDe(script ? "Montserrat" : fuenteSel) + '">' + esc(fr) + '</div>' : '') + '</div>'
+      + '<div class="mes">CATÁLOGO<br>' + esc(mes.toUpperCase()) + '</div></div>'
+      + '<div class="cpg">' + (ps.length ? ps : [{}, {}, {}]).map(p => '<div class="cpi"><div class="ph">' + (p.foto ? '<img src="' + esc(p.foto) + '" alt="" loading="lazy">' : '<i class="fa-regular fa-gem"></i>') + '</div><div class="tx"><div class="n">' + esc(p.nombre || "Tu pieza") + '</div>'
+        + (modo === "sin" ? '' : '<div class="p" style="color:' + acc + ';font-family:' + famDe(script ? "Montserrat" : fuenteSel) + '">' + (p.precioVenta != null ? mxn(p.precioVenta) : "$—") + '</div>') + '</div></div>').join("") + '</div>'
+      + '<div class="cpf" style="border-color:' + acc + ';color:' + acc + '"><span>' + (wa ? "Pedidos por WhatsApp: " + esc(wa) : "Tu WhatsApp aquí") + '</span><span style="color:#999;font-weight:600">1 / 1</span></div>';
+  }
   const piezasCat = () => S.inv.filter(r => r.disponibles > 0 && r.visible);
   function pintarMiniCat() { const c = S.yo.catalogo || {}; const n = piezasCat().length;
     $("#iCat").innerHTML = '<div class="lg">' + (c.logo ? '<img src="' + c.logo + '" alt="">' : '<i class="fa-regular fa-image"></i>') + '</div><div><b>' + esc(c.nombre || S.yo.negocio || "Tu negocio") + '</b><span>' + n + (n === 1 ? " pieza disponible" : " piezas disponibles") + '</span></div>'; }
@@ -241,15 +280,18 @@
   function pintarCatalogo() {
     const c = S.yo.catalogo || {};
     $("#cNombre").value = c.nombre || S.yo.negocio || ""; $("#cWhats").value = c.whatsapp || S.yo.whatsapp || ""; $("#cFrase").value = c.frase || ""; $("#cRedes").value = c.redes || "";
-    colorSel = c.color || COLORES[1];
-    $("#cColores").innerHTML = COLORES.map(x => '<button type="button" style="background:' + x + '" data-c="' + x + '" class="' + (x === colorSel ? "on" : "") + '" aria-label="Color ' + x + '"></button>').join("");
-    $$("#cColores button").forEach(b => b.onclick = () => { colorSel = b.dataset.c; $$("#cColores button").forEach(x => x.classList.toggle("on", x === b)); });
-    pintarLogo(); pintarMiniCat();
+    colorSel = c.color || COLORES[0]; color2Sel = c.color2 || (colorSel === COLORES[0] ? COLORES[1] : colorSel); fuenteSel = FUENTES.some(f => f[0] === c.fuente) ? c.fuente : "Fraunces";
+    $("#cFuentes").innerHTML = FUENTES.map(f => '<button type="button" data-f="' + f[0] + '" class="' + (f[0] === fuenteSel ? "on" : "") + '"><span class="a" style="font-family:' + famDe(f[0]) + (f[0] === "GreatVibes" ? ';font-size:28px' : '') + '">Aa</span><span class="b">' + f[1] + '</span></button>').join("");
+    $$("#cFuentes button").forEach(b => b.onclick = () => { fuenteSel = b.dataset.f; $$("#cFuentes button").forEach(x => x.classList.toggle("on", x === b)); pintarPrev(); });
+    const pal = (id, sel, fijar) => { $(id).innerHTML = COLORES.map(x => '<button type="button" style="background:' + x + '" data-c="' + x + '" class="' + (x === sel ? "on" : "") + '" aria-label="Color ' + x + '"></button>').join("");
+      $$(id + " button").forEach(b => b.onclick = () => { fijar(b.dataset.c); $$(id + " button").forEach(x => x.classList.toggle("on", x === b)); pintarPrev(); }); };
+    pal("#cColores", colorSel, v => colorSel = v); pal("#cColores2", color2Sel, v => color2Sel = v);
+    pintarLogo(); pintarMiniCat(); pintarPrev();
     const p = piezasCat(), sinPrecio = p.filter(r => r.precioVenta == null).length;
     $("#cResumen").innerHTML = '<span class="chip"><i class="fa-solid fa-gem"></i> ' + p.length + ' piezas entrarán al PDF</span>' + (sinPrecio ? '<span class="chip prep"><i class="fa-solid fa-tag"></i> ' + sinPrecio + ' sin precio: saldrán como "Pregunta por precio" (ponlo en Mis precios)</span>' : "");
   }
   async function guardarCat(extra, silencioso) {
-    const cat = Object.assign({}, S.yo.catalogo, { nombre: $("#cNombre").value.trim(), whatsapp: digitos($("#cWhats").value), frase: $("#cFrase").value.trim(), redes: $("#cRedes").value.trim(), color: colorSel }, extra || {});
+    const cat = Object.assign({}, S.yo.catalogo, { nombre: $("#cNombre").value.trim(), whatsapp: digitos($("#cWhats").value), frase: $("#cFrase").value.trim(), redes: $("#cRedes").value.trim(), color: colorSel, color2: color2Sel, fuente: fuenteSel }, extra || {});
     const { error } = await sb.from("clientas").update({ catalogo: cat, negocio: cat.nombre, actualizado: new Date().toISOString() }).eq("id", S.yo.id);
     if (error) { toast("No se guardó: " + error.message, true); return false; }
     S.yo.catalogo = cat; S.yo.negocio = cat.nombre; pintarCatalogo(); pintarCabecera();
@@ -257,6 +299,8 @@
     return true;
   }
   $("#cGuardar").addEventListener("click", () => guardarCat());
+  ["#cNombre", "#cFrase", "#cWhats"].forEach(s => $(s).addEventListener("input", pintarPrev));
+  $$('input[name=pm]').forEach(r => r.addEventListener("change", pintarPrev));
   $("#logoFile").addEventListener("change", async e => {
     const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
     if (!/^image\//.test(f.type)) return toast("Sube una imagen PNG o JPG", true);
@@ -276,7 +320,13 @@
   }
   const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   const telFmt = d => d && d.length === 10 ? d.slice(0, 2) + " " + d.slice(2, 6) + " " + d.slice(6) : d;
-  async function descargarPDF(btn) {
+  const ttfCache = {};
+  async function ttf(nombre) { // la tipografía se baja solo cuando se arma un PDF (≈25 KB)
+    if (!ttfCache[nombre]) ttfCache[nombre] = fetch("cat-" + nombre + ".ttf").then(r => { if (!r.ok) throw new Error("fuente"); return r.arrayBuffer(); }).then(b => { let s = ""; const u = new Uint8Array(b); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); });
+    return ttfCache[nombre];
+  }
+  async function fuentePDF(doc, nombre) { try { const b64 = await ttf(nombre); doc.addFileToVFS(nombre + ".ttf", b64); doc.addFont(nombre + ".ttf", nombre, "normal"); return nombre; } catch (e) { ttfCache[nombre] = null; return null; } }
+  async function descargarPDF(btn, compartir) {
     if (!window.jspdf) return toast("No se pudo cargar el generador de PDF. Recarga la página.", true);
     if (document.querySelector("#p-catalogo.on")) { if (!(await guardarCat(null, true))) return; }
     const piezas = piezasCat(); if (!piezas.length) return toast("No tienes piezas disponibles para el catálogo", true);
@@ -284,7 +334,11 @@
     const txt = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Armando tu PDF…';
     try {
       const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" }); const W = 210, H = 297, M = 12;
-      const col = hexRgb(c.color || COLORES[1]); const neg = c.nombre || S.yo.negocio || S.yo.nombre || "Mi catálogo";
+      const col = hexRgb(c.color || COLORES[0]); const neg = c.nombre || S.yo.negocio || S.yo.nombre || "Mi catálogo";
+      const acc = hexRgb(acentoLegible(c.color2 || c.color || COLORES[1], c.color || COLORES[0])); const txH = luz(c.color || COLORES[0]) > 160 ? [42, 26, 36] : [255, 255, 255];
+      const fam = await fuentePDF(doc, FUENTES.some(f => f[0] === c.fuente) ? c.fuente : "Fraunces"); const script = c.fuente === "GreatVibes";
+      const famTx = script ? await fuentePDF(doc, "Montserrat") : fam; // con letra romántica, precios y frase van en Montserrat para que se lean
+      const fT = (f, est) => { if (f) doc.setFont(f, "normal"); else doc.setFont("helvetica", est || "bold"); };
       const wa = telFmt(digitos(c.whatsapp || S.yo.whatsapp || "")); const pie = [wa ? "Pedidos por WhatsApp: " + wa : "", c.redes || ""].filter(Boolean).join("   ·   ");
       const fotos = await Promise.all(piezas.map(p => p.foto ? fotoCuadrada(p.foto, 520) : Promise.resolve(null)));
       let logo = null, lw = 0, lh = 0; if (c.logo) { try { const pr = doc.getImageProperties(c.logo); const k = Math.min(30 / pr.width, 30 / pr.height); lw = pr.width * k; lh = pr.height * k; logo = c.logo; } catch (e) {} }
@@ -293,11 +347,12 @@
         if (primera) {
           doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 46, "F");
           let x = M; if (logo) { doc.setFillColor(255, 255, 255); doc.roundedRect(M, 8, 30, 30, 3, 3, "F"); doc.addImage(logo, M + (30 - lw) / 2, 8 + (30 - lh) / 2, lw, lh); x = M + 36; }
-          doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(neg.length > 22 ? 20 : 26); doc.text(neg, x, c.frase ? 22 : 26);
-          if (c.frase) { doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.text(doc.splitTextToSize(c.frase, W - x - M - 40), x, 30); }
+          doc.setTextColor(txH[0], txH[1], txH[2]); fT(fam); doc.setFontSize((neg.length > 22 ? 20 : 26) + (script && fam ? 8 : 0)); doc.text(doc.splitTextToSize(neg, W - x - M - 34)[0], x, c.frase ? 22 : 26);
+          if (c.frase) { fT(famTx, "normal"); doc.setFontSize(11); doc.text(doc.splitTextToSize(c.frase, W - x - M - 40), x, 30); }
           doc.setFont("helvetica", "bold"); doc.setFontSize(9); const mes = new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" });
           doc.text("CATÁLOGO", W - M, 18, { align: "right" }); doc.setFont("helvetica", "normal"); doc.text(mes.charAt(0).toUpperCase() + mes.slice(1), W - M, 23, { align: "right" });
-        } else { doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 10, "F"); doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(neg, M, 6.6); }
+          doc.setFillColor(acc[0], acc[1], acc[2]); doc.rect(0, 46, W, 1.6, "F");
+        } else { doc.setFillColor(col[0], col[1], col[2]); doc.rect(0, 0, W, 10, "F"); doc.setTextColor(txH[0], txH[1], txH[2]); fT(famTx); doc.setFontSize(9.5); doc.text(neg, M, 6.6); }
       };
       encabezado(true); let x0 = 0, y = top0, n = 0;
       piezas.forEach((p, idx) => {
@@ -305,23 +360,31 @@
         const x = M + x0 * (cw + gap);
         doc.setDrawColor(230, 225, 222); doc.setLineWidth(.2); doc.roundedRect(x, y, cw, ch, 3, 3, "S");
         if (fotos[idx]) doc.addImage(fotos[idx], "JPEG", x + .6, y + .6, cw - 1.2, cw - 1.2); else { doc.setFillColor(245, 242, 240); doc.rect(x + .6, y + .6, cw - 1.2, cw - 1.2, "F"); }
-        doc.setTextColor(40, 40, 40); doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.text(doc.splitTextToSize(p.nombre || p.codigo, cw - 6)[0], x + 3, y + cw + 6);
+        doc.setTextColor(40, 40, 40); fT(famTx); doc.setFontSize(10.5); doc.text(doc.splitTextToSize(p.nombre || p.codigo, cw - 6)[0], x + 3, y + cw + 6);
         doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(120, 120, 120); doc.text(doc.splitTextToSize([p.categoria, p.material].filter(Boolean).join(" · "), cw - 6)[0] || "", x + 3, y + cw + 11);
-        if (conPrecio) { doc.setTextColor(col[0], col[1], col[2]); doc.setFont("helvetica", "bold");
+        if (conPrecio) { doc.setTextColor(acc[0], acc[1], acc[2]); fT(famTx);
           if (p.precioVenta != null) { doc.setFontSize(13); doc.text("$" + Math.round(p.precioVenta).toLocaleString("es-MX"), x + 3, y + cw + 19);
             if (conMayoreo && p.precioMayoreo != null) { doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(90, 90, 90); doc.text("Mayoreo desde " + p.minMayoreo + " pzas: $" + Math.round(p.precioMayoreo).toLocaleString("es-MX"), x + 3, y + cw + 24.5); } }
           else { doc.setFontSize(9); doc.text("Pregunta por precio", x + 3, y + cw + 19); } }
-        if (p.disponibles <= 1) { doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255); doc.setFillColor(col[0], col[1], col[2]); doc.roundedRect(x + 3, y + 3, 22, 5.5, 2.7, 2.7, "F"); doc.text("ÚLTIMA PIEZA", x + 14, y + 6.8, { align: "center" }); }
+        if (p.disponibles <= 1) { doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); const tb = luz(c.color2 || c.color || COLORES[1]) > 160 ? [42, 26, 36] : [255, 255, 255]; doc.setTextColor(tb[0], tb[1], tb[2]); doc.setFillColor.apply(doc, hexRgb(c.color2 || c.color || COLORES[1])); doc.roundedRect(x + 3, y + 3, 22, 5.5, 2.7, 2.7, "F"); doc.text("ÚLTIMA PIEZA", x + 14, y + 6.8, { align: "center" }); }
         n++; x0++; if (x0 === cols) { x0 = 0; y += ch + gap; }
       });
       const tot = doc.getNumberOfPages();
-      for (let pg = 1; pg <= tot; pg++) { doc.setPage(pg); doc.setDrawColor(col[0], col[1], col[2]); doc.setLineWidth(.4); doc.line(M, H - 13, W - M, H - 13); doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(col[0], col[1], col[2]); if (pie) doc.text(pie, M, H - 8); doc.setFont("helvetica", "normal"); doc.setTextColor(140, 140, 140); doc.text(pg + " / " + tot, W - M, H - 8, { align: "right" }); }
-      const nombreArch = "Catalogo-" + (slugify(neg) || "mi-negocio") + ".pdf"; doc.save(nombreArch); toast("Listo: " + nombreArch); medir("club_catalogo_pdf", { piezas: n });
+      for (let pg = 1; pg <= tot; pg++) { doc.setPage(pg); doc.setDrawColor(acc[0], acc[1], acc[2]); doc.setLineWidth(.5); doc.line(M, H - 13, W - M, H - 13); doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(acc[0], acc[1], acc[2]); if (pie) doc.text(pie, M, H - 8); doc.setFont("helvetica", "normal"); doc.setTextColor(140, 140, 140); doc.text(pg + " / " + tot, W - M, H - 8, { align: "right" }); }
+      const nombreArch = "Catalogo-" + (slugify(neg) || "mi-negocio") + ".pdf";
+      if (compartir) { // celular: menú de compartir (WhatsApp, etc.) con el PDF; si el navegador no puede, se descarga
+        const file = new File([doc.output("blob")], nombreArch, { type: "application/pdf" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: neg, text: "Te comparto mi catálogo · " + neg }); medir("club_catalogo_compartir", { piezas: n }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+        doc.save(nombreArch); toast("Tu catálogo se descargó: mándalo por WhatsApp como documento"); medir("club_catalogo_pdf", { piezas: n, via: "compartir" }); return;
+      }
+      doc.save(nombreArch); toast("Listo: " + nombreArch); medir("club_catalogo_pdf", { piezas: n });
     } catch (e) { toast("No se pudo armar el PDF: " + (e.message || e), true); }
     finally { btn.disabled = false; btn.innerHTML = txt; }
   }
   $("#cPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
   $("#iPdf").addEventListener("click", e => descargarPDF(e.currentTarget));
+  $("#cCompartir").addEventListener("click", e => descargarPDF(e.currentTarget, true));
+  $("#aCompartir").addEventListener("click", e => { if (!piezasCat().length) return toast("Aún no tienes piezas disponibles para tu catálogo", true); descargarPDF(e.currentTarget, true); });
 
   /* ---------- perfil ---------- */
   const TEL_ACTIVO = false; // true cuando Twilio Verify esté configurado (Secrets TWILIO_*)

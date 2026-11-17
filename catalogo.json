@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T15:54:40.682Z",
+ "actualizado": "2026-11-17T16:06:44.054Z",
  "categorias": [
   {
    "p": "ANI",
@@ -46,6 +46,18 @@
  "piezas": 999,
  "productos": [
   {
+   "codigo": "ANI-00001",
+   "nombre": "Anillo Ajustable de Líneas",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/76b22a59776f6b1ad645d0d36ced9dbc.jpg",
+   "creado": "2026-10-19T01:12:42.851Z",
+   "disponible": true
+  },
+  {
    "codigo": "ANI-00002",
    "nombre": "Anillo Ajustable Chunky",
    "categoria": "ANI",
@@ -55,6 +67,54 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00003",
+   "nombre": "Anillo Cartier Talla 6",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 38,
+   "etiqueta": "Últimas piezas",
+   "notas": "Dupe de Cartier",
+   "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
+   "creado": "2026-10-19T02:11:33.688Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00007",
+   "nombre": "Anillo Ajustable de Acero",
+   "categoria": "ANI",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5731c618522513b896f13721dd807c8b.jpg",
+   "creado": "2026-10-19T02:47:25.972Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00014",
+   "nombre": "Anillo Ajustable Corte Oval Dorado",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
+   "creado": "2026-10-27T00:46:37.184Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00020",
+   "nombre": "Anillo Cartier Talla 7",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 33,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
+   "creado": "2026-10-27T00:54:27.042Z",
    "disponible": true
   },
   {
@@ -70,6 +130,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00003",
+   "nombre": "Aretes Ferragamo plateados",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "Inspo Ferragamo",
+   "foto": "fotos/8a9cbc45e5bbdd2d2e87e9f7e0287c59.jpg",
+   "creado": "2026-10-19T01:46:11.478Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00004",
    "nombre": "Aretes Verde Manzana",
    "categoria": "ARE",
@@ -79,6 +151,18 @@
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00008",
+   "nombre": "Arracadas de Acero",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
+   "creado": "2026-10-19T02:01:12.007Z",
    "disponible": true
   },
   {
@@ -238,6 +322,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00033",
+   "nombre": "Aretes Xuping  Marmol Oscuro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2daa3d6bce3789a8aa2f151c96416fe2.jpg",
+   "creado": "2026-10-20T23:14:48.191Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00034",
    "nombre": "Aretes Xuping  Marmol",
    "categoria": "ARE",
@@ -334,6 +430,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00044",
+   "nombre": "Aretes Xuping  Botón Marrón",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
+   "creado": "2026-10-20T23:29:23.461Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00045",
    "nombre": "Aretes Xuping  Marmol Gota",
    "categoria": "ARE",
@@ -351,7 +459,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
    "creado": "2026-10-20T23:31:37.126Z",
@@ -427,6 +535,30 @@
    "notas": "",
    "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
    "creado": "2026-11-01T20:08:35.163Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00057",
+   "nombre": "Arete Vanc Rojo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
+   "creado": "2026-11-01T20:09:55.282Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00059",
+   "nombre": "Arete Vanc Negro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
+   "creado": "2026-11-01T20:13:25.629Z",
    "disponible": true
   },
   {
@@ -802,6 +934,18 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00002",
+   "nombre": "Gargantilla Omega para Dije",
+   "categoria": "CAD",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/0b6db2b11aeae8d4a7e3a3880bef36b8.jpg",
+   "creado": "2026-10-20T21:15:39.255Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00003",
    "nombre": "Cadena Torzal Dorado 45cm",
    "categoria": "CAD",
@@ -1042,6 +1186,54 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00007",
+   "nombre": "Collar de Hematitas",
+   "categoria": "COL",
+   "material": "Hematitas y Chapa de Oro",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/c0bc6f02eb03fd277535aa05afa91a4c.jpg",
+   "creado": "2026-10-19T01:14:56.657Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00008",
+   "nombre": "Collar de Luna",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/0b209269940a6425897ba5b968d49f6b.jpg",
+   "creado": "2026-10-19T01:18:46.039Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00013",
+   "nombre": "Collar de Cuentas y Perla",
+   "categoria": "COL",
+   "material": "Cuenta y Perla Sintética con Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
+   "creado": "2026-10-19T01:33:02.110Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00015",
+   "nombre": "Collar de Cuentas",
+   "categoria": "COL",
+   "material": "Chapa de Oro",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e3b8f3dc3cfc0c5ae52d096042092536.jpg",
+   "creado": "2026-10-19T01:37:56.830Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00021",
    "nombre": "Cadena Cartier",
    "categoria": "CAD",
@@ -1063,6 +1255,30 @@
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00029",
+   "nombre": "Collar Tenis Blanco",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 60,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
+   "creado": "2026-10-19T02:40:37.445Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00041",
+   "nombre": "Chocker de Cuentas",
+   "categoria": "COL",
+   "material": "Cuentas con Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
+   "creado": "2026-10-20T16:26:54.835Z",
    "disponible": true
   },
   {
@@ -1402,6 +1618,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00026",
+   "nombre": "Pulsera Vanc Blanca",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
+   "creado": "2026-11-01T20:31:42.070Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00028",
    "nombre": "Pulsera Vanc Negra",
    "categoria": "PUL",
@@ -1419,7 +1647,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 60,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",

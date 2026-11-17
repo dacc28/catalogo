@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script>/* auto-actualización: si hay versión nueva publicada, la página se recarga sola */
 window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
-<link rel="stylesheet" href="mv.css?v=20261113f">
+<link rel="stylesheet" href="mv.css?v=20261117a">
 <link rel="stylesheet" href="bf.css?v=20261113f">
 <link rel="stylesheet" href="pausa.css?v=20261113f">
 </head>
@@ -322,6 +322,13 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
             <div class="banner-acc"><button class="btn coral lg" onclick="irVista('catalogo')">Hacer mi primer pedido</button><button class="btn blanco lg" data-ir="calculadora">Calcular mi ganancia</button></div>
           </div>
           <div id="inicioActivo">
+            <div id="iActivo"></div>
+            <div class="atajos" id="atajos">
+              <button type="button" data-ir="negocio"><i class="fa-solid fa-cash-register"></i><span>Anotar venta</span></button>
+              <button type="button" data-ir="catalogo"><i class="fa-solid fa-palette"></i><span>Diseñar catálogo</span></button>
+              <button type="button" id="aCompartir"><i class="fa-brands fa-whatsapp"></i><span>Compartir catálogo</span></button>
+              <button type="button" onclick="irVista('catalogo')"><i class="fa-solid fa-bag-shopping"></i><span>Comprar</span></button>
+            </div>
             <div class="kpis">
               <div class="kpi"><small>Piezas compradas</small><b id="kPiezas">0</b><span id="kPedidos">0 pedidos</span></div>
               <div class="kpi"><small>Invertido en Marvea</small><b id="kInvertido">$0</b><span>a precio de mayoreo</span></div>
@@ -373,12 +380,15 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
                 <div class="campo"><label for="cWhats">WhatsApp para pedidos</label><input id="cWhats" inputmode="numeric" placeholder="10 dígitos" maxlength="16"></div>
                 <div class="campo"><label for="cRedes">Instagram / Facebook</label><input id="cRedes" placeholder="@joyerialuna" maxlength="40"></div>
                 <div class="campo ancho"><label for="cFrase">Frase de tu negocio (opcional)</label><input id="cFrase" placeholder="Ej. Acero inoxidable que no se despinta · Envíos en Saltillo" maxlength="90"></div>
-                <div class="campo ancho"><label>Color de tu catálogo</label><div class="colores" id="cColores"></div></div>
+                <div class="campo ancho"><label>Tipografía</label><div class="fuentes" id="cFuentes"></div></div>
+                <div class="campo ancho"><label>Color principal <small class="lbl-s">· portada</small></label><div class="colores" id="cColores"></div></div>
+                <div class="campo ancho"><label>Color de acento <small class="lbl-s">· precios y pie de página</small></label><div class="colores" id="cColores2"></div></div>
               </div>
               <div class="logo-box"><label>Tu logo (opcional)</label><div class="logo-prev" id="logoPrev"><span><i class="fa-regular fa-image"></i>Sin logo</span></div>
                 <div class="acciones"><label class="btn sm" for="logoFile"><i class="fa-solid fa-upload"></i> Subir logo</label><button class="btn blanco sm" id="logoQuitar" hidden>Quitar</button></div>
                 <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden><p class="suave">PNG o JPG. Con fondo transparente se ve mejor.</p></div>
             </div>
+            <div class="cat-prev-box"><span class="cp-t"><i class="fa-regular fa-eye"></i> Así se verá tu catálogo</span><div class="cat-prev" id="cPrev"></div></div>
             <fieldset class="pm-grupo"><legend>¿Qué precios poner en tu catálogo?</legend>
               <div class="pm-ops" id="cPrecioModo">
                 <label class="pm-op"><input type="radio" name="pm" value="mios" checked><span class="pm-i"><i class="fa-solid fa-tags"></i></span><span class="pm-tx"><b>Menudeo y mayoreo</b><small>Tu precio por pieza y el de mayoreo</small></span><span class="pm-ok"><i class="fa-solid fa-check"></i></span></label>
@@ -386,7 +396,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
                 <label class="pm-op"><input type="radio" name="pm" value="sin"><span class="pm-i"><i class="fa-regular fa-comment-dots"></i></span><span class="pm-tx"><b>Sin precios</b><small>Para cotizar por WhatsApp</small></span><span class="pm-ok"><i class="fa-solid fa-check"></i></span></label>
               </div></fieldset>
             <div class="resumen" id="cResumen"></div>
-            <div class="acciones"><button class="btn coral lg" id="cPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar mi catálogo en PDF</button><button class="btn blanco" id="cGuardar">Guardar datos</button></div>
+            <div class="acciones"><button class="btn coral lg" id="cPdf"><i class="fa-solid fa-file-arrow-down"></i> Descargar mi catálogo en PDF</button><button class="btn lg" id="cCompartir"><i class="fa-brands fa-whatsapp"></i> Compartir</button><button class="btn blanco" id="cGuardar">Guardar datos</button></div>
             <div class="ok" id="cOk">Listo, tus datos quedaron guardados.</div>
           </div>
         </div>
@@ -474,8 +484,8 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
 
 <script src="supabase-2.45.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-<script src="mv-tienda.js?v=20261113f"></script>
-<script src="mv-cuenta.js?v=20261113f"></script>
+<script src="mv-tienda.js?v=20261117a"></script>
+<script src="mv-cuenta.js?v=20261117a"></script>
 <script>/* portada: las fotos de joyería pasan como video (sin deformar: object-fit cover). Se pausa fuera de pantalla, con "reducir movimiento" o ahorro de datos */
 (function(){var v=document.getElementById("heroVid");if(!v)return;var c=navigator.connection||{};
 if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||c.saveData){v.removeAttribute("autoplay");v.preload="none";try{v.pause()}catch(e){}return;}
