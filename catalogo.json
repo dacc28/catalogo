@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T17:16:35.200Z",
+ "actualizado": "2026-11-17T17:55:42.670Z",
  "categorias": [
   {
    "p": "ANI",
@@ -511,18 +511,6 @@
    "notas": "",
    "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
    "creado": "2026-11-01T20:09:55.282Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00059",
-   "nombre": "Arete Vanc Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9cbde23e4e876e309f6fb51a56be6252.jpg",
-   "creado": "2026-11-01T20:13:25.629Z",
    "disponible": true
   },
   {
@@ -1498,30 +1486,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00021",
-   "nombre": "Brazalete Negro",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2ae4d146a0e7fd20bb0ac5aa3dde52b9.jpg",
-   "creado": "2026-10-20T23:41:47.831Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00022",
-   "nombre": "Brazalete Blanco",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c06a445e868d72b7e693987ae8255f19.jpg",
-   "creado": "2026-10-20T23:42:22.950Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00024",
    "nombre": "Pulsera Vanc Lila",
    "categoria": "PUL",
@@ -1531,30 +1495,6 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00026",
-   "nombre": "Pulsera Vanc Blanca",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/88be453cec58258e1a1c6676a94b4488.jpg",
-   "creado": "2026-11-01T20:31:42.070Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00028",
-   "nombre": "Pulsera Vanc Negra",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/9397ee2fde817955a10bf82256588ffb.jpg",
-   "creado": "2026-11-01T20:34:34.548Z",
    "disponible": true
   },
   {
