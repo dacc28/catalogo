@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T14:55:31.522Z",
+ "actualizado": "2026-11-17T15:11:18.455Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1167,7 +1167,7 @@
    "categoria": "COL",
    "material": "Chapa de Oro",
    "precio": 55,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
@@ -1191,7 +1191,7 @@
    "categoria": "JUE",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/52bb18e76073c368115dbc2a49f14221.jpg",
    "creado": "2026-10-20T23:43:41.837Z",
