@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T00:08:08.230Z",
+ "actualizado": "2026-11-17T00:20:31.156Z",
  "categorias": [
   {
    "p": "ANI",
@@ -430,18 +430,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00061",
-   "nombre": "Arracada Diamante de Figuras",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/33b88b2c34b8b743a847da5acc2a5b7e.jpg",
-   "creado": "2026-11-01T21:36:28.348Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00064",
    "nombre": "Aretes Mariposa",
    "categoria": "ARE",
@@ -463,18 +451,6 @@
    "notas": "",
    "foto": "fotos/b7cf075f33d0f1b03f6af05c78487cad.jpg",
    "creado": "2026-11-01T21:48:24.238Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00066",
-   "nombre": "Arracadas Eslabón Trebol",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ff0c718b8ef61d02af7380cfef82a9a4.jpg",
-   "creado": "2026-11-01T21:49:51.697Z",
    "disponible": true
   },
   {
@@ -1078,30 +1054,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00013",
-   "nombre": "Collar de Cuentas y Perla",
-   "categoria": "COL",
-   "material": "Cuenta y Perla Sintética con Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
-   "creado": "2026-10-19T01:33:02.110Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00020",
-   "nombre": "Collar Bibiana",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3c25079a35ed2c3722551ea0b1cbe94e.jpg",
-   "creado": "2026-10-19T02:19:59.321Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00021",
    "nombre": "Cadena Cartier",
    "categoria": "CAD",
@@ -1234,18 +1186,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00058",
-   "nombre": "Collar Tenis Blanco Plateado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 60,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/b87b73b6db7f22d77c1a21a01581b373.jpg",
-   "creado": "2026-11-06T17:42:58.863Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00059",
    "nombre": "Collar il",
    "categoria": "COL",
@@ -1366,36 +1306,12 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00007",
-   "nombre": "Pulsera con zirconia",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/af153da1fe82f1a82b6259f755891e3c.jpg",
-   "creado": "2026-10-19T02:49:33.420Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00009",
-   "nombre": "Pulsera Diamante mini Dorado",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7e55cc082db3a8387ec6e2b645285399.jpg",
-   "creado": "2026-10-20T16:09:55.248Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00011",
    "nombre": "Pulsera Cart Dorada",
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
@@ -1483,18 +1399,6 @@
    "notas": "",
    "foto": "fotos/c06a445e868d72b7e693987ae8255f19.jpg",
    "creado": "2026-10-20T23:42:22.950Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00023",
-   "nombre": "Pulsera Vanc Verde Oscuro",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4928ea672b4410f9a25e20e0dcdd974a.jpg",
-   "creado": "2026-11-01T20:26:58.096Z",
    "disponible": true
   },
   {
