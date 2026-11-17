@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-16T23:54:52.892Z",
+ "actualizado": "2026-11-17T00:08:08.230Z",
  "categorias": [
   {
    "p": "ANI",
@@ -55,30 +55,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00012",
-   "nombre": "Anillo Ajustable Corte Pera Dorado",
-   "categoria": "ANI",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4e73772b0f9a89ff699895fb2dcd0fcd.jpg",
-   "creado": "2026-10-27T00:44:06.875Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00017",
-   "nombre": "Anillo Ajustable Corte Marquesa Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/1eab262050ee871c532cab1735fc580e.jpg",
-   "creado": "2026-10-27T00:50:27.444Z",
    "disponible": true
   },
   {
@@ -1330,18 +1306,6 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00010",
-   "nombre": "Juegos Dos Corazones Blancos",
-   "categoria": "JUE",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ad0fe3faa81b57d79d6b6caf73404941.jpg",
-   "creado": "2026-11-01T22:01:35.363Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00012",
    "nombre": "Juego Perlas",
    "categoria": "JUE",
@@ -1479,22 +1443,10 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/d6a6351edfd08629de85a79a95e4344a.jpg",
    "creado": "2026-10-20T23:39:53.907Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00019",
-   "nombre": "Brazalete Rojo",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/17ffc3044698d166489ef9b7b381c139.jpg",
-   "creado": "2026-10-20T23:40:41.858Z",
    "disponible": true
   },
   {
@@ -1503,7 +1455,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/f1ec5e0545dd600df0340cfbe29990d2.jpg",
    "creado": "2026-10-20T23:41:14.238Z",
@@ -1515,7 +1467,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2ae4d146a0e7fd20bb0ac5aa3dde52b9.jpg",
    "creado": "2026-10-20T23:41:47.831Z",
@@ -1527,7 +1479,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/c06a445e868d72b7e693987ae8255f19.jpg",
    "creado": "2026-10-20T23:42:22.950Z",
@@ -1615,18 +1567,6 @@
    "notas": "",
    "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00040",
-   "nombre": "Pulsera Ajustable Tonos Neutros",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f56876f35eea3b66f6f0462372fd0672.jpg",
-   "creado": "2026-11-01T21:20:47.493Z",
    "disponible": true
   },
   {
