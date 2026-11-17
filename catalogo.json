@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T20:25:50.110Z",
+ "actualizado": "2026-11-17T20:37:53.748Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1459,30 +1459,6 @@
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00018",
-   "nombre": "Brazalete Acero Rosa",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d6a6351edfd08629de85a79a95e4344a.jpg",
-   "creado": "2026-10-20T23:39:53.907Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00020",
-   "nombre": "Brazalete Naranja",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f1ec5e0545dd600df0340cfbe29990d2.jpg",
-   "creado": "2026-10-20T23:41:14.238Z",
    "disponible": true
   },
   {
