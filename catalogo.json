@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-17T20:37:53.748Z",
+ "actualizado": "2026-11-17T23:52:17.563Z",
  "categorias": [
   {
    "p": "ANI",
@@ -87,10 +87,22 @@
    "categoria": "ANI",
    "material": "Chapa De Oro",
    "precio": 33,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00022",
+   "nombre": "Anillo Ajustable Solitario Oval Dorado",
+   "categoria": "ANI",
+   "material": "Chapa De Oro",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/c6f964a310519362d4bbd0ef49814291.jpg",
+   "creado": "2026-10-27T00:56:39.983Z",
    "disponible": true
   },
   {
@@ -351,7 +363,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
    "creado": "2026-10-20T23:24:42.521Z",
@@ -415,6 +427,18 @@
    "notas": "",
    "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
    "creado": "2026-10-20T23:30:07.673Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00046",
+   "nombre": "Aretes Xuping  Oval Blanco",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/eedac4bcec2b2dc74fb397d63721c473.jpg",
+   "creado": "2026-10-20T23:30:52.953Z",
    "disponible": true
   },
   {
@@ -487,6 +511,18 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00054",
+   "nombre": "Aretes Xuping Arracada Azul",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
+   "creado": "2026-10-20T23:37:14.343Z",
    "disponible": true
   },
   {
@@ -862,6 +898,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00097",
+   "nombre": "Huggies Flor",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
+   "creado": "2026-11-07T21:48:20.046Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00099",
    "nombre": "Cadena Barbada Gruesa",
    "categoria": "ARE",
@@ -1162,6 +1210,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00025",
+   "nombre": "Collar de Chicle Vino",
+   "categoria": "COL",
+   "material": "Yakli con Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/56f9ead535a6a0f2cdb9848922fb0297.jpg",
+   "creado": "2026-10-19T02:28:24.093Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00029",
    "nombre": "Collar Tenis Blanco",
    "categoria": "COL",
@@ -1191,7 +1251,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 60,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Más Vendido",
    "notas": "",
    "foto": "fotos/18177cbdd1e1807fde3e8028d590f257.jpg",
    "creado": "2026-10-20T16:31:38.009Z",
@@ -1462,6 +1522,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00023",
+   "nombre": "Pulsera Vanc Verde Oscuro",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/4928ea672b4410f9a25e20e0dcdd974a.jpg",
+   "creado": "2026-11-01T20:26:58.096Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00024",
    "nombre": "Pulsera Vanc Lila",
    "categoria": "PUL",
@@ -1471,6 +1543,18 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00028",
+   "nombre": "Pulsera Vanc Negra",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9397ee2fde817955a10bf82256588ffb.jpg",
+   "creado": "2026-11-01T20:34:34.548Z",
    "disponible": true
   },
   {
@@ -1519,6 +1603,30 @@
    "notas": "",
    "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
    "creado": "2026-11-01T21:08:45.418Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00037",
+   "nombre": "Pulsera Ajustable Colorida",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/3d8629c01d507f9b362d2ccc645510d7.jpg",
+   "creado": "2026-11-01T21:15:44.503Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00043",
+   "nombre": "Brazalete con Brillo",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 66,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/4b2d48d574a6f715f6ddb03f4c06ddc2.jpg",
+   "creado": "2026-11-01T21:25:08.247Z",
    "disponible": true
   },
   {
