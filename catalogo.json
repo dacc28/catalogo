@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T22:29:00.863Z",
+ "actualizado": "2026-11-18T23:22:07.515Z",
  "categorias": [
   {
    "p": "ANI",
@@ -595,6 +595,18 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00056",
+   "nombre": "Arete Vanc Rosa",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
+   "creado": "2026-11-01T20:08:35.163Z",
    "disponible": true
   },
   {
