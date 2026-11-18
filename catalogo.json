@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T21:04:16.665Z",
+ "actualizado": "2026-11-18T21:18:18.632Z",
  "categorias": [
   {
    "p": "ANI",
@@ -211,18 +211,6 @@
    "notas": "",
    "foto": "fotos/043f57422672f519de317967fa425bb8.jpg",
    "creado": "2026-11-17T23:34:16.878Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00039",
-   "nombre": "Anillo Cartie plata Talla7",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/3d5aa47e4e376e48b25c406c9e138226.jpg",
-   "creado": "2026-11-17T23:35:06.338Z",
    "disponible": true
   },
   {
@@ -607,18 +595,6 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00056",
-   "nombre": "Arete Vanc Rosa",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
-   "creado": "2026-11-01T20:08:35.163Z",
    "disponible": true
   },
   {
@@ -1023,7 +999,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/07dcb44f2ff32cc78571caf59484ef1d.jpg",
    "creado": "2026-11-07T20:02:54.174Z",
