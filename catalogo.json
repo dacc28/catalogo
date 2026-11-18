@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T20:04:39.553Z",
+ "actualizado": "2026-11-18T20:16:55.246Z",
  "categorias": [
   {
    "p": "ANI",
@@ -622,18 +622,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00054",
-   "nombre": "Aretes Xuping Arracada Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/514e677cd465a3ca99ce62ada00d843c.jpg",
-   "creado": "2026-10-20T23:37:14.343Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00056",
    "nombre": "Arete Vanc Rosa",
    "categoria": "ARE",
@@ -847,18 +835,6 @@
    "notas": "",
    "foto": "fotos/05e4d1d1317d07b601990cfa1aa362dd.jpg",
    "creado": "2026-11-07T21:14:48.951Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00084",
-   "nombre": "Arracadas plata con dorado",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c7c2c5e967311db67887cd2575afccbb.jpg",
-   "creado": "2026-11-07T21:17:01.129Z",
    "disponible": true
   },
   {
@@ -2002,18 +1978,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00034",
-   "nombre": "Brazalete Media Luna",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
-   "creado": "2026-11-01T21:08:45.418Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00037",
    "nombre": "Pulsera Ajustable Colorida",
    "categoria": "PUL",
@@ -2023,18 +1987,6 @@
    "notas": "",
    "foto": "fotos/3d8629c01d507f9b362d2ccc645510d7.jpg",
    "creado": "2026-11-01T21:15:44.503Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00043",
-   "nombre": "Brazalete con Brillo",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 66,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4b2d48d574a6f715f6ddb03f4c06ddc2.jpg",
-   "creado": "2026-11-01T21:25:08.247Z",
    "disponible": true
   },
   {
