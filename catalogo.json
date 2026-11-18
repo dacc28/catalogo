@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T18:27:51.033Z",
+ "actualizado": "2026-11-18T19:11:55.727Z",
  "categorias": [
   {
    "p": "ANI",
@@ -471,7 +471,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
    "creado": "2026-10-20T23:24:42.521Z",
@@ -643,18 +643,6 @@
    "notas": "",
    "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
    "creado": "2026-11-01T20:08:35.163Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00057",
-   "nombre": "Arete Vanc Rojo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6d86a1b9c502b20ab4a4ad2584d76961.jpg",
-   "creado": "2026-11-01T20:09:55.282Z",
    "disponible": true
   },
   {
