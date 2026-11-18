@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T21:31:53.948Z",
+ "actualizado": "2026-11-18T21:44:49.799Z",
  "categorias": [
   {
    "p": "ANI",
@@ -399,10 +399,22 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2b15b4c579ac360eed115d2f14fb41de.jpg",
    "creado": "2026-10-20T23:16:18.376Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00035",
+   "nombre": "Aretes Xuping  Colgante Oscuro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6ade6fee90079227dd32884db1bdff79.jpg",
+   "creado": "2026-10-20T23:18:36.806Z",
    "disponible": true
   },
   {
@@ -583,6 +595,18 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00056",
+   "nombre": "Arete Vanc Rosa",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/eeaecc96afc122233a46f6260e2b8fdb.jpg",
+   "creado": "2026-11-01T20:08:35.163Z",
    "disponible": true
   },
   {
@@ -982,6 +1006,18 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00001",
+   "nombre": "Cadena Bibiana",
+   "categoria": "CAD",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/71eba3f6f6ac76279dcd1e1c52e99b45.jpg",
+   "creado": "2026-10-20T16:13:15.587Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00003",
    "nombre": "Cadena Torzal Dorado 45cm",
    "categoria": "CAD",
@@ -1243,6 +1279,18 @@
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00029",
+   "nombre": "Collar Tenis Blanco",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 60,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
+   "creado": "2026-10-19T02:40:37.445Z",
    "disponible": true
   },
   {
@@ -1666,6 +1714,18 @@
    "disponible": true
   },
   {
+   "codigo": "JUE-00003",
+   "nombre": "Juego Xuping Flor Roja",
+   "categoria": "JUE",
+   "material": "Acero Inoxidable",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/1d03dcce7650b12f57729df1087f902d.jpg",
+   "creado": "2026-10-20T23:44:42.401Z",
+   "disponible": true
+  },
+  {
    "codigo": "JUE-00004",
    "nombre": "Juego Xuping Flor Negra",
    "categoria": "JUE",
@@ -1855,6 +1915,18 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00028",
+   "nombre": "Pulsera Vanc Negra",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9397ee2fde817955a10bf82256588ffb.jpg",
+   "creado": "2026-11-01T20:34:34.548Z",
    "disponible": true
   },
   {
