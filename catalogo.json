@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T22:07:19.224Z",
+ "actualizado": "2026-11-18T22:29:00.863Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1279,18 +1279,6 @@
    "notas": "",
    "foto": "fotos/e3fc2690493bc0e0713e54ca298d5a7a.jpg",
    "creado": "2026-10-19T02:40:37.445Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00041",
-   "nombre": "Chocker de Cuentas",
-   "categoria": "COL",
-   "material": "Cuentas con Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/531944695b86801be17089a953c8f0a1.jpg",
-   "creado": "2026-10-20T16:26:54.835Z",
    "disponible": true
   },
   {
