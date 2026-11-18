@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T21:18:18.632Z",
+ "actualizado": "2026-11-18T21:31:53.948Z",
  "categorias": [
   {
    "p": "ANI",
@@ -79,18 +79,6 @@
    "notas": "",
    "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
    "creado": "2026-10-27T00:54:27.042Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00022",
-   "nombre": "Anillo Ajustable Solitario Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c6f964a310519362d4bbd0ef49814291.jpg",
-   "creado": "2026-10-27T00:56:39.983Z",
    "disponible": true
   },
   {
@@ -1251,7 +1239,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
@@ -1891,18 +1879,6 @@
    "notas": "",
    "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
    "creado": "2026-11-01T21:06:01.761Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00037",
-   "nombre": "Pulsera Ajustable Colorida",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3d8629c01d507f9b362d2ccc645510d7.jpg",
-   "creado": "2026-11-01T21:15:44.503Z",
    "disponible": true
   },
   {
