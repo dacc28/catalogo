@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T19:24:48.157Z",
+ "actualizado": "2026-11-18T20:04:39.553Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1066,18 +1066,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00002",
-   "nombre": "Gargantilla Omega para Dije",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/0b6db2b11aeae8d4a7e3a3880bef36b8.jpg",
-   "creado": "2026-10-20T21:15:39.255Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00003",
    "nombre": "Cadena Torzal Dorado 45cm",
    "categoria": "CAD",
@@ -1339,18 +1327,6 @@
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00025",
-   "nombre": "Collar de Chicle Vino",
-   "categoria": "COL",
-   "material": "Yakli con Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/56f9ead535a6a0f2cdb9848922fb0297.jpg",
-   "creado": "2026-10-19T02:28:24.093Z",
    "disponible": true
   },
   {
