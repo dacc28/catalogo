@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T21:07:56.633Z",
+ "actualizado": "2026-11-19T21:21:13.198Z",
  "categorias": [
   {
    "p": "ANI",
@@ -478,18 +478,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00047",
-   "nombre": "Aretes Xuping  Ladrillo Café",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2ead716d5ea1635a3bdce80d62d55cf0.jpg",
-   "creado": "2026-10-20T23:31:37.126Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00049",
    "nombre": "Aretes Xuping  Flor Azul",
    "categoria": "ARE",
@@ -927,7 +915,7 @@
    "categoria": "ARE",
    "material": "",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/abce4794090dbfc600918bbc010d8c3b.jpg",
    "creado": "2026-11-17T20:28:03.583Z",
@@ -1443,7 +1431,7 @@
    "categoria": "DIJ",
    "material": "Chapa de oro",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/f870242f6fcb820296b3db1c10fed7f4.jpg",
    "creado": "2026-11-17T19:20:54.962Z",
