@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T21:21:13.198Z",
+ "actualizado": "2026-11-19T21:33:17.055Z",
  "categorias": [
   {
    "p": "ANI",
@@ -555,7 +555,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7b2ac47c0208cb767b4931206232f188.jpg",
    "creado": "2026-11-01T21:44:01.970Z",
@@ -982,18 +982,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00007",
-   "nombre": "Cadena cola de raton 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/157afdbd6adca1e337f5e9a6f0f5bfda.jpg",
-   "creado": "2026-11-07T20:10:51.567Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00010",
    "nombre": "Cadena eslabon mini 45cm",
    "categoria": "CAD",
@@ -1411,30 +1399,6 @@
    "notas": "",
    "foto": "fotos/b32e4aec2e61714505e2c01a8775cec2.jpg",
    "creado": "2026-11-17T19:17:39.879Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00012",
-   "nombre": "dije cruz",
-   "categoria": "DIJ",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/710347e875a462f9392abd7aac909a91.jpg",
-   "creado": "2026-11-17T19:19:34.220Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00013",
-   "nombre": "Dije de Elefante",
-   "categoria": "DIJ",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f870242f6fcb820296b3db1c10fed7f4.jpg",
-   "creado": "2026-11-17T19:20:54.962Z",
    "disponible": true
   },
   {
