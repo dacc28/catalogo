@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T00:32:21.128Z",
+ "actualizado": "2026-11-19T01:12:07.561Z",
  "categorias": [
   {
    "p": "ANI",
@@ -1687,18 +1687,6 @@
    "notas": "",
    "foto": "fotos/52bb18e76073c368115dbc2a49f14221.jpg",
    "creado": "2026-10-20T23:43:41.837Z",
-   "disponible": true
-  },
-  {
-   "codigo": "JUE-00003",
-   "nombre": "Juego Xuping Flor Roja",
-   "categoria": "JUE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/1d03dcce7650b12f57729df1087f902d.jpg",
-   "creado": "2026-10-20T23:44:42.401Z",
    "disponible": true
   },
   {
