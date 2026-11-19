@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-18T23:22:07.515Z",
+ "actualizado": "2026-11-19T00:32:21.128Z",
  "categorias": [
   {
    "p": "ANI",
@@ -399,7 +399,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2b15b4c579ac360eed115d2f14fb41de.jpg",
    "creado": "2026-10-20T23:16:18.376Z",
@@ -459,7 +459,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/d74c0777b16440cb6dbff036b3bdcd45.jpg",
    "creado": "2026-10-20T23:25:24.722Z",
@@ -1063,18 +1063,6 @@
    "notas": "",
    "foto": "fotos/157afdbd6adca1e337f5e9a6f0f5bfda.jpg",
    "creado": "2026-11-07T20:10:51.567Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00009",
-   "nombre": "Cadena Bibiana detallada 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/49a30e288b58131c82f64f700ac4a1e1.jpg",
-   "creado": "2026-11-07T20:12:30.531Z",
    "disponible": true
   },
   {
@@ -1903,18 +1891,6 @@
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00028",
-   "nombre": "Pulsera Vanc Negra",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9397ee2fde817955a10bf82256588ffb.jpg",
-   "creado": "2026-11-01T20:34:34.548Z",
    "disponible": true
   },
   {
