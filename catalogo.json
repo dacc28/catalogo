@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T21:33:17.055Z",
+ "actualizado": "2026-11-19T23:11:24.507Z",
  "categorias": [
   {
    "p": "ANI",
@@ -67,18 +67,6 @@
    "notas": "",
    "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
    "creado": "2026-10-27T00:46:37.184Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00020",
-   "nombre": "Anillo Cartier Talla 7",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 33,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d035794c8f69081f8c1e3abc9759a9c8.jpg",
-   "creado": "2026-10-27T00:54:27.042Z",
    "disponible": true
   },
   {
@@ -1623,7 +1611,7 @@
    "categoria": "JUE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/97f704dcaceff3108b0af7f3d083f3c9.jpg",
    "creado": "2026-11-17T19:54:42.227Z",
@@ -1987,18 +1975,6 @@
    "notas": "",
    "foto": "fotos/a7ffe8d2d7f4fcbfa06716f3de650db3.jpg",
    "creado": "2026-11-18T00:06:39.847Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00063",
-   "nombre": "Trio de brazaletes Cartie con logo",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4d8278c8378cc1074f76df47dfc4bb2a.jpg",
-   "creado": "2026-11-18T00:08:47.142Z",
    "disponible": true
   },
   {
