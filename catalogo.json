@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T19:15:27.801Z",
+ "actualizado": "2026-11-19T19:40:32.434Z",
  "categorias": [
   {
    "p": "ANI",
@@ -103,18 +103,6 @@
    "notas": "",
    "foto": "fotos/b2e43ebdb715adbbb6ffea56a8e680db.jpg",
    "creado": "2026-11-17T23:24:38.184Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00031",
-   "nombre": "Anillo Cartie clavo dorado con brillo Talla7",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4b807acef2bfabb189b503f701969d1d.jpg",
-   "creado": "2026-11-17T23:27:06.869Z",
    "disponible": true
   },
   {
@@ -1210,18 +1198,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00024",
-   "nombre": "Cadena Mini",
-   "categoria": "CAD",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
-   "creado": "2026-10-19T02:25:46.170Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00029",
    "nombre": "Collar Tenis Blanco",
    "categoria": "COL",
@@ -2131,18 +2107,6 @@
    "notas": "",
    "foto": "fotos/a06203addcc8fd27bdf9a6e5379e61d0.jpg",
    "creado": "2026-11-18T00:11:59.208Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00066",
-   "nombre": "Brazalete cartie full glam",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 80,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2cfd42981d166fe42f914a88f91de8dc.jpg",
-   "creado": "2026-11-18T00:13:21.752Z",
    "disponible": true
   },
   {
