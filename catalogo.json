@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T20:14:56.301Z",
+ "actualizado": "2026-11-19T21:07:56.633Z",
  "categorias": [
   {
    "p": "ANI",
@@ -403,6 +403,18 @@
    "notas": "",
    "foto": "fotos/512af33e93e6caf3ca9fb1ab6d920bd5.jpg",
    "creado": "2026-10-20T23:21:42.410Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00039",
+   "nombre": "Aretes Xuping  Color Ladrillo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
+   "creado": "2026-10-20T23:24:42.521Z",
    "disponible": true
   },
   {
@@ -1411,18 +1423,6 @@
    "notas": "",
    "foto": "fotos/b32e4aec2e61714505e2c01a8775cec2.jpg",
    "creado": "2026-11-17T19:17:39.879Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00011",
-   "nombre": "Dije Arbol de la vida",
-   "categoria": "DIJ",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8d803000c61f8532106cb5338e369fce.jpg",
-   "creado": "2026-11-17T19:18:44.200Z",
    "disponible": true
   },
   {
