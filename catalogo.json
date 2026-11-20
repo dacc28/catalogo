@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T17:05:44.289Z",
+ "actualizado": "2026-11-20T17:09:03.046Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -123,7 +123,7 @@
    "categoria": "ANI",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/0cea7a46c4415de7defb1685bc8f6a51.jpg",
    "creado": "2026-11-17T23:29:26.247Z",
@@ -183,7 +183,7 @@
    "categoria": "ANI",
    "material": "",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/04ec6feb2cf2bfbfcf1f7abb5779cf92.jpg",
    "creado": "2026-11-18T20:57:07.772Z",
