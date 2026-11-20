@@ -3297,6 +3297,7 @@ function ticketDraw(pdf,c,l,medir){
     y+=15.8;
   }
   if(c.nota){ F("normal",6.3); const nl=pdf.splitTextToSize("Nota: "+c.nota,CW).slice(0,3); T(nl,M,y+0.6); y+=nl.length*2.8+2; }
+  /* mvTB */ if(window.mvCodigoPedido&&c.id){ const cod=window.mvCodigoPedido(c.id); y+=1; if(!medir){ try{ pdf.addImage(barcodeDataUrl(cod),"PNG",(W-41.25)/2,y,41.25,9); }catch(e){} } y+=9; F("bold",6.6); T(cod,W/2,y+2.4,{align:"center"}); y+=5.2; }
   F("normal",6.2); T("Compra mínima de mayoreo: "+MIN_PIEZAS+" piezas · ¡Gracias por tu compra!",W/2,y+1.6,{align:"center"}); y+=3;
   return y+M;
 }
@@ -3574,7 +3575,7 @@ async function livePdf(l,cartsIn){
   try{ await state.downloads.save({filename:`live-${slug(l.nombre)}.pdf`,data:pdf.output("blob")}); toast("PDF del live descargado"); }catch(e){ if(!(e&&e.code==="declined")) toast("No se pudo descargar",true); }
 }
 function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"—"; }
-function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),estatusFijo:(x.estatusFijo&&typeof x.estatusFijo==="object"&&x.estatusFijo.t)?{t:String(x.estatusFijo.t),fecha:String(x.estatusFijo.fecha||"")}:null,origen:String(x.origen||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
+function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),estatusFijo:(x.estatusFijo&&typeof x.estatusFijo==="object"&&x.estatusFijo.t)?{t:String(x.estatusFijo.t),fecha:String(x.estatusFijo.fecha||"")}:null,origen:String(x.origen||""),ticketEnviado:String(x.ticketEnviado||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
 function subscribeCarts(liveId){
   if(state.cartsUnsub){ state.cartsUnsub(); state.cartsUnsub=null; }
   state.carts=new Map(); state.cartId=null;
@@ -3620,7 +3621,7 @@ async function createCart(name,clienteId){
   try{ const ref=await state.db.collection("carritos").add({liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],total:0,creado:now,actualizado:now}); state.carts.set(ref.id,{id:ref.id,liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],creado:now,actualizado:now}); state.cartId=ref.id; state.cartSearch=""; renderLive(true); setTimeout(()=>{ const i=$("#addInput"); if(i) i.focus(); },50); }
   catch(e){ toast("No se pudo crear el carrito",true); }
 }
-async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",estatusFijo:(c.estatusFijo&&c.estatusFijo.t)?{t:String(c.estatusFijo.t),fecha:String(c.estatusFijo.fecha||"")}:null,descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
+async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",estatusFijo:(c.estatusFijo&&c.estatusFijo.t)?{t:String(c.estatusFijo.t),fecha:String(c.estatusFijo.fecha||"")}:null,descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",ticketEnviado:c.ticketEnviado||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
 async function setStock(code,next){ const p=state.products.get(code); if(!p) return 0; next=Math.max(0,next); const cur=Math.max(0,Number(p.existencia)||0); const delta=next-cur; if(!delta) return 0;
   if(state.db&&typeof state.db.stock==="function"){ const r=await state.db.stock(code,delta); p.existencia=Number(r.existencia)||0; return Number(r.aplicado)||0; } // suma/resta segura (varios dispositivos a la vez)
   await state.db.doc("productos/"+code).update({existencia:next,actualizado:new Date().toISOString()}); p.existencia=next; return delta; }
@@ -5346,9 +5347,10 @@ button.dg-f.mvr-a{cursor:pointer}
     if(orden==="compras") list.sort((a,b)=>((st.get(b.id)||{}).tot||0)-((st.get(a.id)||{}).tot||0));
     else if(orden==="reciente") list.sort((a,b)=>String((st.get(b.id)||{}).ult||"").localeCompare(String((st.get(a.id)||{}).ult||"")));
     else if(orden==="debe") list.sort((a,b)=>((st.get(b.id)||{}).debe||0)-((st.get(a.id)||{}).debe||0));
+    else if(orden==="ticket"&&window.mvTBFalta) list.sort((a,b)=>(window.mvTBFalta(st.get(b.id))?1:0)-(window.mvTBFalta(st.get(a.id))?1:0)||String((st.get(b.id)||{}).ult||"").localeCompare(String((st.get(a.id)||{}).ult||"")));
     const search=h("input",{type:"search",id:"cliSearch",class:"mvl-buscar",placeholder:"Buscar por nombre, Facebook, WhatsApp o ciudad…",value:q,"aria-label":"Buscar clientas"});
     search.addEventListener("input",()=>{ state.cliSearch=search.value; window.renderClientas(); const s2=$("#cliSearch"); if(s2){ s2.focus(); s2.setSelectionRange(s2.value.length,s2.value.length); } });
-    const sel=h("select",{class:"mvl-sel","aria-label":"Ordenar"},...[["nombre","A → Z"],["reciente","Compra más reciente"],["compras","Más compras"],["debe","Deben primero"]].map(([v,t])=>h("option",{value:v},t))); sel.value=orden;
+    const sel=h("select",{class:"mvl-sel","aria-label":"Ordenar"},...[["nombre","A → Z"],["reciente","Compra más reciente"],["compras","Más compras"],["debe","Deben primero"],...(window.mvTBFalta?[["ticket","Sin ticket primero"]]:[])].map(([v,t])=>h("option",{value:v},t))); sel.value=orden;
     sel.addEventListener("change",()=>{ state.cliOrden=sel.value; window.renderClientas(); });
     const formHost=h("div",{class:"mvl-form"});
     const nueva=h("button",{class:"btn primary",type:"button",onclick:()=>{ formHost.replaceChildren(clientaForm(null,()=>{ formHost.replaceChildren(); window.renderClientas(); })); }},"+ Nueva clienta");
@@ -5368,10 +5370,10 @@ button.dg-f.mvr-a{cursor:pointer}
         h("span",{class:"mvl-num"},r.tot?money(r.tot):"—"),
         h("span",{class:"mvl-ult"},r.ult?fechaC(r.ult):"—"),
         r.debe>0.005?h("span",{class:"mvl-est debe"},"Debe "+money(r.debe)):h("span",{class:"mvl-est "+(r.n?"ok":"nada")},r.n?"Al corriente":"Sin compras"),
-        h("span",{class:"mvl-acc"},h("button",{type:"button",class:"mvl-b",title:"Abrir su carrito en el live",onclick:()=>abrirCarritoDe(k)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",title:"Ver ficha",onclick:()=>openClienta(k.id)},icon("flecha")))));
+        h("span",{class:"mvl-acc"},h("button",{type:"button",class:"mvl-b",title:"Abrir su carrito en el live",onclick:()=>abrirCarritoDe(k)},icon("carrito"),h("span",null,"Carrito")),h("button",{type:"button",class:"mvl-b",title:"Ver ficha",onclick:()=>openClienta(k.id)},icon("flecha"))),(window.mvTBCelda?window.mvTBCelda(k,r):null)));
       if(abierta) filas.push(subPedidos(k,r));
     }
-    host.replaceChildren(cab,formHost,h("div",{class:"mvl-tabla cli"},h("div",{class:"mvl-th"},...["Clienta","WhatsApp","Ciudad","Pedidos","Comprado","Última","Estado",""].map(t=>h("span",null,t))),...filas));
+    host.replaceChildren(cab,formHost,h("div",{class:"mvl-tabla cli"+(window.mvTBCelda?" tb":"")},h("div",{class:"mvl-th"},...["Clienta","WhatsApp","Ciudad","Pedidos","Comprado","Última","Estado","",...(window.mvTBCelda?["Ticket"]:[])].map(t=>h("span",null,t))),...filas));
     if(!state.logiFinal&&!state.__cliReintento){ state.__cliReintento=true; setTimeout(()=>{ state.__cliReintento=false; if(state.view==="cli") window.renderClientas(); },1500); }
   };
 
@@ -5388,7 +5390,7 @@ button.dg-f.mvr-a{cursor:pointer}
         h("b",{class:"mvl-sp-t"},money(cartGrand(c))),
         h("span",{class:"mvl-acc",onclick:e=>e.stopPropagation()},
           h("button",{type:"button",class:"mvl-b",title:"Ver el carrito",onclick:()=>irACarrito(c)},icon("carrito"),h("span",null,"Carrito")),
-          h("button",{type:"button",class:"mvl-b",title:"Descargar ticket",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket")),
+          (window.mvTBMini?window.mvTBMini(c):null),h("button",{type:"button",class:"mvl-b",title:"Descargar ticket",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},icon("ticket"),h("span",null,"Ticket")),
           h("button",{type:"button",class:"mvl-b primary",title:"Abrir en Logística",onclick:()=>verPedido(c)},h("span",{class:"mvl-sp-abrir"},"Abrir"),icon("flecha")))); }));
   }
   // abre un pedido en Logística (con su detalle abierto), en la Mac, en el sistema web y en Marvea Vende
@@ -7396,6 +7398,364 @@ body.rol-vendedor #tab-cobro{display:none!important}
   };
 })();
 </script>
+<style id="mv-tb-css">
+/* mvTB · ticket enviado + ventana del pedido (20-nov-2026) */
+.mvl-tabla.cli.tb .mvl-th,.mvl-tabla.cli.tb .mvl-fila{grid-template-columns:minmax(160px,2fr) 140px minmax(60px,1fr) 112px 96px 76px 118px 120px 84px;gap:8px}
+@media (max-width:1100px){.mvl-tabla.cli.tb .mvl-th,.mvl-tabla.cli.tb .mvl-fila{grid-template-columns:minmax(170px,2fr) 140px 112px 100px 110px 110px 92px}}
+@media (max-width:720px){.mvl-tabla.cli.tb .mvl-fila{grid-template-columns:minmax(0,1fr) auto}.mvl-tabla.cli.tb .mvl-fila>.mvtb-celda{grid-column:1/-1;justify-self:start;margin-left:44px}}
+.mvtb-celda{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;cursor:pointer;user-select:none;padding:4px 7px;border-radius:999px;width:max-content}
+.mvtb-celda input,.mvtb-mini input,.mvtb-tk input{width:18px;height:18px;accent-color:#5A2748;margin:0;cursor:pointer}
+.mvtb-celda.ok{background:#E7F4EC;color:#1F6B3A}.mvtb-celda.falta{background:#FFF1E8;color:#B5401E}.mvtb-celda.vacia{color:var(--muted,#888);font-weight:400;cursor:default}
+.mvtb-mini{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;cursor:pointer;margin-right:4px}
+.mvtb-mini.ok{background:#E7F4EC;color:#1F6B3A}.mvtb-mini.falta{background:#FFF1E8;color:#B5401E}
+.mvtb-fondo{position:fixed;inset:0;z-index:2147483000;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.mvtb-caja{background:#fff;color:#2a1a24;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.25);width:min(640px,100%);padding:18px 18px 16px;display:flex;flex-direction:column;gap:12px}
+.mvtb-cab{display:flex;justify-content:space-between;gap:10px}.mvtb-cab h2{margin:2px 0 4px;font-size:22px;line-height:1.15}
+.mvtb-cod{font:700 11.5px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#5A2748;background:#F3E8EF;padding:2px 8px;border-radius:999px;display:inline-block}
+.mvtb-meta{font-size:12.5px;color:#6B5664;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.mvtb-wa{color:#1F6B3A;font-weight:700;text-decoration:none}
+.mvtb-x{border:0;background:#F4EEF1;border-radius:999px;width:36px;height:36px;font-size:22px;line-height:1;cursor:pointer;flex:none}
+.mvtb-chips{display:flex;flex-wrap:wrap;gap:6px}.mvtb-chip{font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:#EDEDF0}
+.mvtb-chip.ok{background:#E7F4EC;color:#1F6B3A}.mvtb-chip.debe{background:#FDE8EA;color:#B5333F}.mvtb-chip.aviso{background:#FFF6D6;color:#7A5A00}
+.mvtb-piezas{display:flex;flex-direction:column;gap:6px;max-height:38vh;overflow:auto;border:1px solid #EFE6EB;border-radius:14px;padding:8px}
+.mvtb-pz{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:10px;align-items:center}.mvtb-pz .th{width:44px;height:44px;border-radius:10px;overflow:hidden}.mvtb-pz .th img{width:100%;height:100%;object-fit:cover}
+.mvtb-pzn{min-width:0}.mvtb-pzn b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvtb-pzn small{color:#6B5664;font-size:11.5px}
+.mvtb-pzc{font-size:12.5px;color:#6B5664;white-space:nowrap}.mvtb-pzt{font-size:13px;white-space:nowrap}
+.mvtb-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.mvtb-tot div{background:#FAF6F8;border-radius:12px;padding:8px 10px}.mvtb-tot span{display:block;font-size:11px;color:#6B5664}.mvtb-tot b{font-size:16px}.mvtb-tot .debe b{color:#B5333F}
+.mvtb-sec{border-top:1px solid #EFE6EB;padding-top:10px}.mvtb-sec h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#6B5664}
+.mvtb-fila{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.mvtb-fila input,.mvtb-fila select{height:38px;border:1px solid #E2D6DD;border-radius:10px;padding:0 10px;font-size:14px;min-width:0}
+.mvtb-fila input[type=number]{width:120px}.mvtb-fila input[type=text]{flex:1 1 160px}
+.mvtb-ayuda{margin:2px 0 0;font-size:12px;color:#6B5664}
+.mvtb-tk{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#FFF1E8;font-weight:700;cursor:pointer}.mvtb-tk.ok{background:#E7F4EC;color:#1F6B3A}
+.mvtb-pie{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.mvtb-varios,.mvtb-aviso{font-size:12.5px;background:#FFF6D6;border-radius:10px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+@media (max-width:560px){.mvtb-tot{grid-template-columns:repeat(2,1fr)}.mvtb-pz{grid-template-columns:40px minmax(0,1fr) auto}.mvtb-pzc{display:none}.mvtb-fondo{padding:0}.mvtb-caja{border-radius:0;min-height:100%}}
+</style>
+<script id="mv-tb-js">
+/* ===== mvTB · «Ticket enviado» en Clientas + código de barras por pedido (20-nov-2026) =====
+   1) Cada pedido (carrito) guarda ticketEnviado = fecha ISO o "". Clientas muestra una casilla por clienta:
+      marcada cuando TODOS sus pedidos ya llevan ticket enviado. Al marcarla se marcan los que faltan; al desmarcarla
+      se quita solo la marca del pedido más reciente. En «N pedidos» cada pedido lleva su propia casilla.
+   2) Código de barras por pedido: MV + 8 dígitos que salen del id del carrito (no se guarda nada nuevo, nunca cambia).
+      Va en el ticket (PDF e impresora de tickets) y en una etiqueta 50 × 30 mm (NIIMBOT).
+      Al escanearlo (lector en la Mac / sistema en línea, o cámara en Marvea Vende) abre una ventana con la clienta,
+      sus piezas, el estatus de pago y de envío, y ahí se pueden cambiar (pago: siempre con confirmación).
+   No toca existencias ni borra nada. */
+(function(){
+  if(window.__mvTB) return; window.__mvTB=true;
+  const money=x=>"$"+fmtMoney(x);
+  const fecha=f=>f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}):"";
+  const fechaH=f=>f?new Date(f).toLocaleString("es-MX",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+
+  /* ---------- código del pedido ---------- */
+  function codigo(id){ let x=0x811c9dc5; const s=String(id||""); for(let i=0;i<s.length;i++){ x^=s.charCodeAt(i); x=Math.imul(x,0x01000193)>>>0; } return "MV"+String(x%100000000).padStart(8,"0"); }
+  window.mvCodigoPedido=codigo;
+  const RX=/^MV\d{8}$/;
+  const num=c=>{ try{ return numPedido(c); }catch(e){ return String(c.referencia||String(c.id||"").slice(0,6).toUpperCase()); } };
+
+  /* ---------- ticket enviado ---------- */
+  function propagar(id,patch){
+    for(const m of [state.carts,state.ventaCarts,state.cartsAbiertos,state.logiFinal]){ try{ const x=m&&m.get&&m.get(id); if(x) Object.assign(x,patch); }catch(e){} }
+    try{ if(Array.isArray(state.allCarts)) for(const x of state.allCarts) if(x&&x.id===id) Object.assign(x,patch); }catch(e){}
+  }
+  async function setTicket(c,v){
+    if(!state.db||!c||!c.id) return false; const now=new Date().toISOString(); const val=v?now:"";
+    try{ await state.db.doc("carritos/"+c.id).update({ticketEnviado:val,actualizado:now}); c.ticketEnviado=val; propagar(c.id,{ticketEnviado:val,actualizado:now}); return true; }
+    catch(e){ console.warn("ticket enviado",e); toast("No se pudo guardar la marca del ticket",true); return false; }
+  }
+  window.mvTBSetTicket=setTicket;
+  // r = estadística de la clienta en Clientas ({n, carts})
+  function resumen(r){ const cs=(r&&r.carts)||[]; const env=cs.filter(c=>c.ticketEnviado).length; return {n:cs.length,env,todos:cs.length>0&&env===cs.length}; }
+  window.mvTBFalta=r=>{ const z=resumen(r); return z.n>0&&!z.todos; };
+  window.mvTBCelda=function(k,r){
+    const z=resumen(r); if(!z.n) return h("span",{class:"mvtb-celda vacia"},"—");
+    const cb=h("input",{type:"checkbox","aria-label":"Ticket enviado a "+(k.nombre||"")}); cb.checked=z.todos;
+    const txt=z.todos?"Enviado":(z.n>1&&z.env?z.env+"/"+z.n:"Falta");
+    const lab=h("label",{class:"mvtb-celda "+(z.todos?"ok":"falta"),title:z.n>1?("Ticket enviado en "+z.env+" de "+z.n+" pedidos"):"Ticket enviado"},cb,h("span",null,txt));
+    lab.addEventListener("click",e=>e.stopPropagation());
+    cb.addEventListener("change",async()=>{ cb.disabled=true;
+      const cs=[...r.carts].sort((a,b)=>String(b.finalizado||b.creado).localeCompare(String(a.finalizado||a.creado)));
+      if(cb.checked){ for(const c of cs) if(!c.ticketEnviado) await setTicket(c,true); toast("Ticket enviado ✓ · "+(k.nombre||"")); }
+      else { const ult=cs.find(c=>c.ticketEnviado); if(ult) await setTicket(ult,false); toast("Se quitó la marca de ticket del pedido más reciente"); }
+      try{ window.renderClientas(); }catch(e){}
+    });
+    return lab;
+  };
+  window.mvTBMini=function(c){
+    const cb=h("input",{type:"checkbox","aria-label":"Ticket enviado"}); cb.checked=!!c.ticketEnviado;
+    const lab=h("label",{class:"mvtb-mini "+(c.ticketEnviado?"ok":"falta"),title:c.ticketEnviado?"Ticket enviado "+fechaH(c.ticketEnviado):"Ticket sin enviar"},cb,h("span",null,"Ticket"));
+    lab.addEventListener("click",e=>e.stopPropagation());
+    cb.addEventListener("change",async()=>{ cb.disabled=true; await setTicket(c,cb.checked); try{ window.renderClientas(); }catch(e){} });
+    return lab;
+  };
+
+  /* ---------- etiqueta 50 × 30 mm ---------- */
+  function etiquetaPdf(lista){
+    const J=window.jspdf&&window.jspdf.jsPDF; if(!J) throw new Error("nopdf");
+    const pdf=new J({orientation:"l",unit:"mm",format:[50,30],compress:true});
+    lista.forEach((c,i)=>{ if(i) pdf.addPage([50,30],"l");
+      const cod=codigo(c.id); pdf.setTextColor(0);
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(9.5); const nm=pdf.splitTextToSize(String(c.cliente||"Sin nombre"),46).slice(0,2); pdf.text(nm,2,4.6);
+      let y=4.6+nm.length*3.7; pdf.setFont("helvetica","normal"); pdf.setFontSize(6.6);
+      pdf.text("Pedido #"+num(c)+" · "+cartPieces(c)+" pzas · "+money(cartGrand(c)),2,y); y+=1.2;
+      try{ pdf.addImage(barcodeDataUrl(cod),"PNG",(50-41.25)/2,y,41.25,Math.max(8,27.2-y-1)); }catch(e){}
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(7); pdf.text(cod,25,29,{align:"center"});
+    });
+    return pdf.output("blob");
+  }
+  async function descargarEtiqueta(lista){
+    if(!state.downloads){ toast("La descarga no está disponible en esta vista",true); return; }
+    try{ const blob=etiquetaPdf(lista); const n=lista.length===1?(String(lista[0].cliente||"pedido").replace(/[\/\\:*?"<>|]+/g,"").trim()||"pedido"):lista.length+"-pedidos";
+      await state.downloads.save({filename:"etiqueta-pedido-"+n+".pdf",data:blob}); toast(lista.length===1?"Etiqueta lista · ábrela en la app de NIIMBOT (50 × 30 mm)":"Etiquetas listas"); }
+    catch(e){ if(!(e&&e.code==="declined")) toast("No se pudo preparar la etiqueta",true); }
+  }
+  window.mvTBEtiqueta=c=>descargarEtiqueta([c]);
+
+  /* ---------- buscar el pedido por su código ---------- */
+  async function buscar(cod){
+    if(!state.db) return [];
+    const snap=await state.db.collection("carritos").get();
+    return snap.docs.filter(d=>codigo(d.id)===cod).map(d=>cartFromDoc(d.id,d.data()||{}));
+  }
+  async function abrirPorCodigo(cod){
+    cod=String(cod||"").trim().toUpperCase(); if(!RX.test(cod)) return false;
+    toast("Buscando pedido "+cod+"…");
+    let l=[]; try{ l=await buscar(cod); }catch(e){ toast("No se pudo buscar el pedido (¿hay internet?)",true); return true; }
+    if(!l.length){ toast("No hay ningún pedido con el código "+cod,true); return true; }
+    ventana(l[0],l.length>1?l:null); return true;
+  }
+  window.mvTBEscaneo=txt=>{ const t=String(txt||"").trim().toUpperCase(); if(!RX.test(t)) return false; abrirPorCodigo(t); return true; };
+  window.mvTBAbrirPedido=c=>ventana(c);
+
+  /* ---------- ventana del pedido ---------- */
+  function estPago(c){ const e=c.estado; if(e==="cancelado") return {t:"Cancelada",k:"nada"}; const s=cartSaldo(c), p=cartPagado(c);
+    if(s<=0.005) return {t:s<-0.005?"Pagado · a favor "+money(-s):"Pagado",k:"ok"}; if(p>0.005) return {t:"Debe "+money(s)+" (pagó "+money(p)+")",k:"debe"}; return {t:"Sin pago · "+money(s),k:"debe"}; }
+  function estEnvio(c){ if(c.estado==="cancelado") return {t:"Cancelada",k:"nada"}; if(c.entregado) return {t:"Entregado "+fecha(c.entregado),k:"ok"};
+    if(c.enviado||c.guia) return {t:"Enviado"+(c.guia?" · guía "+(c.paqueteria&&c.paqueteria!=="DHL"?c.paqueteria+" ":"")+c.guia:"")+(c.enviado?" · "+fecha(c.enviado):""),k:"ok"};
+    if(c.estado==="abierto") return {t:"Venta abierta (se está armando)",k:"aviso"}; if(c.resguardo) return {t:"En resguardo (se junta con otro pedido)",k:"aviso"};
+    if(c.entregaMty) return {t:"Entrega en Monterrey · por entregar",k:"aviso"}; if(!c.envio) return {t:"Recoge / sin paquetería · por entregar",k:"aviso"}; return {t:"Por enviar · "+(c.envio.nombre||"paquetería"),k:"aviso"}; }
+  let capa=null;
+  function cerrar(){ if(capa){ capa.remove(); capa=null; document.removeEventListener("keydown",escTecla,true); } }
+  function escTecla(e){ if(e.key==="Escape"&&capa){ e.stopPropagation(); cerrar(); } }
+  async function refrescar(c){ try{ const d=await state.db.doc("carritos/"+c.id).get(); const x=d&&(typeof d.data==="function"?d.data():d); if(x) return cartFromDoc(c.id,x); }catch(e){} return c; }
+  function ventana(c,varios){
+    cerrar(); capa=h("div",{class:"mvtb-fondo"}); capa.addEventListener("click",e=>{ if(e.target===capa) cerrar(); }); document.addEventListener("keydown",escTecla,true);
+    const caja=h("div",{class:"mvtb-caja",role:"dialog","aria-modal":"true"}); capa.append(caja); document.body.append(capa);
+    const pintar=async(cc,aviso)=>{ c=cc; const k=clienteDe(c)||{}; const wa=String(k.whatsapp||"").replace(/\D/g,"");
+      const p=estPago(c), en=estEnvio(c), cod=codigo(c.id);
+      const cab=h("div",{class:"mvtb-cab"},
+        h("div",null,h("div",{class:"mvtb-cod"},cod),h("h2",null,c.cliente||"Sin nombre"),
+          h("div",{class:"mvtb-meta"},"Pedido #"+num(c)+" · "+(c.origen==="web"?"Tienda en línea":lugarDe(c))+" · "+fecha(c.finalizado||c.creado)+(c.referencia&&String(c.referencia)!==String(num(c))?" · Ref. "+c.referencia:""),
+            wa?h("a",{href:"https://wa.me/52"+wa.slice(-10),target:"_blank",rel:"noopener",class:"mvtb-wa"},"WhatsApp "+wa.slice(-10)):null)),
+        h("button",{type:"button",class:"mvtb-x","aria-label":"Cerrar",onclick:cerrar},"×"));
+      const chips=h("div",{class:"mvtb-chips"},h("span",{class:"mvtb-chip "+p.k},"💳 "+p.t),h("span",{class:"mvtb-chip "+en.k},"📦 "+en.t),c.estado==="abierto"?h("span",{class:"mvtb-chip aviso"},"Venta abierta"):null);
+      const piezas=h("div",{class:"mvtb-piezas"},...(c.items||[]).map(it=>{ const pr=state.products.get(it.codigo)||{codigo:it.codigo,nombre:it.nombre}; return h("div",{class:"mvtb-pz"},thumb(pr),h("div",{class:"mvtb-pzn"},h("b",null,it.nombre||it.codigo),h("small",null,(it.palabra?it.palabra+" · ":"")+it.codigo)),h("span",{class:"mvtb-pzc"},it.cant+" × "+money(it.precio)),h("b",{class:"mvtb-pzt"},money((Number(it.cant)||0)*(Number(it.precio)||0)))); }));
+      const tot=h("div",{class:"mvtb-tot"},h("div",null,h("span",null,"Piezas"),h("b",null,String(cartPieces(c)))),h("div",null,h("span",null,"Total"),h("b",null,money(cartGrand(c)))),h("div",null,h("span",null,"Pagado"),h("b",null,money(cartPagado(c)))),h("div",{class:cartSaldo(c)>0.005?"debe":""},h("span",null,cartSaldo(c)<-0.005?"A favor":"Falta"),h("b",null,money(Math.abs(cartSaldo(c))))));
+      // pago
+      const secPago=h("div",{class:"mvtb-sec"},h("h3",null,"Pago"));
+      if(c.estado!=="cancelado"&&cartSaldo(c)>0.005){
+        const monto=h("input",{type:"number",min:"0",step:"0.01",value:String(Math.round(cartSaldo(c)*100)/100),"aria-label":"Monto"});
+        const medio=h("select",{"aria-label":"Medio de pago"},...["Transferencia","Efectivo","Depósito","Tarjeta","Otro"].map(m=>h("option",{value:m},m)));
+        const b=h("button",{type:"button",class:"btn primary",onclick:async()=>{ const m=Math.round((Number(monto.value)||0)*100)/100; if(!(m>0)){ toast("Escribe el monto",true); return; }
+          if(!confirm("¿Registrar un pago de "+money(m)+" ("+medio.value+") en el pedido de "+(c.cliente||"")+"?")) return; b.disabled=true;
+          try{ const fresco=await refrescar(c); const now=new Date().toISOString();
+            if(fresco.estado==="final"&&!fresco.pago&&m>=cartSaldo(fresco)-0.005){ fresco.pago={monto:pagoSinDoble(fresco,m),medio:medio.value,fecha:now,cuenta:""}; } /* cubre todo: pago de la venta; si es parcial va como abono */
+            else { fresco.anticipos=[...(fresco.anticipos||[]),{monto:m,medio:medio.value,fecha:now,nota:"Registrado desde el código de barras del pedido",usuario:""}]; }
+            await saveCart(fresco); toast("Pago registrado · "+money(m)+" "+medio.value); pintar(await refrescar(fresco)); try{ renderAll(); }catch(e){} }
+          catch(e){ console.error(e); toast("No se pudo registrar el pago",true); b.disabled=false; } }},"Registrar pago");
+        secPago.append(h("div",{class:"mvtb-fila"},monto,medio,b),h("p",{class:"mvtb-ayuda"},c.estado==="final"?"Si cubre todo, queda como pago de la venta; si es menos, como abono.":"La venta sigue abierta: se registra como abono."));
+      } else secPago.append(h("p",{class:"mvtb-ayuda"},c.estado==="cancelado"?"Venta cancelada.":"No debe nada."));
+      // envío
+      const secEnv=h("div",{class:"mvtb-sec"},h("h3",null,"Envío / entrega"));
+      if(c.estado!=="cancelado"){
+        const guia=h("input",{type:"text",value:c.guia||"",placeholder:"Número de guía","aria-label":"Número de guía"});
+        const paq=h("select",{"aria-label":"Paquetería"},...["DHL","FedEx","Estafeta","Otra"].map(m=>h("option",{value:m},m))); paq.value=c.paqueteria||"DHL";
+        const hecho=async(fn,msg)=>{ try{ await fn(); }catch(e){ console.error(e); } pintar(await refrescar(c),msg); };
+        secEnv.append(h("div",{class:"mvtb-fila"},guia,paq,h("button",{type:"button",class:"btn",onclick:()=>hecho(()=>guardarGuia(c,guia.value,paq.value))},"Guardar guía")),
+          h("div",{class:"mvtb-fila"},
+            c.enviado?h("button",{type:"button",class:"btn",onclick:()=>hecho(()=>marcarEnviado(c,false))},"Quitar «enviado»"):h("button",{type:"button",class:"btn",onclick:()=>hecho(()=>marcarEnviado(c,true))},"Marcar enviado"),
+            c.entregado?h("button",{type:"button",class:"btn",onclick:()=>hecho(()=>marcarEntregado(c,false))},"Quitar «entregado»"):h("button",{type:"button",class:"btn",onclick:()=>hecho(()=>marcarEntregado(c,true))},"Marcar entregado")),
+          h("p",{class:"mvtb-ayuda"},"Resguardo o entrega en Monterrey: «Ver en Logística»."));
+      }
+      // ticket
+      const tk=h("input",{type:"checkbox"}); tk.checked=!!c.ticketEnviado;
+      tk.addEventListener("change",async()=>{ tk.disabled=true; await setTicket(c,tk.checked); pintar(await refrescar(c)); try{ if(state.view==="cli") window.renderClientas(); }catch(e){} });
+      const secTk=h("label",{class:"mvtb-tk "+(c.ticketEnviado?"ok":"")},tk,h("span",null,c.ticketEnviado?"Ticket enviado · "+fechaH(c.ticketEnviado):"Ticket enviado a la clienta"));
+      const pie=h("div",{class:"mvtb-pie"},
+        h("button",{type:"button",class:"btn",onclick:()=>{ cerrar(); try{ irACarrito(c); }catch(e){} }},"Abrir en Venta"),
+        h("button",{type:"button",class:"btn",onclick:()=>{ cerrar(); try{ window.mvVerPedido&&window.mvVerPedido(c); }catch(e){} }},"Ver en Logística"),
+        h("button",{type:"button",class:"btn",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},"Ticket PDF"),
+        h("button",{type:"button",class:"btn",onclick:()=>descargarEtiqueta([c])},"Etiqueta 50×30"));
+      const otros=varios?h("div",{class:"mvtb-varios"},"Hay "+varios.length+" pedidos con este código: ",...varios.map(v=>h("button",{type:"button",class:"btn sm",onclick:()=>pintar(v)},(v.cliente||"?")+" · #"+num(v)))):null;
+      caja.replaceChildren(...[cab,otros,aviso?h("div",{class:"mvtb-aviso"},aviso):null,chips,piezas,tot,secPago,secEnv,secTk,pie].filter(Boolean));
+    };
+    pintar(c);
+  }
+
+  /* ---------- lector de códigos (teclado) ---------- */
+  let buf="", ult=0;
+  document.addEventListener("keydown",e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey) return; const now=Date.now();
+    if(e.key==="Enter"){
+      const t=e.target, val=(t&&typeof t.value==="string")?t.value.trim().toUpperCase():"";
+      const rapido=RX.test(buf.toUpperCase().slice(-10))?buf.toUpperCase().slice(-10):"";
+      const cod=RX.test(val)?val:rapido;
+      buf="";
+      if(cod){ e.preventDefault(); e.stopImmediatePropagation(); try{ if(t&&typeof t.value==="string"&&t.value.toUpperCase().includes(cod)){ t.value=t.value.toUpperCase().split(cod).join("").trim(); t.dispatchEvent(new Event("input",{bubbles:true})); } }catch(x){} abrirPorCodigo(cod); }
+      return;
+    }
+    if(e.key.length!==1){ return; }
+    if(now-ult>80) buf=""; ult=now; buf=(buf+e.key).slice(-24);
+  },true);
+
+  /* ---------- botón «Etiqueta» en la venta abierta en pantalla ---------- */
+  let pend=false;
+  const obs=new MutationObserver(()=>{ if(pend) return; pend=true; requestAnimationFrame(()=>{ pend=false; try{
+    const sec=document.querySelector(".vx-vcard .vx-acc-sec"); if(!sec||sec.querySelector(".mvtb-btn-et")) return;
+    const id=state.ventaCartId; if(!id) return; const c=(state.ventaCarts&&state.ventaCarts.get(id))||(state.cartsAbiertos&&state.cartsAbiertos.get(id))||(state.logiFinal&&state.logiFinal.get(id)); if(!c) return;
+    sec.append(h("button",{type:"button",class:"btn vx-b2 mvtb-btn-et",onclick:()=>descargarEtiqueta([c])},"🏷️ Etiqueta con código"),h("button",{type:"button",class:"btn vx-b2 mvtb-btn-et",onclick:()=>ventana(c)},"▦ Ver ficha del pedido"));
+  }catch(e){} }); });
+  try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
+})();
+</script>
+<script id="mv-na-js">
+/* ===== mvNA · el sistema en línea hace lo que antes solo hacía la Mac (20-nov-2026) =====
+   Con la sesión de un ADMINISTRADOR en marveamayoreo.com/sistema (Mac, iPad, iPhone o Marvea Vende):
+     · Pedidos de la tienda en línea (pagados o por transferencia) → carrito en Venta, igual que lo hacía la Mac.
+       Antes de crear el carrito el pedido se RECLAMA en la nube (marvea_admin_pedido_reclamar): si hay dos equipos
+       abiertos, solo uno lo pasa. Además se revisa que no exista ya un carrito con ese folio (nunca dos veces).
+     · Registro para live → Clientas (también reclamado: nunca duplica).
+     · Cuentas creadas en la página → Clientas (mismo id que en la nube).
+     · Estatus del pedido web (preparando / enviado + guía / entregado) → Mi cuenta de la clienta.
+   Requiere stripe/sistema_admin.sql. Las piezas de la tienda ya vienen apartadas: aquí NO se resta inventario.
+   No corre dentro de la app de la Mac (ella tiene su propia versión, apagada en modo copia de respaldo). */
+(function(){
+  if(window.__mvNA) return; window.__mvNA=true;
+  if(typeof NATIVE==="function"&&NATIVE()) return; // app de la Mac: no
+  const N=()=>window.MarveaNube;
+  const esAdmin=()=>{ try{ return N()&&N().rol()==="administrador"; }catch(e){ return false; } };
+  const rpc=async(n,a)=>{ const r=await N().conTiempo(N().sb.rpc(n,a||{}),25000); if(r&&r.error) throw r.error; return r?r.data:null; };
+  const dig=w=>{ const d=String(w||"").replace(/\D/g,""); return d.length>10?d.slice(-10):d; };
+  const low=t=>String(t||"").trim().toLowerCase();
+  const quien=()=>{ let u=""; try{ u=(JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).usuario||""; }catch(e){} return (u||"sistema")+" · "+((navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||"web"); };
+  const estado={ faltaSql:false, ultimo:{}, errores:[] }; window.__mvNA_estado=estado;
+  const falta=e=>{ const m=String((e&&(e.message||e.code))||""); return !!e&&(e.code==="PGRST202"||e.code==="42883"||/marvea_admin_/.test(m)&&/find|exist|encontr|schema cache/i.test(m)); };
+  const anota=(k,e)=>{ if(falta(e)){ if(!estado.faltaSql) console.warn("mvNA: falta correr stripe/sistema_admin.sql en Supabase"); estado.faltaSql=true; return; } console.warn("mvNA "+k,e); estado.errores.unshift({k,m:String(e&&e.message||e),t:new Date().toISOString()}); estado.errores=estado.errores.slice(0,10); };
+  const listo=()=>!!(window.state&&state.db)||(typeof state!=="undefined"&&state&&state.db);
+  const clientasRaw=async()=>{ const s=await state.db.collection("clientas").get(); const o={}; for(const d of s.docs){ const x=d.data(); if(x) o[d.id]=x; } return o; };
+  const carritosRaw=async()=>{ const s=await state.db.collection("carritos").get(); const o={}; for(const d of s.docs){ const x=d.data(); if(x) o[d.id]=x; } return o; };
+  const avisa=(m)=>{ try{ toast(m); }catch(e){} };
+
+  /* --- un solo repaso a la vez por navegador (si hay varias pestañas abiertas, una sola trabaja) --- */
+  const conCandado=async(nombre,fn)=>{ if(navigator.locks&&navigator.locks.request) return navigator.locks.request("mvNA-"+nombre,{ifAvailable:true},async l=>{ if(!l) return; return fn(); }); return fn(); };
+  const ocupado={};
+  const turno=(nombre,fn)=>async()=>{ if(ocupado[nombre]||!esAdmin()||!listo()||estado.faltaSql) return; ocupado[nombre]=true; try{ await conCandado(nombre,fn); estado.ultimo[nombre]=new Date().toISOString(); }catch(e){ anota(nombre,e); } finally{ ocupado[nombre]=false; } };
+
+  /* --- 1) pedidos de la tienda en línea --- */
+  const importarPedidos=turno("pedidos",async()=>{
+    const peds=await rpc("marvea_admin_pedidos_web"); if(!Array.isArray(peds)||!peds.length) return;
+    const W=window.__marveaApi||window; if(typeof W.ensureVentaLive!=="function"||typeof W.cartFromDoc!=="function"||typeof W.saveCart!=="function"||!W.state||!W.state.products) return;
+    const avisos=[];
+    for(const p of peds){
+      if(W.state.busy) break;
+      let mio=false; try{ mio=await rpc("marvea_admin_pedido_reclamar",{p_id:p.id,p_quien:quien()}); }catch(e){ anota("reclamar",e); break; }
+      if(!mio) continue; // otro equipo lo está pasando
+      let hecho=false;
+      try{
+        const cl=p.cliente||{}, ent=p.entrega||{}, d=dig(cl.wa), now=new Date().toISOString(); const nombre=String(cl.nombre||"Clienta web").trim();
+        const folio=String(p.folio||""), refF=folio.replace(/^MV-/,"");
+        // nunca dos veces el mismo pedido
+        const cars=await carritosRaw();
+        const yaCarrito=folio?Object.entries(cars).find(([,k])=>k&&(k.pedidoWeb===folio||(k.origen==="web"&&refF&&String(k.referencia||"")===refF)||(typeof k.nota==="string"&&k.nota.indexOf("Pedido web "+folio+" ")===0))):null;
+        if(yaCarrito){ await rpc("marvea_admin_pedido_importado",{p_id:p.id,p_carrito:yaCarrito[0],p_nota:"ya estaba en el sistema (no se duplicó)"}); hecho=true; continue; }
+        // clienta: su cuenta de la página manda; si no, por WhatsApp (también el segundo número); si no existe, se crea
+        let clienteId=""; const cls=await clientasRaw(); const cta=p.clienta_id?String(p.clienta_id):"";
+        const ya=(cta?Object.entries(cls).find(([id,k])=>k&&(id===cta||(Array.isArray(k.unidas)&&k.unidas.includes(cta)))):null)||(d?Object.entries(cls).find(([,k])=>k&&(dig(k.whatsapp)===d||String(k.whatsapp2||"").split(",").map(dig).includes(d))):null);
+        const direccion=[cl.dir,cl.ciudad,cl.cp].filter(Boolean).join(", ")+(cl.ref?" · Ref: "+cl.ref:"");
+        if(ya){ clienteId=ya[0]; const k=ya[1], cambios={}; if(!k.direccion&&direccion) cambios.direccion=direccion; if(!k.correo&&cl.mail) cambios.correo=cl.mail; if(!k.negocio&&cl.negocio) cambios.negocio=cl.negocio; if(Object.keys(cambios).length){ try{ await state.db.doc("clientas/"+clienteId).update(Object.assign(cambios,{actualizado:now})); }catch(e){} } }
+        else { const ficha={nombre,negocio:String(cl.negocio||""),whatsapp:d,ciudad:String(cl.ciudad||""),direccion,correo:String(cl.mail||""),notas:"Compró en la tienda en línea ("+folio+")",creado:now,actualizado:now};
+          if(p.clienta_id&&/^[\w-]{6,80}$/.test(String(p.clienta_id))){ await state.db.doc("clientas/"+p.clienta_id).set(ficha); clienteId=String(p.clienta_id); } else { const ref=await state.db.collection("clientas").add(ficha); clienteId=ref.id; } }
+        // carrito en Venta (venta directa de hoy)
+        const vl=await W.ensureVentaLive(); if(!vl) throw new Error("no hay venta del día");
+        const recoger=ent.tipo==="recoger", tipoEnv=ent.tipo==="5kg"?"DHL Express · hasta 5 kg":"DHL Express · hasta 2 kg";
+        const esTransfer=p.estado==="transferencia";
+        const nota="Pedido web "+folio+(esTransfer?" · TRANSFERENCIA (falta registrar el pago) · ":" · PAGADO con tarjeta (Stripe) · ")+(recoger?"Recoge en Monterrey":tipoEnv+(ent.resguardar?" · pidió RESGUARDO":"")+(ent.sumar_paquete?" · sumar a su paquete en resguardo":""))+(cl.ref?" · Ref. domicilio: "+cl.ref:"");
+        const data={pedidoWeb:folio,promo:(ent.promo==="4x3"?"4x3":""),origen:"web",liveId:vl.id,cliente:nombre,clienteId,referencia:refF||String(Date.now()).slice(-6),nueva:false,deposito:0,factura:!!p.factura,pago:null,nota,estado:"abierto",items:[],envio:recoger?null:{id:ent.tipo||"2kg",nombre:tipoEnv,precio:Number(p.envio)||0},anticipos:esTransfer?[]:[{monto:Number(p.total_cobrado||p.total)||0,medio:"Tarjeta (Stripe)",fecha:p.pagado_en||now,nota:"Pagado en la tienda en línea · "+folio,usuario:"web"}],resguardo:!!ent.resguardar,enviado:"",subtotal:0,total:0,piezas:0,finalizado:"",creado:now,actualizado:now};
+        const ref=await state.db.collection("carritos").add(data); const c=W.cartFromDoc(ref.id,data); c.origen="web";
+        if(W.state.ventaLiveId===vl.id&&W.state.ventaCarts) W.state.ventaCarts.set(c.id,c); if(W.state.cartsAbiertos) W.state.cartsAbiertos.set(c.id,c);
+        // piezas: la tienda YA las apartó del inventario; aquí solo se anotan, sin volver a restar
+        const faltan=[];
+        for(const it of (p.items||[])){ const prod=W.state.products.get(it.codigo); const cant=Math.max(0,Math.floor(Number(it.cant)||0)); if(!cant) continue; if(!prod) faltan.push(cant+" × "+(it.nombre||it.codigo)+" (ya no está en el inventario; revisar)");
+          const y=c.items.find(i=>i.codigo===it.codigo); if(y) y.cant+=cant; else c.items.push({codigo:it.codigo,nombre:(prod&&prod.nombre)||it.nombre||it.codigo,palabra:(prod&&prod.palabra)||"",precio:Number(it.precio)||(prod&&prod.precio)||0,costo:(prod&&prod.costo)||0,cant,emp:0}); }
+        for(const f of (Array.isArray(p.faltan_stock)?p.faltan_stock:[])){ const n=Math.max(0,Math.floor(Number(f&&f.faltan)||0)); if(!n) continue; const it=c.items.find(i=>i.codigo===f.codigo); const quita=it?Math.min(n,it.cant):0;
+          if(it){ it.cant-=quita; if(it.cant<=0) c.items=c.items.filter(i=>i!==it); } faltan.push(n+" × "+((it&&it.nombre)||f.codigo)+" ya no había al pagar (pagó tarde y se vendió): reembolsar o cambiar"); }
+        if(faltan.length) c.nota=nota+" · REVISAR: "+faltan.join("; ");
+        await W.saveCart(c);
+        await rpc("marvea_admin_pedido_importado",{p_id:p.id,p_carrito:c.id,p_nota:faltan.length?"Revisar: "+faltan.join("; "):"ok"}); hecho=true;
+        avisos.push(nombre.split(" ")[0]+" ("+(p.piezas||0)+" pzas, $"+Math.round(Number(p.total)||0)+(esTransfer?", por transferencia: falta el pago":"")+(faltan.length?", revisar":"")+")");
+      }catch(e){ anota("pedido "+(p.folio||p.id),e); }
+      finally{ if(!hecho){ try{ await rpc("marvea_admin_pedido_soltar",{p_id:p.id}); }catch(e){} } }
+    }
+    if(avisos.length) avisa(avisos.length===1?"Pedido web ya está en Tienda en línea: "+avisos[0]:avisos.length+" pedidos web ya están en Tienda en línea: "+avisos.join(" · "));
+    try{ if(W.state.view==="venta"&&typeof W.renderVenta==="function") W.renderVenta(); else if(typeof W.renderAll==="function") W.renderAll(); }catch(e){}
+  });
+
+  /* --- 2) registro para live --- */
+  const importarRegistros=turno("registros",async()=>{
+    const regs=await rpc("marvea_admin_registros"); if(!Array.isArray(regs)||!regs.length) return;
+    let nuevos=0; const nombres=[];
+    for(const r of regs){
+      let mio=false; try{ mio=await rpc("marvea_admin_registro_reclamar",{p_id:r.id}); }catch(e){ anota("registro",e); break; } if(!mio) continue;
+      try{ const d=dig(r.whatsapp); const cl=await clientasRaw(); const now=new Date().toISOString();
+        const ya=Object.entries(cl).find(([,k])=>k&&(dig(k.whatsapp)===d||(d&&String(k.whatsapp2||"").split(",").map(dig).includes(d))));
+        const fecha=new Date(r.creado||Date.now()).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"});
+        if(!ya){ await state.db.collection("clientas").add({nombre:String(r.nombre||"").trim(),facebook:String(r.facebook||"").trim(),whatsapp:d,ciudad:"",direccion:String(r.domicilio||"").trim(),notas:"Se registró en la página para el live ("+fecha+")",creado:now,actualizado:now}); nuevos++; nombres.push(String(r.nombre||"").split(" ")[0]); }
+        else { const [id,k]=ya; const cambios={}; if(!k.facebook&&r.facebook) cambios.facebook=r.facebook; if(!k.direccion&&r.domicilio) cambios.direccion=r.domicilio; if(Object.keys(cambios).length) await state.db.doc("clientas/"+id).update(Object.assign(cambios,{actualizado:now})); }
+      }catch(e){ anota("registro "+r.id,e); try{ await rpc("marvea_admin_registro_soltar",{p_id:r.id}); }catch(x){} }
+    }
+    if(nuevos) avisa(nuevos===1?nombres[0]+" se registró para el live desde la página · ya está en Clientas":nuevos+" clientas nuevas se registraron para el live desde la página");
+  });
+
+  /* --- 3) cuentas creadas en la página --- */
+  const importarCuentas=turno("cuentas",async()=>{
+    const ctas=await rpc("marvea_admin_cuentas_web"); if(!Array.isArray(ctas)||!ctas.length) return;
+    let nuevos=0; const nombres=[]; let cl=await clientasRaw();
+    for(const r of ctas){
+      if(!r||!r.id) continue; const now=new Date().toISOString(); const d=dig(r.whatsapp), mail=low(r.correo);
+      if(Object.values(cl).some(k=>k&&Array.isArray(k.unidas)&&k.unidas.includes(r.id))) continue; // ya se unió a otra ficha
+      if(cl[r.id]){ const k=cl[r.id], cambios={}; if(!k.correo&&mail) cambios.correo=mail; if(!k.whatsapp&&d) cambios.whatsapp=d; if(Object.keys(cambios).length){ try{ await state.db.doc("clientas/"+r.id).update(Object.assign(cambios,{actualizado:now})); }catch(e){} } continue; }
+      const ya=Object.entries(cl).find(([,k])=>k&&((d&&(dig(k.whatsapp)===d||String(k.whatsapp2||"").split(",").map(dig).includes(d)))||(mail&&(low(k.correo)===mail||String(k.correo2||"").split(",").map(low).includes(mail)))));
+      if(ya) continue; // ya estaba con otro registro: no se duplica
+      const fecha=new Date(r.creado||Date.now()).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"});
+      const dir=[r.direccion,r.cp?"CP "+r.cp:"",r.estado].filter(Boolean).join(", ")+(r.referencias?" · Ref: "+r.referencias:"");
+      const via=r.registro==="google"?"con Google":r.registro==="correo"?"con su correo":"con su WhatsApp";
+      const ficha={nombre:String(r.nombre||"Clienta web").trim(),facebook:"",whatsapp:d,ciudad:String(r.ciudad||""),direccion:dir,correo:mail,negocio:String(r.negocio||""),origen:"web",notas:"Creó su cuenta en la página "+via+" ("+fecha+")",creado:r.creado||now,actualizado:now};
+      try{ await state.db.doc("clientas/"+r.id).set(ficha); cl[r.id]=ficha; nuevos++; nombres.push(String(r.nombre||"").split(" ")[0]); }catch(e){ anota("cuenta web",e); }
+    }
+    if(nuevos) avisa(nuevos===1?nombres[0]+" creó su cuenta en la página · ya está en Clientas":nuevos+" clientas nuevas crearon su cuenta en la página · ya están en Clientas");
+  });
+
+  /* --- 4) estatus de los pedidos web hacia Mi cuenta --- */
+  const sincEstados=turno("estados",async()=>{
+    const cars=await carritosRaw(); let cache={}; try{ cache=JSON.parse(localStorage.getItem("marvea.webEstados")||"{}"); }catch(e){}
+    for(const c of Object.values(cars)){ if(!c||c.origen!=="web"||!c.referencia) continue; const folio="MV-"+String(c.referencia).replace(/^MV-/,""); const guia=String(c.guia||"").trim();
+      if(/· TRANSFERENCIA/.test(String(c.nota||""))&&c.estado!=="cancelado"&&!c.entregado&&!guia&&!c.enviado){ const pagadoT=(Array.isArray(c.anticipos)?c.anticipos.reduce((t,a)=>t+(Number(a&&a.monto)||0),0):0)+(c.pago?Number(c.pago.monto)||0:0)+(c.nueva?Number(c.deposito)||0:0); if(pagadoT<(Number(c.total)||0)-0.005) continue; }
+      const est=c.entregado?"entregado":(c.estado==="cancelado"?"cancelado":((guia||c.enviado)?"enviado":"preparando")); const firma=est+"|"+guia;
+      if(cache[folio]===firma) continue; const okk=await rpc("marvea_admin_pedido_estado",{p_folio:folio,p_estado:est,p_guia:guia}); if(okk) cache[folio]=firma; }
+    try{ localStorage.setItem("marvea.webEstados",JSON.stringify(cache)); }catch(e){}
+  });
+
+  window.__mvNA_correr=async()=>{ await importarPedidos(); await importarRegistros(); await importarCuentas(); await sincEstados(); return estado; };
+  const arranca=()=>{ if(!esAdmin()||!listo()) return setTimeout(arranca,4000);
+    setTimeout(importarPedidos,6000); setInterval(importarPedidos,60*1000);
+    setTimeout(importarRegistros,9000); setInterval(importarRegistros,3*60*1000);
+    setTimeout(importarCuentas,12000); setInterval(importarCuentas,2*60*1000);
+    setTimeout(sincEstados,20000); setInterval(sincEstados,90*1000);
+    window.addEventListener("focus",()=>{ importarPedidos(); importarRegistros(); importarCuentas(); });
+    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") importarPedidos(); });
+  };
+  setTimeout(arranca,3000);
+})();
+</script>
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
@@ -8059,6 +8419,7 @@ body.vx-on #vxCamWrap{display:block!important}
       let ultimo = "", ultimoT = 0;
       await lector.decodeFromConstraints({ video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } }, video, (r) => {
         if (!r) return; const txt = r.getText(); const ahora = Date.now(); if (txt === ultimo && ahora - ultimoT < 1500) return; ultimo = txt; ultimoT = ahora;
+        if (window.mvTBEscaneo && window.mvTBEscaneo(txt)) { cerrarCamara(); return; } /* mvTB */
         const p = porCodigo(txt) || porPalabra(txt);
         if (p) { agregar(p); V.scan = { msg: "+1 " + (p.palabra || p.codigo), ok: true }; } else { vibra(80); V.scan = { msg: "No reconozco «" + txt + "»", ok: false }; }
         const m = $$("#vxScanMsg"); if (m) { m.textContent = V.scan.msg; m.className = "vx-scanmsg " + (V.scan.ok ? "ok" : "bad"); }
