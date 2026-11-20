@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T16:10:03.079Z",
+ "actualizado": "2026-11-20T16:40:03.502Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -255,10 +255,22 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
    "creado": "2026-10-20T23:06:31.619Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00024",
+   "nombre": "Aretes Xuping  Amarillo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6485cbbf4bad7d00e20d916fa95b62a7.jpg",
+   "creado": "2026-10-20T23:07:17.488Z",
    "disponible": true
   },
   {
@@ -370,6 +382,30 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00037",
+   "nombre": "Aretes Xuping  Color Marmol con Dorado",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/512af33e93e6caf3ca9fb1ab6d920bd5.jpg",
+   "creado": "2026-10-20T23:21:42.410Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00039",
+   "nombre": "Aretes Xuping  Color Ladrillo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
+   "creado": "2026-10-20T23:24:42.521Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00040",
    "nombre": "Aretes Xuping  Colgante Marmol Oscuro",
    "categoria": "ARE",
@@ -415,6 +451,18 @@
    "notas": "",
    "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
    "creado": "2026-10-20T23:29:23.461Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00045",
+   "nombre": "Aretes Xuping  Marmol Gota",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
+   "creado": "2026-10-20T23:30:07.673Z",
    "disponible": true
   },
   {
