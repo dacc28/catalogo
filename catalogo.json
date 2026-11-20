@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T17:40:02.859Z",
+ "actualizado": "2026-11-20T17:55:03.139Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -55,18 +55,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00003",
-   "nombre": "Anillo Cartier Talla 6",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 38,
-   "etiqueta": "Últimas piezas",
-   "notas": "Dupe de Cartier",
-   "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
-   "creado": "2026-10-19T02:11:33.688Z",
    "disponible": true
   },
   {
@@ -231,7 +219,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
    "creado": "2026-10-20T17:21:24.337Z",
@@ -454,18 +442,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00045",
-   "nombre": "Aretes Xuping  Marmol Gota",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
-   "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00050",
    "nombre": "Aretes Xuping  Verde Manzana",
    "categoria": "ARE",
@@ -555,7 +531,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/949f76ea748996695f32dfc75c9ecaac.jpg",
    "creado": "2026-11-07T20:56:49.776Z",
@@ -1546,18 +1522,6 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00004",
-   "nombre": "Juego Xuping Flor Negra",
-   "categoria": "JUE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/1b3aae853f9cbd3bcb6b295e165a19a7.jpg",
-   "creado": "2026-10-20T23:45:10.703Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00005",
    "nombre": "Juego Xuping Flor Blanca",
    "categoria": "JUE",
@@ -1635,7 +1599,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
@@ -2011,18 +1975,6 @@
    "notas": "",
    "foto": "fotos/a06203addcc8fd27bdf9a6e5379e61d0.jpg",
    "creado": "2026-11-18T00:11:59.208Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00067",
-   "nombre": "Trio de brazaletes Cartie",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
-   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
