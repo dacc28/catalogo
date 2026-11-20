@@ -10273,7 +10273,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
       const otros=varios?h("div",{class:"mvtb-varios"},"Hay "+varios.length+" pedidos con este código: ",...varios.map(v=>h("button",{type:"button",class:"btn sm",onclick:()=>pintar(v)},(v.cliente||"?")+" · #"+num(v)))):null;
       caja.replaceChildren(...[cab,otros,aviso?h("div",{class:"mvtb-aviso"},aviso):null,chips,piezas,tot,secPago,secEnv,secTk,pie].filter(Boolean));
     };
-    pintar(c);
+    pintar(c).catch(e=>{ console.error(e); toast("No se pudo mostrar el pedido: "+(e&&e.message||e),true); });
   }
 
   /* ---------- lector de códigos (teclado) ---------- */

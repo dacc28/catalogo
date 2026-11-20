@@ -10273,7 +10273,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
       const otros=varios?h("div",{class:"mvtb-varios"},"Hay "+varios.length+" pedidos con este código: ",...varios.map(v=>h("button",{type:"button",class:"btn sm",onclick:()=>pintar(v)},(v.cliente||"?")+" · #"+num(v)))):null;
       caja.replaceChildren(...[cab,otros,aviso?h("div",{class:"mvtb-aviso"},aviso):null,chips,piezas,tot,secPago,secEnv,secTk,pie].filter(Boolean));
     };
-    pintar(c);
+    pintar(c).catch(e=>{ console.error(e); toast("No se pudo mostrar el pedido: "+(e&&e.message||e),true); });
   }
 
   /* ---------- lector de códigos (teclado) ---------- */
@@ -10334,7 +10334,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(script):not(style):not(.ctxmenu){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(script):not(style):not(.ctxmenu){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
@@ -10997,7 +10997,7 @@ body.vx-on #vxCamWrap{display:block!important}
       let ultimo = "", ultimoT = 0;
       await lector.decodeFromConstraints({ video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } }, video, (r) => {
         if (!r) return; const txt = r.getText(); const ahora = Date.now(); if (txt === ultimo && ahora - ultimoT < 1500) return; ultimo = txt; ultimoT = ahora;
-        if (window.mvTBEscaneo && window.mvTBEscaneo(txt)) { cerrarCamara(); return; } /* mvTB */
+        if (window.mvTBEscaneo && window.mvTBEscaneo(txt)) { vibra(40); cerrarCamara(); return; } /* mvTB */
         const p = porCodigo(txt) || porPalabra(txt);
         if (p && V.scanLibre) { /* mvQR: desde el inicio, la pieza se muestra (no se agrega a ninguna venta) */ vibra(30); const av = Number(p.existencia) || 0;
           if (esAdmin()) { cerrarCamara(); V.tab = "inv"; V.prod = p.codigo; render(); return; }
