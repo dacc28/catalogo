@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T17:09:03.046Z",
+ "actualizado": "2026-11-20T17:40:02.859Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -463,18 +463,6 @@
    "notas": "",
    "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
    "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00049",
-   "nombre": "Aretes Xuping  Flor Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7a005b415acfaeefc694877e3aac617d.jpg",
-   "creado": "2026-10-20T23:32:42.292Z",
    "disponible": true
   },
   {
