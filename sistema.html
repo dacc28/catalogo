@@ -7769,4 +7769,106 @@ body.rol-vendedor #tab-cobro{display:none!important}
   setTimeout(arranca,3000);
 })();
 </script>
+<style id="mv-nt-css">
+.mvnt .mvnt-det{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted,#6B5664);line-height:1.4}
+.mvnt .mvnt-det:empty{display:none}
+.mvnt .mvnt-mal{color:#B4232A;font-weight:600}
+.mvnt .ajrow{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+<script id="mv-nt-js">
+/* ===== mvNT · Catálogo de la página y Business Club desde la nube (20-nov-2026) =====
+   En el sistema en línea (sesión de ADMINISTRADOR), Ajustes muestra:
+     · Catálogo: lo publicado, piezas nuevas o con cambios, última subida; «Publicar catálogo», «Actualizar página» y «Revisar».
+       Lo hace la función publicar-catalogo de Supabase (la Mac ya no hace falta). Cada 5 min la nube revisa sola.
+     · Business Club: se sincroniza solo en la nube cada 2 min; aquí se ve cuándo fue el último repaso y se puede forzar.
+   No corre dentro de la app de la Mac (ella tiene sus propios paneles). */
+(function(){
+  if(window.__mvNT) return; window.__mvNT=true;
+  if(typeof NATIVE==="function"&&NATIVE()) return;
+  const N=()=>window.MarveaNube;
+  const esAdmin=()=>{ try{ return N()&&N().rol()==="administrador"; }catch(e){ return false; } };
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const avisa=(m,mal)=>{ try{ toast(m,mal); }catch(e){} };
+  const cuando=iso=>{ if(!iso) return "nunca"; const t=Date.parse(iso); if(!t) return "—"; const s=Math.round((Date.now()-t)/1000);
+    if(s<60) return "hace un momento"; if(s<3600) return "hace "+Math.round(s/60)+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h";
+    return new Date(t).toLocaleString("es-MX",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); };
+  const fn=async(accion)=>{ const r=await N().conTiempo(N().sb.functions.invoke("publicar-catalogo",{body:{accion}}),330000);
+    if(r&&r.error){ let m=r.error.message||String(r.error); try{ const c=r.error.context; if(c&&typeof c.json==="function"){ const j=await c.json(); if(j&&j.error) m=j.error; } }catch(e){} const e=new Error(m); throw e; }
+    return r?r.data:null; };
+  const rpc=async(n,a)=>{ const r=await N().conTiempo(N().sb.rpc(n,a||{}),60000); if(r&&r.error) throw r.error; return r?r.data:null; };
+  const falta=e=>/not found|404|Failed to send|FunctionsFetchError|could not find|PGRST202|42883/i.test(String(e&&(e.message||e.code)||e));
+
+  function panel(titulo,icono,clase){ const el=document.createElement("div"); el.className="panel ajpanel mvnt "+clase; el.dataset.mvnt=clase;
+    el.innerHTML='<div class="ajtitle"><span class="ajicon">'+icono+'</span><h3>'+esc(titulo)+'</h3></div><p class="ajstatus">…</p><div class="mvnt-det"></div><div class="ajrow"></div>';
+    return { el, status:el.querySelector(".ajstatus"), det:el.querySelector(".mvnt-det"), row:el.querySelector(".ajrow") }; }
+  const boton=(t,f,clase)=>{ const b=document.createElement("button"); b.type="button"; b.className="btn "+(clase||"ghost"); b.textContent=t; b.onclick=async()=>{ if(b.disabled) return; const t0=b.textContent; b.disabled=true; b.textContent="Un momento…"; try{ await f(); }finally{ b.disabled=false; b.textContent=t0; } }; return b; };
+  const ICO_CAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+  const ICO_CLUB='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.6 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg>';
+
+  /* ---------- Catálogo ---------- */
+  let infoCat=null;
+  async function pintarCat(p){
+    try{ infoCat=await fn("info"); }catch(e){ p.status.textContent=falta(e)?"Falta desplegar la función «publicar-catalogo» en Supabase.":"No se pudo revisar: "+(e.message||e); p.det.innerHTML=""; return; }
+    const i=infoCat||{}; const w=i.web||{};
+    let st=i.publicadas+" piezas publicadas"+(i.fecha?" (catálogo del "+new Date(i.fecha).toLocaleDateString("es-MX",{day:"numeric",month:"short"})+")":"")+". ";
+    st+=(i.nuevas||i.cambiadas)?((i.nuevas?i.nuevas+" nueva(s)":"")+(i.nuevas&&i.cambiadas?" y ":"")+(i.cambiadas?i.cambiadas+" con cambios":"")+" esperan «Publicar catálogo»."):"Todo lo del inventario ya está publicado.";
+    p.status.textContent=st;
+    const lineas=[];
+    if(!i.configurado) lineas.push('<b class="mvnt-mal">Falta la llave de GitHub (secret GITHUB_TOKEN) en Supabase.</b>');
+    lineas.push(i.activo?"La nube publica sola: revisa cada 5 min y sube los cambios de existencias como máximo cada 12 min.":(i.semilla?"Aún publica la Mac. La nube empieza sola en cuanto la página quede igual, o al pulsar «Actualizar página».":"Esperando lo publicado desde la Mac (o pulsa «Publicar catálogo» para empezar desde aquí)."));
+    lineas.push("Última subida: "+cuando(w.ultimaSubida)+(w.archivos?" ("+w.archivos+" archivo(s))":"")+" · última revisión: "+cuando(w.last));
+    if(w.lastError) lineas.push('<span class="mvnt-mal">⚠️ '+esc(w.lastError)+"</span>");
+    if(w.revisar&&!i.activo) lineas.push('<span class="mvnt-mal">La página de la nube saldría distinta a la de la Mac ('+[(w.revisar.altas||[]).length+" altas",(w.revisar.bajas||[]).length+" bajas",(w.revisar.modificadas||[]).length+" con cambios"].join(", ")+"). Pulsa «Revisar» para ver el detalle.</span>");
+    p.det.innerHTML=lineas.map(x=>"<div>"+x+"</div>").join("");
+  }
+  function avisoCat(r){ if(!r) return; const m={ ok:(r.catalogo?"Catálogo publicado":"Página actualizada")+(r.archivos?" · "+r.archivos+" archivo(s)":" · ya estaba al día")+" ("+r.piezas+" modelos en la página)", parcial:"Publicado, pero "+((r.errores||[]).length)+" foto(s) no se pudieron subir", "al-dia":"La página ya está al día", ocupado:"Ya se está publicando; intenta en un momento", esperando:r.error||"Aún no llega lo publicado desde la Mac", "sin-config":r.error||"Falta configurar GitHub" }[r.status];
+    avisa(m||("No se pudo publicar: "+(r.error||r.status)), !(r.status==="ok"||r.status==="al-dia")); }
+  function catalogoPanel(){
+    const p=panel("Catálogo",ICO_CAT,"mvnt-cat");
+    p.row.append(
+      boton("Publicar catálogo",async()=>{ const i=infoCat||{}; const pend=(i.nuevas||0)+(i.cambiadas||0);
+        if(!confirm(pend?"Se publicarán en la página "+(i.nuevas?i.nuevas+" pieza(s) nueva(s)":"")+(i.nuevas&&i.cambiadas?" y ":"")+(i.cambiadas?i.cambiadas+" con cambios (foto, nombre, precio…)":"")+", tal como están ahora en el inventario. El contador de piezas de la página se actualiza.\n\n¿Publicar?":"No hay piezas nuevas ni con cambios. ¿Publicar de todos modos (actualiza el contador de piezas)?")) return;
+        try{ avisoCat(await fn("publicar-catalogo")); }catch(e){ avisa("No se pudo publicar: "+(e.message||e),true); } await pintarCat(p); },"primary"),
+      boton("Actualizar página",async()=>{ try{ avisoCat(await fn("publicar")); }catch(e){ avisa("No se pudo actualizar: "+(e.message||e),true); } await pintarCat(p); }),
+      boton("Revisar",async()=>{ try{ const s=await fn("simular"); const c=s.cambios||{};
+        alert("Si se publicara ahora (sin cambiar nada):\n\n• "+s.modelos+" modelos en la página · contador: "+s.contador+" piezas\n• catalogo.json: "+(s.catalogoJson==="igual"?"igual al de la página":"cambia")
+          +"\n• Altas: "+((c.altas||[]).join(", ")||"ninguna")+"\n• Bajas (agotadas): "+((c.bajas||[]).join(", ")||"ninguna")+"\n• Con cambios: "+((c.modificadas||[]).join(", ")||"ninguno")
+          +(c.contador?"\n• Contador: "+c.contador[0]+" → "+c.contador[1]:"")+"\n• Fotos por subir: "+((s.fotosNuevas||[]).length)+" · fotos sin uso por quitar: "+((s.fotosQuitar||[]).length)); }
+        catch(e){ avisa("No se pudo revisar: "+(e.message||e),true); } }),
+      boton("Ver página",async()=>{ window.open("https://www.marveamayoreo.com","_blank","noopener"); }));
+    pintarCat(p); return p.el;
+  }
+
+  /* ---------- Business Club ---------- */
+  async function pintarClub(p){
+    let t=null; try{ t=await rpc("marvea_admin_nube_tareas"); }catch(e){ p.status.textContent=falta(e)?"Falta correr stripe/nube_tareas.sql en Supabase.":"No se pudo revisar: "+(e.message||e); return; }
+    const club=(t||[]).find(x=>x&&x.tarea==="club"), sim=(t||[]).find(x=>x&&x.tarea==="club-simulacro");
+    if(!club&&sim&&sim.error){ p.status.textContent="La sincronización automática no se activó: el simulacro pidió revisar."; return; }
+    p.status.textContent=club?"Se sincroniza solo en la nube cada 2 minutos (cuentas, fichas y «Mis pedidos» de tus clientas).":"Programado: el primer repaso corre en menos de 2 minutos.";
+    const r=(club&&club.resultado)||{}; const lineas=[];
+    if(club) lineas.push("Último repaso: "+cuando(club.ultimo)+" · último cambio: "+cuando(club.ultimo_cambio));
+    if(club&&club.ultimo_cambio) lineas.push("En ese cambio: "+[(r.clientas||[]).length+" clienta(s)",(r.pedidos||[]).length+" pedido(s)",(r.usuarios_nuevos||[]).length+" cuenta(s) nueva(s)"].join(" · "));
+    if(club&&club.error) lineas.push('<span class="mvnt-mal">⚠️ '+esc(club.error)+"</span>");
+    p.det.innerHTML=lineas.map(x=>"<div>"+x+"</div>").join("");
+  }
+  function clubPanel(){
+    const p=panel("Business Club",ICO_CLUB,"mvnt-club");
+    p.row.append(boton("Sincronizar ahora",async()=>{ try{ const r=await rpc("marvea_admin_nube_club",{p_simular:false});
+        if(r&&r.ocupado){ avisa("Ya se está sincronizando; intenta en un momento"); }
+        else avisa("Business Club al día · "+(r.clientas||[]).length+" clienta(s) · "+(r.pedidos||[]).length+" pedido(s) · "+(r.usuarios_nuevos||[]).length+" cuenta(s) nueva(s)"+((r.errores||[]).length?" · ⚠️ "+r.errores[0]:""),(r.errores||[]).length>0); }
+      catch(e){ avisa("No se pudo sincronizar: "+(e.message||e),true); } await pintarClub(p); },"primary"));
+    pintarClub(p); return p.el;
+  }
+
+  /* ---------- meterlos en Ajustes ---------- */
+  function poner(){ const host=document.getElementById("ajustesHost"); if(!host||!esAdmin()) return;
+    if(!host.querySelector('[data-mvnt="mvnt-cat"]')) host.append(catalogoPanel());
+    if(!host.querySelector('[data-mvnt="mvnt-club"]')) host.append(clubPanel()); }
+  let tm=null; const obs=new MutationObserver(()=>{ clearTimeout(tm); tm=setTimeout(poner,120); });
+  function vigilar(){ const host=document.getElementById("ajustesHost"); if(!host) return false; obs.observe(host,{childList:true}); poner(); return true; }
+  if(!vigilar()) document.addEventListener("DOMContentLoaded",vigilar);
+  setInterval(poner,4000); // por si la sesión de administrador llega después
+  window.__mvNT_poner=poner;
+})();
+</script>
 </body></html>
