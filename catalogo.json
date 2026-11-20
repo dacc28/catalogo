@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T18:50:03.713Z",
+ "actualizado": "2026-11-20T22:55:02.950Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1975,18 +1975,6 @@
    "notas": "",
    "foto": "fotos/8fcab28e6413babb2ee5213bce0613c0.jpg",
    "creado": "2026-11-18T00:02:50.170Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00062",
-   "nombre": "Trio de brazaletes cartier",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/a7ffe8d2d7f4fcbfa06716f3de650db3.jpg",
-   "creado": "2026-11-18T00:06:39.847Z",
    "disponible": true
   },
   {
