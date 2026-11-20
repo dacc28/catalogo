@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T04:49:52.987Z",
+ "actualizado": "2026-11-20T06:01:22.395Z",
  "categorias": [
   {
    "p": "ANI",
@@ -219,7 +219,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
@@ -1903,6 +1903,30 @@
    "notas": "",
    "foto": "fotos/4b78f88b80e55a64f07447f4be519abb.jpg",
    "creado": "2026-11-17T20:20:22.564Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00057",
+   "nombre": "Brazalete Cartier con Rayas y Brillo",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/3292f4e86620647a30767a4e5215b025.jpg",
+   "creado": "2026-11-17T23:47:17.305Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00058",
+   "nombre": "Brazalete Cartier con Rayas y Brillo Plateado",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/a1d0ed08814058e0051c5d6bc8ef9f73.jpg",
+   "creado": "2026-11-17T23:54:00.408Z",
    "disponible": true
   },
   {
