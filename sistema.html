@@ -7745,7 +7745,20 @@ body.rol-vendedor #tab-cobro{display:none!important}
   });
 
   window.__mvNA_correr=async()=>{ await importarPedidos(); await importarRegistros(); await importarCuentas(); await sincEstados(); return estado; };
-  const arranca=()=>{ if(!esAdmin()||!listo()) return setTimeout(arranca,4000);
+  /* --- 20-nov-2026 (2): la NUBE hace todo sola cada minuto (stripe/nube_importar.sql, pg_cron), aunque no haya nada prendido.
+     El sistema solo le da un empujón al abrir o volver a la ventana (mismo código de la nube, con su candado) y avisa.
+     Si la nube aún no tiene el importador, se usa el repaso de aquí (arriba) como antes. --- */
+  let yaAviso="";
+  const empujar=async()=>{ if(!esAdmin()) return null;
+    try{ const r=await rpc("marvea_admin_nube_importar"); estado.nube=true; estado.ultimo.nube=new Date().toISOString(); estado.respuesta=r;
+      if(r&&r.pedidos>0) avisa(r.pedidos===1?"Llegó 1 pedido de la tienda en línea · ya está en Venta":"Llegaron "+r.pedidos+" pedidos de la tienda en línea · ya están en Venta");
+      if(r&&r.errores>0){ try{ const b=await rpc("marvea_admin_nube_bitacora"); const e=(b||[]).find(x=>/^error/.test(x.tipo||"")); const k=e?e.ref+"|"+e.detalle:""; if(e&&k!==yaAviso){ yaAviso=k; toast("⚠️ Revisar en la nube: "+(e.ref||e.tipo)+" no se pudo pasar ("+String(e.detalle||"").slice(0,80)+")",true); } }catch(x){} }
+      return true; }
+    catch(e){ const m=String((e&&(e.message||e.code))||""); if(e&&(e.code==="PGRST202"||e.code==="42883"||/marvea_admin_nube_importar/.test(m)&&/find|exist|encontr|schema cache/i.test(m))){ estado.nube=false; return false; } anota("nube",e); return true; } };
+  window.__mvNA_empujar=empujar;
+  const arranca=async()=>{ if(!esAdmin()||!listo()) return setTimeout(arranca,4000);
+    const enNube=await empujar();
+    if(enNube!==false){ setInterval(empujar,60*1000); window.addEventListener("focus",()=>empujar()); document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") empujar(); }); return; }
     setTimeout(importarPedidos,6000); setInterval(importarPedidos,60*1000);
     setTimeout(importarRegistros,9000); setInterval(importarRegistros,3*60*1000);
     setTimeout(importarCuentas,12000); setInterval(importarCuentas,2*60*1000);
