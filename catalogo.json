@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T01:37:41.152Z",
+ "actualizado": "2026-11-20T01:47:00.579Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 1076,
+ "piezas": 696,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -163,6 +163,18 @@
    "notas": "",
    "foto": "fotos/043f57422672f519de317967fa425bb8.jpg",
    "creado": "2026-11-17T23:34:16.878Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00040",
+   "nombre": "Anillo Cart 7 Cm Liso",
+   "categoria": "ANI",
+   "material": "",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/04ec6feb2cf2bfbfcf1f7abb5779cf92.jpg",
+   "creado": "2026-11-18T20:57:07.772Z",
    "disponible": true
   },
   {
@@ -888,7 +900,7 @@
   {
    "codigo": "ARE-00102",
    "nombre": "Anillo Cartie plata Talla7",
-   "categoria": "ARE",
+   "categoria": "ANI",
    "material": "Acero Inoxidable",
    "precio": 35,
    "etiqueta": "Dupe Alert",
@@ -1671,7 +1683,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
    "creado": "2026-10-20T17:58:10.177Z",
@@ -1839,7 +1851,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
@@ -1883,13 +1895,13 @@
   },
   {
    "codigo": "PUL-00053",
-   "nombre": "Pulsera 3 oros Dije Surtida",
+   "nombre": "Pulsera 3 oros Dije Libelula",
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 60,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/a3708b1e5c20726836ad7862bddd351d.jpg",
+   "foto": "fotos/d259f8b025d95107639261e7cad6d986.jpg",
    "creado": "2026-11-17T20:16:49.028Z",
    "disponible": true
   },
