@@ -7763,24 +7763,24 @@ button.dg-f.mvr-a{cursor:pointer}
     const pz=todos.reduce((s,c)=>s+cartPieces(c),0), kg=pz*PESO_PZ_G/1000;
     const pagado=todos.filter(c=>cartSaldo(c)<=0.005).reduce((s,c)=>s+Math.max(0,cartShip(c)),0);
     const porCobrar=todos.filter(c=>esDifEnvio(c)&&cartSaldo(c)>0.005).reduce((s,c)=>s+cartShip(c),0);
-    const ops=opcionesEnvio(); const sug=kg<=2?ops[0]:(ops.find(o=>Number(o.precio)>Number(ops[0].precio))||ops[ops.length-1]);
+    const ops=opcionesEnvio(); const sug=ops.slice().sort((a,b)=>Number(a.precio)-Number(b.precio))[0]; /* sin peso (20-nov-2026): siempre el envío estándar; el cambio es manual */
     state.lgEnv=state.lgEnv||{}; const elegidoId=state.lgEnv[c0.id]||info.id||sug.id; const op=ops.find(o=>o.id===elegidoId)||sug;
     const falta=Math.max(0,Math.round((Number(op.precio)-pagado)*100)/100); const dif=Math.max(0,Math.round((falta-porCobrar)*100)/100);
-    const sel=h("select",{class:"mvl-sel","aria-label":"Envío según peso"},...ops.map(o=>h("option",{value:o.id},o.nombre+" · "+money(o.precio)+(o.id===sug.id?" (sugerido)":""))));
+    const sel=h("select",{class:"mvl-sel","aria-label":"Envío del paquete"},...ops.map(o=>h("option",{value:o.id},o.nombre+" · "+money(o.precio)+(o.id===sug.id?" (estándar)":""))));
     sel.value=op.id; sel.addEventListener("change",()=>{ state.lgEnv[c0.id]=sel.value; window.renderLogistica(); }); sel.addEventListener("click",e=>e.stopPropagation());
     const k=clienteDe(c0); const w=String(k&&k.whatsapp||"").replace(/\D/g,"").replace(/^52(?=\d{10}$)/,"");
     const nom=String(c0.cliente||"").split(" ")[0];
-    const msg="¡Hola "+nom+"! 💛 Tu paquete en resguardo ya tiene "+todos.length+" pedido"+(todos.length===1?"":"s")+" ("+pz+" piezas, aprox. "+kg.toFixed(2)+" kg).\n\nCon ese peso, DHL cobra "+op.nombre.replace(/^Envío\s*/i,"")+" ("+money(op.precio)+"). Ya pagaste "+money(pagado)+" de envío"+(falta>0?", así que la diferencia es de "+money(falta)+". ¿Te paso los datos para pagarla y enviarte tu paquete?":", así que no pagas nada extra. ¿Te lo enviamos ya?");
+    const msg="¡Hola "+nom+"! 💛 Tu paquete en resguardo ya tiene "+todos.length+" pedido"+(todos.length===1?"":"s")+" ("+pz+" piezas).\n\nEl envío de tu paquete es "+op.nombre.replace(/^Envío\s*/i,"")+" ("+money(op.precio)+"). Ya pagaste "+money(pagado)+" de envío"+(falta>0?", así que la diferencia es de "+money(falta)+". ¿Te paso los datos para pagarla y enviarte tu paquete?":", así que no pagas nada extra. ¿Te lo enviamos ya?");
     const avisar=async()=>{ if(w.length===10) window.open("https://wa.me/52"+w+"?text="+encodeURIComponent(msg),"_blank"); else { try{ await navigator.clipboard.writeText(msg); toast("La clienta no tiene WhatsApp: copié el mensaje"); }catch(e){} } await guardarEnvPaq(c0.id,{id:op.id,nombre:op.nombre,precio:Number(op.precio),dif:falta,avisado:new Date().toISOString()}); window.renderLogistica(); };
     const cobrar=async()=>{ if(!(dif>0)) return; if(!confirm("¿Agregar a "+(c0.cliente||"la clienta")+" una diferencia de envío de "+money(dif)+" ("+op.nombre+")? Queda como pendiente de pago dentro de su paquete.")) return;
-      const now=new Date().toISOString(); const data={liveId:c0.liveId,cliente:c0.cliente,clienteId:c0.clienteId,referencia:nuevaReferencia(),nueva:false,deposito:0,factura:false,pago:null,nota:"Diferencia de envío del paquete en resguardo · "+op.nombre+" ("+pz+" pzas, ~"+kg.toFixed(2)+" kg)",estado:"final",items:[],envio:{id:"dif-resguardo",nombre:"Diferencia de envío · paquete en resguardo ("+op.nombre.replace(/^Envío\s*/i,"")+")",precio:dif},anticipos:[],resguardo:true,enviado:"",finalizado:now,origen:"",creado:now,actualizado:now};
+      const now=new Date().toISOString(); const data={liveId:c0.liveId,cliente:c0.cliente,clienteId:c0.clienteId,referencia:nuevaReferencia(),nueva:false,deposito:0,factura:false,pago:null,nota:"Diferencia de envío del paquete en resguardo · "+op.nombre+" ("+pz+" pzas)",estado:"final",items:[],envio:{id:"dif-resguardo",nombre:"Diferencia de envío · paquete en resguardo ("+op.nombre.replace(/^Envío\s*/i,"")+")",precio:dif},anticipos:[],resguardo:true,enviado:"",finalizado:now,origen:"",creado:now,actualizado:now};
       try{ await state.db.collection("carritos").add(data); await guardarEnvPaq(c0.id,{id:op.id,nombre:op.nombre,precio:Number(op.precio),dif,cobrado:now}); toast("Diferencia de "+money(dif)+" agregada al paquete de "+nom+" · cóbrala con $ Cobrar"); }catch(e){ toast("No se pudo agregar la diferencia",true); } };
     return h("div",{class:"mvl-envpaq",onclick:e=>e.stopPropagation()},
-      h("div",{class:"mvl-ep-cab"},h("b",null,"Envío del paquete según peso"),h("span",null,"Tú decides el envío final y avisas a la clienta antes de enviarlo")),
+      h("div",{class:"mvl-ep-cab"},h("b",null,"Envío del paquete"),h("span",null,"Envío estándar; si pesa más, tú eliges otro envío a mano y avisas a la clienta")),
       h("div",{class:"mvl-ep-g"},
-        h("div",null,h("small",null,"Peso estimado"),h("b",null,kg.toFixed(2)+" kg"),h("span",null,pz+" pzas · ~"+PESO_PZ_G+" g c/u")),
+        h("div",null,h("small",null,"Paquete"),h("b",null,pz+" pzas"),h("span",null,todos.length+(todos.length===1?" pedido":" pedidos")+" · el peso lo ves tú")),
         h("div",null,h("small",null,"Envío ya pagado"),h("b",null,money(pagado)),porCobrar>0?h("span",{class:"rojo"},"+ "+money(porCobrar)+" por cobrar"):h("span",null,"en "+g.pagados.length+" pedido"+(g.pagados.length===1?"":"s"))),
-        h("div",{class:"mvl-ep-sel"},h("small",null,"Envío según peso"),sel),
+        h("div",{class:"mvl-ep-sel"},h("small",null,"Envío del paquete"),sel),
         h("div",{class:"mvl-ep-dif"+(falta>0?" sube":" ok")},h("small",null,"Diferencia"),h("b",null,falta>0?money(falta):"$0"),h("span",null,dif>0?"la clienta debe pagarla":falta>0?"ya agregada · falta cobrarla":"el envío pagado alcanza ✓"))),
       h("div",{class:"mvl-acc izq"},
         h("button",{type:"button",class:"mvl-b"+(falta>0?"":" primary"),onclick:avisar},icon("wa"),h("span",null,info.avisado?"Avisar otra vez":"Avisar a la clienta")),
