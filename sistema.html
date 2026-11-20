@@ -10193,11 +10193,22 @@ body.rol-vendedor #tab-cobro{display:none!important}
   window.mvTBEtiquetasPorCobrar=etiquetasPorCobrar;
 
   /* ---------- buscar el pedido por su código ---------- */
+  /* mvQR (3): búsqueda rápida. 1) en lo que ya está cargado en pantalla; 2) en un índice código → pedido que se arma una vez
+     (y se vuelve a armar si el código no aparece: pedido nuevo); del índice solo se baja ese pedido, ya fresco. */
+  let idx=null, idxP=null;
+  function locales(cod){ const m=new Map();
+    for(const src of [state.mvxCerr,state.logiFinal,state.cartsAbiertos,state.ventaAbiertas,state.carts,state.ventaCarts]){ try{ if(src&&src.values) for(const x of src.values()) if(x&&x.id&&codigo(x.id)===cod) m.set(x.id,x); }catch(e){} }
+    return [...m.values()]; }
+  function cargarIdx(){ if(idxP) return idxP; idxP=(async()=>{ const snap=await state.db.collection("carritos").get(); const m=new Map(); for(const d of snap.docs){ const k=codigo(d.id); if(!m.has(k)) m.set(k,[]); m.get(k).push(d.id); } idx=m; })().finally(()=>{ idxP=null; }); return idxP; }
+  async function porIds(ids){ const out=[]; for(const id of ids){ try{ const d=await state.db.doc("carritos/"+id).get(); const x=d&&(typeof d.data==="function"?d.data():d); if(x) out.push(cartFromDoc(id,x)); }catch(e){} } return out; }
   async function buscar(cod){
     if(!state.db) return [];
-    const snap=await state.db.collection("carritos").get();
-    return snap.docs.filter(d=>codigo(d.id)===cod).map(d=>cartFromDoc(d.id,d.data()||{}));
+    const loc=locales(cod); if(loc.length) return loc;
+    if(idx&&idx.has(cod)){ const l=await porIds(idx.get(cod)); if(l.length) return l; }
+    await cargarIdx(); return porIds(idx.get(cod)||[]);
   }
+  // en Marvea Vende el índice se prepara al abrir, para que el primer escaneo ya sea inmediato
+  (function(){ let n=0; const t=setInterval(()=>{ if(++n>120){ clearInterval(t); return; } if(!state.db||!document.body.classList.contains("vx-on")) return; clearInterval(t); cargarIdx().catch(()=>{}); },1000); })();
   let escCapa=null;
   async function abrirPorCodigo(cod){
     cod=String(cod||"").trim().toUpperCase(); if(!RX.test(cod)) return false; if(escCapa){ escCapa.remove(); escCapa=null; }
