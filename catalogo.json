@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T16:40:03.502Z",
+ "actualizado": "2026-11-20T17:05:44.289Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -43,7 +43,7 @@
    "p": "SIM"
   }
  ],
- "piezas": 710,
+ "piezas": 711,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -101,7 +101,7 @@
    "precio": 35,
    "etiqueta": "Dupe Alert",
    "notas": "",
-   "foto": "fotos/b2e43ebdb715adbbb6ffea56a8e680db.jpg",
+   "foto": "fotos/aef9df6016caa32f3b9fbc09a3b02c0f.jpg",
    "creado": "2026-11-17T23:24:38.184Z",
    "disponible": true
   },
@@ -125,7 +125,7 @@
    "precio": 35,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/08c43dc807c08d619abc098a4996bf2c.jpg",
+   "foto": "fotos/0cea7a46c4415de7defb1685bc8f6a51.jpg",
    "creado": "2026-11-17T23:29:26.247Z",
    "disponible": true
   },
@@ -917,7 +917,7 @@
    "precio": 35,
    "etiqueta": "Dupe Alert",
    "notas": "",
-   "foto": "fotos/2184bb6a1a6fe63d4109d5c0814dbdb6.jpg",
+   "foto": "fotos/7df8c5096941f7c301ccd8c06260d3b7.jpg",
    "creado": "2026-11-17T23:26:20.300Z",
    "disponible": true
   },
@@ -1397,7 +1397,7 @@
    "precio": 48,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/a4ad5649b6237151a3bdb321b774b4c9.jpg",
+   "foto": "fotos/2f7dff00f1592ac04da0e9919a1ee4b7.jpg",
    "creado": "2026-11-17T19:27:48.407Z",
    "disponible": true
   },
@@ -1517,7 +1517,7 @@
    "precio": 30,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/7f6adabc897879da4d5c5487f92921af.jpg",
+   "foto": "fotos/43669f40e1de795953bc2216e382b040.jpg",
    "creado": "2026-11-17T23:44:20.213Z",
    "disponible": true
   },
