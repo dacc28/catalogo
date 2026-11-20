@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T09:09:25.748Z",
+ "actualizado": "2026-11-20T09:10:52.333Z",
  "categorias": [
   {
    "p": "ANI",
@@ -43,7 +43,7 @@
    "n": "Simuladores"
   }
  ],
- "piezas": 696,
+ "piezas": 710,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -977,7 +977,7 @@
    "precio": 45,
    "etiqueta": "",
    "notas": "",
-   "foto": "fotos/63013dd72c7bf8d68f006695c67e6243.jpg",
+   "foto": "fotos/8ced7cf37625e68fe9e093117f3ada90.jpg",
    "creado": "2026-11-07T20:24:20.656Z",
    "disponible": true
   },
@@ -1087,6 +1087,30 @@
    "notas": "",
    "foto": "fotos/15d30a3678868c1f37ceb3ef2878cf61.jpg",
    "creado": "2026-11-07T20:40:10.008Z",
+   "disponible": true
+  },
+  {
+   "codigo": "CAD-00023",
+   "nombre": "Cadena cartier pequeña",
+   "categoria": "CAD",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/50dc915677dcbf20c8caa2f75850477e.jpg",
+   "creado": "2026-11-20T03:08:56.379Z",
+   "disponible": true
+  },
+  {
+   "codigo": "CAD-00024",
+   "nombre": "Cadena Plana",
+   "categoria": "CAD",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/8cdfcd265e808a582cfa2b422c59cc15.jpg",
+   "creado": "2026-11-20T03:13:41.340Z",
    "disponible": true
   },
   {
