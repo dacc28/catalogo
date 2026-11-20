@@ -3978,10 +3978,16 @@ window.mvQrLib=qrcode;
   if(window.__mvQR) return; window.__mvQR=true;
   const Q=window.mvQrLib;
   const ALNUM=/^[0-9A-Z $%*+\-.\/:]*$/;
-  function matriz(text){ text=String(text==null?"":text); const q=Q(0,"M"); q.addData(text,ALNUM.test(text)?"Alphanumeric":"Byte"); q.make(); return q; }
+  // 20-nov-2026 (2): el QR lleva un ENLACE a Marvea Vende con el código (…/vende#MV12345678 o …/vende#CODIGO).
+  // Así lo abre la cámara normal del iPhone/iPad y también lo lee el escáner de Marvea Vende (toma el código del final).
+  const BASE="https://www.marveamayoreo.com/vende#";
+  const enlace=t=>(/:\/\//.test(t)||!/^[A-Za-z0-9-]{3,40}$/.test(t))?t:BASE+t;
+  window.mvQrUrl=t=>enlace(String(t||"").trim());
+  window.mvCodigoDeQR=t=>{ t=String(t||"").trim(); const m=t.match(/marveamayoreo\.com\/vende(?:\.html)?\/?#([^#?\s]+)/i); return m?decodeURIComponent(m[1]).trim().toUpperCase():t; };
+  function matriz(text,crudo){ text=String(text==null?"":text); if(!crudo) text=enlace(text); const q=Q(0,text.length>24?"L":"M"); q.addData(text,ALNUM.test(text)?"Alphanumeric":"Byte"); q.make(); return q; }
   // Dibuja el QR centrado en un cuadro de lado `size` (px), con módulos enteros y `quiet` módulos de margen blanco.
-  function drawQR(ctx,text,x,y,size,quiet){
-    quiet=quiet==null?1:quiet; const q=matriz(text); const n=q.getModuleCount(); const tot=n+2*quiet;
+  function drawQR(ctx,text,x,y,size,quiet,crudo){
+    quiet=quiet==null?1:quiet; const q=matriz(text,crudo); const n=q.getModuleCount(); const tot=n+2*quiet;
     const mod=Math.max(1,Math.floor(size/tot)); const w=tot*mod;
     const ox=Math.round(x+(size-w)/2), oy=Math.round(y+(size-w)/2);
     ctx.save(); ctx.fillStyle="#fff"; ctx.fillRect(ox,oy,w,w); ctx.fillStyle="#000";
@@ -4066,7 +4072,7 @@ function renderLabel(p,preset,code,dpi){ // mvQR 20-nov-2026: Nombre · Material
   const ajusta=(t,w,px,max,mono)=>{ let s=Math.round(px); ctx.font=F(w,s,mono); while(s>Math.round(px*0.55)&&ctx.measureText(t).width>max){ s--; ctx.font=F(w,s,mono); } return {t:fitText(ctx,t,max),s}; };
   const QR=window.drawQR||function(){};
   if(preset.h<16){ // angosta (joyería 25 × 12): QR a la izquierda; precio, nombre y código a la derecha
-    const m=mm(0.6), q=H-2*m; QR(ctx,code,m,m,q,1); const tx=m+q+mm(0.8), tw=W-tx-m;
+    const m=mm(0.6), q=H-2*m; QR(ctx,code,m,m,q,1,true); /* tan chica que lleva el código solo (lo lee Marvea Vende) */ const tx=m+q+mm(0.8), tw=W-tx-m;
     let a=ajusta(precio,800,H*0.30,tw); ctx.fillText(a.t,tx,m+a.s*0.82);
     const y2=m+a.s*0.82+H*0.26; a=ajusta(nombre,600,H*0.19,tw); ctx.fillText(a.t,tx,y2);
     a=ajusta(code,500,H*0.15,tw,true); ctx.fillText(a.t,tx,H-m-1);
@@ -4204,7 +4210,7 @@ function palabraAleatoria(exceptCode){
 function parseUnidad(){ return null; }
 function etiquetasDe(p){ return Math.max(1,Number(p.existencia)||0); } // etiquetas sugeridas: una por pieza en existencia
 function porCodigo(texto){
-  if(!texto) return null; const raw=String(texto).trim();
+  if(!texto) return null; if(window.mvCodigoDeQR) texto=window.mvCodigoDeQR(texto); const raw=String(texto).trim();
   const up=raw.toUpperCase(); if(state.products.has(up)) return state.products.get(up);
   const key=x=>String(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
   const k=key(raw); if(k.length<3) return null;
