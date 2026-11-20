@@ -9910,10 +9910,11 @@ body.rol-vendedor #tab-cobro{display:none!important}
      · Catálogo: lo publicado, piezas nuevas o con cambios, última subida; «Publicar catálogo», «Actualizar página» y «Revisar».
        Lo hace la función publicar-catalogo de Supabase (la Mac ya no hace falta). Cada 5 min la nube revisa sola.
      · Business Club: se sincroniza solo en la nube cada 2 min; aquí se ve cuándo fue el último repaso y se puede forzar.
-   No corre dentro de la app de la Mac (ella tiene sus propios paneles). */
+   En la app de la Mac reemplaza sus paneles viejos de Catálogo y Business Club. */
 (function(){
   if(window.__mvNT) return; window.__mvNT=true;
-  if(typeof NATIVE==="function"&&NATIVE()) return;
+  /* 20-nov-2026 (tarde): también en la app de la Mac. Ahí reemplaza sus paneles viejos «Catálogo» y «Business Club», que ya no publican
+     (eso lo hace la nube); con la sesión de administrador de la Mac se publica igual que en el sistema en línea. */
   const N=()=>window.MarveaNube;
   const esAdmin=()=>{ try{ return N()&&N().rol()==="administrador"; }catch(e){ return false; } };
   const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -9991,6 +9992,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
 
   /* ---------- meterlos en Ajustes ---------- */
   function poner(){ const host=document.getElementById("ajustesHost"); if(!host||!esAdmin()) return;
+    host.querySelectorAll(".ajpanel:not(.mvnt)").forEach(x=>{ const t=((x.querySelector("h3")||{}).textContent||"").trim(); if(t==="Catálogo"||t==="Business Club") x.remove(); });
     if(!host.querySelector('[data-mvnt="mvnt-cat"]')) host.append(catalogoPanel());
     if(!host.querySelector('[data-mvnt="mvnt-club"]')) host.append(clubPanel()); }
   let tm=null; const obs=new MutationObserver(()=>{ clearTimeout(tm); tm=setTimeout(poner,120); });
@@ -10046,6 +10048,10 @@ body.rol-vendedor #tab-cobro{display:none!important}
 .mvtb-esc{max-width:420px;display:flex;flex-direction:column;gap:12px}
 .mvtb-esc h3{margin:0;font-size:20px}
 .mvtb-esc-in{font:inherit;font-size:22px;letter-spacing:.08em;text-align:center;padding:12px;border:1.5px solid #E8DDD0;border-radius:12px;text-transform:uppercase}
+/* número de resguardo + total + adeuda/liquidado (20-nov-2026) */
+.mvtb-rg{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 12px;border-radius:14px;background:#F6EEF3;font-size:14px}
+.mvtb-rgn{background:#5A2748;color:#fff;border-radius:999px;padding:5px 14px;font-size:15.5px;letter-spacing:.01em}
+.mvtb-rge{margin-left:auto;font-weight:800;font-size:15px}.mvtb-rg.debe .mvtb-rge{color:#B5333F}.mvtb-rg.ok .mvtb-rge{color:#1F6B3A}
 </style>
 <script id="mv-tb-js">
 /* ===== mvTB · «Ticket enviado» en Clientas + código de barras por pedido (20-nov-2026) =====
@@ -10222,6 +10228,26 @@ body.rol-vendedor #tab-cobro{display:none!important}
   window.mvTBEscaneo=txt=>{ const m=String(txt||"").toUpperCase().match(/MV\d{8}/); if(!m) return false; abrirPorCodigo(m[0]); return true; };
   window.mvTBAbrirPedido=c=>ventana(c);
 
+  /* ---------- número de resguardo (20-nov-2026) ----------
+     Por clienta: sus carritos en resguardo se numeran por la fecha en que se INICIÓ el carrito (1, 2, 3…).
+     Un resguardo anterior deja de contar cuando ya se envió ANTES de que empezara este carrito (ahí reinicia la cuenta).
+     No se guarda nada: se calcula. Si un «enviado» se regresa a resguardo, vuelve a contar y cada uno recupera su número. */
+  const esDif=y=>!!(y&&y.envio&&y.envio.id==="dif-resguardo");
+  const claveCli=y=>{ try{ if(typeof logiClave==="function") return logiClave(y); }catch(e){} return y.clienteId||String(y.cliente||"").trim().toLowerCase(); };
+  function numResguardoEn(c,lista){
+    if(!c||!c.resguardo||c.estado==="cancelado"||esDif(c)) return 0; const k=claveCli(c);
+    const antes=(y,x)=>{ const a=String(y.creado||""), b=String(x.creado||""); return a<b||(a===b&&String(y.id)<String(x.id)); };
+    const S=lista.filter(y=>y&&y.id!==c.id&&y.resguardo&&y.estado!=="cancelado"&&!esDif(y)&&claveCli(y)===k).concat([c]).sort((x,y)=>antes(x,y)?-1:1);
+    // cada uno sigue al resguardo anterior más reciente que NO se había enviado cuando él empezó; si no hay, es el 1
+    const num=new Map();
+    for(let i=0;i<S.length;i++){ const x=S[i], cr=String(x.creado||""); let n=1;
+      for(let j=i-1;j>=0;j--){ const y=S[j]; if(y.enviado&&String(y.enviado)<=cr) continue; n=num.get(y.id)+1; break; }
+      num.set(x.id,n); }
+    return num.get(c.id)||0;
+  }
+  async function numResguardo(c){ if(!c||!c.resguardo||!state.db) return 0; const snap=await state.db.collection("carritos").get(); return numResguardoEn(c,snap.docs.map(d=>cartFromDoc(d.id,d.data()||{}))); }
+  window.mvResguardoNum=numResguardo; window.mvResguardoNumEn=numResguardoEn;
+
   /* ---------- ventana del pedido ---------- */
   function estPago(c){ const e=c.estado; if(e==="cancelado") return {t:"Cancelada",k:"nada"}; const s=cartSaldo(c), p=cartPagado(c);
     if(s<=0.005) return {t:s<-0.005?"Pagado · a favor "+money(-s):"Pagado",k:"ok"}; if(p>0.005) return {t:"Debe "+money(s)+" (pagó "+money(p)+")",k:"debe"}; return {t:"Sin pago · "+money(s),k:"debe"}; }
@@ -10236,7 +10262,10 @@ body.rol-vendedor #tab-cobro{display:none!important}
   function ventana(c,varios){
     cerrar(); capa=h("div",{class:"mvtb-fondo"}); capa.addEventListener("click",e=>{ if(e.target===capa) cerrar(); }); document.addEventListener("keydown",escTecla,true);
     const caja=h("div",{class:"mvtb-caja",role:"dialog","aria-modal":"true"}); capa.append(caja); document.body.append(capa);
-    const pintar=async(cc,aviso)=>{ c=cc; const k=clienteDe(c)||{}; const wa=String(k.whatsapp||"").replace(/\D/g,"");
+    const pintar=async(cc,aviso)=>{ c=cc; let nr=0; try{ nr=await numResguardo(c); }catch(e){ console.warn(e); }
+      const canc=c.estado==="cancelado", debeB=cartSaldo(c)>0.005;
+      const banner=h("div",{class:"mvtb-rg "+(canc?"":debeB?"debe":"ok")},nr?h("b",{class:"mvtb-rgn"},"Resguardo "+nr):null,h("span",null,"Total ",h("b",null,money(cartGrand(c)))),h("span",{class:"mvtb-rge"},canc?"Cancelada":debeB?"ADEUDA "+money(cartSaldo(c)):"LIQUIDADO ✓"));
+      const k=clienteDe(c)||{}; const wa=String(k.whatsapp||"").replace(/\D/g,"");
       const p=estPago(c), en=estEnvio(c), cod=codigo(c.id);
       const cab=h("div",{class:"mvtb-cab"},
         h("div",null,h("div",{class:"mvtb-cod"},cod),h("h2",null,c.cliente||"Sin nombre"),
@@ -10282,7 +10311,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
         h("button",{type:"button",class:"btn",onclick:()=>downloadTicket(c,{nombre:lugarDe(c)})},"Ticket PDF"),
         h("button",{type:"button",class:"btn",onclick:()=>imprimirEtiqueta([c])},"🏷️ Etiqueta 40×30"));
       const otros=varios?h("div",{class:"mvtb-varios"},"Hay "+varios.length+" pedidos con este código: ",...varios.map(v=>h("button",{type:"button",class:"btn sm",onclick:()=>pintar(v)},(v.cliente||"?")+" · #"+num(v)))):null;
-      caja.replaceChildren(...[cab,otros,aviso?h("div",{class:"mvtb-aviso"},aviso):null,chips,piezas,tot,secPago,secEnv,secTk,pie].filter(Boolean));
+      caja.replaceChildren(...[cab,otros,banner,aviso?h("div",{class:"mvtb-aviso"},aviso):null,chips,piezas,tot,secPago,secEnv,secTk,pie].filter(Boolean));
     };
     pintar(c).catch(e=>{ console.error(e); toast("No se pudo mostrar el pedido: "+(e&&e.message||e),true); });
   }
