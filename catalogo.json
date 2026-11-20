@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T01:24:46.154Z",
+ "actualizado": "2026-11-20T01:37:41.152Z",
  "categorias": [
   {
    "p": "ANI",
@@ -334,30 +334,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00033",
-   "nombre": "Aretes Xuping  Marmol Oscuro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2daa3d6bce3789a8aa2f151c96416fe2.jpg",
-   "creado": "2026-10-20T23:14:48.191Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00034",
-   "nombre": "Aretes Xuping  Marmol",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2b15b4c579ac360eed115d2f14fb41de.jpg",
-   "creado": "2026-10-20T23:16:18.376Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00035",
    "nombre": "Aretes Xuping  Colgante Oscuro",
    "categoria": "ARE",
@@ -591,7 +567,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/949f76ea748996695f32dfc75c9ecaac.jpg",
    "creado": "2026-11-07T20:56:49.776Z",
@@ -907,18 +883,6 @@
    "notas": "",
    "foto": "fotos/242d0a2ba8b21b81161c3465978a2c9d.jpg",
    "creado": "2026-11-17T20:23:48.666Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00101",
-   "nombre": "Arracada Lineas Brillo",
-   "categoria": "ARE",
-   "material": "",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/abce4794090dbfc600918bbc010d8c3b.jpg",
-   "creado": "2026-11-17T20:28:03.583Z",
    "disponible": true
   },
   {
@@ -1779,7 +1743,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 60,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
@@ -1963,18 +1927,6 @@
    "notas": "",
    "foto": "fotos/4b78f88b80e55a64f07447f4be519abb.jpg",
    "creado": "2026-11-17T20:20:22.564Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00057",
-   "nombre": "Brazalete Cartier con Rayas y Brillo",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3292f4e86620647a30767a4e5215b025.jpg",
-   "creado": "2026-11-17T23:47:17.305Z",
    "disponible": true
   },
   {
