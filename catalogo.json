@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-19T23:11:24.507Z",
+ "actualizado": "2026-11-20T01:01:42.762Z",
  "categorias": [
   {
    "p": "ANI",
@@ -231,7 +231,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
    "creado": "2026-10-20T23:06:31.619Z",
@@ -874,6 +874,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00097",
+   "nombre": "Huggies Flor",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
+   "creado": "2026-11-07T21:48:20.046Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00099",
    "nombre": "Huggie Brillo",
    "categoria": "ARE",
@@ -967,6 +979,18 @@
    "notas": "",
    "foto": "fotos/35420d576c46aa9fa7def06819d2ff30.jpg",
    "creado": "2026-11-07T20:06:10.353Z",
+   "disponible": true
+  },
+  {
+   "codigo": "CAD-00009",
+   "nombre": "Cadena Bibiana detallada 45cm",
+   "categoria": "CAD",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/49a30e288b58131c82f64f700ac4a1e1.jpg",
+   "creado": "2026-11-07T20:12:30.531Z",
    "disponible": true
   },
   {
@@ -1347,7 +1371,7 @@
    "categoria": "DIJ",
    "material": "Chapa de oro",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/179e93258f5139984a3d2aed078a151a.jpg",
    "creado": "2026-11-17T19:15:00.773Z",
@@ -1755,10 +1779,22 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 60,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00031",
+   "nombre": "Brazalete",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/694bd31652db4561770b30a91b227f6e.jpg",
+   "creado": "2026-11-01T21:03:09.591Z",
    "disponible": true
   },
   {
@@ -1771,6 +1807,18 @@
    "notas": "",
    "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
    "creado": "2026-11-01T21:06:01.761Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00034",
+   "nombre": "Brazalete Media Luna",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
+   "creado": "2026-11-01T21:08:45.418Z",
    "disponible": true
   },
   {
@@ -1803,7 +1851,7 @@
    "categoria": "PUL",
    "material": "Chapa de Oro",
    "precio": 70,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fc1a5d4c3abde386c557e9826043933a.jpg",
    "creado": "2026-11-17T18:52:07.933Z",
