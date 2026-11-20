@@ -10198,6 +10198,27 @@ body.rol-vendedor #tab-cobro{display:none!important}
   }
   window.mvTBEtiquetasPorCobrar=etiquetasPorCobrar;
 
+  /* ---------- todas las etiquetas de los carritos EN RESGUARDO (20-nov-2026) ----------
+     Los que siguen en resguardo (sin enviar), con piezas; por clienta y por número de resguardo. */
+  async function etiquetasResguardo(){
+    if(imprimiendoPC||!state.db) return; let todos=[];
+    try{ const snap=await state.db.collection("carritos").get(); todos=snap.docs.map(d=>cartFromDoc(d.id,d.data()||{})); }catch(e){ toast("No se pudieron leer los carritos",true); return; }
+    const lista=todos.filter(c=>c.resguardo&&!c.enviado&&!c.entregado&&c.estado!=="cancelado"&&!esDif(c)&&Array.isArray(c.items)&&c.items.length)
+      .map(c=>({c,n:numResguardoEn(c,todos)}))
+      .sort((a,b)=>String(a.c.cliente||"").localeCompare(String(b.c.cliente||""),"es",{sensitivity:"base"})||a.n-b.n).map(x=>Object.assign(x.c,{__rg:x.n}));
+    if(!lista.length){ toast("No hay carritos en resguardo"); return; }
+    const cerrar=()=>capa.remove();
+    const btn=h("button",{type:"button",class:"btn primary",onclick:async()=>{ if(imprimiendoPC) return; imprimiendoPC=true; btn.disabled=true; btn.textContent="Imprimiendo…";
+      try{ await imprimirEtiqueta(lista); } finally { imprimiendoPC=false; cerrar(); } }},"🏷️ Imprimir "+lista.length);
+    const caja=h("div",{class:"mvtb-caja mvtb-esc"},h("h3",null,"🏷️ Etiquetas de resguardo · 40 × 30 mm"),
+      h("p",{class:"mvtb-ayuda"},lista.length+" etiqueta"+(lista.length===1?"":"s")+", una por cada carrito en resguardo, por clienta y número de resguardo:"),
+      h("div",{class:"mvtb-piezas"},...lista.map(c=>h("div",{class:"mvtb-pzc",style:"white-space:normal"},h("b",null,c.cliente||"Sin nombre")," · Resguardo "+c.__rg+" · #"+num(c)+" · "+(c.estado==="abierto"?"armándose · ":"")+(cartSaldo(c)>0.005?"adeuda "+money(cartSaldo(c)):"liquidado")))),
+      h("div",{class:"mvtb-pie"},h("button",{type:"button",class:"btn",onclick:cerrar},"Cancelar"),btn));
+    const capa=h("div",{class:"mvtb-fondo"},caja); capa.addEventListener("click",e=>{ if(e.target===capa&&!imprimiendoPC) cerrar(); });
+    document.body.append(capa);
+  }
+  window.mvTBEtiquetasResguardo=etiquetasResguardo;
+
   /* ---------- buscar el pedido por su código ---------- */
   /* mvQR (3): búsqueda rápida. 1) en lo que ya está cargado en pantalla; 2) en un índice código → pedido que se arma una vez
      (y se vuelve a armar si el código no aparece: pedido nuevo); del índice solo se baja ese pedido, ya fresco. */
@@ -10367,7 +10388,8 @@ body.rol-vendedor #tab-cobro{display:none!important}
   function cerrarEsc(){ if(escCapa){ escCapa.remove(); escCapa=null; } }
   window.mvTBEscanearPedido=escanearPedido;
   const obs2=new MutationObserver(()=>{ try{ const n=document.querySelector(".vx-nueva"); if(n&&!n.parentNode.querySelector(".mvtb-escbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-escbtn",title:"Escanea la etiqueta de un pedido para ver su ficha",onclick:escanearPedido},"▦ Escanear pedido"),n);
-    if(n&&!n.parentNode.querySelector(".mvtb-pcbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-pcbtn",title:"Imprime una etiqueta 40 × 30 con código por cada venta «Por cobrar»",onclick:etiquetasPorCobrar},"🏷️ Etiquetas por cobrar"),n); }catch(e){} });
+    if(n&&!n.parentNode.querySelector(".mvtb-pcbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-pcbtn",title:"Imprime una etiqueta 40 × 30 con código por cada venta «Por cobrar»",onclick:etiquetasPorCobrar},"🏷️ Etiquetas por cobrar"),n);
+    if(n&&!n.parentNode.querySelector(".mvtb-rgbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-rgbtn",title:"Imprime una etiqueta 40 × 30 con QR por cada carrito en resguardo",onclick:etiquetasResguardo},"🏷️ Etiquetas resguardo"),n); }catch(e){} });
   try{ obs2.observe(document.body,{childList:true,subtree:true}); }catch(e){}
 })();
 </script>
