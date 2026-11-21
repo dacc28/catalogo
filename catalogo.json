@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T19:20:04.075Z",
+ "actualizado": "2026-11-21T23:00:04.292Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -41,6 +41,10 @@
   {
    "n": "Simuladores",
    "p": "SIM"
+  },
+  {
+   "n": "Rosarios",
+   "p": "ROS"
   }
  ],
  "piezas": 684,
