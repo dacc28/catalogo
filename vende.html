@@ -4208,7 +4208,7 @@ function palabraAleatoria(exceptCode){
 }
 /* ---- Un solo código de barras por producto (COL-00001). Las etiquetas viejas con número de serie (COL-00001-004) siguen leyéndose como el producto. ---- */
 function parseUnidad(){ return null; }
-function etiquetasDe(p){ return Math.max(1,Number(p.existencia)||0); } // etiquetas sugeridas: una por pieza en existencia
+function etiquetasDe(p){ return 1; } // mvPQ: una etiqueta (QR) por producto
 function porCodigo(texto){
   if(!texto) return null; if(window.mvCodigoDeQR) texto=window.mvCodigoDeQR(texto); const raw=String(texto).trim();
   const up=raw.toUpperCase(); if(state.products.has(up)) return state.products.get(up);
@@ -4931,7 +4931,7 @@ function openSabana(){
   const drawer=h("aside",{class:"drawer",role:"dialog","aria-label":"Imprimir etiquetas"},
     h("div",{class:"head"},h("span",{class:"pill on"},"Etiquetas"),h("button",{class:"btn sm",onclick:closeDrawer},"Cerrar")),
     h("h2",{style:"margin-top:4px"},"Imprimir etiquetas"),
-    h("p",{style:"margin:0 0 12px;color:var(--muted);font-size:14px"},"Marca los productos que quieres imprimir y cuántas etiquetas de cada uno (de entrada, una por pieza en existencia). Todas las piezas de un producto llevan el mismo código de barras."),
+    h("p",{style:"margin:0 0 12px;color:var(--muted);font-size:14px"},"Marca los productos que quieres imprimir y cuántas etiquetas de cada uno (de entrada, una por producto). Cada producto lleva un solo QR: al escanearlo se ve su ficha o se agrega a la venta."),
     h("div",{class:"field"},h("label",{for:"sabPreset"},"Tamaño de etiqueta"),presetSel),
     h("div",{style:"display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"},buscar,h("button",{class:"btn sm",type:"button",onclick:()=>marcarTodas(true)},"Todas"),h("button",{class:"btn sm ghost",type:"button",onclick:()=>marcarTodas(false)},"Ninguna")),
     lista,resumen,prev,
@@ -4975,7 +4975,7 @@ function openDrawer(code,focusLabel){
       h("div",{style:"display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"},
         NATIVE()?h("button",{class:"btn primary",id:"btnLabelPrint",onclick:async()=>{ await printLabels([{p,copies:copiesN()}],presetDe(presetSel)); }},"Imprimir"):null,
         h("button",{class:"btn"+(NATIVE()?"":" primary"),id:"btnLabelPdf",onclick:async()=>{ await saveLabels([{p,copies:copiesN()}],presetDe(presetSel),`etiquetas-${p.codigo}-${copiesN()}.pdf`); }},"Descargar PDF")),
-      h("p",{style:"margin:10px 0 0;font-size:13px;color:var(--muted)"},`Todas las piezas de este producto llevan el mismo código (${p.codigo}). De entrada salen tantas etiquetas como piezas en existencia; cambia el número si quieres otra cantidad. Para varios productos a la vez usa «Imprimir etiquetas» arriba del inventario.`)),
+      h("p",{style:"margin:10px 0 0;font-size:13px;color:var(--muted)"},`Todas las piezas de este producto llevan el mismo código (${p.codigo}). De entrada sale 1 etiqueta (un QR por producto); cambia el número si quieres más. Para varios productos a la vez usa «Imprimir etiquetas» arriba del inventario.`)),
     h("div",{class:"section"},h("h4",null,"Acciones"),h("div",{style:"display:flex;gap:8px;flex-wrap:wrap"},h("button",{class:"btn",onclick:()=>startEdit(p)},"Editar"),h("button",{class:"btn danger",onclick:()=>{ delBox.replaceChildren(h("div",{class:"confirm",style:"margin-top:10px"},"¿Eliminar "+p.codigo+" definitivamente?",h("button",{class:"btn sm danger",onclick:()=>removeProduct(p)},"Sí, eliminar"),h("button",{class:"btn sm ghost",onclick:()=>delBox.replaceChildren()},"No"))); }},"Eliminar")),delBox)
   );
   host.replaceChildren(h("div",{class:"scrim",onclick:closeDrawer}),drawer);
@@ -6484,7 +6484,7 @@ function renderVenta(keepFocus){
 
   /* ---- 2) piezas ---- */
   const qty=h("input",{class:"qty vd-qty",id:"ventaQty",type:"number",min:"1",max:"999",value:qtyVal||"1","aria-label":"Cantidad",inputmode:"numeric"});
-  const inp=h("input",{id:"ventaInput",class:"vd-input vd-scan",placeholder:esHoy?"Escanea o escribe palabra clave / código":"Día anterior: solo consulta",autocomplete:"off",autocapitalize:"characters",spellcheck:"false",...(esHoy&&(!c||c.estado==="abierto")?{}:{disabled:true})});
+  const inp=h("input",{id:"ventaInput",class:"vd-input vd-scan",placeholder:esHoy?"Escanea el QR o escribe palabra clave / código":"Día anterior: solo consulta",autocomplete:"off",autocapitalize:"characters",spellcheck:"false",...(esHoy&&(!c||c.estado==="abierto")?{}:{disabled:true})});
   const acList=h("div",{class:"ac-list",hidden:true}); let results=[]; state.vAc=state.vAc||0;
   const renderAc=()=>{ const q=inp.value.trim(); results=q?searchProducts(q).slice(0,8):[]; state.vAc=Math.min(state.vAc,Math.max(0,results.length-1)); acList.hidden=!results.length; acList.replaceChildren(...results.map((p,i)=>h("button",{type:"button",class:"ac-item"+(i===state.vAc?" hl":""),onmousedown:e=>{ e.preventDefault(); pick(p); }},thumb(p),h("div",{style:"min-width:0"},h("div",{class:"tn"},p.nombre),h("div",{class:"ts"},(p.palabra?p.palabra+" · ":"")+p.codigo+" · quedan "+p.existencia)),h("b",null,"$"+fmtMoney(p.precio))))); };
   const pick=async p=>{ inp.value=""; acList.hidden=true; results=[]; const n=Math.max(1,parseInt(qty.value,10)||1); qty.value="1"; await ventaAgregar(p,n); };
@@ -10393,10 +10393,324 @@ body.rol-vendedor #tab-cobro{display:none!important}
   try{ obs2.observe(document.body,{childList:true,subtree:true}); }catch(e){}
 })();
 </script>
+<style id="mv-pq-css">
+/* mvPQ · ficha del producto, «Escanear» y aviso de lectura (20-nov-2026) */
+body.mvpq-sinscroll{overflow:hidden}
+.mvpq-fondo{position:fixed;inset:0;z-index:2147483100;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 14px;overflow:auto;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:mvpqIn .14s ease-out}
+@keyframes mvpqIn{from{opacity:0}to{opacity:1}}
+.mvpq-caja{background:#fff;color:#2a1a24;border-radius:22px;box-shadow:0 24px 70px rgba(40,10,30,.28);width:min(720px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px;font-family:inherit}
+.mvpq-cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mvpq-cab h3{margin:0;font-size:20px}
+.mvpq-eti{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8B6A7E}
+.mvpq-x{border:0;background:#F4EEF1;color:#2a1a24;border-radius:999px;width:38px;height:38px;font-size:24px;line-height:1;cursor:pointer;flex:none}
+.mvpq-x:hover{background:#EADFE5}
+/* ficha */
+.mvpq-cuerpo{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
+.mvpq-foto{aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#FAF6F8;border:1px solid #F0E7EC}
+.mvpq-foto>*{width:100%!important;height:100%!important;max-height:none!important;margin:0!important;border-radius:0!important;display:flex;align-items:center;justify-content:center}
+.mvpq-foto img{width:100%;height:100%;object-fit:contain;display:block}
+.mvpq-info{min-width:0;display:flex;flex-direction:column;gap:12px}
+.mvpq-info h2{margin:0;font-size:23px;line-height:1.18;letter-spacing:-.01em}
+.mvpq-datos{display:flex;flex-direction:column;border:1px solid #F0E7EC;border-radius:14px;overflow:hidden}
+.mvpq-kv{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:center;padding:9px 12px;font-size:14px}
+.mvpq-kv+.mvpq-kv{border-top:1px solid #F4EDF1}
+.mvpq-kv>span{color:#8B6A7E;font-size:12.5px;font-weight:700}
+.mvpq-kv>b{font-weight:650;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.mvpq-cod{font:700 12.5px ui-monospace,Menlo,monospace;letter-spacing:.06em;color:#5A2748;background:#F3E8EF;padding:3px 9px;border-radius:999px}
+.mvpq-pal{font-size:12.5px;font-weight:700;color:#7A3F63;background:#FFF;border:1px solid #E7D5DF;padding:2px 9px;border-radius:999px}
+.mvpq-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mvpq-num{border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;background:#FAF6F8}
+.mvpq-num>span{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8B6A7E}
+.mvpq-num>b{font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mvpq-num>small{font-size:12px;color:#6B5664}
+.mvpq-precio>b{color:#5A2748}
+.mvpq-ex.ok{background:#E9F5EE}.mvpq-ex.ok>b{color:#1F6B3A}
+.mvpq-ex.unica{background:#FFF4D6}.mvpq-ex.unica>b{color:#8A5D00}
+.mvpq-ex.agot{background:#FDE8EA}.mvpq-ex.agot>b{color:#B5333F;font-size:24px}
+.mvpq-notas{margin:0;font-size:13px;color:#6B5664;background:#FAF6F8;border-radius:12px;padding:8px 12px}
+.mvpq-acc{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.mvpq-b{font:inherit;font-size:14px;font-weight:700;border:1px solid #E2D6DD;background:#fff;color:#2a1a24;border-radius:12px;padding:10px 14px;cursor:pointer;min-height:42px}
+.mvpq-b:hover{background:#FAF6F8}
+.mvpq-b.prim{background:#5A2748;border-color:#5A2748;color:#fff}
+.mvpq-b.prim:hover{background:#4A1F3B}
+.mvpq-b:disabled{opacity:.55;cursor:default}
+/* escanear */
+.mvpq-esc{width:min(460px,100%)}
+.mvpq-tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mvpq-tipos>div{background:#FAF6F8;border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:1px}
+.mvpq-tipos b{font-size:13.5px}.mvpq-tipos span{font-size:12px;color:#6B5664}
+.mvpq-in{font:inherit;font-size:21px;letter-spacing:.06em;text-align:center;padding:13px 12px;border:1.5px solid #E2D6DD;border-radius:14px;text-transform:uppercase;outline:none;width:100%;box-sizing:border-box}
+.mvpq-in:focus{border-color:#5A2748;box-shadow:0 0 0 4px rgba(90,39,72,.12)}
+.mvpq-cam{position:relative;border-radius:16px;overflow:hidden;background:#111;aspect-ratio:4/3}
+.mvpq-cam[hidden]{display:none}
+.mvpq-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.mvpq-mira{position:absolute;left:50%;top:50%;width:58%;aspect-ratio:1/1;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.92);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+.mvpq-msg{min-height:18px;font-size:13px;color:#6B5664;text-align:center}
+.mvpq-msg.bad{color:#B5333F;font-weight:700}
+/* aviso de lectura */
+.mvpq-hud{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);z-index:2147483600;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:999px;background:#2a1a24;color:#fff;box-shadow:0 12px 34px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;max-width:min(560px,calc(100vw - 24px))}
+.mvpq-hud.on{opacity:1;transform:translate(-50%,0)}
+.mvpq-hico{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex:none;background:#555}
+.mvpq-hud.ok .mvpq-hico{background:#2E9B57}.mvpq-hud.bad .mvpq-hico{background:#D2414F}
+.mvpq-hud.wait .mvpq-hico{background:transparent;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:mvpqGira .7s linear infinite;width:20px;height:20px}
+@keyframes mvpqGira{to{transform:rotate(360deg)}}
+.mvpq-htx{display:flex;flex-direction:column;min-width:0}
+.mvpq-htx b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvpq-htx small{font-size:12.5px;opacity:.82}
+body.vx-on .mvpq-hud{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* celular */
+@media (max-width:640px){
+  .mvpq-fondo{padding:0;align-items:flex-end}
+  .mvpq-caja{border-radius:22px 22px 0 0;max-height:94vh;overflow:auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+  .mvpq-cuerpo{grid-template-columns:1fr;gap:12px}
+  .mvpq-foto{max-width:210px;width:52%;margin:0 auto}
+  .mvpq-info h2{font-size:20px;text-align:center}
+  .mvpq-num>b{font-size:26px}
+  .mvpq-acc{justify-content:stretch}.mvpq-acc .mvpq-b{flex:1 1 calc(50% - 8px)}.mvpq-acc .mvpq-b.prim{flex-basis:100%}
+}
+/* Marvea Vende: botones de arriba (Escanear · Etiquetas) compactos en una sola fila */
+body.vx-on .vx-topr{flex-wrap:nowrap;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none}
+body.vx-on .vx-topr::-webkit-scrollbar{display:none}
+body.vx-on .vx-topr .mvtb-escbtn,body.vx-on .vx-topr .mvtb-pcbtn,body.vx-on .vx-topr .mvtb-rgbtn{margin:0!important;white-space:nowrap;font-size:13px!important;padding:7px 11px!important;min-height:0!important;height:auto!important;border-radius:999px!important;line-height:1.2!important;flex:none}
+body.vx-on .vx-topr .vx-nueva{order:-1;flex:none;white-space:nowrap}
+body.vx-on .vx-topr>*{flex:none}
+</style>
+<script id="mv-pq-js">
+/* ===== mvPQ · QR de producto (20-nov-2026) =====
+   1) Un QR por producto (modelo). Al leerlo fuera de una venta se abre la FICHA EMERGENTE del producto:
+      foto, producto, modelo (código + palabra clave), categoría, material, precio y existencias al momento.
+   2) «▦ Escanear» (Venta) unifica pedido y producto: QR de pedido (MV…) → ficha del pedido (mvTB); QR de producto → su ficha.
+      En el sistema en línea también se puede leer con la cámara de la laptop.
+   3) Dentro de una venta abierta (Venta / Live, sistema y Marvea Vende) cada lectura agrega 1 pieza al carrito y resta 1 del
+      inventario. Las lecturas van EN FILA: ninguna se pierde aunque se escanee rápido, y cada una espera a que la anterior
+      termine de guardarse. La resta la hace la nube con candado por producto (marvea_stock_mov): si queda 1 pieza y dos
+      equipos la escanean al mismo tiempo, solo uno se la lleva; al otro le sale «Agotado» y no se agrega.
+   No guarda nada nuevo ni cambia la forma de los datos. */
+(function(){
+  if(window.__mvPQ) return; window.__mvPQ=true;
+  const $q=s=>document.querySelector(s);
+  const money=x=>"$"+fmtMoney(x);
+  const esVende=()=>!!(document.body&&document.body.classList.contains("vx-on"));
+  const rol=()=>{ try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; }; // app de la Mac: sin perfil = administrador
+  const espera=ms=>new Promise(r=>setTimeout(r,ms));
+  const vende=()=>window.mvPQVende||null;
+
+  /* ---------- 1) sacar el código de lo que se lea ----------
+     El QR es un enlace …marveamayoreo.com/vende#COL-00002. Un lector de mano configurado con otro idioma de teclado lo
+     escribe con signos cambiados (p. ej. «httpsÑ--www.marveamayoreo.com-vende·COL'00002»): se toma lo que va después de
+     «vende» y porCodigo ya ignora guiones y signos. */
+  const qrBase=window.mvCodigoDeQR;
+  function deQR(t){
+    const s=String(t==null?"":t).trim(); const x=qrBase?qrBase(s):s; if(x!==s) return x;
+    const U=s.toUpperCase(); const i=U.lastIndexOf("VENDE");
+    if(i>0&&/MARVEA|WWW|HTTP/.test(U.slice(0,i))){ const r=U.slice(i+5).replace(/^[^A-Z0-9]*(HTML)?[^A-Z0-9]*/,"").replace(/\s.*$/,""); if(r) return r; }
+    return s;
+  }
+  window.mvCodigoDeQR=deQR;
+  function resolver(txt){
+    const cod=deQR(txt); if(!cod) return null; const U=cod.toUpperCase();
+    const mv=U.match(/^MV\d{8}$/)||U.replace(/[^A-Z0-9]/g,"").match(/^MV\d{8}$/); if(mv) return {tipo:"pedido",cod:mv[0]};
+    const p=porCodigo(cod)||porPalabra(cod); if(p) return {tipo:"producto",p,cod:U};
+    return {tipo:"nada",cod:U};
+  }
+
+  /* ---------- avisos: sonido, vibración y franja ---------- */
+  let actx=null;
+  function bip(ok){
+    try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume();
+      const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime, d=ok?0.11:0.32;
+      o.type=ok?"sine":"square"; o.frequency.value=ok?1320:220; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(ok?0.16:0.08,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d+0.02); }catch(e){}
+    try{ if(navigator.vibrate) navigator.vibrate(ok?25:[70,50,70]); }catch(e){}
+  }
+  let hud=null, hudT=0;
+  function aviso(ok,titulo,detalle){
+    if(!hud){ hud=h("div",{class:"mvpq-hud",role:"status","aria-live":"polite"}); document.body.append(hud); }
+    hud.className="mvpq-hud on "+(ok===true?"ok":ok===false?"bad":"wait");
+    hud.replaceChildren(h("span",{class:"mvpq-hico"},ok===true?"✓":ok===false?"✕":""),h("span",{class:"mvpq-htx"},h("b",null,titulo),detalle?h("small",null,detalle):null));
+    clearTimeout(hudT); if(ok!==null) hudT=setTimeout(()=>{ if(hud) hud.classList.remove("on"); },ok?2400:4500);
+  }
+  function estado(p){ const n=Math.max(0,Number(p&&p.existencia)||0); return n<=0?{cls:"agot",n,t:"Agotado"}:n===1?{cls:"unica",n,t:"Única pieza"}:{cls:"ok",n,t:n+" piezas"}; }
+
+  /* ---------- 2) escaneo a la venta: en fila, una pieza por lectura ---------- */
+  // durante una lectura, el aviso propio sustituye al mensaje corto del carrito (+1 …, sin existencia): un solo aviso, no dos
+  let silencio=0;
+  try{ const t0=window.toast; if(typeof t0==="function"&&!t0.__mvPQ){ const t1=function(msg,bad){ if(silencio&&/^(\+\d|Sin existencia|Solo había)/.test(String(msg||""))) return; return t0.apply(this,arguments); }; t1.__mvPQ=true; window.toast=t1; } }catch(e){}
+  let cola=Promise.resolve(), enFila=0;
+  async function libre(){ const t0=Date.now(); while(state.busy&&Date.now()-t0<15000) await espera(25); }
+  const piezasDe=(c,cod)=>{ if(!c||!Array.isArray(c.items)) return 0; let n=0; for(const it of c.items) if(it&&it.codigo===cod) n+=Number(it.cant)||0; return n; };
+  // Si otro equipo agregó al MISMO pedido, se parte de lo que ya está guardado (así no se pisan sus piezas).
+  async function fresca(c){ try{ if(!c||!c.id||!state.db) return; const d=await state.db.doc("carritos/"+c.id).get(); const x=d&&d.exists&&d.data();
+    if(x&&Array.isArray(x.items)&&(x.estado||"abierto")===c.estado) c.items=JSON.parse(JSON.stringify(x.items)); }catch(e){} }
+  function encolar(p,agregarFn,carrito){
+    enFila++; if(enFila>1) aviso(null,"Agregando…",enFila+" lecturas en fila");
+    const tarea=cola.then(async()=>{
+      const cod=p.codigo; let ok=false, falla="";
+      try{
+        for(let intento=0;intento<3&&!ok;intento++){
+          await libre();
+          const c0=carrito&&carrito(); if(c0&&c0.estado==="abierto") await fresca(c0);
+          const base=piezasDe(c0,cod), id0=c0&&c0.id;
+          const q0=state.products.get(cod); if(!q0){ falla="Ya no está en el inventario"; break; }
+          if((Number(q0.existencia)||0)<=0){ falla="Agotado · no se agregó"; break; }
+          silencio++; try{ await agregarFn(state.products.get(cod)||q0); await libre(); } finally{ silencio--; } // siempre con el producto al día (existencia actual)
+          const c1=carrito&&carrito(); const gan=piezasDe(c1,cod)-(c1&&c1.id===id0?base:0);
+          if(gan>0){ ok=true; break; }
+          const q1=state.products.get(cod); if(!q1||(Number(q1.existencia)||0)<=0){ falla="Agotado · se vendió en otro equipo"; break; }
+          if(c1&&c1.estado&&c1.estado!=="abierto"){ falla="La venta está "+c1.estado+"; reábrela para agregar"; break; }
+          falla="No se pudo agregar"; await espera(150);
+        }
+      }catch(e){ console.warn("mvPQ",e); falla="No se pudo agregar (¿hay internet?)"; }
+      enFila=Math.max(0,enFila-1);
+      const q=state.products.get(cod)||p; const quedan=Math.max(0,Number(q.existencia)||0); const c=carrito&&carrito();
+      if(ok){ bip(true); aviso(true,"+1 "+(q.nombre||cod),(quedan<=0?"Era la última pieza":quedan===1?"Queda 1 pieza":"Quedan "+quedan)+(c?" · "+piezasDe(c,cod)+" en la venta":"")+(enFila?" · faltan "+enFila+" en fila":"")); }
+      else { bip(false); aviso(false,(q.nombre||cod),falla); }
+      return {ok,msg:ok?"+1 "+(q.palabra||q.nombre||cod)+" · quedan "+quedan:(q.palabra||q.nombre||cod)+" · "+falla,quedan};
+    });
+    cola=tarea.catch(()=>{}); return tarea;
+  }
+
+  /* dónde cae la lectura: agregar (venta abierta en pantalla) o ver la ficha */
+  function contexto(){
+    const v=vende(); if(v&&esVende()){ try{ return v.contexto()||{modo:"ver"}; }catch(e){ return {modo:"ver"}; } }
+    const vis=el=>!!(el&&!el.disabled&&el.offsetParent!==null);
+    if(state.view==="venta"&&vis($q("#ventaInput"))&&typeof ventaAgregar==="function") return {modo:"agregar",agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()};
+    if(vis($q("#addInput"))&&state.cartId&&state.carts&&state.carts.get(state.cartId)) return {modo:"agregar",agregar:p=>{ const c=state.carts.get(state.cartId); return c?addToCart(c,p,1):null; },carrito:()=>state.carts.get(state.cartId)||null};
+    return {modo:"ver"};
+  }
+  // venta abierta aunque no esté en pantalla (botón «Agregar a la venta» de la ficha)
+  function ventaAbierta(){
+    const v=vende(); if(v&&esVende()){ try{ return v.ventaAbierta(); }catch(e){ return null; } }
+    try{ const c=typeof ventaActual==="function"?ventaActual():null; if(c&&c.estado==="abierto"&&(typeof esHoyVenta!=="function"||esHoyVenta())) return {nombre:c.cliente,agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()}; }catch(e){}
+    return null;
+  }
+  function despachar(r,opts){
+    opts=opts||{}; if(!r) return;
+    if(r.tipo==="pedido"){ cerrarFicha(); cerrarEsc(); if(window.mvTBEscaneo) window.mvTBEscaneo(r.cod); return; }
+    if(r.tipo==="nada"){ bip(false); aviso(false,"No encontré «"+r.cod+"»","Revisa que esté registrado en Inventario"); return; }
+    const ctx=(opts.ver||capaF||capaE)?{modo:"ver"}:contexto();
+    if(ctx.modo==="agregar") return encolar(r.p,q=>ctx.agregar(q),ctx.carrito);
+    bip(true); ficha(r.p,opts);
+  }
+
+  /* ---------- lector de mano (teclado): ráfaga rápida que termina en Enter ---------- */
+  let buf="", t0=0, tu=0;
+  function quitarTecleo(t,txt){
+    try{ if(!t||typeof t.value!=="string"||!t.value) return; let v=t.value; const k=v.lastIndexOf(txt);
+      if(k>=0) v=v.slice(0,k)+v.slice(k+txt.length);
+      else { for(let n=txt.length-1;n>=4;n--){ const cola2=txt.slice(0,n); if(v.endsWith(cola2)){ v=v.slice(0,v.length-n); break; } const ini=txt.slice(-n); if(v.endsWith(ini)){ v=v.slice(0,v.length-n); break; } } }
+      if(v!==t.value){ t.value=v.trim(); t.dispatchEvent(new Event("input",{bubbles:true})); } }catch(e){}
+  }
+  document.addEventListener("keydown",e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey) return; const now=performance.now();
+    if(e.key==="Enter"){
+      const txt=buf, n=txt.length, ritmo=n>1?(tu-t0)/(n-1):999; buf="";
+      if(n<5||now-tu>160||ritmo>45) return; // tecleado a mano
+      if(state.view==="scan"&&!esVende()&&!capaF&&!capaE) return; // pestaña «Escanear» de siempre
+      const r=resolver(txt); if(!r) return;
+      e.preventDefault(); e.stopImmediatePropagation(); quitarTecleo(e.target,txt); despachar(r);
+      return;
+    }
+    if(e.key.length!==1) return;
+    if(!buf||now-tu>160){ buf=""; t0=now; } tu=now; buf=(buf+e.key).slice(-160);
+  },true);
+
+  /* ---------- ficha emergente del producto ---------- */
+  let capaF=null, relojF=0;
+  function escF(e){ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); cerrarFicha(); } }
+  function cerrarFicha(){ if(capaF){ capaF.remove(); capaF=null; clearInterval(relojF); document.removeEventListener("keydown",escF,true); document.body.classList.remove("mvpq-sinscroll"); } }
+  function ficha(p0,opts){
+    opts=opts||{}; cerrarFicha(); cerrarEsc();
+    const cod=p0.codigo, P=()=>state.products.get(cod)||p0; const p=P();
+    const exBox=h("div",{class:"mvpq-num mvpq-ex"});
+    const pintaEx=()=>{ const s=estado(P()); exBox.className="mvpq-num mvpq-ex "+s.cls;
+      exBox.replaceChildren(h("span",null,"Existencias"),h("b",null,s.n<=0?"Agotado":String(s.n)),h("small",null,s.n<=0?"sin piezas disponibles":s.n===1?"única pieza":"piezas disponibles")); };
+    pintaEx(); relojF=setInterval(()=>{ if(!document.body.contains(exBox)){ clearInterval(relojF); return; } pintaEx(); },1000);
+    const fila=(k,v)=>h("div",{class:"mvpq-kv"},h("span",null,k),h("b",null,v));
+    const ab=ventaAbierta(); const v=vende();
+    const btnAgregar=ab?h("button",{type:"button",class:"mvpq-b prim",onclick:async()=>{ btnAgregar.disabled=true; await encolar(P(),q=>ab.agregar(q),ab.carrito); btnAgregar.disabled=false; pintaEx(); }},"＋ Agregar a la venta"+(ab.nombre?" · "+ab.nombre:"")):null;
+    const verFicha=esVende()?(v&&v.admin&&v.admin()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); v.verInventario(P()); }},"Ver en inventario"):null)
+      :(esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod); }},"Ficha completa"):null);
+    const etiq=!esVende()&&esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod,true); }},"🏷️ Etiqueta"):null;
+    const otro=h("button",{type:"button",class:"mvpq-b",onclick:()=>{ const cam=!!opts.camara; cerrarFicha(); abrirEscaner(cam); }},"▦ Escanear otro");
+    const caja=h("div",{class:"mvpq-caja mvpq-ficha",role:"dialog","aria-label":"Producto "+(p.nombre||cod)},
+      h("div",{class:"mvpq-cab"},h("span",{class:"mvpq-eti"},"Producto"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarFicha},"×")),
+      h("div",{class:"mvpq-cuerpo"},
+        h("div",{class:"mvpq-foto"},imgOrPh(p,"hero")),
+        h("div",{class:"mvpq-info"},
+          h("h2",null,p.nombre||cod),
+          h("div",{class:"mvpq-datos"},
+            fila("Modelo",[h("span",{class:"mvpq-cod"},cod),p.palabra?h("span",{class:"mvpq-pal"},p.palabra):null]),
+            fila("Material",p.material||"—"),
+            fila("Categoría",catName(p.categoria))),
+          h("div",{class:"mvpq-nums"},h("div",{class:"mvpq-num mvpq-precio"},h("span",null,"Precio"),h("b",null,money(p.precio)),h("small",null,"MXN mayoreo")),exBox),
+          p.notas?h("p",{class:"mvpq-notas"},p.notas):null)),
+      h("div",{class:"mvpq-acc"},btnAgregar,verFicha,etiq,otro,h("button",{type:"button",class:"mvpq-b",onclick:cerrarFicha},"Cerrar")));
+    capaF=h("div",{class:"mvpq-fondo"},caja); capaF.addEventListener("click",e=>{ if(e.target===capaF) cerrarFicha(); });
+    document.body.append(capaF); document.body.classList.add("mvpq-sinscroll"); document.addEventListener("keydown",escF,true);
+    setTimeout(()=>{ const b=caja.querySelector(".mvpq-b.prim")||caja.querySelector(".mvpq-x"); if(b&&!esVende()) b.focus(); },30);
+  }
+
+  /* ---------- «▦ Escanear»: pedido o producto (lector, tecleado o cámara de la laptop) ---------- */
+  let capaE=null, cam=null, zx=null;
+  const puedeCam=()=>/^https?:$/.test(location.protocol)&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+  function cargarZX(){ if(window.ZXing) return Promise.resolve(); if(zx) return zx; zx=new Promise((ok,no)=>{ const s=document.createElement("script"); s.src="zxing-0.21.3.min.js"; s.onload=ok; s.onerror=()=>{ zx=null; no(new Error("zxing")); }; document.head.append(s); }); return zx; }
+  function pararCam(){ if(cam){ cam.vivo=false; try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam=null; } }
+  function cerrarEsc(){ pararCam(); if(capaE){ capaE.remove(); capaE=null; document.body.classList.remove("mvpq-sinscroll"); } }
+  function abrirEscaner(conCamara){
+    const v=vende(); if(esVende()&&v&&v.camara){ cerrarFicha(); v.camara(); return; } // celular: la cámara de Marvea Vende
+    cerrarFicha(); cerrarEsc();
+    const msg=h("div",{class:"mvpq-msg"},"");
+    const inp=h("input",{type:"text",class:"mvpq-in",placeholder:"Escanea o escribe el código",autocomplete:"off",autocapitalize:"characters",spellcheck:"false","aria-label":"Código del pedido o del producto"});
+    const buscar=(txt)=>{ const r=resolver(txt); inp.value="";
+      if(!r||r.tipo==="nada"){ bip(false); msg.textContent=r?"No hay pedido ni producto con «"+r.cod+"»":""; msg.className="mvpq-msg bad"; inp.focus(); return; }
+      despachar(r,{ver:true,camara:!!cam}); };
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); e.stopPropagation(); if(inp.value.trim()) buscar(inp.value.trim()); } else if(e.key==="Escape"){ e.preventDefault(); cerrarEsc(); } });
+    const video=h("video",{class:"mvpq-video",muted:true,autoplay:true,playsinline:true}); video.muted=true; video.setAttribute("playsinline","");
+    const camBox=h("div",{class:"mvpq-cam",hidden:true},video,h("div",{class:"mvpq-mira"}));
+    const btnCam=puedeCam()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ if(cam){ pararCam(); camBox.hidden=true; btnCam.textContent="📷 Usar cámara"; inp.focus(); } else iniciarCam(); }},"📷 Usar cámara"):null;
+    async function iniciarCam(){
+      camBox.hidden=false; btnCam.textContent="Apagar cámara"; msg.textContent="Acerca el QR a la cámara"; msg.className="mvpq-msg";
+      try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720}}});
+        if(!capaE){ stream.getTracks().forEach(t=>t.stop()); return; }
+        cam={vivo:true,stream}; video.srcObject=stream; try{ await video.play(); }catch(e){}
+        const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+        let vuelta=0; const yo=cam;
+        const lee=(sx,sy,sw,sh,max)=>{ const k=Math.min(1,max/Math.max(sw,sh)); const w=Math.round(sw*k), hh=Math.round(sh*k); cv.width=w; cv.height=hh; cx.drawImage(video,sx,sy,sw,sh,0,0,w,hh);
+          const d=cx.getImageData(0,0,w,hh).data; const lum=new Uint8ClampedArray(w*hh); for(let i=0,j=0;i<lum.length;i++,j+=4) lum[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
+          try{ return qr.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(lum,w,hh))),hints).getText()||""; }catch(e){ return ""; } finally{ try{ qr.reset(); }catch(e){} } };
+        const tick=()=>{ if(!yo.vivo) return; let txt=""; const vw=video.videoWidth, vh=video.videoHeight;
+          if(vw&&vh){ vuelta++; const lado=Math.min(vw,vh)*0.7; try{ txt=vuelta%2?lee((vw-lado)/2,(vh-lado)/2,lado,lado,720):lee(0,0,vw,vh,1100); }catch(e){} }
+          if(txt){ const r=resolver(txt); if(r&&r.tipo!=="nada"){ despachar(r,{ver:true,camara:true}); return; } bip(false); msg.textContent="No reconozco ese código"; msg.className="mvpq-msg bad"; }
+          setTimeout(tick,txt?900:70); };
+        tick();
+      }catch(e){ console.warn(e); pararCam(); camBox.hidden=true; if(btnCam) btnCam.textContent="📷 Usar cámara"; msg.textContent="No se pudo abrir la cámara (revisa el permiso del navegador)."; msg.className="mvpq-msg bad"; }
+    }
+    const caja=h("div",{class:"mvpq-caja mvpq-esc",role:"dialog","aria-label":"Escanear"},
+      h("div",{class:"mvpq-cab"},h("h3",null,"▦ Escanear"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarEsc},"×")),
+      h("div",{class:"mvpq-tipos"},h("div",null,h("b",null,"Pedido"),h("span",null,"clienta, piezas, pago y envío")),h("div",null,h("b",null,"Producto"),h("span",null,"precio, material y existencias"))),
+      inp,camBox,msg,
+      h("div",{class:"mvpq-acc"},btnCam,h("button",{type:"button",class:"mvpq-b prim",onclick:()=>{ if(inp.value.trim()) buscar(inp.value.trim()); else inp.focus(); }},"Buscar")));
+    capaE=h("div",{class:"mvpq-fondo"},caja); capaE.addEventListener("click",e=>{ if(e.target===capaE) cerrarEsc(); });
+    document.body.append(capaE); document.body.classList.add("mvpq-sinscroll"); setTimeout(()=>inp.focus(),30);
+    if(conCamara&&btnCam) iniciarCam();
+  }
+
+  // Venta: el botón «▦ Escanear pedido» pasa a «▦ Escanear» (pedido o producto)
+  const obs=new MutationObserver(()=>{ try{
+    const b=document.querySelector(".mvtb-escbtn:not([data-mvpq])"); if(b){ const n=b.cloneNode(false); n.dataset.mvpq="1"; n.textContent="▦ Escanear"; n.title="Escanea el QR de un pedido (ficha del pedido) o de un producto (precio y existencias)"; n.addEventListener("click",()=>abrirEscaner(false)); b.replaceWith(n); }
+    if(capaE&&document.querySelector(".mvtb-fondo")) cerrarEsc(); // se abrió la ficha de un pedido
+  }catch(e){} });
+  try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
+
+  window.mvPQFicha=ficha; window.mvPQEscanear=abrirEscaner; window.mvPQEncolar=encolar; window.mvPQResolver=resolver; window.mvPQDespachar=despachar;
+})();
+</script>
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(script):not(style):not(.ctxmenu){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(.mvpq-fondo):not(.mvpq-hud):not(script):not(style):not(.ctxmenu){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
@@ -10867,7 +11181,7 @@ body.vx-on #vxCamWrap{display:block!important}
         el("div", { class: "vx-kpi negro" }, el("span", null, "Vendido"), el("b", null, precio(R.total)), el("small", null, R.ventas + " venta" + (R.ventas === 1 ? "" : "s") + " · " + R.piezas + " pzas")),
         el("button", { type: "button", class: "vx-kpi vx-kpib" + (R.porCobrar > 0.005 ? " rojo" : " amarillo"), onclick: () => { V.vf = R.porCobrar > 0.005 ? "debe" : "todas"; render(); setTimeout(() => { const l = $$("#vxVentas"); if (l) l.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60); } }, el("span", null, R.porCobrar > 0.005 ? "Por cobrar" : "Todo cobrado"), el("b", null, precio(R.porCobrar)), el("small", null, R.porCobrar > 0.005 ? R.pendientes + " pendiente" + (R.pendientes === 1 ? "" : "s") + " · ver" : "✓ sin pendientes"))),
       el("button", { class: "vx-cta", type: "button", onclick: nueva }, abierta ? "Continuar venta abierta" : "Nueva venta"),
-      el("button", { class: "vx-cta2 vx-qrbtn", type: "button", onclick: () => { V.scanLibre = true; abrirCamara(); } }, "▦ Escanear QR · pedido o pieza"), /* mvQR */
+      el("button", { class: "vx-cta2 vx-qrbtn", type: "button", onclick: () => { V.scanLibre = true; abrirCamara(); } }, "▦ Escanear QR · pedido o producto"), /* mvQR */
       abierta ? el("button", { class: "vx-cta2", type: "button", onclick: ventaNueva }, "Venta nueva") : null,
       ...(() => { const ab = abiertasTodas(); if (!ab.length) return []; const hoyK = hoyKey(); const dia = x => { const l = state.lives.find(y => y.id === x.liveId); return l && l.dia && l.dia !== hoyK ? new Date(l.dia + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " · " : ""; };
         return [el("h2", { class: "vx-h2" }, "Abiertas ", el("span", { class: "vx-h2n" }, String(ab.length))),
@@ -10932,9 +11246,9 @@ body.vx-on #vxCamWrap{display:block!important}
       c && c.cliente ? el("div", { class: "vx-cliok" }, k ? el("span", { class: "vx-chip ok" }, "✓ Guardada") : el("span", { class: "vx-chip" }, "Nueva"), k && k.whatsapp ? el("span", null, k.whatsapp) : null) : null);
 
     // escanear / buscar
-    const scan = el("input", { id: "vxScan", class: "vx-input vx-scan", placeholder: "Escanea o escribe palabra / código", value: V.q, autocomplete: "off", autocapitalize: "characters", spellcheck: "false", enterkeyhint: "done" });
+    const scan = el("input", { id: "vxScan", class: "vx-input vx-scan", placeholder: "Escanea el QR o escribe palabra / código", value: V.q, autocomplete: "off", autocapitalize: "characters", spellcheck: "false", enterkeyhint: "done" });
     scan.addEventListener("input", () => { V.q = scan.value; render(); });
-    scan.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); const raw = scan.value.trim(); if (!raw) return; const p = porCodigo(raw) || porPalabra(raw) || searchProducts(raw)[0]; V.q = ""; scan.value = ""; if (p) agregar(p); else { toast("No encontré «" + raw + "»", true); render(); } } });
+    scan.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); const raw = scan.value.trim(); if (!raw) return; const p = porCodigo(raw) || porPalabra(raw) || searchProducts(raw)[0]; V.q = ""; scan.value = ""; if (p) encola(p); /* mvPQ */ else { toast("No encontré «" + raw + "»", true); render(); } } });
     const camBtn = el("button", { class: "vx-cam", type: "button", "aria-label": "Escanear con la cámara", onclick: () => { V.scanLibre = false; abrirCamara(); } }, el("span", { class: "vx-camico" }), "Cámara");
     const res = V.q.trim() ? searchProducts(V.q.trim()).slice(0, 12) : [];
     const resultados = V.q.trim() ? el("div", { class: "vx-grid" }, ...(res.length ? res.map(p => { const av = Number(p.existencia) || 0; return el("button", { type: "button", class: "vx-tile" + (av <= 0 ? " agotado" : ""), onclick: () => { V.q = ""; agregar(p); } }, foto(p, "vx-tfoto"), el("div", { class: "vx-tinfo" }, el("b", null, p.palabra || p.codigo), el("span", { class: "vx-tn" }, p.nombre), el("div", { class: "vx-tp" }, el("span", null, precio(p.precio)), el("small", null, av <= 0 ? "Agotado" : "Quedan " + av)))); }) : [el("div", { class: "vx-vacio" }, "Sin resultados")])) : null;
@@ -11044,6 +11358,16 @@ body.vx-on #vxCamWrap{display:block!important}
         el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: async () => { await reabrirVenta(c); V.detalle = null; V.pantalla = "venta"; render(); } }, "↺ Reabrir venta (activa)"), el("button", { type: "button", onclick: () => { V.detalle = null; render(); } }, "Cerrar"))));
   }
 
+  /* mvPQ (20-nov-2026): cada lectura de QR va en fila (ninguna se pierde ni se duplica) y se confirma con aviso y sonido */
+  function encola(p) { return window.mvPQEncolar ? window.mvPQEncolar(p, q => agregar(q), () => ventaActual()) : agregar(p); }
+  window.mvPQVende = {
+    contexto: () => (V.tab === "vender" && V.pantalla === "venta" && !V.cobro && !V.detalle && !V.scanLibre) ? { modo: "agregar", agregar: p => agregar(p), carrito: () => ventaActual() } : { modo: "ver" },
+    ventaAbierta: () => { const c = ventaActual(); return c && c.estado === "abierto" ? { nombre: c.cliente, agregar: p => agregar(p), carrito: () => ventaActual() } : null; },
+    admin: () => esAdmin(),
+    verInventario: p => { V.tab = "inv"; V.prod = p.codigo; render(); },
+    camara: () => { V.scanLibre = true; abrirCamara(); }
+  };
+
   /* ---------- cámara (códigos de barras de las etiquetas) ---------- */
   let lector = null, cargando = null;
   function cargarZXing() { if (window.ZXing) return Promise.resolve(); if (cargando) return cargando; cargando = new Promise((ok, err) => { const s = document.createElement("script"); s.src = "zxing-0.21.3.min.js"; s.onload = ok; s.onerror = () => { cargando = null; err(new Error("zxing")); }; document.head.append(s); }); return cargando; }
@@ -11076,13 +11400,11 @@ body.vx-on #vxCamWrap{display:block!important}
         try { return reader.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(lum, w, hh))), hints).getText() || ""; } catch (e) { return ""; } finally { try { reader.reset(); } catch (e) {} }
       };
       const alLeer = (txt) => {
-        const ahora = Date.now(); if (txt === ultimo && ahora - ultimoT < 1500) return; ultimo = txt; ultimoT = ahora;
+        const ahora = Date.now(); if (txt === ultimo && ahora - ultimoT < 1100) { ultimoT = ahora; return; } ultimo = txt; ultimoT = ahora; /* mvPQ: para sumar otra pieza del mismo producto, retira el QR y vuelve a acercarlo */
         if (window.mvTBEscaneo && window.mvTBEscaneo(txt)) { vibra(40); cerrarCamara(); return; } /* mvTB */
         const p = porCodigo(txt) || porPalabra(txt);
-        if (p && V.scanLibre) { /* mvQR: desde el inicio, la pieza se muestra (no se agrega a ninguna venta) */ vibra(30); const av = Number(p.existencia) || 0;
-          if (esAdmin()) { cerrarCamara(); V.tab = "inv"; V.prod = p.codigo; render(); return; }
-          V.scan = { msg: (p.nombre || p.codigo) + " · " + precio(p.precio) + " · " + av + (av === 1 ? " pieza" : " piezas"), ok: true }; const m0 = $$("#vxScanMsg"); if (m0) { m0.textContent = V.scan.msg; m0.className = "vx-scanmsg ok"; } return; }
-        if (p) { agregar(p); V.scan = { msg: "+1 " + (p.palabra || p.codigo), ok: true }; } else { vibra(80); V.scan = { msg: "No reconozco «" + txt + "»", ok: false }; }
+        if (p && V.scanLibre) { /* mvPQ: ficha del producto */ vibra(30); cerrarCamara(); if (window.mvPQFicha) window.mvPQFicha(p, { camara: true }); return; }
+        if (p) { V.scan = { msg: "Agregando " + (p.palabra || p.codigo) + "…", ok: true }; const pm = encola(p); /* mvPQ */ if (pm && pm.then) pm.then(r => { if (!r || !camWrap) return; V.scan = { msg: r.msg, ok: r.ok }; const m2 = $$("#vxScanMsg"); if (m2) { m2.textContent = r.msg; m2.className = "vx-scanmsg " + (r.ok ? "ok" : "bad"); } camaraCapa(); }); } else { vibra(80); V.scan = { msg: "No reconozco «" + txt + "»", ok: false }; }
         const m = $$("#vxScanMsg"); if (m) { m.textContent = V.scan.msg; m.className = "vx-scanmsg " + (V.scan.ok ? "ok" : "bad"); }
       };
       const tick = () => {
@@ -11109,7 +11431,7 @@ body.vx-on #vxCamWrap{display:block!important}
       hecho = h; try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
       if (/^MV\d{8}$/.test(h)) { if (window.mvTBEscaneo) window.mvTBEscaneo(h); return true; }
       const p = porCodigo(h); if (!p) { toast("No encontré la pieza " + h, true); return true; }
-      if (esAdmin()) { V.tab = "inv"; V.prod = p.codigo; render(); } else toast((p.nombre || p.codigo) + " · " + precio(p.precio) + " · " + (Number(p.existencia) || 0) + " pzas");
+      if (window.mvPQFicha) window.mvPQFicha(p, {}); /* mvPQ */ else if (esAdmin()) { V.tab = "inv"; V.prod = p.codigo; render(); } else toast((p.nombre || p.codigo) + " · " + precio(p.precio) + " · " + (Number(p.existencia) || 0) + " pzas");
       return true;
     }
     const vigila = () => { let n = 0; const t = setInterval(() => { let ok = true; try { ok = intenta(); } catch (e) { console.warn(e); } if (ok || ++n > 240) clearInterval(t); }, 500); };
