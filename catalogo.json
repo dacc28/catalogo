@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T06:15:04.772Z",
+ "actualizado": "2026-11-21T06:30:05.990Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1599,7 +1599,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
@@ -1927,18 +1927,6 @@
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00067",
-   "nombre": "Trio de brazaletes Cartie",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
-   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
