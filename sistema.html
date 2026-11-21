@@ -11119,4 +11119,150 @@ body.vx-on .vx-topr>*{flex:none}
   window.mvPQFicha=ficha; window.mvPQEscanear=abrirEscaner; window.mvPQEncolar=encolar; window.mvPQResolver=resolver; window.mvPQDespachar=despachar;
 })();
 </script>
+<style id="mv-notas-css">
+/* mvNotas · notas compartidas (letra Aptos; si el equipo no la tiene, la más parecida del sistema) */
+#mvNotasBtn{position:fixed;right:22px;bottom:22px;z-index:900;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px 11px 14px;
+  background:rgba(90,39,72,.92);color:#fff;font:600 14px Aptos,"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;cursor:pointer;
+  box-shadow:0 10px 30px rgba(90,39,72,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#mvNotasBtn svg{width:18px;height:18px}
+#mvNotasBtn b{min-width:20px;height:20px;border-radius:10px;background:#F2653F;color:#fff;font-size:12px;display:grid;place-items:center;padding:0 6px}
+#mvNotasBtn[hidden]{display:none}
+#mvNotasCapa{position:fixed;inset:0;z-index:2147483000;font-family:var(--mvn-f);color:#1D1D1F;-webkit-font-smoothing:antialiased}
+#mvNotasCapa[hidden]{display:none}
+#mvNotasCapa *{box-sizing:border-box}
+.mvn-velo{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:opacity .25s}
+#mvNotasCapa.on .mvn-velo{opacity:1}
+.mvn-hoja{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  box-shadow:-20px 0 60px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+#mvNotasCapa.on .mvn-hoja{transform:none}
+.mvn-grip{display:none}
+.mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 20px 8px}
+.mvn-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#5A2748}
+.mvn-sub{margin:2px 0 0;font-size:13px;color:#6E6E73}
+.mvn-x{border:0;background:#F2F2F7;width:32px;height:32px;border-radius:50%;font-size:14px;color:#6E6E73;cursor:pointer;flex:none}
+.mvn-nueva{display:flex;gap:8px;align-items:flex-end;margin:8px 16px 6px;padding:8px;border-radius:16px;background:#F2F2F7}
+.mvn-nueva textarea{flex:1;border:0;background:transparent;resize:none;font:16px var(--mvn-f);line-height:1.35;padding:6px 6px;outline:none;color:#1D1D1F;min-height:32px}
+.mvn-nueva button{border:0;border-radius:12px;background:#5A2748;color:#fff;font:600 15px var(--mvn-f);padding:8px 14px;cursor:pointer}
+.mvn-lista{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px calc(24px + env(safe-area-inset-bottom))}
+.mvn-fila{display:flex;align-items:flex-start;gap:10px;padding:12px 8px;border-bottom:1px solid rgba(0,0,0,.06)}
+.mvn-circ{flex:none;border:0;background:transparent;padding:0;width:28px;height:28px;cursor:pointer;margin-top:-2px}
+.mvn-circ svg{width:28px;height:28px;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mvn-circ circle{stroke:#C7C7CC;stroke-width:1.6}
+.mvn-circ path{stroke:transparent;stroke-width:2.2}
+.mvn-fila.hecha .mvn-circ circle{fill:#5A2748;stroke:#5A2748}
+.mvn-fila.hecha .mvn-circ path{stroke:#fff}
+.mvn-txt{flex:1;min-width:0}
+.mvn-t{font-size:16px;line-height:1.35;word-wrap:break-word;overflow-wrap:anywhere}
+.mvn-fila.hecha .mvn-t{text-decoration:line-through;text-decoration-color:#8E8E93;color:#8E8E93}
+.mvn-txt small{display:block;margin-top:3px;font-size:12px;color:#8E8E93}
+.mvn-del{flex:none;border:0;background:transparent;color:#C7C7CC;font-size:13px;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.mvn-del:active,.mvn-del:hover{background:#F2F2F7;color:#D70015}
+.mvn-vacio{padding:28px 14px;text-align:center;color:#8E8E93;font-size:15px;line-height:1.4}
+.mvn-hechash{display:flex;justify-content:space-between;align-items:center;padding:16px 8px 4px}
+.mvn-hechash button{border:0;background:transparent;color:#5A2748;font:600 14px var(--mvn-f);cursor:pointer;padding:4px 0}
+.mvn-hechash button.rojo{color:#D70015}
+@media (max-width:640px){
+  .mvn-hoja{top:auto;left:0;right:0;width:auto;height:calc(100% - 44px - env(safe-area-inset-top));border-radius:22px 22px 0 0;transform:translateY(102%);box-shadow:0 -20px 60px rgba(0,0,0,.18)}
+  #mvNotasCapa.on .mvn-hoja{transform:none}
+  .mvn-grip{display:block;width:38px;height:5px;border-radius:3px;background:#D1D1D6;margin:8px auto 0}
+  .mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{padding-top:10px}
+  #mvNotasBtn{right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
+</style>
+<script id="mv-notas-js">
+/* ===== mvNotas · Notas compartidas entre administradores (20-nov-2026) =====
+   Viven en la nube (marvea_docs, colección «notas») y llegan en vivo a todos los equipos de los administradores:
+   sistema en línea, Marvea Vende (iPhone/iPad) y la app de la Mac. Un círculo marca cada nota como hecha (queda tachada).
+   Sistema en línea: botón flotante «Notas» abajo a la derecha. Marvea Vende: menú ☰ › Notas (el botón flotante se oculta). */
+(function(){
+  if(window.mvNotas) return;
+  const LETRA='Aptos,"Aptos Display","Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif';
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const perfil=()=>{ try{ return JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}; }catch(e){ return {}; } };
+  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} return perfil().rol||""; };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
+  const yo=()=>{ const p=perfil(); return String(p.usuario||"").toUpperCase()||"YO"; };
+  const db=()=>window.state&&window.state.db||(typeof state!=="undefined"?state.db:null);
+  const aviso=(m,mal)=>{ try{ toast(m,mal); }catch(e){} };
+  const cuando=iso=>{ const t=Date.parse(iso||""); if(!t) return ""; const s=Math.round((Date.now()-t)/1000);
+    if(s<60) return "ahora"; if(s<3600) return "hace "+Math.round(s/60)+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h";
+    return new Date(t).toLocaleDateString("es-MX",{day:"numeric",month:"short"}); };
+
+  const N={ lista:new Map(), cbs:new Set(), suscrito:false, cargado:false, abierta:false, verHechas:false, ocupado:new Set() };
+  function avisar(){ for(const f of N.cbs){ try{ f(); }catch(e){ console.warn(e); } } pintar(); pintarBoton(); }
+  function suscribir(){
+    const d=db(); if(N.suscrito||!d) return; N.suscrito=true;
+    try{ d.collection("notas").onSnapshot(s=>{ const m=new Map(); for(const x of s.docs){ const v=x.data(); if(v&&typeof v.texto==="string") m.set(x.id,Object.assign({id:x.id},v)); } N.lista=m; N.cargado=true; avisar(); },e=>console.warn("notas",e)); }catch(e){ console.warn(e); N.suscrito=false; }
+  }
+  (function(){ const t=setInterval(()=>{ if(db()){ clearInterval(t); suscribir(); } },400); })();
+
+  const ordenadas=()=>{ const l=[...N.lista.values()];
+    const pend=l.filter(x=>!x.hecha).sort((a,b)=>String(b.creado||"").localeCompare(String(a.creado||"")));
+    const hechas=l.filter(x=>x.hecha).sort((a,b)=>String(b.hechaEn||b.creado||"").localeCompare(String(a.hechaEn||a.creado||"")));
+    return {pend,hechas}; };
+  async function agregar(texto){ texto=String(texto||"").trim().slice(0,600); if(!texto) return false; const d=db(); if(!d){ aviso("Sin conexión con la nube",true); return false; }
+    const ahora=new Date().toISOString(); const id="N"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    const nota={texto,hecha:false,autor:yo(),creado:ahora,actualizado:ahora};
+    N.lista.set(id,Object.assign({id},nota)); avisar();
+    try{ await d.doc("notas/"+id).set(nota); return true; }catch(e){ N.lista.delete(id); avisar(); aviso("No se guardó la nota (¿hay internet?)",true); return false; } }
+  async function alternar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d||N.ocupado.has(id)) return; N.ocupado.add(id);
+    const ahora=new Date().toISOString(); const nuevo=Object.assign({},x,{hecha:!x.hecha,actualizado:ahora}); if(nuevo.hecha){ nuevo.hechaPor=yo(); nuevo.hechaEn=ahora; } else { delete nuevo.hechaPor; delete nuevo.hechaEn; }
+    N.lista.set(id,nuevo); avisar(); const datos=Object.assign({},nuevo); delete datos.id;
+    try{ await d.doc("notas/"+id).set(datos); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo marcar (¿hay internet?)",true); } finally{ N.ocupado.delete(id); } }
+  async function borrar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d) return; N.lista.delete(id); avisar();
+    try{ await d.doc("notas/"+id).delete(); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo borrar (¿hay internet?)",true); } }
+  async function borrarHechas(){ const {hechas}=ordenadas(); if(!hechas.length) return; if(!confirm("¿Borrar las "+hechas.length+" nota(s) hechas? Se borran para todos los administradores.")) return; for(const x of hechas) await borrar(x.id); }
+
+  /* ---------- ventana ---------- */
+  let capa=null;
+  function abrir(){ if(!esAdmin()){ aviso("Las notas son solo para administradores",true); return; } suscribir(); N.abierta=true; if(!capa){ capa=document.createElement("div"); capa.id="mvNotasCapa"; capa.innerHTML=
+      '<div class="mvn-velo"></div><section class="mvn-hoja" role="dialog" aria-label="Notas"><div class="mvn-grip"></div><div class="mvn-logo"><img src="logo-marvea-letras.png" alt="Marvea"></div>'+
+      '<header class="mvn-head"><div><h2>Notas</h2><p class="mvn-sub"></p></div><button type="button" class="mvn-x" aria-label="Cerrar">✕</button></header>'+
+      '<form class="mvn-nueva" autocomplete="off"><textarea rows="1" maxlength="600" placeholder="Escribe una nota o tarea…" enterkeyhint="send"></textarea><button type="submit" aria-label="Agregar">Agregar</button></form>'+
+      '<div class="mvn-lista"></div></section>';
+      document.body.append(capa);
+      capa.style.setProperty("--mvn-f",LETRA);
+      capa.querySelector(".mvn-velo").onclick=cerrar; capa.querySelector(".mvn-x").onclick=cerrar;
+      const ta=capa.querySelector("textarea"), fm=capa.querySelector("form");
+      const crecer=()=>{ ta.style.height="auto"; ta.style.height=Math.min(140,ta.scrollHeight)+"px"; };
+      ta.addEventListener("input",crecer);
+      ta.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); fm.requestSubmit?fm.requestSubmit():fm.dispatchEvent(new Event("submit",{cancelable:true})); } });
+      fm.addEventListener("submit",async e=>{ e.preventDefault(); const t=ta.value.trim(); if(!t) return; ta.value=""; crecer(); await agregar(t); });
+      capa.querySelector(".mvn-lista").addEventListener("click",e=>{ const b=e.target.closest("[data-acc]"); if(!b) return; const id=b.closest("[data-id]")&&b.closest("[data-id]").dataset.id;
+        if(b.dataset.acc==="hecha") alternar(id); else if(b.dataset.acc==="borrar"){ if(confirm("¿Borrar esta nota para todos?")) borrar(id); }
+        else if(b.dataset.acc==="ver"){ N.verHechas=!N.verHechas; pintar(); } else if(b.dataset.acc==="limpiar") borrarHechas(); });
+      document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&N.abierta) cerrar(); });
+    }
+    capa.classList.remove("on"); capa.hidden=false; pintar(); requestAnimationFrame(()=>requestAnimationFrame(()=>capa.classList.add("on")));
+    try{ document.documentElement.classList.add("mvn-quieto"); }catch(e){}
+  }
+  function cerrar(){ N.abierta=false; if(!capa) return; capa.classList.remove("on"); try{ document.documentElement.classList.remove("mvn-quieto"); }catch(e){} setTimeout(()=>{ if(!N.abierta&&capa) capa.hidden=true; },260); for(const f of N.cbs){ try{ f(); }catch(e){} } }
+  const CIRC='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg>';
+  function fila(x){ const meta=[x.autor||"",cuando(x.creado)].filter(Boolean).join(" · ")+(x.hecha&&x.hechaPor?" · hecha por "+x.hechaPor+(x.hechaEn?" "+cuando(x.hechaEn):""):"");
+    return '<div class="mvn-fila'+(x.hecha?" hecha":"")+'" data-id="'+esc(x.id)+'"><button type="button" class="mvn-circ" data-acc="hecha" aria-label="'+(x.hecha?"Marcar pendiente":"Marcar hecha")+'">'+CIRC+'</button>'+
+      '<div class="mvn-txt"><div class="mvn-t">'+esc(x.texto).replace(/\n/g,"<br>")+'</div><small>'+esc(meta)+'</small></div><button type="button" class="mvn-del" data-acc="borrar" aria-label="Borrar nota">✕</button></div>'; }
+  function pintar(){ if(!capa||capa.hidden&&!N.abierta) return; const {pend,hechas}=ordenadas();
+    capa.querySelector(".mvn-sub").textContent=!N.cargado?"Cargando…":pend.length?(pend.length===1?"1 pendiente":pend.length+" pendientes")+" · se comparten en vivo con los administradores":"Todo hecho · se comparten en vivo con los administradores";
+    const l=capa.querySelector(".mvn-lista");
+    let html=pend.length?pend.map(fila).join(""):(N.cargado?'<div class="mvn-vacio">Sin pendientes. Escribe arriba una nota o tarea y le aparecerá a los demás administradores.</div>':"");
+    if(hechas.length) html+='<div class="mvn-hechash"><button type="button" data-acc="ver">'+(N.verHechas?"Ocultar":"Ver")+' hechas ('+hechas.length+')</button>'+(N.verHechas?'<button type="button" class="rojo" data-acc="limpiar">Borrar hechas</button>':"")+'</div>'+(N.verHechas?hechas.map(fila).join(""):"");
+    l.innerHTML=html; }
+  setInterval(()=>{ if(N.abierta) pintar(); },60000);
+
+  /* ---------- botón flotante (sistema en línea / Mac) ---------- */
+  let boton=null;
+  function pintarBoton(){ if(document.body&&document.body.classList.contains("vx-on")){ if(boton) boton.hidden=true; return; }
+    if(!esAdmin()||!db()){ if(boton) boton.hidden=true; return; }
+    if(!boton){ boton=document.createElement("button"); boton.type="button"; boton.id="mvNotasBtn"; boton.setAttribute("aria-label","Notas"); boton.onclick=abrir; document.body.append(boton); }
+    const n=ordenadas().pend.length; boton.hidden=false; boton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg><span>Notas</span>'+(n?'<b>'+n+'</b>':''); }
+  setInterval(pintarBoton,1500);
+
+  window.mvNotas={ abrir, cerrar, agregar, alternar, borrar, abierta:()=>N.abierta, pendientes:()=>ordenadas().pend.length, lista:()=>ordenadas(), alCambiar:f=>{ N.cbs.add(f); return ()=>N.cbs.delete(f); } };
+})();
+</script>
 </body></html>

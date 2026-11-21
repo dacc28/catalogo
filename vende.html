@@ -11119,10 +11119,156 @@ body.vx-on .vx-topr>*{flex:none}
   window.mvPQFicha=ficha; window.mvPQEscanear=abrirEscaner; window.mvPQEncolar=encolar; window.mvPQResolver=resolver; window.mvPQDespachar=despachar;
 })();
 </script>
+<style id="mv-notas-css">
+/* mvNotas · notas compartidas (letra Aptos; si el equipo no la tiene, la más parecida del sistema) */
+#mvNotasBtn{position:fixed;right:22px;bottom:22px;z-index:900;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px 11px 14px;
+  background:rgba(90,39,72,.92);color:#fff;font:600 14px Aptos,"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;cursor:pointer;
+  box-shadow:0 10px 30px rgba(90,39,72,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#mvNotasBtn svg{width:18px;height:18px}
+#mvNotasBtn b{min-width:20px;height:20px;border-radius:10px;background:#F2653F;color:#fff;font-size:12px;display:grid;place-items:center;padding:0 6px}
+#mvNotasBtn[hidden]{display:none}
+#mvNotasCapa{position:fixed;inset:0;z-index:2147483000;font-family:var(--mvn-f);color:#1D1D1F;-webkit-font-smoothing:antialiased}
+#mvNotasCapa[hidden]{display:none}
+#mvNotasCapa *{box-sizing:border-box}
+.mvn-velo{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:opacity .25s}
+#mvNotasCapa.on .mvn-velo{opacity:1}
+.mvn-hoja{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  box-shadow:-20px 0 60px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+#mvNotasCapa.on .mvn-hoja{transform:none}
+.mvn-grip{display:none}
+.mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 20px 8px}
+.mvn-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#5A2748}
+.mvn-sub{margin:2px 0 0;font-size:13px;color:#6E6E73}
+.mvn-x{border:0;background:#F2F2F7;width:32px;height:32px;border-radius:50%;font-size:14px;color:#6E6E73;cursor:pointer;flex:none}
+.mvn-nueva{display:flex;gap:8px;align-items:flex-end;margin:8px 16px 6px;padding:8px;border-radius:16px;background:#F2F2F7}
+.mvn-nueva textarea{flex:1;border:0;background:transparent;resize:none;font:16px var(--mvn-f);line-height:1.35;padding:6px 6px;outline:none;color:#1D1D1F;min-height:32px}
+.mvn-nueva button{border:0;border-radius:12px;background:#5A2748;color:#fff;font:600 15px var(--mvn-f);padding:8px 14px;cursor:pointer}
+.mvn-lista{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px calc(24px + env(safe-area-inset-bottom))}
+.mvn-fila{display:flex;align-items:flex-start;gap:10px;padding:12px 8px;border-bottom:1px solid rgba(0,0,0,.06)}
+.mvn-circ{flex:none;border:0;background:transparent;padding:0;width:28px;height:28px;cursor:pointer;margin-top:-2px}
+.mvn-circ svg{width:28px;height:28px;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mvn-circ circle{stroke:#C7C7CC;stroke-width:1.6}
+.mvn-circ path{stroke:transparent;stroke-width:2.2}
+.mvn-fila.hecha .mvn-circ circle{fill:#5A2748;stroke:#5A2748}
+.mvn-fila.hecha .mvn-circ path{stroke:#fff}
+.mvn-txt{flex:1;min-width:0}
+.mvn-t{font-size:16px;line-height:1.35;word-wrap:break-word;overflow-wrap:anywhere}
+.mvn-fila.hecha .mvn-t{text-decoration:line-through;text-decoration-color:#8E8E93;color:#8E8E93}
+.mvn-txt small{display:block;margin-top:3px;font-size:12px;color:#8E8E93}
+.mvn-del{flex:none;border:0;background:transparent;color:#C7C7CC;font-size:13px;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.mvn-del:active,.mvn-del:hover{background:#F2F2F7;color:#D70015}
+.mvn-vacio{padding:28px 14px;text-align:center;color:#8E8E93;font-size:15px;line-height:1.4}
+.mvn-hechash{display:flex;justify-content:space-between;align-items:center;padding:16px 8px 4px}
+.mvn-hechash button{border:0;background:transparent;color:#5A2748;font:600 14px var(--mvn-f);cursor:pointer;padding:4px 0}
+.mvn-hechash button.rojo{color:#D70015}
+@media (max-width:640px){
+  .mvn-hoja{top:auto;left:0;right:0;width:auto;height:calc(100% - 44px - env(safe-area-inset-top));border-radius:22px 22px 0 0;transform:translateY(102%);box-shadow:0 -20px 60px rgba(0,0,0,.18)}
+  #mvNotasCapa.on .mvn-hoja{transform:none}
+  .mvn-grip{display:block;width:38px;height:5px;border-radius:3px;background:#D1D1D6;margin:8px auto 0}
+  .mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{padding-top:10px}
+  #mvNotasBtn{right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
+</style>
+<script id="mv-notas-js">
+/* ===== mvNotas · Notas compartidas entre administradores (20-nov-2026) =====
+   Viven en la nube (marvea_docs, colección «notas») y llegan en vivo a todos los equipos de los administradores:
+   sistema en línea, Marvea Vende (iPhone/iPad) y la app de la Mac. Un círculo marca cada nota como hecha (queda tachada).
+   Sistema en línea: botón flotante «Notas» abajo a la derecha. Marvea Vende: menú ☰ › Notas (el botón flotante se oculta). */
+(function(){
+  if(window.mvNotas) return;
+  const LETRA='Aptos,"Aptos Display","Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif';
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const perfil=()=>{ try{ return JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}; }catch(e){ return {}; } };
+  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} return perfil().rol||""; };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
+  const yo=()=>{ const p=perfil(); return String(p.usuario||"").toUpperCase()||"YO"; };
+  const db=()=>window.state&&window.state.db||(typeof state!=="undefined"?state.db:null);
+  const aviso=(m,mal)=>{ try{ toast(m,mal); }catch(e){} };
+  const cuando=iso=>{ const t=Date.parse(iso||""); if(!t) return ""; const s=Math.round((Date.now()-t)/1000);
+    if(s<60) return "ahora"; if(s<3600) return "hace "+Math.round(s/60)+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h";
+    return new Date(t).toLocaleDateString("es-MX",{day:"numeric",month:"short"}); };
+
+  const N={ lista:new Map(), cbs:new Set(), suscrito:false, cargado:false, abierta:false, verHechas:false, ocupado:new Set() };
+  function avisar(){ for(const f of N.cbs){ try{ f(); }catch(e){ console.warn(e); } } pintar(); pintarBoton(); }
+  function suscribir(){
+    const d=db(); if(N.suscrito||!d) return; N.suscrito=true;
+    try{ d.collection("notas").onSnapshot(s=>{ const m=new Map(); for(const x of s.docs){ const v=x.data(); if(v&&typeof v.texto==="string") m.set(x.id,Object.assign({id:x.id},v)); } N.lista=m; N.cargado=true; avisar(); },e=>console.warn("notas",e)); }catch(e){ console.warn(e); N.suscrito=false; }
+  }
+  (function(){ const t=setInterval(()=>{ if(db()){ clearInterval(t); suscribir(); } },400); })();
+
+  const ordenadas=()=>{ const l=[...N.lista.values()];
+    const pend=l.filter(x=>!x.hecha).sort((a,b)=>String(b.creado||"").localeCompare(String(a.creado||"")));
+    const hechas=l.filter(x=>x.hecha).sort((a,b)=>String(b.hechaEn||b.creado||"").localeCompare(String(a.hechaEn||a.creado||"")));
+    return {pend,hechas}; };
+  async function agregar(texto){ texto=String(texto||"").trim().slice(0,600); if(!texto) return false; const d=db(); if(!d){ aviso("Sin conexión con la nube",true); return false; }
+    const ahora=new Date().toISOString(); const id="N"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    const nota={texto,hecha:false,autor:yo(),creado:ahora,actualizado:ahora};
+    N.lista.set(id,Object.assign({id},nota)); avisar();
+    try{ await d.doc("notas/"+id).set(nota); return true; }catch(e){ N.lista.delete(id); avisar(); aviso("No se guardó la nota (¿hay internet?)",true); return false; } }
+  async function alternar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d||N.ocupado.has(id)) return; N.ocupado.add(id);
+    const ahora=new Date().toISOString(); const nuevo=Object.assign({},x,{hecha:!x.hecha,actualizado:ahora}); if(nuevo.hecha){ nuevo.hechaPor=yo(); nuevo.hechaEn=ahora; } else { delete nuevo.hechaPor; delete nuevo.hechaEn; }
+    N.lista.set(id,nuevo); avisar(); const datos=Object.assign({},nuevo); delete datos.id;
+    try{ await d.doc("notas/"+id).set(datos); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo marcar (¿hay internet?)",true); } finally{ N.ocupado.delete(id); } }
+  async function borrar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d) return; N.lista.delete(id); avisar();
+    try{ await d.doc("notas/"+id).delete(); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo borrar (¿hay internet?)",true); } }
+  async function borrarHechas(){ const {hechas}=ordenadas(); if(!hechas.length) return; if(!confirm("¿Borrar las "+hechas.length+" nota(s) hechas? Se borran para todos los administradores.")) return; for(const x of hechas) await borrar(x.id); }
+
+  /* ---------- ventana ---------- */
+  let capa=null;
+  function abrir(){ if(!esAdmin()){ aviso("Las notas son solo para administradores",true); return; } suscribir(); N.abierta=true; if(!capa){ capa=document.createElement("div"); capa.id="mvNotasCapa"; capa.innerHTML=
+      '<div class="mvn-velo"></div><section class="mvn-hoja" role="dialog" aria-label="Notas"><div class="mvn-grip"></div><div class="mvn-logo"><img src="logo-marvea-letras.png" alt="Marvea"></div>'+
+      '<header class="mvn-head"><div><h2>Notas</h2><p class="mvn-sub"></p></div><button type="button" class="mvn-x" aria-label="Cerrar">✕</button></header>'+
+      '<form class="mvn-nueva" autocomplete="off"><textarea rows="1" maxlength="600" placeholder="Escribe una nota o tarea…" enterkeyhint="send"></textarea><button type="submit" aria-label="Agregar">Agregar</button></form>'+
+      '<div class="mvn-lista"></div></section>';
+      document.body.append(capa);
+      capa.style.setProperty("--mvn-f",LETRA);
+      capa.querySelector(".mvn-velo").onclick=cerrar; capa.querySelector(".mvn-x").onclick=cerrar;
+      const ta=capa.querySelector("textarea"), fm=capa.querySelector("form");
+      const crecer=()=>{ ta.style.height="auto"; ta.style.height=Math.min(140,ta.scrollHeight)+"px"; };
+      ta.addEventListener("input",crecer);
+      ta.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); fm.requestSubmit?fm.requestSubmit():fm.dispatchEvent(new Event("submit",{cancelable:true})); } });
+      fm.addEventListener("submit",async e=>{ e.preventDefault(); const t=ta.value.trim(); if(!t) return; ta.value=""; crecer(); await agregar(t); });
+      capa.querySelector(".mvn-lista").addEventListener("click",e=>{ const b=e.target.closest("[data-acc]"); if(!b) return; const id=b.closest("[data-id]")&&b.closest("[data-id]").dataset.id;
+        if(b.dataset.acc==="hecha") alternar(id); else if(b.dataset.acc==="borrar"){ if(confirm("¿Borrar esta nota para todos?")) borrar(id); }
+        else if(b.dataset.acc==="ver"){ N.verHechas=!N.verHechas; pintar(); } else if(b.dataset.acc==="limpiar") borrarHechas(); });
+      document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&N.abierta) cerrar(); });
+    }
+    capa.classList.remove("on"); capa.hidden=false; pintar(); requestAnimationFrame(()=>requestAnimationFrame(()=>capa.classList.add("on")));
+    try{ document.documentElement.classList.add("mvn-quieto"); }catch(e){}
+  }
+  function cerrar(){ N.abierta=false; if(!capa) return; capa.classList.remove("on"); try{ document.documentElement.classList.remove("mvn-quieto"); }catch(e){} setTimeout(()=>{ if(!N.abierta&&capa) capa.hidden=true; },260); for(const f of N.cbs){ try{ f(); }catch(e){} } }
+  const CIRC='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg>';
+  function fila(x){ const meta=[x.autor||"",cuando(x.creado)].filter(Boolean).join(" · ")+(x.hecha&&x.hechaPor?" · hecha por "+x.hechaPor+(x.hechaEn?" "+cuando(x.hechaEn):""):"");
+    return '<div class="mvn-fila'+(x.hecha?" hecha":"")+'" data-id="'+esc(x.id)+'"><button type="button" class="mvn-circ" data-acc="hecha" aria-label="'+(x.hecha?"Marcar pendiente":"Marcar hecha")+'">'+CIRC+'</button>'+
+      '<div class="mvn-txt"><div class="mvn-t">'+esc(x.texto).replace(/\n/g,"<br>")+'</div><small>'+esc(meta)+'</small></div><button type="button" class="mvn-del" data-acc="borrar" aria-label="Borrar nota">✕</button></div>'; }
+  function pintar(){ if(!capa||capa.hidden&&!N.abierta) return; const {pend,hechas}=ordenadas();
+    capa.querySelector(".mvn-sub").textContent=!N.cargado?"Cargando…":pend.length?(pend.length===1?"1 pendiente":pend.length+" pendientes")+" · se comparten en vivo con los administradores":"Todo hecho · se comparten en vivo con los administradores";
+    const l=capa.querySelector(".mvn-lista");
+    let html=pend.length?pend.map(fila).join(""):(N.cargado?'<div class="mvn-vacio">Sin pendientes. Escribe arriba una nota o tarea y le aparecerá a los demás administradores.</div>':"");
+    if(hechas.length) html+='<div class="mvn-hechash"><button type="button" data-acc="ver">'+(N.verHechas?"Ocultar":"Ver")+' hechas ('+hechas.length+')</button>'+(N.verHechas?'<button type="button" class="rojo" data-acc="limpiar">Borrar hechas</button>':"")+'</div>'+(N.verHechas?hechas.map(fila).join(""):"");
+    l.innerHTML=html; }
+  setInterval(()=>{ if(N.abierta) pintar(); },60000);
+
+  /* ---------- botón flotante (sistema en línea / Mac) ---------- */
+  let boton=null;
+  function pintarBoton(){ if(document.body&&document.body.classList.contains("vx-on")){ if(boton) boton.hidden=true; return; }
+    if(!esAdmin()||!db()){ if(boton) boton.hidden=true; return; }
+    if(!boton){ boton=document.createElement("button"); boton.type="button"; boton.id="mvNotasBtn"; boton.setAttribute("aria-label","Notas"); boton.onclick=abrir; document.body.append(boton); }
+    const n=ordenadas().pend.length; boton.hidden=false; boton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg><span>Notas</span>'+(n?'<b>'+n+'</b>':''); }
+  setInterval(pintarBoton,1500);
+
+  window.mvNotas={ abrir, cerrar, agregar, alternar, borrar, abierta:()=>N.abierta, pendientes:()=>ordenadas().pend.length, lista:()=>ordenadas(), alCambiar:f=>{ N.cbs.add(f); return ()=>N.cbs.delete(f); } };
+})();
+</script>
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(.mvpq-fondo):not(.mvpq-hud):not(script):not(style):not(.ctxmenu){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(.mvpq-fondo):not(.mvpq-hud):not(script):not(style):not(.ctxmenu):not(#vxPull):not(#mvNotasCapa){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
@@ -11536,6 +11682,109 @@ body.vx-on #vxCamWrap{display:block!important}
 .vx-docacc small{color:#8E8E93;font-size:12.5px;line-height:1.35}
 .vx-docabrir{border:0;border-radius:16px;background:#1D1D1F;color:#fff;font:inherit;font-size:18px;font-weight:700;padding:16px}
 .vx-doccerrar{margin-top:12px;border:0;background:none;color:#6E6E73;font:inherit;font-weight:700;font-size:15px;padding:10px}
+/* ===== mvMN ===== */
+/* barra de arriba: ☰ · logo Marvea al centro · usuario */
+.vx-top{position:sticky;min-height:56px}
+.vx-hamb{position:relative;width:40px;height:40px;border:0;border-radius:12px;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4.5px;padding:0;margin-left:-4px}
+.vx-hamb i{display:block;width:20px;height:2.2px;border-radius:2px;background:#1D1D1F;transition:transform .2s,opacity .2s}
+.vx-hamb:active{background:rgba(118,118,128,.12)}
+.vx-hamb.on i:nth-child(1){transform:translateY(6.7px) rotate(45deg)}
+.vx-hamb.on i:nth-child(2){opacity:0}
+.vx-hamb.on i:nth-child(3){transform:translateY(-6.7px) rotate(-45deg)}
+.vx-hambn{position:absolute;top:2px;right:0;min-width:17px;height:17px;border-radius:9px;background:#F2653F;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px;font-style:normal}
+.vx-logo{position:absolute;left:50%;top:calc(50% + env(safe-area-inset-top) / 2);transform:translate(-50%,-50%);border:0;background:transparent;padding:4px 6px;line-height:0}
+.vx-logo img{height:24px;width:auto;display:block}
+.vx-menu:not(.open) .vx-menubox{display:none}
+.vx-menu.open .vx-menubox{position:fixed;top:calc(60px + env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:80;animation:vxfade .15s;background:rgba(255,255,255,.98);max-width:calc(100vw - 24px)}
+.vx-menubtn{width:36px;height:36px;border-radius:50%;border:0;background:#F2F2F7;color:#1D1D1F;display:grid;place-items:center;font-weight:700;font-size:13px;text-transform:uppercase;padding:0}
+.vx-menu.open .vx-menubtn{background:#5A2748;color:#fff}
+.vx-menuweb{display:flex!important;flex-direction:column;gap:1px}
+.vx-menuweb small{font-size:12px;color:#6E6E73}
+/* menú lateral (liquid glass) */
+.vx-drawerbg{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.22);animation:vxfade .2s}
+.vx-drawer{position:absolute;left:0;top:0;bottom:0;width:min(340px,88vw);overflow:auto;-webkit-overflow-scrolling:touch;
+  background:rgba(246,246,248,.82);-webkit-backdrop-filter:blur(40px) saturate(200%);backdrop-filter:blur(40px) saturate(200%);
+  box-shadow:20px 0 60px rgba(0,0,0,.18);border-radius:0 26px 26px 0;padding:calc(14px + env(safe-area-inset-top)) 14px calc(20px + env(safe-area-inset-bottom));animation:vxdrawer .26s cubic-bezier(.2,.8,.2,1)}
+.vx-drawerbg.quieto,.vx-drawerbg.quieto .vx-drawer{animation:none}
+.vx-drawerbg.cerrando{animation:vxfadeout .2s forwards}
+.vx-drawerbg.cerrando .vx-drawer{animation:vxdrawerout .2s forwards}
+@keyframes vxdrawer{from{transform:translateX(-104%)}to{transform:none}}
+@keyframes vxdrawerout{to{transform:translateX(-104%)}}
+@keyframes vxfadeout{to{opacity:0}}
+.vx-dhead{display:flex;align-items:center;justify-content:center;position:relative;padding:8px 0 14px}
+.vx-dlogo{height:30px;width:auto}
+.vx-dx{position:absolute;right:0;top:4px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(118,118,128,.14);color:#3A3A3C;font-size:13px;font-weight:700}
+.vx-duser{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0 2px 12px;background:#fff;border-radius:16px}
+.vx-duser>span:last-child{display:flex;flex-direction:column}
+.vx-duser b{font-size:15px}
+.vx-duser small{font-size:12px;color:#6E6E73}
+.vx-dav{width:36px;height:36px;border-radius:50%;background:#5A2748;color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;text-transform:uppercase}
+.vx-dgrupo{margin:0 0 14px}
+.vx-dgt{font-size:12px;font-weight:600;color:#6E6E73;text-transform:uppercase;letter-spacing:.05em;padding:0 14px 6px}
+.vx-dlista{background:#fff;border-radius:16px;overflow:hidden}
+.vx-ditem{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;padding:11px 12px;text-align:left;color:#1D1D1F;text-decoration:none;position:relative;font-family:inherit}
+.vx-ditem+.vx-ditem::before{content:"";position:absolute;top:0;left:54px;right:0;height:1px;background:rgba(60,60,67,.12)}
+.vx-ditem:active{background:#E5E5EA}
+.vx-ditem.on{background:rgba(90,39,72,.07)}
+.vx-ditem.on .vx-dico{background:#5A2748;color:#fff}
+.vx-dico{flex:none;width:32px;height:32px;border-radius:9px;background:#F2F2F7;color:#5A2748;display:grid;place-items:center}
+.vx-dico svg{width:19px;height:19px}
+.vx-ditem.amb .vx-dico{background:#FFF4D6;color:#9A6A00}
+.vx-dtxt{flex:1;min-width:0;display:flex;flex-direction:column}
+.vx-dtxt b{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.vx-dtxt small{font-size:12.5px;color:#6E6E73;line-height:1.3;margin-top:1px}
+.vx-dbadge{flex:none;min-width:22px;height:22px;border-radius:11px;background:#E5E5EA;color:#1D1D1F;font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 7px;font-style:normal}
+.vx-ditem.amb .vx-dbadge{background:#FFCC4D}
+.vx-ditem.notas .vx-dbadge{background:#F2653F;color:#fff}
+.vx-dchev{flex:none;color:#C7C7CC;font-size:20px;font-style:normal;line-height:1}
+.vx-dpie{text-align:center;font-size:12px;color:#8E8E93;padding:6px 10px}
+/* Reservas */
+.vx-rsheet h2,.vx-psheet h2{margin:6px 0 2px;font-size:24px;letter-spacing:-.02em}
+.vx-rkpi{display:flex;gap:16px;font-size:14px;color:#6E6E73;margin:6px 0}
+.vx-rkpi b{color:#1D1D1F;font-size:17px}
+.vx-rlista{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.vx-rcard{display:grid;grid-template-columns:64px 1fr;gap:4px 12px;align-items:center;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:10px}
+.vx-rcard.conf{border-color:#5A2748}
+.vx-rfoto{width:64px;height:64px;border-radius:12px;overflow:hidden;background:#F2F2F7;display:grid;place-items:center;font-weight:700;color:#8E8E93;grid-row:span 2}
+.vx-rfoto img{width:100%;height:100%;object-fit:cover}
+.vx-rinfo{display:flex;flex-direction:column;min-width:0}
+.vx-rinfo b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vx-rinfo span{font-size:13px;color:#6E6E73}
+.vx-rinfo .vx-rnum{color:#1D1D1F;font-weight:600}
+.vx-rinfo small{font-size:12px;color:#8E8E93}
+.vx-rint{grid-column:2;justify-self:start;border:0;border-radius:12px;background:#5A2748;color:#fff;font-weight:600;font-size:14px;padding:8px 14px}
+.vx-rconf{grid-column:1/-1;display:flex;flex-direction:column;gap:8px;background:#F7F2F5;border-radius:12px;padding:10px;font-size:14px}
+.vx-rconf.todo{margin:6px 0}
+.vx-rconf div{display:flex;gap:8px}
+.vx-rconf button{border:0;border-radius:10px;padding:8px 14px;font-weight:600;font-size:14px;background:#E5E5EA;color:#1D1D1F}
+.vx-rconf button.si{background:#5A2748;color:#fff}
+.vx-rtodo{margin:6px 0}
+.vx-rok{display:flex;flex-direction:column;gap:6px;background:#E9F8EE;border:1px solid #B5E3C4;border-radius:14px;padding:12px;margin:8px 0;font-size:14px}
+.vx-rok b{color:#1B7F3B}
+.vx-rok button{align-self:flex-start;border:0;border-radius:10px;background:#1B7F3B;color:#fff;font-weight:600;padding:8px 12px;font-size:14px}
+/* Página y catálogo */
+.vx-pcard{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:20px;padding:14px;margin:10px 0;display:flex;flex-direction:column;gap:6px}
+.vx-pcard.foco{border-color:#5A2748;box-shadow:0 8px 24px rgba(90,39,72,.12)}
+.vx-pct{display:flex;align-items:center;gap:10px;font-size:17px}
+.vx-pcard p{margin:0;font-size:14px;line-height:1.4;color:#3A3A3C}
+.vx-pcard p b{color:#1D1D1F}
+.vx-pest{font-size:13px;color:#6E6E73;background:#F2F2F7;border-radius:10px;padding:7px 10px}
+.vx-pest.pend{background:#FFF4D6;color:#7A5300}
+.vx-pcard .vx-cta{margin-top:4px}
+.vx-cta-sec{background:#F2F2F7!important;color:#1D1D1F!important;box-shadow:none!important}
+.vx-pres{font-size:14px;border-radius:10px;padding:8px 10px}
+.vx-pres.ok{background:#E9F8EE;color:#1B7F3B}
+.vx-pres.mal{background:#FDECEC;color:#B3261E}
+/* «¿Va al catálogo?» en el primer paso */
+.vx-alta-dest0{margin:0 0 10px}
+.vx-alta-dop.reserva.on{border-color:#C98A00;background:#FFF6DD}
+/* deslizar para actualizar */
+#vxPull{position:fixed;left:50%;top:calc(56px + env(safe-area-inset-top));z-index:60;transform:translate(-50%,-46px);opacity:0;pointer-events:none}
+.vx-pullc{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.14);display:grid;place-items:center}
+#vxPull svg{width:24px;height:24px;stroke:#5A2748;stroke-width:2.2;stroke-linecap:round}
+#vxPull.gira svg{animation:vxgira .8s steps(8) infinite}
+@keyframes vxgira{to{transform:rotate(360deg)}}
+/* ===== fin mvMN ===== */
 
 </style><script>
 /* Marvea Vende · app express para vender desde iPhone / iPad (31-oct-2026)
@@ -11559,6 +11808,7 @@ body.vx-on #vxCamWrap{display:block!important}
   document.addEventListener("focusout", e => { if (diferido && e.target && e.target.id === "vxCli") { diferido = false; setTimeout(render, 260); } }, true);
   function render() { const a = document.activeElement; if (a && a.id === "vxCli" && root.contains(a)) { diferido = true; return; } if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; try { pintar(); } catch (e) { console.error(e); } }); }
   window.__vxRender = render;
+  document.addEventListener("click", e => { if (V.menuU && !e.target.closest(".vx-menu")) { V.menuU = false; render(); } }, true); /* mvMN */
   // se vuelve a pintar cuando cambia cualquier dato (ventas, inventario, clientas)
   for (const fn of ["renderVenta", "renderAll"]) { const o = window[fn]; if (typeof o === "function") window[fn] = function () { const r = o.apply(this, arguments); render(); return r; }; }
 
@@ -11575,12 +11825,13 @@ body.vx-on #vxCamWrap{display:block!important}
   /* ---------- barra de arriba ---------- */
   function barra() {
     const perfil = (window.MarveaNube && JSON.parse(localStorage.getItem("marvea.perfil") || "null")) || {};
-    const menu = el("details", { class: "vx-menu" }, el("summary", { "aria-label": "Menú" }, (perfil.usuario || "?").slice(0, 2)),
+    const menu = el("div", { class: "vx-menu" + (V.menuU ? " open" : "") }, el("button", { type: "button", class: "vx-menubtn", "aria-label": "Mi usuario", "aria-expanded": V.menuU ? "true" : "false", onclick: () => { V.menuU = !V.menuU; V.menu = false; vibra(8); render(); } }, (perfil.usuario || "?").slice(0, 2)), /* mvMN: ya no es <details> (el iPhone lo cerraba al llegar datos y la caja quedaba tapada) */
       el("div", { class: "vx-menubox" }, el("div", { class: "vx-menuuser" }, el("b", null, perfil.usuario || ""), el("span", null, perfil.rol === "vendedor" ? "Vendedor" : "Administrador")),
-        el("a", { href: "sistema.html?desde=vende", class: "vx-menuitem" }, "Abrir sistema completo"),
+        el("a", { href: "sistema.html?desde=vende", class: "vx-menuitem vx-menuweb", onclick: () => { V.menuU = false; } }, el("span", null, "Ir al sistema web"), el("small", null, "El sistema completo, como en la computadora")),
         el("button", { type: "button", class: "vx-menuitem rojo", onclick: () => { if (confirm("¿Cerrar sesión en este dispositivo?")) window.MarveaNube.salir(); } }, "Cerrar sesión")));
     return el("header", { class: "vx-top", "data-k": "top" },
-      V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; const c = ventaActual(); if (c && state.ventaLiveId && (state.lives.find(l => l.id === state.ventaLiveId) || {}).dia !== hoyKey()) { state.ventaCartId = null; alDia(); } render(); } }, "‹ Inicio") : el("div", { class: "vx-brand" }, el("span", { class: "vx-m" }, "M"), el("span", null, "Marvea ", el("b", null, "Vende"))),
+      V.tab === "vender" && V.pantalla === "venta" ? el("button", { class: "vx-back", type: "button", "aria-label": "Inicio", onclick: () => { V.pantalla = "inicio"; V.q = ""; const c = ventaActual(); if (c && state.ventaLiveId && (state.lives.find(l => l.id === state.ventaLiveId) || {}).dia !== hoyKey()) { state.ventaCartId = null; alDia(); } render(); } }, "‹ Inicio") : el("button", { type: "button", class: "vx-hamb" + (V.menu ? " on" : ""), "aria-label": "Menú", onclick: () => { V.menu = !V.menu; V.menuU = false; vibra(8); render(); } }, el("i"), el("i"), el("i"), nPend() ? el("b", { class: "vx-hambn" }, String(nPend())) : null), /* mvMN */
+      V.tab === "vender" && V.pantalla === "venta" ? null : el("button", { type: "button", class: "vx-logo", "aria-label": "Marvea · inicio", onclick: () => irA("vender") }, el("img", { src: "logo-marvea-letras.png", alt: "Marvea" })),
       el("div", { class: "vx-topr" }, V.tab === "vender" && V.pantalla === "venta" ? el("button", { type: "button", class: "vx-nueva", onclick: () => ventaNueva() }, "+ Nueva venta") : null, menu));
   }
 
@@ -12076,6 +12327,7 @@ body.vx-on #vxCamWrap{display:block!important}
   function firma() {
     let h = 5381; const add = t => { t = String(t); for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; };
     add(JSON.stringify(V, (k, v) => v instanceof Map ? "M" + v.size + ":" + [...v.values()].map(x => x && (x.pass || "") + (x.enviado || "")).join() : k === "res" ? (v ? v.length + ":" + v.map(c => c.actualizado).join() : -1) : k === "hist" ? (v ? v.length : -1) : v));
+    try { add(nPend()); add(state.reservas ? state.reservas.size + ":" + [...state.reservas.values()].map(p => p.codigo + p.existencia + p.fotoId).join() : 0); } catch (e) {} /* mvMN */
     for (const c of (state.ventaCarts || new Map()).values()) add(c.id + c.actualizado + c.estado + c.items.length);
     add(state.ventaCartId); add(state.ventaLiveId);
     let fotosListas = 0; for (const p of state.products.values()) { add(p.codigo + "|" + p.existencia + "|" + p.precio + "|" + p.nombre + "|" + p.fotoId + "|" + (p.fotoId2 || "")); if (p.fotoId && blobUrl(p.fotoId)) fotosListas++; }
@@ -12091,7 +12343,10 @@ body.vx-on #vxCamWrap{display:block!important}
     const admin = esAdmin(); if (!admin && V.tab !== "logi") V.tab = "vender";
     const vista = V.tab === "logi" ? logistica() : V.tab === "inv" ? inventario() : V.tab === "cli" ? clientas() : V.tab === "res" ? resumen() : V.pantalla === "venta" ? venta() : V.pantalla === "hecho" ? hecho() : inicio();
     const kids = [barra(), vista];
-    if (!(V.tab === "vender" && (V.pantalla === "venta" || V.pantalla === "hecho"))) { kids.push(tabbar()); document.body.classList.add("vx-contab"); } else document.body.classList.remove("vx-contab");
+    document.body.classList.remove("vx-contab"); /* mvMN: ya no hay barra de abajo; todo va en el menú ☰ */
+    if (V.menu) kids.push(menuLateral());
+    if (V.reservas) kids.push(reservasSheet());
+    if (V.pagina) kids.push(paginaSheet());
     if (V.prod) { const d = prodSheet(); if (d) kids.push(d); }
     if (V.clienta) { const d = clientaSheet(); if (d) kids.push(d); }
     if (V.cliForm) kids.push(cliFormSheet());
@@ -12205,6 +12460,8 @@ body.vx-on #vxCamWrap{display:block!important}
       toast(e && e.shown ? m : red ? "Sin internet: no se guardó. Revisa la conexión y vuelve a intentar." : /row-level|permission|42501/i.test(m) ? "Tu usuario no tiene permiso para registrar productos" : "No se pudo guardar: " + m, true); render();
     }
   }
+  function destinoAlta(f) { /* mvMN: ¿Va al catálogo? desde el primer paso (se puede cambiar hasta el final) */
+    return el("div", { class: "vx-field vx-alta-dest vx-alta-dest0" }, el("span", null, "¿Va al catálogo?"), el("div", { class: "vx-alta-destops" }, ...[["inventario", "✓ Sí, al inventario", "Se vende y se publica"], ["reserva", "⏸ No, a Reservas", "Registrado, sin vender"]].map(([d, t, sub]) => el("button", { type: "button", class: "vx-alta-dop " + d + (f.destino === d ? " on" : ""), onclick: () => { f.destino = d; try { localStorage.setItem("marvea.rp.destino", d); } catch (e) {} vibra(8); render(); } }, el("b", null, t), el("small", null, sub))))); }
   /* proceso de registro paso a paso: Foto → Qué es → Material → Precio → Piezas → Revisar y registrar */
   const PASOS = [
     { t: "Foto", s: "Tómale foto a la pieza o elígela de tus fotos." },
@@ -12239,7 +12496,8 @@ body.vx-on #vxCamWrap{display:block!important}
     const etqs = unicos(["New in", ...topValores("etiquetaCat", 5)]).slice(0, 6);
     const codigoTxt = f.codigo || (f.cat ? nextCode(f.cat) : "");
     let cuerpo;
-    if (f.paso === 0) cuerpo = [fotoAlta(), fotoAlta2(), !(f.file || (!f.quitarFoto && f.fotoId) || f.file2 || (!f.quitarFoto2 && f.fotoId2)) ? el("p", { class: "vx-nota" }, "Si ahorita no tienes la foto, sigue: la puedes agregar después desde su ficha.") : null];
+    if (!edit && !f.destino) { try { f.destino = localStorage.getItem("marvea.rp.destino") === "reserva" ? "reserva" : "inventario"; } catch (e) { f.destino = "inventario"; } } /* mvMN */
+    if (f.paso === 0) cuerpo = [!edit ? destinoAlta(f) : null, fotoAlta(), fotoAlta2(), !(f.file || (!f.quitarFoto && f.fotoId) || f.file2 || (!f.quitarFoto2 && f.fotoId2)) ? el("p", { class: "vx-nota" }, "Si ahorita no tienes la foto, sigue: la puedes agregar después desde su ficha.") : null];
     else if (f.paso === 1) cuerpo = [conEnter(campo("nombre", "Nombre del producto", { placeholder: "Ej. Collar cadena cubana dorada 45 cm", autocapitalize: "sentences", enterkeyhint: "next" })),
       el("div", { class: "vx-alta-dup", id: "vxAltaDup", hidden: true }),
       el("div", { class: "vx-field" }, el("span", null, "Categoría"), el("div", { class: "vx-alta-cats" }, ...cats.map(c => el("button", { type: "button", class: f.cat === c.p ? "on" : "", onclick: () => { if (edit) { toast("La categoría define el código; para cambiarla usa la Mac", true); return; } f.cat = c.p; render(); } }, c.n)))),
@@ -12277,7 +12535,7 @@ body.vx-on #vxCamWrap{display:block!important}
       : f.paso === 0 ? ((f.file || (!f.quitarFoto && f.fotoId) || f.file2 || (!f.quitarFoto2 && f.fotoId2)) ? "Siguiente" : "Seguir sin foto") : f.visto ? "Listo" : "Siguiente";
     const hoja = el("div", { class: "vx-sheet vx-alta vx-alta-wiz" }, el("div", { class: "vx-grip" }),
       el("div", { class: "vx-alta-top" },
-        f.paso > 0 && !(f.visto && f.paso === ULTIMO) ? el("button", { type: "button", class: "vx-alta-atras", onclick: () => irPaso(f.visto ? ULTIMO : f.paso - 1) }, f.visto ? "‹ Resumen" : "‹ Atrás") : el("span", { class: "vx-alta-titulo" }, edit ? "Editar producto" : "Añadir producto"),
+        f.paso > 0 && !(f.visto && f.paso === ULTIMO) ? el("button", { type: "button", class: "vx-alta-atras", onclick: () => irPaso(f.visto ? ULTIMO : f.paso - 1) }, f.visto ? "‹ Resumen" : "‹ Atrás") : el("span", { class: "vx-alta-titulo" }, edit ? "Editar producto" : f.destino === "reserva" ? "Añadir a Reservas" : "Añadir producto"),
         el("span", { class: "vx-alta-pnum" }, f.paso === ULTIMO ? (edit ? "" : "Último paso") : "Paso " + (f.paso + 1) + " de " + PASOS.length)),
       barraPasos,
       el("div", { class: "vx-alta-ph" }, el("h2", null, edit && f.paso === ULTIMO ? "Revisa y guarda" : P.t), el("p", null, P.s)),
@@ -12287,6 +12545,153 @@ body.vx-on #vxCamWrap{display:block!important}
     setTimeout(pistas, 0);
     return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if ((f.nombre || f.file) && !edit) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
   }
+
+  /* ===== mvMN · menú ☰, Reservas, Página y catálogo, deslizar para actualizar (20-nov-2026) ===== */
+  const VX_VER = "20261121a";
+  const nPend = () => { try { return esAdmin() && window.mvNotas ? window.mvNotas.pendientes() : 0; } catch (e) { return 0; } };
+  if (window.mvNotas) window.mvNotas.alCambiar(() => render());
+  function irA(tab) { V.tab = tab; V.prod = null; V.clienta = null; V.cliForm = null; V.menu = false; V.menuU = false; if (tab === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); }
+  const ICM = {
+    alta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    res: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M3 4h18v3.5H3z"/><path d="M10 11.5h4"/></svg>',
+    notas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6.5" r="1.6"/><circle cx="5" cy="12" r="1.6"/><circle cx="5" cy="17.5" r="1.6"/><path d="M9.5 6.5H20M9.5 12H20M9.5 17.5H20"/></svg>',
+    cat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-1.5 5H5.5z"/><path d="M5.5 10v9h13v-9"/><path d="M12 13v4M10 15l2 2 2-2"/></svg>',
+    web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.7 5.4 3.7 8.5s-1.2 5.9-3.7 8.5c-2.5-2.6-3.7-5.4-3.7-8.5S9.5 6.1 12 3.5z"/></svg>',
+    sis: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/></svg>'
+  };
+  const icono = svg => { const s = el("span", { class: "vx-dico" }); s.innerHTML = svg; return s; };
+
+  /* ---------- menú ☰ (hoja lateral estilo Apple) ---------- */
+  function cerrarMenu() { const d = root.querySelector(".vx-drawerbg"); if (!d) { V.menu = false; render(); return; } d.classList.add("cerrando"); setTimeout(() => { V.menu = false; render(); }, 200); }
+  function menuLateral() {
+    const ya = !!root.querySelector(".vx-drawerbg:not(.cerrando)"); const admin = esAdmin();
+    const perfil = (() => { try { return JSON.parse(localStorage.getItem("marvea.perfil") || "null") || {}; } catch (e) { return {}; } })();
+    const item = (ico, txt, sub, on, accion, badge, cls) => el("button", { type: "button", class: "vx-ditem" + (on ? " on" : "") + (cls ? " " + cls : ""), onclick: () => { vibra(8); accion(); } },
+      icono(ico), el("span", { class: "vx-dtxt" }, el("b", null, txt), sub ? el("small", null, sub) : null), badge ? el("em", { class: "vx-dbadge" }, String(badge)) : null, el("i", { class: "vx-dchev" }, "›"));
+    const grupo = (titulo, ...items) => el("div", { class: "vx-dgrupo" }, titulo ? el("div", { class: "vx-dgt" }, titulo) : null, el("div", { class: "vx-dlista" }, ...items.filter(Boolean)));
+    const tab = V.tab || "vender"; const nRes = state.reservas ? state.reservas.size : 0; const nN = nPend();
+    const abrirOtro = f => { V.menu = false; f(); render(); };
+    const hoja = el("aside", { class: "vx-drawer", role: "dialog", "aria-label": "Menú" },
+      el("div", { class: "vx-dhead" }, el("img", { class: "vx-dlogo", src: "logo-marvea-letras.png", alt: "Marvea" }), el("button", { type: "button", class: "vx-dx", "aria-label": "Cerrar menú", onclick: cerrarMenu }, "✕")),
+      el("div", { class: "vx-duser" }, el("span", { class: "vx-dav" }, (perfil.usuario || "?").slice(0, 2)), el("span", null, el("b", null, perfil.usuario || ""), el("small", null, admin ? "Administrador" : "Vendedor"))),
+      grupo("Ir a",
+        item(IC.vender, "Vender", "Ventas de hoy y nueva venta", tab === "vender", () => irA("vender")),
+        admin ? item(IC.inv, "Inventario", null, tab === "inv", () => irA("inv")) : null,
+        admin ? item(IC.cli, "Clientas", null, tab === "cli", () => irA("cli")) : null,
+        item(IC.logi, "Logística", "Envíos, guías y resguardos", tab === "logi", () => irA("logi")),
+        admin ? item(IC.res, "Resumen", null, tab === "res", () => irA("res")) : null),
+      admin ? grupo("Productos",
+        item(ICM.alta, "Añadir producto", "Al inventario o a Reservas", false, () => abrirOtro(() => abrirAlta(null))),
+        item(ICM.res, "Reservas", nRes ? "Aprobar para subir al catálogo" : "No hay productos en Reservas", false, () => abrirOtro(() => { V.reservas = true; V.resConf = null; }), nRes, "amb")) : null,
+      admin ? grupo("Equipo",
+        item(ICM.notas, "Notas", nN ? "Pendientes compartidas en vivo" : "Notas y tareas compartidas", false, () => { V.menu = false; render(); setTimeout(() => window.mvNotas && window.mvNotas.abrir(), 60); }, nN, "notas")) : null,
+      admin ? grupo("Página y catálogo",
+        item(ICM.cat, "Actualizar catálogo", "Sube a la tienda los productos nuevos o con cambios", false, () => abrirOtro(() => { V.pagina = { foco: "catalogo" }; })),
+        item(ICM.web, "Actualizar página web", "Refresca la tienda con existencias y fotos al día", false, () => abrirOtro(() => { V.pagina = { foco: "pagina" }; }))) : null,
+      grupo(null, (() => { const a = el("a", { href: "sistema.html?desde=vende", class: "vx-ditem" }, icono(ICM.sis), el("span", { class: "vx-dtxt" }, el("b", null, "Ir al sistema web"), el("small", null, "El sistema completo, como en la computadora")), el("i", { class: "vx-dchev" }, "›")); return a; })()),
+      el("div", { class: "vx-dpie" }, "Marvea Vende · desliza la pantalla hacia abajo para actualizar"));
+    return el("div", { class: "vx-drawerbg" + (ya ? " quieto" : ""), "data-k": "menu", onclick: e => { if (e.target.classList.contains("vx-drawerbg")) cerrarMenu(); } }, hoja);
+  }
+
+  /* ---------- Reservas: aprobar para subir al catálogo ---------- */
+  function reservasSheet() {
+    const cerrar = () => { V.reservas = false; V.resConf = null; V.resOk = null; render(); };
+    const lista = [...(state.reservas || new Map()).values()].sort((a, b) => String(b.reservado || b.creado || "").localeCompare(String(a.reservado || a.creado || "")) || String(a.codigo).localeCompare(String(b.codigo)));
+    const pz = lista.reduce((s, p) => s + (Number(p.existencia) || 0), 0);
+    const integrar = async (cods) => { if (V.resOcupado) return; V.resOcupado = true; render(); let ok = 0; const hechos = [];
+      for (const c of cods) { try { if (window.mvRPAInventario && await window.mvRPAInventario(c)) { ok++; hechos.push(c); } } catch (e) { console.warn(e); } }
+      V.resOcupado = false; V.resConf = null; if (ok) { V.resOk = hechos; vibra(30); } render(); };
+    const tarjeta = p => { const conf = V.resConf === p.codigo; const n = Number(p.existencia) || 0;
+      return el("div", { class: "vx-rcard" + (conf ? " conf" : "") },
+        foto(p, "vx-rfoto"),
+        el("div", { class: "vx-rinfo" }, el("b", null, p.nombre || p.codigo), el("span", null, p.codigo + (p.material ? " · " + p.material : "")),
+          el("span", { class: "vx-rnum" }, precio(p.precio), " · ", n + " pza" + (n === 1 ? "" : "s")),
+          el("small", null, "En Reservas desde " + (p.reservado || p.creado ? new Date(p.reservado || p.creado).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : "—"))),
+        conf ? el("div", { class: "vx-rconf" }, el("span", null, "¿Integrar con " + n + " pza" + (n === 1 ? "" : "s") + "? Se pone a la venta en el inventario."),
+            el("div", null, el("button", { type: "button", class: "si", disabled: !!V.resOcupado, onclick: () => integrar([p.codigo]) }, V.resOcupado ? "Integrando…" : "Sí, integrar"), el("button", { type: "button", onclick: () => { V.resConf = null; render(); } }, "No")))
+          : el("button", { type: "button", class: "vx-rint", onclick: () => { V.resConf = p.codigo; render(); } }, "Integrar al catálogo"));
+    };
+    const ok = V.resOk && V.resOk.length ? el("div", { class: "vx-rok" }, el("b", null, "✓ " + (V.resOk.length === 1 ? V.resOk[0] + " ya está en el inventario" : V.resOk.length + " productos ya están en el inventario")),
+      el("span", null, "Para que aparezca en la tienda en línea, toca «Actualizar catálogo»."),
+      el("button", { type: "button", onclick: () => { V.reservas = false; V.resOk = null; V.pagina = { foco: "catalogo" }; render(); } }, "Actualizar catálogo ›")) : null;
+    return el("div", { class: "vx-sheetbg", "data-k": "reservas", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) cerrar(); } },
+      el("div", { class: "vx-sheet vx-rsheet" }, el("div", { class: "vx-grip" }),
+        el("h2", null, "Reservas"),
+        el("p", { class: "vx-nota" }, "Productos registrados que todavía no se venden: no cuentan en el inventario ni salen en la tienda. Al integrarlos se ponen a la venta."),
+        lista.length ? el("div", { class: "vx-rkpi" }, el("span", null, el("b", null, String(lista.length)), " producto" + (lista.length === 1 ? "" : "s")), el("span", null, el("b", null, String(pz)), " pieza" + (pz === 1 ? "" : "s"))) : null,
+        ok,
+        lista.length > 1 ? (V.resConf === "*" ? el("div", { class: "vx-rconf todo" }, el("span", null, "¿Integrar los " + lista.length + " productos (" + pz + " pzas) al inventario?"),
+            el("div", null, el("button", { type: "button", class: "si", disabled: !!V.resOcupado, onclick: () => integrar(lista.map(p => p.codigo)) }, V.resOcupado ? "Integrando…" : "Sí, integrar todos"), el("button", { type: "button", onclick: () => { V.resConf = null; render(); } }, "No")))
+          : el("button", { type: "button", class: "vx-cta2 vx-rtodo", onclick: () => { V.resConf = "*"; render(); } }, "Integrar todos (" + lista.length + ")")) : null,
+        lista.length ? el("div", { class: "vx-rlista" }, ...lista.map(tarjeta)) : el("div", { class: "vx-vacio" }, "No hay productos en Reservas. Al añadir un producto elige «No, a Reservas»."),
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: cerrar }, "Listo"))));
+  }
+
+  /* ---------- Página y catálogo (la nube publica; la Mac no hace falta) ---------- */
+  async function fnCatalogo(accion) { const N = window.MarveaNube; if (!N || !N.sb || !N.sb.functions) throw new Error("Sin conexión con la nube");
+    const pr = N.sb.functions.invoke("publicar-catalogo", { body: { accion } }); const r = typeof N.conTiempo === "function" ? await N.conTiempo(pr, 330000) : await pr;
+    if (r && r.error) { let m = r.error.message || String(r.error); try { const c = r.error.context; if (c && typeof c.json === "function") { const j = await c.json(); if (j && j.error) m = j.error; } } catch (e) {} throw new Error(m); }
+    return r ? r.data : null; }
+  const hace = iso => { const t = Date.parse(iso || ""); if (!t) return "nunca"; const s = Math.round((Date.now() - t) / 1000); if (s < 60) return "hace un momento"; if (s < 3600) return "hace " + Math.round(s / 60) + " min"; if (s < 86400) return "hace " + Math.round(s / 3600) + " h"; return new Date(t).toLocaleString("es-MX", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
+  async function paginaInfo() { const P = V.pagina; if (!P || P.cargando) return; P.cargando = true; try { P.info = await fnCatalogo("info"); P.err = null; } catch (e) { P.err = e.message || String(e); } finally { P.cargando = false; if (V.pagina === P) render(); } }
+  async function paginaHacer(accion) { const P = V.pagina; if (!P || P.trabajando) return; P.trabajando = accion; P.resultado = null; render();
+    try { const r = await fnCatalogo(accion === "catalogo" ? "publicar-catalogo" : "publicar") || {};
+      const st = r.status; P.resultado = { ok: st === "ok" || st === "al-dia", accion, txt: st === "ok" ? (accion === "catalogo" ? "Catálogo actualizado" : "Página actualizada") + (r.archivos ? " · " + r.archivos + " archivo(s)" : " · ya estaba al día") + " · " + (r.piezas || 0) + " modelos en la tienda. Se ve en www.marveamayoreo.com en un minuto." : st === "al-dia" ? "La página ya estaba al día." : st === "ocupado" ? "Ya se está actualizando desde otro equipo; intenta en un momento." : st === "parcial" ? "Se actualizó, pero " + ((r.errores || []).length) + " foto(s) no se pudieron subir." : "No se pudo: " + (r.error || st || "respuesta vacía") };
+      if (st === "parcial" || st === "ocupado") P.resultado.ok = false; vibra(30);
+    } catch (e) { P.resultado = { ok: false, accion, txt: "No se pudo: " + (e.message || e) }; }
+    P.trabajando = null; if (V.pagina === P) { render(); paginaInfo(); } }
+  function paginaSheet() {
+    const P = V.pagina; if (!P.info && !P.cargando && !P.err && !P.pedido) { P.pedido = true; setTimeout(paginaInfo, 0); }
+    const cerrar = () => { if (P.trabajando) { toast("Espera a que termine; puede tardar un minuto"); return; } V.pagina = null; render(); };
+    const i = P.info || {}; const w = i.web || {}; const pend = (i.nuevas || 0) + (i.cambiadas || 0);
+    const estCat = P.cargando && !P.info ? "Revisando…" : P.err ? "No se pudo revisar: " + P.err : pend ? [(i.nuevas ? i.nuevas + " producto" + (i.nuevas === 1 ? " nuevo" : "s nuevos") : ""), (i.cambiadas ? i.cambiadas + " con cambios" : "")].filter(Boolean).join(" y ") + " esperando para subir" : "Todo lo del inventario ya está en la tienda";
+    const estWeb = P.cargando && !P.info ? "Revisando…" : P.err ? "" : "Última subida: " + hace(w.ultimaSubida) + (w.lastError ? " · ⚠️ " + w.lastError : "");
+    const tarjeta = (k, ico, titulo, que, cuando, est, boton) => el("div", { class: "vx-pcard" + (P.foco === k ? " foco" : "") },
+      el("div", { class: "vx-pct" }, icono(ico), el("b", null, titulo)),
+      el("p", null, el("b", null, "Qué hace: "), que), el("p", null, el("b", null, "Cuándo usarlo: "), cuando),
+      est ? el("div", { class: "vx-pest" + (k === "catalogo" && pend ? " pend" : "") }, est) : null,
+      el("button", { type: "button", class: "vx-cta" + (P.foco === k ? "" : " vx-cta-sec"), disabled: !!P.trabajando, onclick: () => paginaHacer(k) }, P.trabajando === k ? "Actualizando… (hasta 1 min)" : boton),
+      P.resultado && P.resultado.accion === k ? el("div", { class: "vx-pres" + (P.resultado.ok ? " ok" : " mal") }, P.resultado.txt) : null);
+    return el("div", { class: "vx-sheetbg", "data-k": "pagina", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) cerrar(); } },
+      el("div", { class: "vx-sheet vx-psheet" }, el("div", { class: "vx-grip" }),
+        el("h2", null, "Página y catálogo"), el("p", { class: "vx-nota" }, "Lo hace la nube: no necesitas la Mac prendida. Tu inventario no se modifica."),
+        tarjeta("catalogo", ICM.cat, "Actualizar catálogo", "sube a la tienda en línea los productos nuevos y los cambios de foto, nombre o precio que ya están en tu inventario.", "después de registrar productos, integrar Reservas o cambiar precios.", estCat, "Actualizar catálogo"),
+        tarjeta("pagina", ICM.web, "Actualizar página web", "vuelve a subir la tienda con las existencias y fotos al día, sin agregar productos nuevos. (Las existencias y lo agotado ya se actualizan solos.)", "si algo de la tienda no se ve al día.", estWeb, "Actualizar página web"),
+        el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: cerrar }, "Listo"))));
+  }
+
+  /* ---------- deslizar hacia abajo para actualizar ---------- */
+  (function () {
+    const ruedita = document.createElement("div"); ruedita.id = "vxPull"; ruedita.innerHTML = '<div class="vx-pullc"><svg viewBox="0 0 24 24">' + Array.from({ length: 8 }, (_, k) => '<line x1="12" y1="3.2" x2="12" y2="7" transform="rotate(' + (k * 45) + ' 12 12)" style="opacity:' + (0.25 + k * 0.1).toFixed(2) + '"/>').join("") + '</svg></div>';
+    document.body.append(ruedita);
+    const LIM = 72; let y0 = null, dy = 0, activo = false, cargando = false;
+    const libre = (t) => !cargando && !V.alta && !V.prod && !V.clienta && !V.cliForm && !V.detalle && !V.scan && !V.menu && !V.reservas && !V.pagina && !V.menuU && !(window.mvNotas && window.mvNotas.abierta()) && !document.querySelector(".vx-sheetbg,#vxCamWrap:not([hidden]),.mvpq-fondo,.mvtb-fondo") && !(t && t.closest && t.closest("input,textarea,select,.vx-sheet,.vx-drawer,#mvNotasCapa"));
+    const pinta = () => { const d = Math.min(dy, LIM * 1.6); ruedita.style.transform = "translate(-50%," + (d * 0.75 - 46) + "px)"; ruedita.style.opacity = String(Math.min(1, d / LIM)); ruedita.querySelector("svg").style.transform = "rotate(" + Math.round(d * 4) + "deg)"; ruedita.classList.toggle("listo", dy >= LIM); };
+    window.addEventListener("touchstart", e => { if (e.touches.length !== 1 || window.scrollY > 0 || !document.body.classList.contains("vx-on") || !libre(e.target)) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; activo = false; }, { passive: true });
+    window.addEventListener("touchmove", e => { if (y0 == null) return; const d = e.touches[0].clientY - y0; if (d <= 0 || window.scrollY > 0) { if (activo) { dy = 0; pinta(); } activo = false; return; }
+      activo = true; dy = d * 0.55; if (e.cancelable) e.preventDefault(); const antes = ruedita.classList.contains("listo"); pinta(); if (!antes && dy >= LIM) vibra(12); }, { passive: false });
+    const soltar = () => { if (y0 == null) return; y0 = null; if (!activo) return; activo = false;
+      if (dy >= LIM) { cargando = true; ruedita.classList.add("gira"); ruedita.style.transform = "translate(-50%," + (LIM * 0.75 - 46) + "px)"; ruedita.style.opacity = "1"; setTimeout(() => { try { sessionStorage.setItem("vx.recargado", String(Date.now())); } catch (e) {} location.reload(); }, 450); }
+      else { dy = 0; ruedita.style.transition = "transform .2s, opacity .2s"; pinta(); setTimeout(() => { ruedita.style.transition = ""; }, 220); } };
+    window.addEventListener("touchend", soltar, { passive: true }); window.addEventListener("touchcancel", soltar, { passive: true });
+    window.__vxPull = { libre };
+  })();
+
+  /* ---------- versión nueva de Marvea Vende: se recarga sola cuando no estás a media acción ---------- */
+  (function () {
+    let avisado = false;
+    async function revisar() {
+      try { const r = await fetch("vende-version.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) return; const j = await r.json(); if (!j || !j.v || j.v === VX_VER) return;
+        const quieto = V.pantalla !== "venta" && window.__vxPull && window.__vxPull.libre(null);
+        let ult = 0; try { ult = Number(sessionStorage.getItem("vx.recargaVer." + j.v)) || 0; } catch (e) {}
+        if (quieto && Date.now() - ult > 120000) { try { sessionStorage.setItem("vx.recargaVer." + j.v, String(Date.now())); } catch (e) {} location.reload(); return; }
+        if (!avisado) { avisado = true; toast("Hay una versión nueva de Marvea Vende: desliza la pantalla hacia abajo para actualizar"); }
+      } catch (e) {}
+    }
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(revisar, 800); });
+    setInterval(revisar, 5 * 60000); setTimeout(revisar, 8000);
+  })();
+  /* ===== fin mvMN ===== */
 
   render(); arrancar();
 })();
