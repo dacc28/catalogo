@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T00:20:03.794Z",
+ "actualizado": "2026-11-21T00:35:04.283Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1591,18 +1591,6 @@
    "notas": "",
    "foto": "fotos/a6786ccd4f2b82597d71774a4345a4e2.jpg",
    "creado": "2026-11-17T19:54:05.562Z",
-   "disponible": true
-  },
-  {
-   "codigo": "JUE-00014",
-   "nombre": "Juego VanC Negro",
-   "categoria": "JUE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/97f704dcaceff3108b0af7f3d083f3c9.jpg",
-   "creado": "2026-11-17T19:54:42.227Z",
    "disponible": true
   },
   {
