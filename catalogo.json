@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-20T23:10:02.569Z",
+ "actualizado": "2026-11-21T00:05:03.119Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -99,7 +99,7 @@
    "categoria": "ANI",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/aef9df6016caa32f3b9fbc09a3b02c0f.jpg",
    "creado": "2026-11-17T23:24:38.184Z",
@@ -1959,22 +1959,10 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 95,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/29484e188f3851c0c0c2efe184c0fbf8.jpg",
    "creado": "2026-11-17T23:59:31.676Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00061",
-   "nombre": "Trio de brazaletes liso",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8fcab28e6413babb2ee5213bce0613c0.jpg",
-   "creado": "2026-11-18T00:02:50.170Z",
    "disponible": true
   },
   {
@@ -1995,7 +1983,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 95,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
