@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T05:25:03.822Z",
+ "actualizado": "2026-11-21T05:40:05.196Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -67,30 +67,6 @@
    "notas": "Dupe de Cartier",
    "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
    "creado": "2026-10-19T02:11:33.688Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00014",
-   "nombre": "Anillo Ajustable Corte Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
-   "creado": "2026-10-27T00:46:37.184Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00025",
-   "nombre": "Anillo Ajustable Esmeralda Plata",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
-   "creado": "2026-10-27T00:59:47.920Z",
    "disponible": true
   },
   {
@@ -207,7 +183,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
    "creado": "2026-10-20T17:21:24.337Z",
@@ -838,18 +814,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00097",
-   "nombre": "Huggies Flor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
-   "creado": "2026-11-07T21:48:20.046Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00099",
    "nombre": "Huggie Brillo",
    "categoria": "ARE",
@@ -1027,18 +991,6 @@
    "notas": "",
    "foto": "fotos/8ae10d1dc231a454531c8d914a6d1b82.jpg",
    "creado": "2026-11-07T20:37:01.164Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00020",
-   "nombre": "Cadena Barbada Mini 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/054361c2c5e97d2c21d8b4a675e14573.jpg",
-   "creado": "2026-11-07T20:38:34.240Z",
    "disponible": true
   },
   {
@@ -1546,18 +1498,6 @@
    "disponible": true
   },
   {
-   "codigo": "JUE-00005",
-   "nombre": "Juego Xuping Flor Blanca",
-   "categoria": "JUE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2816ce06ccfb90d85eaa143061ce501c.jpg",
-   "creado": "2026-10-20T23:45:49.520Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00012",
    "nombre": "Juego Perlas",
    "categoria": "JUE",
@@ -1683,7 +1623,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
@@ -1939,18 +1879,6 @@
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00067",
-   "nombre": "Trio de brazaletes Cartie",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
-   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
