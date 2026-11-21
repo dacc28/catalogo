@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T07:00:06.088Z",
+ "actualizado": "2026-11-21T19:20:04.075Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -679,18 +679,6 @@
    "notas": "",
    "foto": "fotos/05e4d1d1317d07b601990cfa1aa362dd.jpg",
    "creado": "2026-11-07T21:14:48.951Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00083",
-   "nombre": "Aretes Inspiración",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bc366e415e49d8be1e90d691c48f22b9.jpg",
-   "creado": "2026-11-07T21:16:01.080Z",
    "disponible": true
   },
   {
