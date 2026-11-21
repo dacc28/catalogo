@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T06:30:05.990Z",
+ "actualizado": "2026-11-21T06:45:02.691Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -178,12 +178,24 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00008",
+   "nombre": "Arracadas de Acero",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
+   "creado": "2026-10-19T02:01:12.007Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00013",
    "nombre": "Arracadas Bicolor",
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
