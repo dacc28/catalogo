@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-21T00:05:03.119Z",
+ "actualizado": "2026-11-21T00:20:03.794Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -103,18 +103,6 @@
    "notas": "",
    "foto": "fotos/aef9df6016caa32f3b9fbc09a3b02c0f.jpg",
    "creado": "2026-11-17T23:24:38.184Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00033",
-   "nombre": "Anillo Tous Dorado con brillo Talla7",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4e8e38f7851fc48caa1ba8b112137bc8.jpg",
-   "creado": "2026-11-17T23:28:48.041Z",
    "disponible": true
   },
   {
@@ -1966,18 +1954,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00063",
-   "nombre": "Trio de brazaletes Cartie con logo",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/c11f0e5017d3341ca514f31237b5e2a4.jpg",
-   "creado": "2026-11-18T00:08:47.142Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00064",
    "nombre": "Trio de brazaletes LV",
    "categoria": "PUL",
@@ -1987,18 +1963,6 @@
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00065",
-   "nombre": "Trio de brazaletes tiffan",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a06203addcc8fd27bdf9a6e5379e61d0.jpg",
-   "creado": "2026-11-18T00:11:59.208Z",
    "disponible": true
   },
   {
