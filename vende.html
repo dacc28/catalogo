@@ -1463,6 +1463,7 @@ nav.tabs button[aria-selected="true"] .beta{background:rgba(248,238,154,.9);colo
     <button role="tab" id="tab-envios" aria-selected="false" data-view="envios">Enviados</button>
     <button role="tab" id="tab-cli" aria-selected="false" data-view="cli">Clientas</button>
     <button role="tab" id="tab-inv" aria-selected="true" data-view="inv">Inventario</button>
+    <button role="tab" id="tab-regp" aria-selected="false" data-view="regp">Registro de productos</button>
     <button role="tab" id="tab-new" aria-selected="false" data-view="new">Nuevo producto</button>
     <button role="tab" id="tab-scan" aria-selected="false" data-view="scan">Escanear</button>
     <button role="tab" id="tab-ajustes" aria-selected="false" data-view="ajustes" hidden>Ajustes</button>
@@ -4199,7 +4200,7 @@ async function migracionPalabras(){
     renderAll(); toast(`Palabras clave nuevas: ${cambios.length} pieza${cambios.length===1?"":"s"} ahora usan una palabra de su nombre (las anteriores se siguen reconociendo)`);
   }catch(e){ console.warn("migracion palabras",e); state.migrPal=false; }
 }
-function palabrasUsadas(exceptCode){ const u=new Set(); for(const p of state.products.values()){ if(p.codigo!==exceptCode&&p.palabra) u.add(normaliza(p.palabra)); } return u; }
+function palabrasUsadas(exceptCode){ const u=new Set(); for(const p of state.products.values()){ if(p.codigo!==exceptCode&&p.palabra) u.add(normaliza(p.palabra)); } if(state.reservas) for(const p of state.reservas.values()){ if(p.codigo!==exceptCode&&p.palabra) u.add(normaliza(p.palabra)); } return u; } /* mvRP */
 function palabraAleatoria(exceptCode){
   const usadas=palabrasUsadas(exceptCode); const libres=PALABRAS.filter(w=>!usadas.has(w));
   if(libres.length) return libres[Math.floor(Math.random()*libres.length)];
@@ -4239,7 +4240,7 @@ async function migracionCadenas(){
     renderCats(); renderAll(); if(n) toast(`Categoría «Cadenas» lista · ${n} producto${n===1?"":"s"} movido${n===1?"":"s"} a Cadenas`);
   }catch(e){ console.warn("migracion cadenas",e); state.migrCad=false; }
 }
-function nextCode(prefix){ let max=0; for(const p of state.products.values()){ if(p.categoria===prefix&&String(p.codigo).startsWith(prefix+"-")){ const n=parseInt(String(p.codigo).split("-")[1],10); if(n>max) max=n; } } return prefix+"-"+pad5(max+1); }
+function nextCode(prefix){ let max=0; const ver=c=>{ c=String(c||""); if(c.startsWith(prefix+"-")){ const n=parseInt(c.split("-")[1],10); if(n>max) max=n; } }; for(const p of state.products.values()) ver(p.codigo); if(state.reservas) for(const k of state.reservas.keys()) ver(k); return prefix+"-"+pad5(max+1); } /* mvRP: cuenta también Reservas y códigos de otra categoría (nunca se repite) */
 function sortedProducts(){ return [...state.products.values()].sort((a,b)=>String(b.creado||"").localeCompare(String(a.creado||""))||a.codigo.localeCompare(b.codigo)); }
 
 /* ============ Menú de clic derecho ============ */
@@ -4851,8 +4852,9 @@ form.addEventListener("submit",async(ev)=>{
     let palabra=normaliza($("#palabra").value)||palabraDelProducto(nombre,$("#material").value,codigo); if(palabrasUsadas(codigo).has(palabra)){ const otro=porPalabra(palabra); toast(`La palabra "${palabra}" ya la usa ${otro?otro.codigo:"otro producto"}; se asignó otra`,true); palabra=palabraAleatoria(codigo); }
     const data={codigo,nombre,palabra,categoria:cat,material:materialNormalizado($("#material").value),costo:Math.round((parseFloat($("#costo").value)||0)*100)/100,precio:Math.round(precio*100)/100,existencia:Math.max(0,parseInt($("#existencia").value,10)||0),minimo:Math.max(0,parseInt($("#minimo").value,10)||0),notas:$("#notas").value.trim(),etiquetaCat:$("#etiquetaCat").value.trim().slice(0,24),fotoId,...(fotoId2?{fotoId2}:{}),creado:prev?prev.creado||now:now,actualizado:now};
     if(prev&&state.db&&typeof state.db.stock==="function"){ /* mvInv: solo la diferencia */ const vivo=state.products.get(codigo)||prev; const ex0=(state.__mvEx0&&state.__mvEx0.codigo===codigo)?state.__mvEx0.ex:Math.max(0,Number(prev.existencia)||0); const quiere=data.existencia; data.existencia=Math.max(0,Number(vivo.existencia)||0); await state.db.doc("productos/"+codigo).set(data); const dif=quiere-ex0; if(dif){ const pv=window.__mvMov; window.__mvMov={motivo:"ajuste",ref:"ficha del producto"}; try{ const r=await state.db.stock(codigo,dif); data.existencia=Number(r.existencia)||0; if(Number(r.aplicado)!==dif) toast(`Existencia: pediste ${dif>0?"+":""}${dif} y solo se pudo ${r.aplicado}; ahora hay ${data.existencia}`,true); }finally{ window.__mvMov=pv||null; } } state.__mvEx0=null; }
+    else if(!state.editing&&window.mvRPReservar&&window.mvRPReservar()){ data.reservado=now; await state.db.doc("reservas/"+codigo).set(data); if(window.mvRPGuardada) window.mvRPGuardada(data); } /* mvRP: a Reservas */
     else await state.db.doc("productos/"+codigo).set(data);
-    state.products.set(codigo,data); renderAll();
+    if(!data.reservado) state.products.set(codigo,data); renderAll();
     const wasEdit=!!state.editing;
     resetForm();
     form.hidden=true; const d=$("#done"); d.hidden=false;
@@ -4860,7 +4862,7 @@ form.addEventListener("submit",async(ev)=>{
     $("#doneCode").textContent=codigo; $("#doneWordVal").textContent=palabra; $("#doneSub").textContent=`${nombre} · ${catName(cat)} · $${fmtMoney(data.precio)} MXN mayoreo`;
     $("#doneBc").replaceChildren(window.mvQrSVG?window.mvQrSVG(codigo,140):barcodeSVG(codigo));
     $("#doneLabel").onclick=()=>openDrawer(codigo,true);
-    toast(wasEdit?"Guardado":"Registrado "+codigo);
+    if(data.reservado&&window.mvRPDespues) window.mvRPDespues(codigo,wasEdit); else toast(wasEdit?"Guardado":"Registrado "+codigo);
   }catch(e){
     console.error(e);
     const code=e&&e.code; let msg=e&&e.shown?e.message:"No se pudo guardar. Intenta de nuevo.";
@@ -8521,7 +8523,8 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
     {id:"bf", tab:"bf", sub:[]},
     {id:"web", tab:"web", sub:[]},
     {id:"cli", tab:"cli", sub:[]},
-    {id:"inv", tab:"inv", sub:[["inv","Inventario"],["new","Nuevo producto"],["scan","Escanear"]]},
+    {id:"inv", tab:"inv", sub:[["inv","Inventario"],["scan","Escanear"]]},
+    {id:"regp", tab:"regp", sub:[["new","Nuevo producto"],["res","Reservas"],["etq","Por etiquetar"]]},
     {id:"ajustes", tab:"ajustes", sub:[]}
   ];
   var ALIAS={rapido:"dash"};
@@ -10393,320 +10396,6 @@ body.rol-vendedor #tab-cobro{display:none!important}
   try{ obs2.observe(document.body,{childList:true,subtree:true}); }catch(e){}
 })();
 </script>
-<style id="mv-pq-css">
-/* mvPQ · ficha del producto, «Escanear» y aviso de lectura (20-nov-2026) */
-body.mvpq-sinscroll{overflow:hidden}
-.mvpq-fondo{position:fixed;inset:0;z-index:2147483100;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 14px;overflow:auto;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:mvpqIn .14s ease-out}
-@keyframes mvpqIn{from{opacity:0}to{opacity:1}}
-.mvpq-caja{background:#fff;color:#2a1a24;border-radius:22px;box-shadow:0 24px 70px rgba(40,10,30,.28);width:min(720px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px;font-family:inherit}
-.mvpq-cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.mvpq-cab h3{margin:0;font-size:20px}
-.mvpq-eti{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8B6A7E}
-.mvpq-x{border:0;background:#F4EEF1;color:#2a1a24;border-radius:999px;width:38px;height:38px;font-size:24px;line-height:1;cursor:pointer;flex:none}
-.mvpq-x:hover{background:#EADFE5}
-/* ficha */
-.mvpq-cuerpo{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
-.mvpq-foto{aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#FAF6F8;border:1px solid #F0E7EC}
-.mvpq-foto>*{width:100%!important;height:100%!important;max-height:none!important;margin:0!important;border-radius:0!important;display:flex;align-items:center;justify-content:center}
-.mvpq-foto img{width:100%;height:100%;object-fit:contain;display:block}
-.mvpq-info{min-width:0;display:flex;flex-direction:column;gap:12px}
-.mvpq-info h2{margin:0;font-size:23px;line-height:1.18;letter-spacing:-.01em}
-.mvpq-datos{display:flex;flex-direction:column;border:1px solid #F0E7EC;border-radius:14px;overflow:hidden}
-.mvpq-kv{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:center;padding:9px 12px;font-size:14px}
-.mvpq-kv+.mvpq-kv{border-top:1px solid #F4EDF1}
-.mvpq-kv>span{color:#8B6A7E;font-size:12.5px;font-weight:700}
-.mvpq-kv>b{font-weight:650;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
-.mvpq-cod{font:700 12.5px ui-monospace,Menlo,monospace;letter-spacing:.06em;color:#5A2748;background:#F3E8EF;padding:3px 9px;border-radius:999px}
-.mvpq-pal{font-size:12.5px;font-weight:700;color:#7A3F63;background:#FFF;border:1px solid #E7D5DF;padding:2px 9px;border-radius:999px}
-.mvpq-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mvpq-num{border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;background:#FAF6F8}
-.mvpq-num>span{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8B6A7E}
-.mvpq-num>b{font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.mvpq-num>small{font-size:12px;color:#6B5664}
-.mvpq-precio>b{color:#5A2748}
-.mvpq-ex.ok{background:#E9F5EE}.mvpq-ex.ok>b{color:#1F6B3A}
-.mvpq-ex.unica{background:#FFF4D6}.mvpq-ex.unica>b{color:#8A5D00}
-.mvpq-ex.agot{background:#FDE8EA}.mvpq-ex.agot>b{color:#B5333F;font-size:24px}
-.mvpq-notas{margin:0;font-size:13px;color:#6B5664;background:#FAF6F8;border-radius:12px;padding:8px 12px}
-.mvpq-acc{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
-.mvpq-b{font:inherit;font-size:14px;font-weight:700;border:1px solid #E2D6DD;background:#fff;color:#2a1a24;border-radius:12px;padding:10px 14px;cursor:pointer;min-height:42px}
-.mvpq-b:hover{background:#FAF6F8}
-.mvpq-b.prim{background:#5A2748;border-color:#5A2748;color:#fff}
-.mvpq-b.prim:hover{background:#4A1F3B}
-.mvpq-b:disabled{opacity:.55;cursor:default}
-/* escanear */
-.mvpq-esc{width:min(460px,100%)}
-.mvpq-tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mvpq-tipos>div{background:#FAF6F8;border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:1px}
-.mvpq-tipos b{font-size:13.5px}.mvpq-tipos span{font-size:12px;color:#6B5664}
-.mvpq-in{font:inherit;font-size:21px;letter-spacing:.06em;text-align:center;padding:13px 12px;border:1.5px solid #E2D6DD;border-radius:14px;text-transform:uppercase;outline:none;width:100%;box-sizing:border-box}
-.mvpq-in:focus{border-color:#5A2748;box-shadow:0 0 0 4px rgba(90,39,72,.12)}
-.mvpq-cam{position:relative;border-radius:16px;overflow:hidden;background:#111;aspect-ratio:4/3}
-.mvpq-cam[hidden]{display:none}
-.mvpq-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
-.mvpq-mira{position:absolute;left:50%;top:50%;width:58%;aspect-ratio:1/1;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.92);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
-.mvpq-msg{min-height:18px;font-size:13px;color:#6B5664;text-align:center}
-.mvpq-msg.bad{color:#B5333F;font-weight:700}
-/* aviso de lectura */
-.mvpq-hud{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);z-index:2147483600;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:999px;background:#2a1a24;color:#fff;box-shadow:0 12px 34px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;max-width:min(560px,calc(100vw - 24px))}
-.mvpq-hud.on{opacity:1;transform:translate(-50%,0)}
-.mvpq-hico{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex:none;background:#555}
-.mvpq-hud.ok .mvpq-hico{background:#2E9B57}.mvpq-hud.bad .mvpq-hico{background:#D2414F}
-.mvpq-hud.wait .mvpq-hico{background:transparent;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:mvpqGira .7s linear infinite;width:20px;height:20px}
-@keyframes mvpqGira{to{transform:rotate(360deg)}}
-.mvpq-htx{display:flex;flex-direction:column;min-width:0}
-.mvpq-htx b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mvpq-htx small{font-size:12.5px;opacity:.82}
-body.vx-on .mvpq-hud{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-/* celular */
-@media (max-width:640px){
-  .mvpq-fondo{padding:0;align-items:flex-end}
-  .mvpq-caja{border-radius:22px 22px 0 0;max-height:94vh;overflow:auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
-  .mvpq-cuerpo{grid-template-columns:1fr;gap:12px}
-  .mvpq-foto{max-width:210px;width:52%;margin:0 auto}
-  .mvpq-info h2{font-size:20px;text-align:center}
-  .mvpq-num>b{font-size:26px}
-  .mvpq-acc{justify-content:stretch}.mvpq-acc .mvpq-b{flex:1 1 calc(50% - 8px)}.mvpq-acc .mvpq-b.prim{flex-basis:100%}
-}
-/* Marvea Vende: botones de arriba (Escanear · Etiquetas) compactos en una sola fila */
-body.vx-on .vx-topr{flex-wrap:nowrap;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none}
-body.vx-on .vx-topr::-webkit-scrollbar{display:none}
-body.vx-on .vx-topr .mvtb-escbtn,body.vx-on .vx-topr .mvtb-pcbtn,body.vx-on .vx-topr .mvtb-rgbtn{margin:0!important;white-space:nowrap;font-size:13px!important;padding:7px 11px!important;min-height:0!important;height:auto!important;border-radius:999px!important;line-height:1.2!important;flex:none}
-body.vx-on .vx-topr .vx-nueva{order:-1;flex:none;white-space:nowrap}
-body.vx-on .vx-topr>*{flex:none}
-</style>
-<script id="mv-pq-js">
-/* ===== mvPQ · QR de producto (20-nov-2026) =====
-   1) Un QR por producto (modelo). Al leerlo fuera de una venta se abre la FICHA EMERGENTE del producto:
-      foto, producto, modelo (código + palabra clave), categoría, material, precio y existencias al momento.
-   2) «▦ Escanear» (Venta) unifica pedido y producto: QR de pedido (MV…) → ficha del pedido (mvTB); QR de producto → su ficha.
-      En el sistema en línea también se puede leer con la cámara de la laptop.
-   3) Dentro de una venta abierta (Venta / Live, sistema y Marvea Vende) cada lectura agrega 1 pieza al carrito y resta 1 del
-      inventario. Las lecturas van EN FILA: ninguna se pierde aunque se escanee rápido, y cada una espera a que la anterior
-      termine de guardarse. La resta la hace la nube con candado por producto (marvea_stock_mov): si queda 1 pieza y dos
-      equipos la escanean al mismo tiempo, solo uno se la lleva; al otro le sale «Agotado» y no se agrega.
-   No guarda nada nuevo ni cambia la forma de los datos. */
-(function(){
-  if(window.__mvPQ) return; window.__mvPQ=true;
-  const $q=s=>document.querySelector(s);
-  const money=x=>"$"+fmtMoney(x);
-  const esVende=()=>!!(document.body&&document.body.classList.contains("vx-on"));
-  const rol=()=>{ try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
-  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; }; // app de la Mac: sin perfil = administrador
-  const espera=ms=>new Promise(r=>setTimeout(r,ms));
-  const vende=()=>window.mvPQVende||null;
-
-  /* ---------- 1) sacar el código de lo que se lea ----------
-     El QR es un enlace …marveamayoreo.com/vende#COL-00002. Un lector de mano configurado con otro idioma de teclado lo
-     escribe con signos cambiados (p. ej. «httpsÑ--www.marveamayoreo.com-vende·COL'00002»): se toma lo que va después de
-     «vende» y porCodigo ya ignora guiones y signos. */
-  const qrBase=window.mvCodigoDeQR;
-  function deQR(t){
-    const s=String(t==null?"":t).trim(); const x=qrBase?qrBase(s):s; if(x!==s) return x;
-    const U=s.toUpperCase(); const i=U.lastIndexOf("VENDE");
-    if(i>0&&/MARVEA|WWW|HTTP/.test(U.slice(0,i))){ const r=U.slice(i+5).replace(/^[^A-Z0-9]*(HTML)?[^A-Z0-9]*/,"").replace(/\s.*$/,""); if(r) return r; }
-    return s;
-  }
-  window.mvCodigoDeQR=deQR;
-  function resolver(txt){
-    const cod=deQR(txt); if(!cod) return null; const U=cod.toUpperCase();
-    const mv=U.match(/^MV\d{8}$/)||U.replace(/[^A-Z0-9]/g,"").match(/^MV\d{8}$/); if(mv) return {tipo:"pedido",cod:mv[0]};
-    const p=porCodigo(cod)||porPalabra(cod); if(p) return {tipo:"producto",p,cod:U};
-    return {tipo:"nada",cod:U};
-  }
-
-  /* ---------- avisos: sonido, vibración y franja ---------- */
-  let actx=null;
-  function bip(ok){
-    try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume();
-      const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime, d=ok?0.11:0.32;
-      o.type=ok?"sine":"square"; o.frequency.value=ok?1320:220; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(ok?0.16:0.08,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
-      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d+0.02); }catch(e){}
-    try{ if(navigator.vibrate) navigator.vibrate(ok?25:[70,50,70]); }catch(e){}
-  }
-  let hud=null, hudT=0;
-  function aviso(ok,titulo,detalle){
-    if(!hud){ hud=h("div",{class:"mvpq-hud",role:"status","aria-live":"polite"}); document.body.append(hud); }
-    hud.className="mvpq-hud on "+(ok===true?"ok":ok===false?"bad":"wait");
-    hud.replaceChildren(h("span",{class:"mvpq-hico"},ok===true?"✓":ok===false?"✕":""),h("span",{class:"mvpq-htx"},h("b",null,titulo),detalle?h("small",null,detalle):null));
-    clearTimeout(hudT); if(ok!==null) hudT=setTimeout(()=>{ if(hud) hud.classList.remove("on"); },ok?2400:4500);
-  }
-  function estado(p){ const n=Math.max(0,Number(p&&p.existencia)||0); return n<=0?{cls:"agot",n,t:"Agotado"}:n===1?{cls:"unica",n,t:"Única pieza"}:{cls:"ok",n,t:n+" piezas"}; }
-
-  /* ---------- 2) escaneo a la venta: en fila, una pieza por lectura ---------- */
-  // durante una lectura, el aviso propio sustituye al mensaje corto del carrito (+1 …, sin existencia): un solo aviso, no dos
-  let silencio=0;
-  try{ const t0=window.toast; if(typeof t0==="function"&&!t0.__mvPQ){ const t1=function(msg,bad){ if(silencio&&/^(\+\d|Sin existencia|Solo había)/.test(String(msg||""))) return; return t0.apply(this,arguments); }; t1.__mvPQ=true; window.toast=t1; } }catch(e){}
-  let cola=Promise.resolve(), enFila=0;
-  async function libre(){ const t0=Date.now(); while(state.busy&&Date.now()-t0<15000) await espera(25); }
-  const piezasDe=(c,cod)=>{ if(!c||!Array.isArray(c.items)) return 0; let n=0; for(const it of c.items) if(it&&it.codigo===cod) n+=Number(it.cant)||0; return n; };
-  // Si otro equipo agregó al MISMO pedido, se parte de lo que ya está guardado (así no se pisan sus piezas).
-  async function fresca(c){ try{ if(!c||!c.id||!state.db) return; const d=await state.db.doc("carritos/"+c.id).get(); const x=d&&d.exists&&d.data();
-    if(x&&Array.isArray(x.items)&&(x.estado||"abierto")===c.estado) c.items=JSON.parse(JSON.stringify(x.items)); }catch(e){} }
-  function encolar(p,agregarFn,carrito){
-    enFila++; if(enFila>1) aviso(null,"Agregando…",enFila+" lecturas en fila");
-    const tarea=cola.then(async()=>{
-      const cod=p.codigo; let ok=false, falla="";
-      try{
-        for(let intento=0;intento<3&&!ok;intento++){
-          await libre();
-          const c0=carrito&&carrito(); if(c0&&c0.estado==="abierto") await fresca(c0);
-          const base=piezasDe(c0,cod), id0=c0&&c0.id;
-          const q0=state.products.get(cod); if(!q0){ falla="Ya no está en el inventario"; break; }
-          if((Number(q0.existencia)||0)<=0){ falla="Agotado · no se agregó"; break; }
-          silencio++; try{ await agregarFn(state.products.get(cod)||q0); await libre(); } finally{ silencio--; } // siempre con el producto al día (existencia actual)
-          const c1=carrito&&carrito(); const gan=piezasDe(c1,cod)-(c1&&c1.id===id0?base:0);
-          if(gan>0){ ok=true; break; }
-          const q1=state.products.get(cod); if(!q1||(Number(q1.existencia)||0)<=0){ falla="Agotado · se vendió en otro equipo"; break; }
-          if(c1&&c1.estado&&c1.estado!=="abierto"){ falla="La venta está "+c1.estado+"; reábrela para agregar"; break; }
-          falla="No se pudo agregar"; await espera(150);
-        }
-      }catch(e){ console.warn("mvPQ",e); falla="No se pudo agregar (¿hay internet?)"; }
-      enFila=Math.max(0,enFila-1);
-      const q=state.products.get(cod)||p; const quedan=Math.max(0,Number(q.existencia)||0); const c=carrito&&carrito();
-      if(ok){ bip(true); aviso(true,"+1 "+(q.nombre||cod),(quedan<=0?"Era la última pieza":quedan===1?"Queda 1 pieza":"Quedan "+quedan)+(c?" · "+piezasDe(c,cod)+" en la venta":"")+(enFila?" · faltan "+enFila+" en fila":"")); }
-      else { bip(false); aviso(false,(q.nombre||cod),falla); }
-      return {ok,msg:ok?"+1 "+(q.palabra||q.nombre||cod)+" · quedan "+quedan:(q.palabra||q.nombre||cod)+" · "+falla,quedan};
-    });
-    cola=tarea.catch(()=>{}); return tarea;
-  }
-
-  /* dónde cae la lectura: agregar (venta abierta en pantalla) o ver la ficha */
-  function contexto(){
-    const v=vende(); if(v&&esVende()){ try{ return v.contexto()||{modo:"ver"}; }catch(e){ return {modo:"ver"}; } }
-    const vis=el=>!!(el&&!el.disabled&&el.offsetParent!==null);
-    if(state.view==="venta"&&vis($q("#ventaInput"))&&typeof ventaAgregar==="function") return {modo:"agregar",agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()};
-    if(vis($q("#addInput"))&&state.cartId&&state.carts&&state.carts.get(state.cartId)) return {modo:"agregar",agregar:p=>{ const c=state.carts.get(state.cartId); return c?addToCart(c,p,1):null; },carrito:()=>state.carts.get(state.cartId)||null};
-    return {modo:"ver"};
-  }
-  // venta abierta aunque no esté en pantalla (botón «Agregar a la venta» de la ficha)
-  function ventaAbierta(){
-    const v=vende(); if(v&&esVende()){ try{ return v.ventaAbierta(); }catch(e){ return null; } }
-    try{ const c=typeof ventaActual==="function"?ventaActual():null; if(c&&c.estado==="abierto"&&(typeof esHoyVenta!=="function"||esHoyVenta())) return {nombre:c.cliente,agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()}; }catch(e){}
-    return null;
-  }
-  function despachar(r,opts){
-    opts=opts||{}; if(!r) return;
-    if(r.tipo==="pedido"){ cerrarFicha(); cerrarEsc(); if(window.mvTBEscaneo) window.mvTBEscaneo(r.cod); return; }
-    if(r.tipo==="nada"){ bip(false); aviso(false,"No encontré «"+r.cod+"»","Revisa que esté registrado en Inventario"); return; }
-    const ctx=(opts.ver||capaF||capaE)?{modo:"ver"}:contexto();
-    if(ctx.modo==="agregar") return encolar(r.p,q=>ctx.agregar(q),ctx.carrito);
-    bip(true); ficha(r.p,opts);
-  }
-
-  /* ---------- lector de mano (teclado): ráfaga rápida que termina en Enter ---------- */
-  let buf="", t0=0, tu=0;
-  function quitarTecleo(t,txt){
-    try{ if(!t||typeof t.value!=="string"||!t.value) return; let v=t.value; const k=v.lastIndexOf(txt);
-      if(k>=0) v=v.slice(0,k)+v.slice(k+txt.length);
-      else { for(let n=txt.length-1;n>=4;n--){ const cola2=txt.slice(0,n); if(v.endsWith(cola2)){ v=v.slice(0,v.length-n); break; } const ini=txt.slice(-n); if(v.endsWith(ini)){ v=v.slice(0,v.length-n); break; } } }
-      if(v!==t.value){ t.value=v.trim(); t.dispatchEvent(new Event("input",{bubbles:true})); } }catch(e){}
-  }
-  document.addEventListener("keydown",e=>{
-    if(e.metaKey||e.ctrlKey||e.altKey) return; const now=performance.now();
-    if(e.key==="Enter"){
-      const txt=buf, n=txt.length, ritmo=n>1?(tu-t0)/(n-1):999; buf="";
-      if(n<5||now-tu>160||ritmo>45) return; // tecleado a mano
-      if(state.view==="scan"&&!esVende()&&!capaF&&!capaE) return; // pestaña «Escanear» de siempre
-      const r=resolver(txt); if(!r) return;
-      e.preventDefault(); e.stopImmediatePropagation(); quitarTecleo(e.target,txt); despachar(r);
-      return;
-    }
-    if(e.key.length!==1) return;
-    if(!buf||now-tu>160){ buf=""; t0=now; } tu=now; buf=(buf+e.key).slice(-160);
-  },true);
-
-  /* ---------- ficha emergente del producto ---------- */
-  let capaF=null, relojF=0;
-  function escF(e){ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); cerrarFicha(); } }
-  function cerrarFicha(){ if(capaF){ capaF.remove(); capaF=null; clearInterval(relojF); document.removeEventListener("keydown",escF,true); document.body.classList.remove("mvpq-sinscroll"); } }
-  function ficha(p0,opts){
-    opts=opts||{}; cerrarFicha(); cerrarEsc();
-    const cod=p0.codigo, P=()=>state.products.get(cod)||p0; const p=P();
-    const exBox=h("div",{class:"mvpq-num mvpq-ex"});
-    const pintaEx=()=>{ const s=estado(P()); exBox.className="mvpq-num mvpq-ex "+s.cls;
-      exBox.replaceChildren(h("span",null,"Existencias"),h("b",null,s.n<=0?"Agotado":String(s.n)),h("small",null,s.n<=0?"sin piezas disponibles":s.n===1?"única pieza":"piezas disponibles")); };
-    pintaEx(); relojF=setInterval(()=>{ if(!document.body.contains(exBox)){ clearInterval(relojF); return; } pintaEx(); },1000);
-    const fila=(k,v)=>h("div",{class:"mvpq-kv"},h("span",null,k),h("b",null,v));
-    const ab=ventaAbierta(); const v=vende();
-    const btnAgregar=ab?h("button",{type:"button",class:"mvpq-b prim",onclick:async()=>{ btnAgregar.disabled=true; await encolar(P(),q=>ab.agregar(q),ab.carrito); btnAgregar.disabled=false; pintaEx(); }},"＋ Agregar a la venta"+(ab.nombre?" · "+ab.nombre:"")):null;
-    const verFicha=esVende()?(v&&v.admin&&v.admin()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); v.verInventario(P()); }},"Ver en inventario"):null)
-      :(esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod); }},"Ficha completa"):null);
-    const etiq=!esVende()&&esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod,true); }},"🏷️ Etiqueta"):null;
-    const otro=h("button",{type:"button",class:"mvpq-b",onclick:()=>{ const cam=!!opts.camara; cerrarFicha(); abrirEscaner(cam); }},"▦ Escanear otro");
-    const caja=h("div",{class:"mvpq-caja mvpq-ficha",role:"dialog","aria-label":"Producto "+(p.nombre||cod)},
-      h("div",{class:"mvpq-cab"},h("span",{class:"mvpq-eti"},"Producto"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarFicha},"×")),
-      h("div",{class:"mvpq-cuerpo"},
-        h("div",{class:"mvpq-foto"},imgOrPh(p,"hero")),
-        h("div",{class:"mvpq-info"},
-          h("h2",null,p.nombre||cod),
-          h("div",{class:"mvpq-datos"},
-            fila("Modelo",[h("span",{class:"mvpq-cod"},cod),p.palabra?h("span",{class:"mvpq-pal"},p.palabra):null]),
-            fila("Material",p.material||"—"),
-            fila("Categoría",catName(p.categoria))),
-          h("div",{class:"mvpq-nums"},h("div",{class:"mvpq-num mvpq-precio"},h("span",null,"Precio"),h("b",null,money(p.precio)),h("small",null,"MXN mayoreo")),exBox),
-          p.notas?h("p",{class:"mvpq-notas"},p.notas):null)),
-      h("div",{class:"mvpq-acc"},btnAgregar,verFicha,etiq,otro,h("button",{type:"button",class:"mvpq-b",onclick:cerrarFicha},"Cerrar")));
-    capaF=h("div",{class:"mvpq-fondo"},caja); capaF.addEventListener("click",e=>{ if(e.target===capaF) cerrarFicha(); });
-    document.body.append(capaF); document.body.classList.add("mvpq-sinscroll"); document.addEventListener("keydown",escF,true);
-    setTimeout(()=>{ const b=caja.querySelector(".mvpq-b.prim")||caja.querySelector(".mvpq-x"); if(b&&!esVende()) b.focus(); },30);
-  }
-
-  /* ---------- «▦ Escanear»: pedido o producto (lector, tecleado o cámara de la laptop) ---------- */
-  let capaE=null, cam=null, zx=null;
-  const puedeCam=()=>/^https?:$/.test(location.protocol)&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
-  function cargarZX(){ if(window.ZXing) return Promise.resolve(); if(zx) return zx; zx=new Promise((ok,no)=>{ const s=document.createElement("script"); s.src="zxing-0.21.3.min.js"; s.onload=ok; s.onerror=()=>{ zx=null; no(new Error("zxing")); }; document.head.append(s); }); return zx; }
-  function pararCam(){ if(cam){ cam.vivo=false; try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam=null; } }
-  function cerrarEsc(){ pararCam(); if(capaE){ capaE.remove(); capaE=null; document.body.classList.remove("mvpq-sinscroll"); } }
-  function abrirEscaner(conCamara){
-    const v=vende(); if(esVende()&&v&&v.camara){ cerrarFicha(); v.camara(); return; } // celular: la cámara de Marvea Vende
-    cerrarFicha(); cerrarEsc();
-    const msg=h("div",{class:"mvpq-msg"},"");
-    const inp=h("input",{type:"text",class:"mvpq-in",placeholder:"Escanea o escribe el código",autocomplete:"off",autocapitalize:"characters",spellcheck:"false","aria-label":"Código del pedido o del producto"});
-    const buscar=(txt)=>{ const r=resolver(txt); inp.value="";
-      if(!r||r.tipo==="nada"){ bip(false); msg.textContent=r?"No hay pedido ni producto con «"+r.cod+"»":""; msg.className="mvpq-msg bad"; inp.focus(); return; }
-      despachar(r,{ver:true,camara:!!cam}); };
-    inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); e.stopPropagation(); if(inp.value.trim()) buscar(inp.value.trim()); } else if(e.key==="Escape"){ e.preventDefault(); cerrarEsc(); } });
-    const video=h("video",{class:"mvpq-video",muted:true,autoplay:true,playsinline:true}); video.muted=true; video.setAttribute("playsinline","");
-    const camBox=h("div",{class:"mvpq-cam",hidden:true},video,h("div",{class:"mvpq-mira"}));
-    const btnCam=puedeCam()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ if(cam){ pararCam(); camBox.hidden=true; btnCam.textContent="📷 Usar cámara"; inp.focus(); } else iniciarCam(); }},"📷 Usar cámara"):null;
-    async function iniciarCam(){
-      camBox.hidden=false; btnCam.textContent="Apagar cámara"; msg.textContent="Acerca el QR a la cámara"; msg.className="mvpq-msg";
-      try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720}}});
-        if(!capaE){ stream.getTracks().forEach(t=>t.stop()); return; }
-        cam={vivo:true,stream}; video.srcObject=stream; try{ await video.play(); }catch(e){}
-        const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
-        let vuelta=0; const yo=cam;
-        const lee=(sx,sy,sw,sh,max)=>{ const k=Math.min(1,max/Math.max(sw,sh)); const w=Math.round(sw*k), hh=Math.round(sh*k); cv.width=w; cv.height=hh; cx.drawImage(video,sx,sy,sw,sh,0,0,w,hh);
-          const d=cx.getImageData(0,0,w,hh).data; const lum=new Uint8ClampedArray(w*hh); for(let i=0,j=0;i<lum.length;i++,j+=4) lum[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
-          try{ return qr.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(lum,w,hh))),hints).getText()||""; }catch(e){ return ""; } finally{ try{ qr.reset(); }catch(e){} } };
-        const tick=()=>{ if(!yo.vivo) return; let txt=""; const vw=video.videoWidth, vh=video.videoHeight;
-          if(vw&&vh){ vuelta++; const lado=Math.min(vw,vh)*0.7; try{ txt=vuelta%2?lee((vw-lado)/2,(vh-lado)/2,lado,lado,720):lee(0,0,vw,vh,1100); }catch(e){} }
-          if(txt){ const r=resolver(txt); if(r&&r.tipo!=="nada"){ despachar(r,{ver:true,camara:true}); return; } bip(false); msg.textContent="No reconozco ese código"; msg.className="mvpq-msg bad"; }
-          setTimeout(tick,txt?900:70); };
-        tick();
-      }catch(e){ console.warn(e); pararCam(); camBox.hidden=true; if(btnCam) btnCam.textContent="📷 Usar cámara"; msg.textContent="No se pudo abrir la cámara (revisa el permiso del navegador)."; msg.className="mvpq-msg bad"; }
-    }
-    const caja=h("div",{class:"mvpq-caja mvpq-esc",role:"dialog","aria-label":"Escanear"},
-      h("div",{class:"mvpq-cab"},h("h3",null,"▦ Escanear"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarEsc},"×")),
-      h("div",{class:"mvpq-tipos"},h("div",null,h("b",null,"Pedido"),h("span",null,"clienta, piezas, pago y envío")),h("div",null,h("b",null,"Producto"),h("span",null,"precio, material y existencias"))),
-      inp,camBox,msg,
-      h("div",{class:"mvpq-acc"},btnCam,h("button",{type:"button",class:"mvpq-b prim",onclick:()=>{ if(inp.value.trim()) buscar(inp.value.trim()); else inp.focus(); }},"Buscar")));
-    capaE=h("div",{class:"mvpq-fondo"},caja); capaE.addEventListener("click",e=>{ if(e.target===capaE) cerrarEsc(); });
-    document.body.append(capaE); document.body.classList.add("mvpq-sinscroll"); setTimeout(()=>inp.focus(),30);
-    if(conCamara&&btnCam) iniciarCam();
-  }
-
-  // Venta: el botón «▦ Escanear pedido» pasa a «▦ Escanear» (pedido o producto)
-  const obs=new MutationObserver(()=>{ try{
-    const b=document.querySelector(".mvtb-escbtn:not([data-mvpq])"); if(b){ const n=b.cloneNode(false); n.dataset.mvpq="1"; n.textContent="▦ Escanear"; n.title="Escanea el QR de un pedido (ficha del pedido) o de un producto (precio y existencias)"; n.addEventListener("click",()=>abrirEscaner(false)); b.replaceWith(n); }
-    if(capaE&&document.querySelector(".mvtb-fondo")) cerrarEsc(); // se abrió la ficha de un pedido
-  }catch(e){} });
-  try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
-
-  window.mvPQFicha=ficha; window.mvPQEscanear=abrirEscaner; window.mvPQEncolar=encolar; window.mvPQResolver=resolver; window.mvPQDespachar=despachar;
-})();
-</script>
 <style id="mv-caja-css">
 /* mvCaja · etiquetas de caja (20-nov-2026) */
 .mvcaja{border-top:1px solid var(--line,#eee);margin-top:14px;padding-top:14px}
@@ -10788,6 +10477,646 @@ body.vx-on .vx-topr>*{flex:none}
   const obs=new MutationObserver(()=>{ try{ const d=document.querySelector('aside.drawer[aria-label="Imprimir etiquetas"]'); if(d&&!d.querySelector(".mvcaja")) d.append(seccion()); }catch(e){} });
   try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
   window.mvCajaRender=render; window.mvCajaImprimir=imprimir;
+})();
+</script>
+<style id="mv-rp-css">
+/* mvRP · Registro de productos: ¿va al catálogo?, Reservas y Por etiquetar (21-nov-2026) */
+.mvrp-dest{grid-column:1/-1;border:1.5px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px;background:var(--surface,#fff);margin-bottom:4px}
+.mvrp-dest[hidden]{display:none}
+.mvrp-desttit{font-weight:800;font-size:14px;margin-bottom:8px;color:var(--fg,#2a1a24)}
+.mvrp-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mvrp-op{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;border:1.5px solid var(--line,#E2D6DD);background:var(--bg,#fff);border-radius:14px;padding:10px 12px;cursor:pointer;color:inherit}
+.mvrp-op .mvrp-opic{flex:none;width:30px;height:30px;border-radius:999px;display:grid;place-items:center;font-weight:900;background:#F1ECEF;color:#6B5664}
+.mvrp-optx{display:flex;flex-direction:column;min-width:0}.mvrp-optx b{font-size:14px}.mvrp-optx small{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-op.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.mvrp-op.inventario.on .mvrp-opic{background:#2E9C6A;color:#fff}
+.mvrp-op.reserva.on{border-color:#C98A00;background:#FFF7E0}.mvrp-op.reserva.on .mvrp-opic{background:#C98A00;color:#fff}
+.btn.mvrp-btnres{background:#C98A00!important;border-color:#C98A00!important;color:#fff!important}
+.mvrp-donechip{display:inline-block;font-size:12px;font-weight:800;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:3px 10px;margin-left:4px}
+.mvrp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.mvrp-head h2{margin:0 0 4px;font-size:24px}.mvrp-head p{margin:0;color:var(--muted,#6B5664);font-size:14px;max-width:640px;line-height:1.45}
+.mvrp-kpis{display:flex;gap:8px}.mvrp-kpis div{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:14px;padding:8px 14px;display:flex;flex-direction:column;align-items:flex-start;min-width:86px}
+.mvrp-kpis b{font-size:22px;font-variant-numeric:tabular-nums}.mvrp-kpis span{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-barra{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.mvrp-buscar{flex:1 1 240px;min-width:0;font:inherit;font-size:14.5px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:10px 12px;background:var(--bg,#fff)}
+.mvrp-sel{font:inherit;font-size:14px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:9px 10px;background:var(--bg,#fff)}
+.mvrp-conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#FFF7E0;border:1px solid #F0D58A;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.mvrp-conf.mini{padding:4px 6px;margin:0;font-size:13px}
+.mvrp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mvrp-card{position:relative;background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.mvrp-card.on{border-color:#C98A00;box-shadow:0 0 0 2px rgba(201,138,0,.25)}
+.mvrp-chk{position:absolute;top:8px;left:8px;z-index:2;background:rgba(255,255,255,.92);border-radius:8px;padding:4px;display:flex}
+.mvrp-chk input{width:20px;height:20px;accent-color:#C98A00;margin:0;cursor:pointer}
+.mvrp-foto{display:block;width:100%;aspect-ratio:1/1;border:0;padding:0;background:#FAF6F8;cursor:zoom-in}
+.mvrp-foto>*{width:100%!important;height:100%!important;border-radius:0!important}
+.mvrp-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.mvrp-info{padding:10px 12px 4px;display:flex;flex-direction:column;gap:3px}
+.mvrp-tags{display:flex;gap:6px;flex-wrap:wrap}
+.mvrp-cod{font:700 11.5px ui-monospace,Menlo,monospace;color:#5A2748;background:#F3E8EF;padding:2px 8px;border-radius:999px}
+.mvrp-pal{font-size:11.5px;font-weight:700;color:#7A3F63;border:1px solid #E7D5DF;padding:1px 8px;border-radius:999px}
+.mvrp-nom{font-size:14.5px;line-height:1.25}
+.mvrp-meta{font-size:12.5px;color:var(--muted,#6B5664)}
+.mvrp-num{display:flex;justify-content:space-between;font-weight:800;font-size:15px}
+.mvrp-pz{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:1px 9px}
+.mvrp-fecha{font-size:11.5px;color:var(--muted,#6B5664)}
+.mvrp-int,.mvrp-card>.mvrp-conf{margin:6px 12px 12px}
+.mvrp-vacio{padding:30px 16px;text-align:center;color:var(--muted,#6B5664);background:var(--surface,#fff);border:1px dashed var(--line,#E2D6DD);border-radius:16px}
+.mvrp-fondo{position:fixed;inset:0;z-index:2147483000;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 12px;overflow:auto}
+.mvrp-modal{background:#fff;border-radius:20px;width:min(640px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 24px 70px rgba(40,10,30,.28)}
+.mvrp-mcab{display:flex;justify-content:space-between;align-items:center}.mvrp-mcab h3{margin:0;font-size:19px}
+.mvrp-x{border:0;background:#F4EEF1;border-radius:999px;width:36px;height:36px;font-size:22px;cursor:pointer}
+.mvrp-ayuda{margin:0;font-size:13px;color:var(--muted,#6B5664)}
+.mvrp-mlista{display:flex;flex-direction:column;gap:6px;max-height:56vh;overflow:auto}
+.mvrp-mrow,.mvrp-erow{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line,#EFE6EB);border-radius:12px;background:var(--surface,#fff)}
+.mvrp-mrow{grid-template-columns:44px minmax(0,1fr) auto}
+.mvrp-mrow .th,.mvrp-erow .th{width:44px;height:44px;border-radius:10px;overflow:hidden}
+.mvrp-minfo,.mvrp-einfo{min-width:0;display:flex;flex-direction:column}.mvrp-minfo b,.mvrp-einfo b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvrp-minfo small,.mvrp-einfo small{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-efoto{border:0;padding:0;background:none;cursor:zoom-in}
+.mvrp-chip{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}.mvrp-chip.res{background:#FFF4D6;color:#7A5A00}.mvrp-chip.inv{background:#E9F5EE;color:#1F6B3A}
+.mvrp-q{border:0;background:#F4EEF1;border-radius:999px;width:30px;height:30px;cursor:pointer;color:#6B5664}
+.mvrp-grupos{display:flex;flex-direction:column;gap:16px}
+.mvrp-grupo{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px}
+.mvrp-ghead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mvrp-ghead h3{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}
+.mvrp-n{font-size:13px;background:#5A2748;color:#fff;border-radius:999px;padding:2px 9px}
+.mvrp-elist{display:flex;flex-direction:column;gap:6px}
+.mvrp-dbox .btn{margin-top:6px}
+@media (max-width:640px){.mvrp-ops{grid-template-columns:1fr}.mvrp-erow{grid-template-columns:40px minmax(0,1fr) auto}.mvrp-erow .mvrp-chip{display:none}}
+.vx-alta-destops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vx-alta-dop{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font:inherit;text-align:left;border:1.5px solid #E2D6DD;background:#fff;border-radius:14px;padding:10px 12px;color:#2a1a24}
+.vx-alta-dop b{font-size:14.5px}.vx-alta-dop small{font-size:12px;color:#6B5664}
+.vx-alta-dop.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.vx-alta-dop.reserva.on{border-color:#C98A00;background:#FFF7E0}
+.vx-alta-resok{margin:0;font-size:13.5px;font-weight:700;color:#7A5A00;background:#FFF4D6;border-radius:12px;padding:9px 12px;text-align:center}
+.vx-cta.vx-cta-res{background:#C98A00!important;color:#fff!important}
+.vx-alta-dest{margin:4px 0 6px}
+</style>
+<script id="mv-rp-js">
+/* ===== mvRP · Registro de productos: Nuevo producto · Reservas · Por etiquetar (21-nov-2026) =====
+   Pestaña nueva «Registro de productos» (sale «Nuevo producto» de Inventario).
+   1) Nuevo producto: «¿Va al catálogo?» → Sí: al inventario (como siempre, se publica en el catálogo) · No: a Reservas.
+   2) Reservas: productos registrados que NO están a la venta. Viven en su propia colección «reservas» (marvea_docs col='reservas'),
+      así ni el inventario, ni el catálogo, ni la tienda en línea, ni las ventas los ven. «Integrar al catálogo» los pasa a
+      «productos» con sus piezas (la nube anota la alta en el historial). Un producto del inventario se puede mandar a Reservas
+      (no si tiene piezas en carritos abiertos o apartadas en la tienda en línea). Foto en grande al tocarla.
+   3) Por etiquetar: todo producto registrado desde que se activó (config/registroEtiquetas.desde), venga de la laptop o del
+      celular, aparece por categoría hasta que se imprime su etiqueta 40 × 30 (1 por producto). Al imprimir sale de la lista
+      (colección «etiquetasHechas», un documento por código: no se pisan entre equipos).
+   Los códigos y las palabras clave cuentan también los productos en Reservas (nunca se repiten). */
+(function(){
+  if(window.__mvRP) return; window.__mvRP=true;
+  const money=x=>"$"+fmtMoney(x);
+  const ahora=()=>new Date().toISOString();
+  const fechaC=f=>{ try{ return f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""; }catch(e){ return ""; } };
+  const fechaL=f=>{ try{ return f?new Date(f).toLocaleString("es-MX",{day:"numeric",month:"long",hour:"numeric",minute:"2-digit"}):""; }catch(e){ return ""; } };
+  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
+  const key=x=>String(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  state.reservas=state.reservas||new Map(); state.etqHechas=state.etqHechas||new Map(); state.etqDesde=state.etqDesde||null;
+  const R={q:"",cat:"",sel:new Set(),conf:null,ocupado:false};
+
+  function norm(id,x){ x=x||{}; return {codigo:id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,...(typeof x.fotoId2==="string"&&x.fotoId2?{fotoId2:x.fotoId2}:{}),etiquetaCat:String(x.etiquetaCat||""),creado:String(x.creado||""),actualizado:String(x.actualizado||""),reservado:String(x.reservado||""),reservadoDesde:String(x.reservadoDesde||""),reserva:true}; }
+
+  /* ---------- datos ---------- */
+  let suscrito=false, creandoDesde=false;
+  function suscribir(){
+    if(suscrito||!state.db) return; suscrito=true;
+    try{ state.db.collection("reservas").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data(); if(x) m.set(d.id,norm(d.id,x)); } state.reservas=m; repintar(); },e=>console.warn("reservas",e)); }catch(e){ console.warn(e); }
+    try{ state.db.collection("etiquetasHechas").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,x); } state.etqHechas=m; repintar(); },e=>console.warn("etiquetasHechas",e)); }catch(e){ console.warn(e); }
+    try{ state.db.doc("config/registroEtiquetas").onSnapshot(s=>{ const d=s&&s.exists?s.data():null; state.etqDesde=d&&d.desde||null;
+        if(!state.etqDesde&&esAdmin()&&!creandoDesde){ creandoDesde=true; const v=ahora(); state.etqDesde=v; state.db.doc("config/registroEtiquetas").set({desde:v,creado:v}).catch(e=>console.warn("registroEtiquetas",e)); }
+        repintar(); },e=>console.warn("registroEtiquetas",e)); }catch(e){ console.warn(e); }
+  }
+  (function(){ let n=0; const t=setInterval(()=>{ if(state.db){ clearInterval(t); suscribir(); } else if(++n>600) clearInterval(t); },250); })();
+
+  // para el resto del sistema
+  window.mvRPCodigos=()=>[...state.reservas.keys()];
+  window.mvRPBuscar=t=>{ const k=key(t); if(k.length<3) return null; for(const p of state.reservas.values()){ if(key(p.codigo)===k) return p; } const q=String(t||"").trim().toLowerCase(); if(q) for(const p of state.reservas.values()){ if(p.palabra&&p.palabra.toLowerCase()===q) return p; } return null; };
+
+  /* ---------- 1) Nuevo producto: ¿va al catálogo? ---------- */
+  let destino="inventario"; try{ if(localStorage.getItem("marvea.rp.destino")==="reserva") destino="reserva"; }catch(e){}
+  let ultimaReserva=null;
+  window.mvRPReservar=()=>!state.editing&&destino==="reserva";
+  window.mvRPGuardada=data=>{ ultimaReserva=data.codigo; state.reservas.set(data.codigo,norm(data.codigo,data)); };
+  window.mvRPDespues=(codigo,wasEdit)=>{ if(wasEdit||ultimaReserva!==codigo) return; ultimaReserva=null;
+    try{ const t=document.getElementById("doneTitle"); if(t) t.textContent="Registrado en Reservas";
+      const s=document.getElementById("doneSub"); if(s&&!s.querySelector(".mvrp-donechip")) s.append(" ",h("span",{class:"mvrp-donechip"},"⏸ En Reservas · no está a la venta"));
+      const b=document.getElementById("doneLabel"); if(b) b.onclick=()=>{ const p=state.reservas.get(codigo); if(p) imprimir([p],null); };
+      const inv=document.getElementById("doneInv"); if(inv){ inv.dataset.mvrp="1"; inv.textContent="Ver Reservas"; }
+    }catch(e){} toast("Registrado "+codigo+" en Reservas"); };
+  document.addEventListener("click",e=>{ const b=e.target&&e.target.closest&&e.target.closest("#doneInv[data-mvrp]"); if(b){ delete b.dataset.mvrp; b.textContent="Ir al inventario"; setTimeout(()=>setView("res"),0); } },true);
+  let caja=null;
+  function pintaDestino(){
+    const f=document.getElementById("form"); if(!f) return;
+    if(!caja){
+      caja=h("div",{class:"mvrp-dest",role:"radiogroup","aria-label":"¿Va al catálogo?"});
+      f.insertBefore(caja,f.firstChild);
+    }
+    const editando=!!state.editing; caja.hidden=editando;
+    const op=(v,ic,t,s)=>h("button",{type:"button",role:"radio","aria-checked":String(destino===v),class:"mvrp-op "+v+(destino===v?" on":""),onclick:()=>{ destino=v; try{ localStorage.setItem("marvea.rp.destino",v); }catch(e){} pintaDestino(); }},h("span",{class:"mvrp-opic"},ic),h("span",{class:"mvrp-optx"},h("b",null,t),h("small",null,s)));
+    caja.replaceChildren(h("div",{class:"mvrp-desttit"},"¿Va al catálogo?"),
+      h("div",{class:"mvrp-ops"},op("inventario","✓","Sí, al inventario","Se pone a la venta y se publica en el catálogo"),op("reserva","⏸","No, a Reservas","Queda registrado pero no se vende ni se publica")));
+    const btn=document.getElementById("btnSave"); if(btn&&!editando) btn.textContent=destino==="reserva"?"Registrar en Reservas":"Registrar producto";
+    if(btn) btn.classList.toggle("mvrp-btnres",!editando&&destino==="reserva");
+  }
+  function envolverForm(){
+    let ok=true;
+    if(typeof window.resetForm==="function"&&!window.resetForm.__mvRP){ const o=window.resetForm; const n=function(){ const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.resetForm=n; } else if(typeof window.resetForm!=="function") ok=false;
+    if(typeof window.startEdit==="function"&&!window.startEdit.__mvRP){ const o=window.startEdit; const n=function(){ const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.startEdit=n; } else if(typeof window.startEdit!=="function") ok=false;
+    return ok;
+  }
+
+  /* ---------- pestaña y vistas ---------- */
+  const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>';
+  function montar(){
+    const t=document.getElementById("tab-regp"); if(t&&!t.dataset.mvrpIc){ t.dataset.mvrpIc="1"; const s=document.createElement("span"); s.innerHTML=ICON; s.setAttribute("aria-hidden","true"); s.style.display="inline-flex"; t.prepend(s); }
+    if(t) t.hidden=!esAdmin();
+    const vn=document.getElementById("view-new"); if(!vn) return false;
+    for(const id of ["view-res","view-etq"]) if(!document.getElementById(id)){ const s=h("section",{class:"view",id,hidden:true},h("div",{id:id==="view-res"?"mvRPRes":"mvRPEtq"})); vn.parentNode.insertBefore(s,vn.nextSibling); }
+    return true;
+  }
+  function envolverVista(){
+    if(typeof window.setView!=="function"||window.setView.__mvRP) return !!(window.setView&&window.setView.__mvRP);
+    const o=window.setView; const n=function(v){ if(v==="regp") v="new"; const r=o.call(this,v); try{ if(v==="res") pintarRes(); if(v==="etq") pintarEtq(); if(v==="new") pintaDestino(); }catch(e){ console.warn(e); } return r; };
+    n.__mvRP=true; window.setView=n; return true;
+  }
+  (function(){ let n=0; const t=setInterval(()=>{ let ok=false; try{ ok=montar()&&envolverForm()&&envolverVista(); if(ok) pintaDestino(); }catch(e){ console.warn(e); } if(ok||++n>120) clearInterval(t); },250); })();
+  // si otra capa vuelve a envolver setView después, se vuelve a poner la nuestra encima
+  setInterval(()=>{ try{ envolverVista(); envolverForm(); }catch(e){} },2000);
+  // al abrir en «res»/«etq» desde la última vista guardada
+  setTimeout(()=>{ try{ const v=state.view; if(v==="res"||v==="etq") setView(v); }catch(e){} },1500);
+
+  let repT=0; function repintar(){ clearTimeout(repT); repT=setTimeout(()=>{ try{ if(state.view==="res") pintarRes(); if(state.view==="etq") pintarEtq(); }catch(e){ console.warn(e); } },60); }
+
+  /* ---------- carritos y tienda: ¿se puede mandar a Reservas? ---------- */
+  async function enCarritos(cod){
+    const out=[]; try{ const s=await state.db.collection("carritos").get(); for(const d of s.docs){ const c=d.data()||{}; if(c.estado!=="abierto"&&c.estado!=="cerrado") continue; let n=0; for(const it of c.items||[]) if(it&&it.codigo===cod) n+=Number(it.cant)||0; if(n>0) out.push({cliente:c.cliente||"Sin nombre",n}); } }catch(e){ console.warn(e); }
+    return out;
+  }
+  async function enTienda(cod){
+    try{ const sb=window.MarveaNube&&window.MarveaNube.sb; if(!sb||!sb.from) return 0; const {data,error}=await sb.from("apartados_web").select("cant").eq("codigo",cod).in("estado",["activo","pago"]); if(error) return 0; return (data||[]).reduce((s,r)=>s+(Number(r.cant)||0),0); }catch(e){ return 0; }
+  }
+  async function aReserva(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede mandar a Reservas",true); return false; }
+    const p=state.products.get(cod); if(!p){ toast("Ese producto ya no está en el inventario",true); return false; }
+    const c=await enCarritos(cod); if(c.length){ toast(`No se puede: ${cod} tiene piezas en ${c.length===1?"el carrito de "+c[0].cliente:c.length+" carritos abiertos"}. Sácalas primero.`,true); return false; }
+    const w=await enTienda(cod); if(w>0){ toast(`No se puede: ${cod} tiene ${w} pieza${w===1?"":"s"} apartada${w===1?"":"s"} en la tienda en línea. Intenta en unos minutos.`,true); return false; }
+    let x=null; try{ const d=await state.db.doc("productos/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
+    if(!x){ toast("No se encontró "+cod,true); return false; }
+    const now=ahora(); const data=Object.assign({},x,{codigo:cod,reservado:now,reservadoDesde:"inventario",actualizado:now});
+    try{ await state.db.doc("reservas/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo mandar a Reservas (¿hay internet?)",true); return false; }
+    const pv=window.__mvMov; window.__mvMov={motivo:"reserva",ref:"a reservas"};
+    try{ await state.db.doc("productos/"+cod).delete(); }
+    catch(e){ console.error(e); try{ await state.db.doc("reservas/"+cod).delete(); }catch(_){} toast("No se pudo mandar a Reservas; quedó en el inventario",true); return false; }
+    finally{ window.__mvMov=pv||null; }
+    state.products.delete(cod); state.reservas.set(cod,norm(cod,data)); try{ renderAll(); }catch(e){}
+    toast(cod+" pasó a Reservas ("+(Number(x.existencia)||0)+" pzas)"); repintar(); return true;
+  }
+  async function aInventario(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede integrar productos",true); return false; }
+    let x=null; try{ const d=await state.db.doc("reservas/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
+    if(!x){ toast("Ese producto ya no está en Reservas",true); return false; }
+    let ya=state.products.has(cod); try{ const d=await state.db.doc("productos/"+cod).get(); if(d&&d.exists) ya=true; }catch(e){}
+    if(ya){ toast(`Ya hay un producto ${cod} en el inventario; no se integró para no encimarlo`,true); return false; }
+    const now=ahora(); const data=Object.assign({},x,{codigo:cod,actualizado:now,integrado:now}); delete data.reservado; delete data.reservadoDesde;
+    try{ await state.db.doc("productos/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo integrar "+cod+" (¿hay internet?)",true); return false; }
+    try{ await state.db.doc("reservas/"+cod).delete(); }catch(e){ console.warn(e); }
+    state.reservas.delete(cod); try{ renderAll(); }catch(e){} return true;
+  }
+  window.mvRPAReserva=aReserva; window.mvRPAInventario=aInventario;
+
+  /* ---------- 2) Reservas ---------- */
+  const catN=c=>{ try{ return catName(c); }catch(e){ return c; } };
+  const ordenCats=()=>{ const l=(state.cats||[]).map(c=>c.p); return l; };
+  function pintarRes(){
+    const host=document.getElementById("mvRPRes"); if(!host) return;
+    const todos=[...state.reservas.values()].sort((a,b)=>String(b.reservado||b.creado).localeCompare(String(a.reservado||a.creado))||a.codigo.localeCompare(b.codigo));
+    const q=R.q.trim().toLowerCase(); const vis=todos.filter(p=>(!R.cat||p.categoria===R.cat)&&(!q||[p.codigo,p.nombre,p.palabra,p.material].join(" ").toLowerCase().includes(q)));
+    for(const c of [...R.sel]) if(!state.reservas.has(c)) R.sel.delete(c);
+    const pz=todos.reduce((s,p)=>s+p.existencia,0);
+    const buscar=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Buscar por nombre, código o palabra…",value:R.q});
+    buscar.addEventListener("input",()=>{ R.q=buscar.value; const pos=buscar.selectionStart; pintarRes(); const b=document.querySelector(".mvrp-buscar"); if(b){ b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} } });
+    const cats=[...new Set(todos.map(p=>p.categoria))]; const ord=ordenCats(); cats.sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
+    const sel=h("select",{class:"mvrp-sel","aria-label":"Categoría"},h("option",{value:""},"Todas las categorías"),...cats.map(c=>h("option",{value:c},catN(c)))); sel.value=R.cat; sel.addEventListener("change",()=>{ R.cat=sel.value; pintarRes(); });
+    const nSel=[...R.sel].length;
+    const barra=h("div",{class:"mvrp-barra"},buscar,sel,
+      esAdmin()?h("button",{type:"button",class:"btn",onclick:abrirMandar},"＋ Mandar del inventario"):null,
+      esAdmin()&&nSel?h("button",{type:"button",class:"btn primary",onclick:()=>{ R.conf={tipo:"varios"}; pintarRes(); }},"Integrar seleccionados ("+nSel+")"):null);
+    let confBox=null;
+    if(R.conf&&R.conf.tipo==="varios"){ const lista=[...R.sel].map(c=>state.reservas.get(c)).filter(Boolean); const tp=lista.reduce((s,p)=>s+p.existencia,0);
+      confBox=h("div",{class:"mvrp-conf"},h("span",null,`¿Integrar ${lista.length} producto${lista.length===1?"":"s"} (${tp} pzas) al inventario? Se ponen a la venta y se publican en el catálogo.`),
+        h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); let ok=0; for(const p of lista){ if(await aInventario(p.codigo)){ ok++; R.sel.delete(p.codigo); } } R.ocupado=false; R.conf=null; toast(ok+" producto"+(ok===1?"":"s")+" integrado"+(ok===1?"":"s")+" al catálogo"); pintarRes(); }},R.ocupado?"Integrando…":"Sí, integrar"),
+        h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No")); }
+    const tarjeta=p=>{
+      const chk=h("input",{type:"checkbox","aria-label":"Seleccionar "+p.codigo}); chk.checked=R.sel.has(p.codigo); chk.addEventListener("change",()=>{ if(chk.checked) R.sel.add(p.codigo); else R.sel.delete(p.codigo); pintarRes(); });
+      const foto=h("button",{type:"button",class:"mvrp-foto",title:p.fotoId?"Ver foto en grande":"Sin foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},imgOrPh(p));
+      const conf=R.conf&&R.conf.tipo==="uno"&&R.conf.cod===p.codigo;
+      return h("div",{class:"mvrp-card"+(R.sel.has(p.codigo)?" on":"")},
+        esAdmin()?h("label",{class:"mvrp-chk"},chk):null, foto,
+        h("div",{class:"mvrp-info"},
+          h("div",{class:"mvrp-tags"},h("span",{class:"mvrp-cod"},p.codigo),p.palabra?h("span",{class:"mvrp-pal"},p.palabra):null),
+          h("b",{class:"mvrp-nom"},p.nombre),
+          h("div",{class:"mvrp-meta"},[catN(p.categoria),p.material].filter(Boolean).join(" · ")),
+          h("div",{class:"mvrp-num"},h("span",null,money(p.precio)),h("span",{class:"mvrp-pz"},p.existencia+" pza"+(p.existencia===1?"":"s"))),
+          h("small",{class:"mvrp-fecha"},"En Reservas desde "+fechaC(p.reservado||p.creado)+(p.reservadoDesde==="inventario"?" · venía del inventario":""))),
+        esAdmin()?(conf?h("div",{class:"mvrp-conf mini"},h("span",null,`¿Integrar con ${p.existencia} pzas?`),h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); const ok=await aInventario(p.codigo); R.ocupado=false; R.conf=null; if(ok) toast(p.codigo+" integrado al inventario y al catálogo"); pintarRes(); }},R.ocupado?"…":"Sí"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No"))
+          :h("button",{type:"button",class:"btn sm mvrp-int",onclick:()=>{ R.conf={tipo:"uno",cod:p.codigo}; pintarRes(); }},"Integrar al catálogo")):null);
+    };
+    host.replaceChildren(...[
+      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Reservas"),h("p",null,"Productos registrados que todavía no están a la venta: no cuentan en el inventario, no salen en el catálogo ni en la tienda en línea, y no se pueden agregar a una venta. «Integrar al catálogo» los pone a la venta con sus piezas.")),
+        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(todos.length)),h("span",null,"productos")),h("div",null,h("b",null,String(pz)),h("span",null,"piezas")))),
+      barra,confBox,
+      vis.length?h("div",{class:"mvrp-grid"},...vis.map(tarjeta)):h("div",{class:"mvrp-vacio"},todos.length?"No hay productos en Reservas con esa búsqueda.":"No hay productos en Reservas. Al registrar un producto elige «No, a Reservas», o manda uno desde el inventario.")].filter(Boolean));
+  }
+  // ventana: mandar productos del inventario a Reservas
+  let capaM=null;
+  function abrirMandar(){
+    if(capaM) capaM.remove(); let q="", conf=null, ocupado=false;
+    const lista=h("div",{class:"mvrp-mlista"}); const inp=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Busca el producto del inventario…"});
+    const pinta=()=>{ const t=q.trim().toLowerCase(); const ps=[...state.products.values()].filter(p=>!t||[p.codigo,p.nombre,p.palabra].join(" ").toLowerCase().includes(t)).sort((a,b)=>a.codigo.localeCompare(b.codigo)).slice(0,60);
+      lista.replaceChildren(...(ps.length?ps.map(p=>h("div",{class:"mvrp-mrow"},thumb(p),h("div",{class:"mvrp-minfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+(Number(p.existencia)||0)+" pzas")),
+        conf===p.codigo?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm primary",disabled:ocupado,onclick:async()=>{ ocupado=true; pinta(); await aReserva(p.codigo); ocupado=false; conf=null; pinta(); }},ocupado?"…":"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ conf=null; pinta(); }},"No"))
+        :h("button",{type:"button",class:"btn sm",onclick:()=>{ conf=p.codigo; pinta(); }},"⏸ Mandar a Reservas"))):[h("div",{class:"mvrp-vacio"},"Sin resultados")])); };
+    inp.addEventListener("input",()=>{ q=inp.value; conf=null; pinta(); });
+    const cerrar=()=>{ if(capaM){ capaM.remove(); capaM=null; } pintarRes(); };
+    const caja=h("div",{class:"mvrp-modal",role:"dialog","aria-label":"Mandar a Reservas"},h("div",{class:"mvrp-mcab"},h("h3",null,"Mandar del inventario a Reservas"),h("button",{type:"button",class:"mvrp-x","aria-label":"Cerrar",onclick:cerrar},"×")),
+      h("p",{class:"mvrp-ayuda"},"El producto sale del inventario, del catálogo y de la tienda en línea con todas sus piezas, y queda en Reservas hasta que lo vuelvas a integrar. No se puede si tiene piezas en un carrito abierto."),inp,lista);
+    capaM=h("div",{class:"mvrp-fondo"},caja); capaM.addEventListener("click",e=>{ if(e.target===capaM) cerrar(); }); document.body.append(capaM); pinta(); setTimeout(()=>inp.focus(),30);
+  }
+  // ficha del producto (Inventario): botón «Mandar a Reservas»
+  function envolverDrawer(){
+    if(typeof window.openDrawer!=="function"||window.openDrawer.__mvRP) return;
+    const o=window.openDrawer; const n=function(code){ const r=o.apply(this,arguments); try{ if(esAdmin()&&state.products.get(code)){ const d=document.querySelector("#drawerHost aside.drawer"); if(d&&!d.querySelector(".mvrp-dbox")){ const box=h("div",{class:"section mvrp-dbox"});
+        const base=()=>box.replaceChildren(h("h4",null,"Reservas"),h("p",{class:"mvrp-ayuda"},"Sácalo de la venta y del catálogo sin borrarlo; queda en «Registro de productos › Reservas»."),h("button",{type:"button",class:"btn",onclick:conf},"⏸ Mandar a Reservas"));
+        const conf=()=>box.replaceChildren(h("h4",null,"Reservas"),h("div",{class:"confirm",style:"margin-top:6px"},"¿Mandar "+code+" a Reservas? Sale del inventario y del catálogo con sus piezas.",h("button",{type:"button",class:"btn sm primary",onclick:async(e)=>{ e.target.disabled=true; if(await aReserva(code)){ try{ closeDrawer(); }catch(x){} } else base(); }},"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:base},"No")));
+        base(); d.append(box); } } }catch(e){ console.warn(e); } return r; };
+    n.__mvRP=true; window.openDrawer=n;
+  }
+  setInterval(envolverDrawer,1500); envolverDrawer();
+
+  /* ---------- 3) Por etiquetar ---------- */
+  function pendientes(){
+    const desde=state.etqDesde; if(!desde) return [];
+    const out=[]; const ver=(p,res)=>{ if(!p||!p.codigo) return; if(String(p.creado||"")<desde) return; if(state.etqHechas.has(p.codigo)) return; out.push(Object.assign({},p,{reserva:!!res})); };
+    for(const p of state.products.values()) ver(p,false); for(const p of state.reservas.values()) ver(p,true);
+    return out.sort((a,b)=>String(a.creado).localeCompare(String(b.creado))||a.codigo.localeCompare(b.codigo));
+  }
+  window.mvRPPendientes=pendientes;
+  async function marcar(codigos,motivo){
+    const now=ahora(); let quien=""; try{ quien=(JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).usuario||""; }catch(e){}
+    let ok=0; for(const c of codigos){ try{ await state.db.doc("etiquetasHechas/"+c).set({codigo:c,fecha:now,motivo:motivo||"impresa",por:quien}); state.etqHechas.set(c,{fecha:now}); ok++; }catch(e){ console.warn(e); } }
+    repintar(); return ok;
+  }
+  const E={ocupado:"",pdf:null,quitar:null};
+  async function imprimir(ps,clave){
+    if(!ps.length) return; if(E.ocupado) return; E.ocupado=clave||"x"; repintar();
+    try{ const preset=(typeof PRESETS!=="undefined"&&PRESETS.find(x=>x.id==="40x30"))||{id:"40x30",w:40,h:30};
+      const items=ps.map(p=>({p,copies:1})); let st="none"; try{ st=await printLabels(items,preset); }catch(e){ console.warn(e); st="error"; }
+      if(st==="printed"){ const n=await marcar(ps.map(p=>p.codigo),"impresa"); toast(n+" etiqueta"+(n===1?"":"s")+" impresa"+(n===1?"":"s")+" · salieron de «Por etiquetar»"); }
+      else if(st==="none"){ await saveLabels(items,preset,"etiquetas-"+(clave&&clave!=="todas"?String(clave).toLowerCase():"nuevas")+"-"+ps.length+".pdf"); E.pdf={clave,codigos:ps.map(p=>p.codigo)}; }
+      else if(st!=="cancelled") toast("No se imprimieron; siguen en la lista",true);
+    } finally{ E.ocupado=""; repintar(); }
+  }
+  function pintarEtq(){
+    const host=document.getElementById("mvRPEtq"); if(!host) return;
+    const ps=pendientes(); const grupos=new Map(); for(const p of ps){ if(!grupos.has(p.categoria)) grupos.set(p.categoria,[]); grupos.get(p.categoria).push(p); }
+    const ord=ordenCats(); const cats=[...grupos.keys()].sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
+    const pdfBox=E.pdf?h("div",{class:"mvrp-conf"},h("span",null,`Se descargó el PDF con ${E.pdf.codigos.length} etiqueta${E.pdf.codigos.length===1?"":"s"}. ¿Ya las imprimiste?`),
+      h("button",{type:"button",class:"btn sm primary",onclick:async()=>{ const c=E.pdf.codigos; E.pdf=null; const n=await marcar(c,"impresa (PDF)"); toast(n+" salieron de la lista"); }},"Sí, quitarlas de la lista"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.pdf=null; repintar(); }},"Todavía no")):null;
+    const fila=p=>{ const q=E.quitar===p.codigo; return h("div",{class:"mvrp-erow"},h("button",{type:"button",class:"mvrp-efoto",title:"Ver foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},thumb(p)),
+      h("div",{class:"mvrp-einfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+p.existencia+" pza"+(p.existencia===1?"":"s")+" · "+money(p.precio))),
+      p.reserva?h("span",{class:"mvrp-chip res"},"⏸ Reserva"):h("span",{class:"mvrp-chip inv"},"Inventario"),
+      q?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm",onclick:async()=>{ E.quitar=null; await marcar([p.codigo],"quitada a mano"); }},"Quitar"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.quitar=null; repintar(); }},"No"))
+        :h("button",{type:"button",class:"mvrp-q",title:"Quitar de la lista sin imprimir",onclick:()=>{ E.quitar=p.codigo; repintar(); }},"✕")); };
+    const grupo=c=>{ const l=grupos.get(c); return h("section",{class:"mvrp-grupo"},
+      h("div",{class:"mvrp-ghead"},h("h3",null,catN(c)," ",h("span",{class:"mvrp-n"},String(l.length))),
+        h("button",{type:"button",class:"btn sm primary",disabled:!!E.ocupado,onclick:()=>imprimir(l,c)},E.ocupado===c?"Imprimiendo…":"🏷️ Imprimir "+l.length+" (40 × 30)")),
+      h("div",{class:"mvrp-elist"},...l.map(fila))); };
+    host.replaceChildren(...[
+      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Por etiquetar"),h("p",null,"Productos nuevos registrados"+(state.etqDesde?" desde el "+fechaL(state.etqDesde):"")+", por categoría. Se imprime 1 etiqueta 40 × 30 por producto; al imprimirse salen de esta lista.")),
+        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(ps.length)),h("span",null,"etiquetas")),h("div",null,h("b",null,String(cats.length)),h("span",null,"categorías")))),
+      ps.length?h("div",{class:"mvrp-barra"},h("button",{type:"button",class:"btn primary",disabled:!!E.ocupado,onclick:()=>imprimir(ps,"todas")},E.ocupado==="todas"?"Imprimiendo…":"🏷️ Imprimir todas ("+ps.length+")")):null,
+      pdfBox,
+      ps.length?h("div",{class:"mvrp-grupos"},...cats.map(grupo)):h("div",{class:"mvrp-vacio"},state.etqDesde?"No hay etiquetas pendientes. Lo que registres en «Nuevo producto» (aquí o desde el celular) aparece aquí por categoría.":"Preparando la lista…")].filter(Boolean));
+  }
+  // cuando llegan productos nuevos, se actualiza la lista si está a la vista
+  (function(){ let ult=0; setInterval(()=>{ try{ if(state.view!=="etq"&&state.view!=="res") return; const n=(state.products?state.products.size:0)*7+state.reservas.size*13+state.etqHechas.size; if(n!==ult){ ult=n; repintar(); } }catch(e){} },1500); })();
+})();
+</script>
+<style id="mv-pq-css">
+/* mvPQ · ficha del producto, «Escanear» y aviso de lectura (20-nov-2026) */
+body.mvpq-sinscroll{overflow:hidden}
+.mvpq-fondo{position:fixed;inset:0;z-index:2147483100;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 14px;overflow:auto;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:mvpqIn .14s ease-out}
+@keyframes mvpqIn{from{opacity:0}to{opacity:1}}
+.mvpq-caja{background:#fff;color:#2a1a24;border-radius:22px;box-shadow:0 24px 70px rgba(40,10,30,.28);width:min(720px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px;font-family:inherit}
+.mvpq-cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mvpq-cab h3{margin:0;font-size:20px}
+.mvpq-eti{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8B6A7E}
+.mvpq-x{border:0;background:#F4EEF1;color:#2a1a24;border-radius:999px;width:38px;height:38px;font-size:24px;line-height:1;cursor:pointer;flex:none}
+.mvpq-x:hover{background:#EADFE5}
+/* ficha */
+.mvpq-cuerpo{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
+.mvpq-foto{aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#FAF6F8;border:1px solid #F0E7EC}
+.mvpq-foto>*{width:100%!important;height:100%!important;max-height:none!important;margin:0!important;border-radius:0!important;display:flex;align-items:center;justify-content:center}
+.mvpq-foto img{width:100%;height:100%;object-fit:contain;display:block}
+.mvpq-info{min-width:0;display:flex;flex-direction:column;gap:12px}
+.mvpq-info h2{margin:0;font-size:23px;line-height:1.18;letter-spacing:-.01em}
+.mvpq-datos{display:flex;flex-direction:column;border:1px solid #F0E7EC;border-radius:14px;overflow:hidden}
+.mvpq-kv{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:center;padding:9px 12px;font-size:14px}
+.mvpq-kv+.mvpq-kv{border-top:1px solid #F4EDF1}
+.mvpq-kv>span{color:#8B6A7E;font-size:12.5px;font-weight:700}
+.mvpq-kv>b{font-weight:650;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.mvpq-cod{font:700 12.5px ui-monospace,Menlo,monospace;letter-spacing:.06em;color:#5A2748;background:#F3E8EF;padding:3px 9px;border-radius:999px}
+.mvpq-pal{font-size:12.5px;font-weight:700;color:#7A3F63;background:#FFF;border:1px solid #E7D5DF;padding:2px 9px;border-radius:999px}
+.mvpq-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mvpq-num{border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;background:#FAF6F8}
+.mvpq-num>span{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8B6A7E}
+.mvpq-num>b{font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mvpq-num>small{font-size:12px;color:#6B5664}
+.mvpq-precio>b{color:#5A2748}
+.mvpq-ex.ok{background:#E9F5EE}.mvpq-ex.ok>b{color:#1F6B3A}
+.mvpq-ex.unica{background:#FFF4D6}.mvpq-ex.unica>b{color:#8A5D00}
+.mvpq-ex.agot{background:#FDE8EA}.mvpq-ex.agot>b{color:#B5333F;font-size:24px}
+.mvpq-notas{margin:0;font-size:13px;color:#6B5664;background:#FAF6F8;border-radius:12px;padding:8px 12px}
+.mvpq-acc{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.mvpq-b{font:inherit;font-size:14px;font-weight:700;border:1px solid #E2D6DD;background:#fff;color:#2a1a24;border-radius:12px;padding:10px 14px;cursor:pointer;min-height:42px}
+.mvpq-b:hover{background:#FAF6F8}
+.mvpq-b.prim{background:#5A2748;border-color:#5A2748;color:#fff}
+.mvpq-b.prim:hover{background:#4A1F3B}
+.mvpq-b:disabled{opacity:.55;cursor:default}
+/* escanear */
+.mvpq-esc{width:min(460px,100%)}
+.mvpq-tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mvpq-tipos>div{background:#FAF6F8;border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:1px}
+.mvpq-tipos b{font-size:13.5px}.mvpq-tipos span{font-size:12px;color:#6B5664}
+.mvpq-in{font:inherit;font-size:21px;letter-spacing:.06em;text-align:center;padding:13px 12px;border:1.5px solid #E2D6DD;border-radius:14px;text-transform:uppercase;outline:none;width:100%;box-sizing:border-box}
+.mvpq-in:focus{border-color:#5A2748;box-shadow:0 0 0 4px rgba(90,39,72,.12)}
+.mvpq-cam{position:relative;border-radius:16px;overflow:hidden;background:#111;aspect-ratio:4/3}
+.mvpq-cam[hidden]{display:none}
+.mvpq-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.mvpq-mira{position:absolute;left:50%;top:50%;width:58%;aspect-ratio:1/1;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.92);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+.mvpq-msg{min-height:18px;font-size:13px;color:#6B5664;text-align:center}
+.mvpq-msg.bad{color:#B5333F;font-weight:700}
+/* aviso de lectura */
+.mvpq-hud{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);z-index:2147483600;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:999px;background:#2a1a24;color:#fff;box-shadow:0 12px 34px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;max-width:min(560px,calc(100vw - 24px))}
+.mvpq-hud.on{opacity:1;transform:translate(-50%,0)}
+.mvpq-hico{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex:none;background:#555}
+.mvpq-hud.ok .mvpq-hico{background:#2E9B57}.mvpq-hud.bad .mvpq-hico{background:#D2414F}
+.mvpq-hud.wait .mvpq-hico{background:transparent;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:mvpqGira .7s linear infinite;width:20px;height:20px}
+@keyframes mvpqGira{to{transform:rotate(360deg)}}
+.mvpq-htx{display:flex;flex-direction:column;min-width:0}
+.mvpq-htx b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvpq-htx small{font-size:12.5px;opacity:.82}
+body.vx-on .mvpq-hud{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* celular */
+@media (max-width:640px){
+  .mvpq-fondo{padding:0;align-items:flex-end}
+  .mvpq-caja{border-radius:22px 22px 0 0;max-height:94vh;overflow:auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+  .mvpq-cuerpo{grid-template-columns:1fr;gap:12px}
+  .mvpq-foto{max-width:210px;width:52%;margin:0 auto}
+  .mvpq-info h2{font-size:20px;text-align:center}
+  .mvpq-num>b{font-size:26px}
+  .mvpq-acc{justify-content:stretch}.mvpq-acc .mvpq-b{flex:1 1 calc(50% - 8px)}.mvpq-acc .mvpq-b.prim{flex-basis:100%}
+}
+/* Marvea Vende: botones de arriba (Escanear · Etiquetas) compactos en una sola fila */
+body.vx-on .vx-topr{flex-wrap:nowrap;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none}
+body.vx-on .vx-topr::-webkit-scrollbar{display:none}
+body.vx-on .vx-topr .mvtb-escbtn,body.vx-on .vx-topr .mvtb-pcbtn,body.vx-on .vx-topr .mvtb-rgbtn{margin:0!important;white-space:nowrap;font-size:13px!important;padding:7px 11px!important;min-height:0!important;height:auto!important;border-radius:999px!important;line-height:1.2!important;flex:none}
+body.vx-on .vx-topr .vx-nueva{order:-1;flex:none;white-space:nowrap}
+body.vx-on .vx-topr>*{flex:none}
+.mvpq-res{font-size:13px;font-weight:800;color:#7A5A00;background:#FFF4D6;border-radius:10px;padding:7px 10px}
+</style>
+<script id="mv-pq-js">
+/* ===== mvPQ · QR de producto (20-nov-2026) =====
+   1) Un QR por producto (modelo). Al leerlo fuera de una venta se abre la FICHA EMERGENTE del producto:
+      foto, producto, modelo (código + palabra clave), categoría, material, precio y existencias al momento.
+   2) «▦ Escanear» (Venta) unifica pedido y producto: QR de pedido (MV…) → ficha del pedido (mvTB); QR de producto → su ficha.
+      En el sistema en línea también se puede leer con la cámara de la laptop.
+   3) Dentro de una venta abierta (Venta / Live, sistema y Marvea Vende) cada lectura agrega 1 pieza al carrito y resta 1 del
+      inventario. Las lecturas van EN FILA: ninguna se pierde aunque se escanee rápido, y cada una espera a que la anterior
+      termine de guardarse. La resta la hace la nube con candado por producto (marvea_stock_mov): si queda 1 pieza y dos
+      equipos la escanean al mismo tiempo, solo uno se la lleva; al otro le sale «Agotado» y no se agrega.
+   No guarda nada nuevo ni cambia la forma de los datos. */
+(function(){
+  if(window.__mvPQ) return; window.__mvPQ=true;
+  const $q=s=>document.querySelector(s);
+  const money=x=>"$"+fmtMoney(x);
+  const esVende=()=>!!(document.body&&document.body.classList.contains("vx-on"));
+  const rol=()=>{ try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; }; // app de la Mac: sin perfil = administrador
+  const espera=ms=>new Promise(r=>setTimeout(r,ms));
+  const vende=()=>window.mvPQVende||null;
+
+  /* ---------- 1) sacar el código de lo que se lea ----------
+     El QR es un enlace …marveamayoreo.com/vende#COL-00002. Un lector de mano configurado con otro idioma de teclado lo
+     escribe con signos cambiados (p. ej. «httpsÑ--www.marveamayoreo.com-vende·COL'00002»): se toma lo que va después de
+     «vende» y porCodigo ya ignora guiones y signos. */
+  const qrBase=window.mvCodigoDeQR;
+  function deQR(t){
+    const s=String(t==null?"":t).trim(); const x=qrBase?qrBase(s):s; if(x!==s) return x;
+    const U=s.toUpperCase(); const i=U.lastIndexOf("VENDE");
+    if(i>0&&/MARVEA|WWW|HTTP/.test(U.slice(0,i))){ const r=U.slice(i+5).replace(/^[^A-Z0-9]*(HTML)?[^A-Z0-9]*/,"").replace(/\s.*$/,""); if(r) return r; }
+    return s;
+  }
+  window.mvCodigoDeQR=deQR;
+  function resolver(txt){
+    const cod=deQR(txt); if(!cod) return null; const U=cod.toUpperCase();
+    const mv=U.match(/^MV\d{8}$/)||U.replace(/[^A-Z0-9]/g,"").match(/^MV\d{8}$/); if(mv) return {tipo:"pedido",cod:mv[0]};
+    const p=porCodigo(cod)||porPalabra(cod); if(p) return {tipo:"producto",p,cod:U};
+    const rv=window.mvRPBuscar?window.mvRPBuscar(cod):null; if(rv) return {tipo:"reserva",p:rv,cod:U}; /* mvRP: producto en Reservas */
+    return {tipo:"nada",cod:U};
+  }
+
+  /* ---------- avisos: sonido, vibración y franja ---------- */
+  let actx=null;
+  function bip(ok){
+    try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume();
+      const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime, d=ok?0.11:0.32;
+      o.type=ok?"sine":"square"; o.frequency.value=ok?1320:220; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(ok?0.16:0.08,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d+0.02); }catch(e){}
+    try{ if(navigator.vibrate) navigator.vibrate(ok?25:[70,50,70]); }catch(e){}
+  }
+  let hud=null, hudT=0;
+  function aviso(ok,titulo,detalle){
+    if(!hud){ hud=h("div",{class:"mvpq-hud",role:"status","aria-live":"polite"}); document.body.append(hud); }
+    hud.className="mvpq-hud on "+(ok===true?"ok":ok===false?"bad":"wait");
+    hud.replaceChildren(h("span",{class:"mvpq-hico"},ok===true?"✓":ok===false?"✕":""),h("span",{class:"mvpq-htx"},h("b",null,titulo),detalle?h("small",null,detalle):null));
+    clearTimeout(hudT); if(ok!==null) hudT=setTimeout(()=>{ if(hud) hud.classList.remove("on"); },ok?2400:4500);
+  }
+  function estado(p){ const n=Math.max(0,Number(p&&p.existencia)||0); return n<=0?{cls:"agot",n,t:"Agotado"}:n===1?{cls:"unica",n,t:"Única pieza"}:{cls:"ok",n,t:n+" piezas"}; }
+
+  /* ---------- 2) escaneo a la venta: en fila, una pieza por lectura ---------- */
+  // durante una lectura, el aviso propio sustituye al mensaje corto del carrito (+1 …, sin existencia): un solo aviso, no dos
+  let silencio=0;
+  try{ const t0=window.toast; if(typeof t0==="function"&&!t0.__mvPQ){ const t1=function(msg,bad){ if(silencio&&/^(\+\d|Sin existencia|Solo había)/.test(String(msg||""))) return; return t0.apply(this,arguments); }; t1.__mvPQ=true; window.toast=t1; } }catch(e){}
+  let cola=Promise.resolve(), enFila=0;
+  async function libre(){ const t0=Date.now(); while(state.busy&&Date.now()-t0<15000) await espera(25); }
+  const piezasDe=(c,cod)=>{ if(!c||!Array.isArray(c.items)) return 0; let n=0; for(const it of c.items) if(it&&it.codigo===cod) n+=Number(it.cant)||0; return n; };
+  // Si otro equipo agregó al MISMO pedido, se parte de lo que ya está guardado (así no se pisan sus piezas).
+  async function fresca(c){ try{ if(!c||!c.id||!state.db) return; const d=await state.db.doc("carritos/"+c.id).get(); const x=d&&d.exists&&d.data();
+    if(x&&Array.isArray(x.items)&&(x.estado||"abierto")===c.estado) c.items=JSON.parse(JSON.stringify(x.items)); }catch(e){} }
+  function encolar(p,agregarFn,carrito){
+    enFila++; if(enFila>1) aviso(null,"Agregando…",enFila+" lecturas en fila");
+    const tarea=cola.then(async()=>{
+      const cod=p.codigo; let ok=false, falla="";
+      try{
+        for(let intento=0;intento<3&&!ok;intento++){
+          await libre();
+          const c0=carrito&&carrito(); if(c0&&c0.estado==="abierto") await fresca(c0);
+          const base=piezasDe(c0,cod), id0=c0&&c0.id;
+          const q0=state.products.get(cod); if(!q0){ falla="Ya no está en el inventario"; break; }
+          if((Number(q0.existencia)||0)<=0){ falla="Agotado · no se agregó"; break; }
+          silencio++; try{ await agregarFn(state.products.get(cod)||q0); await libre(); } finally{ silencio--; } // siempre con el producto al día (existencia actual)
+          const c1=carrito&&carrito(); const gan=piezasDe(c1,cod)-(c1&&c1.id===id0?base:0);
+          if(gan>0){ ok=true; break; }
+          const q1=state.products.get(cod); if(!q1||(Number(q1.existencia)||0)<=0){ falla="Agotado · se vendió en otro equipo"; break; }
+          if(c1&&c1.estado&&c1.estado!=="abierto"){ falla="La venta está "+c1.estado+"; reábrela para agregar"; break; }
+          falla="No se pudo agregar"; await espera(150);
+        }
+      }catch(e){ console.warn("mvPQ",e); falla="No se pudo agregar (¿hay internet?)"; }
+      enFila=Math.max(0,enFila-1);
+      const q=state.products.get(cod)||p; const quedan=Math.max(0,Number(q.existencia)||0); const c=carrito&&carrito();
+      if(ok){ bip(true); aviso(true,"+1 "+(q.nombre||cod),(quedan<=0?"Era la última pieza":quedan===1?"Queda 1 pieza":"Quedan "+quedan)+(c?" · "+piezasDe(c,cod)+" en la venta":"")+(enFila?" · faltan "+enFila+" en fila":"")); }
+      else { bip(false); aviso(false,(q.nombre||cod),falla); }
+      return {ok,msg:ok?"+1 "+(q.palabra||q.nombre||cod)+" · quedan "+quedan:(q.palabra||q.nombre||cod)+" · "+falla,quedan};
+    });
+    cola=tarea.catch(()=>{}); return tarea;
+  }
+
+  /* dónde cae la lectura: agregar (venta abierta en pantalla) o ver la ficha */
+  function contexto(){
+    const v=vende(); if(v&&esVende()){ try{ return v.contexto()||{modo:"ver"}; }catch(e){ return {modo:"ver"}; } }
+    const vis=el=>!!(el&&!el.disabled&&el.offsetParent!==null);
+    if(state.view==="venta"&&vis($q("#ventaInput"))&&typeof ventaAgregar==="function") return {modo:"agregar",agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()};
+    if(vis($q("#addInput"))&&state.cartId&&state.carts&&state.carts.get(state.cartId)) return {modo:"agregar",agregar:p=>{ const c=state.carts.get(state.cartId); return c?addToCart(c,p,1):null; },carrito:()=>state.carts.get(state.cartId)||null};
+    return {modo:"ver"};
+  }
+  // venta abierta aunque no esté en pantalla (botón «Agregar a la venta» de la ficha)
+  function ventaAbierta(){
+    const v=vende(); if(v&&esVende()){ try{ return v.ventaAbierta(); }catch(e){ return null; } }
+    try{ const c=typeof ventaActual==="function"?ventaActual():null; if(c&&c.estado==="abierto"&&(typeof esHoyVenta!=="function"||esHoyVenta())) return {nombre:c.cliente,agregar:p=>ventaAgregar(p,1),carrito:()=>ventaActual()}; }catch(e){}
+    return null;
+  }
+  function despachar(r,opts){
+    opts=opts||{}; if(!r) return;
+    if(r.tipo==="pedido"){ cerrarFicha(); cerrarEsc(); if(window.mvTBEscaneo) window.mvTBEscaneo(r.cod); return; }
+    if(r.tipo==="nada"){ bip(false); aviso(false,"No encontré «"+r.cod+"»","Revisa que esté registrado en Inventario"); return; }
+    const ctx=(opts.ver||capaF||capaE)?{modo:"ver"}:contexto();
+    if(r.tipo==="reserva"){ if(ctx.modo==="agregar"){ bip(false); aviso(false,r.p.nombre||r.p.codigo,"Está en Reservas: no se puede vender"); return; } bip(true); ficha(r.p,Object.assign({},opts,{reserva:true})); return; }
+    if(ctx.modo==="agregar") return encolar(r.p,q=>ctx.agregar(q),ctx.carrito);
+    bip(true); ficha(r.p,opts);
+  }
+
+  /* ---------- lector de mano (teclado): ráfaga rápida que termina en Enter ---------- */
+  let buf="", t0=0, tu=0;
+  function quitarTecleo(t,txt){
+    try{ if(!t||typeof t.value!=="string"||!t.value) return; let v=t.value; const k=v.lastIndexOf(txt);
+      if(k>=0) v=v.slice(0,k)+v.slice(k+txt.length);
+      else { for(let n=txt.length-1;n>=4;n--){ const cola2=txt.slice(0,n); if(v.endsWith(cola2)){ v=v.slice(0,v.length-n); break; } const ini=txt.slice(-n); if(v.endsWith(ini)){ v=v.slice(0,v.length-n); break; } } }
+      if(v!==t.value){ t.value=v.trim(); t.dispatchEvent(new Event("input",{bubbles:true})); } }catch(e){}
+  }
+  document.addEventListener("keydown",e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey) return; const now=performance.now();
+    if(e.key==="Enter"){
+      const txt=buf, n=txt.length, ritmo=n>1?(tu-t0)/(n-1):999; buf="";
+      if(n<5||now-tu>160||ritmo>45) return; // tecleado a mano
+      if(state.view==="scan"&&!esVende()&&!capaF&&!capaE) return; // pestaña «Escanear» de siempre
+      const r=resolver(txt); if(!r) return;
+      e.preventDefault(); e.stopImmediatePropagation(); quitarTecleo(e.target,txt); despachar(r);
+      return;
+    }
+    if(e.key.length!==1) return;
+    if(!buf||now-tu>160){ buf=""; t0=now; } tu=now; buf=(buf+e.key).slice(-160);
+  },true);
+
+  /* ---------- ficha emergente del producto ---------- */
+  let capaF=null, relojF=0;
+  function escF(e){ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); cerrarFicha(); } }
+  function cerrarFicha(){ if(capaF){ capaF.remove(); capaF=null; clearInterval(relojF); document.removeEventListener("keydown",escF,true); document.body.classList.remove("mvpq-sinscroll"); } }
+  function ficha(p0,opts){
+    opts=opts||{}; cerrarFicha(); cerrarEsc();
+    const cod=p0.codigo, P=()=>state.products.get(cod)||p0; const p=P();
+    const exBox=h("div",{class:"mvpq-num mvpq-ex"});
+    const pintaEx=()=>{ const s=estado(P()); exBox.className="mvpq-num mvpq-ex "+s.cls;
+      exBox.replaceChildren(h("span",null,"Existencias"),h("b",null,s.n<=0?"Agotado":String(s.n)),h("small",null,s.n<=0?"sin piezas disponibles":s.n===1?"única pieza":"piezas disponibles")); };
+    pintaEx(); relojF=setInterval(()=>{ if(!document.body.contains(exBox)){ clearInterval(relojF); return; } pintaEx(); },1000);
+    const fila=(k,v)=>h("div",{class:"mvpq-kv"},h("span",null,k),h("b",null,v));
+    const ab=opts.reserva?null:ventaAbierta(); const v=vende();
+    const btnAgregar=ab?h("button",{type:"button",class:"mvpq-b prim",onclick:async()=>{ btnAgregar.disabled=true; await encolar(P(),q=>ab.agregar(q),ab.carrito); btnAgregar.disabled=false; pintaEx(); }},"＋ Agregar a la venta"+(ab.nombre?" · "+ab.nombre:"")):null;
+    const verFicha=opts.reserva?(!esVende()&&esAdmin()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); setView("res"); }},"Ver en Reservas"):null):esVende()?(v&&v.admin&&v.admin()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); v.verInventario(P()); }},"Ver en inventario"):null)
+      :(esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod); }},"Ficha completa"):null);
+    const etiq=!opts.reserva&&!esVende()&&esAdmin()&&typeof openDrawer==="function"?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ cerrarFicha(); openDrawer(cod,true); }},"🏷️ Etiqueta"):null;
+    const otro=h("button",{type:"button",class:"mvpq-b",onclick:()=>{ const cam=!!opts.camara; cerrarFicha(); abrirEscaner(cam); }},"▦ Escanear otro");
+    const caja=h("div",{class:"mvpq-caja mvpq-ficha",role:"dialog","aria-label":"Producto "+(p.nombre||cod)},
+      h("div",{class:"mvpq-cab"},h("span",{class:"mvpq-eti"},"Producto"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarFicha},"×")),
+      h("div",{class:"mvpq-cuerpo"},
+        h("div",{class:"mvpq-foto"},imgOrPh(p,"hero")),
+        h("div",{class:"mvpq-info"},
+          h("h2",null,p.nombre||cod),
+          opts.reserva?h("div",{class:"mvpq-res"},"⏸ En Reservas · no está a la venta ni en el catálogo"):null,
+          h("div",{class:"mvpq-datos"},
+            fila("Modelo",[h("span",{class:"mvpq-cod"},cod),p.palabra?h("span",{class:"mvpq-pal"},p.palabra):null]),
+            fila("Material",p.material||"—"),
+            fila("Categoría",catName(p.categoria))),
+          h("div",{class:"mvpq-nums"},h("div",{class:"mvpq-num mvpq-precio"},h("span",null,"Precio"),h("b",null,money(p.precio)),h("small",null,"MXN mayoreo")),exBox),
+          p.notas?h("p",{class:"mvpq-notas"},p.notas):null)),
+      h("div",{class:"mvpq-acc"},btnAgregar,verFicha,etiq,otro,h("button",{type:"button",class:"mvpq-b",onclick:cerrarFicha},"Cerrar")));
+    capaF=h("div",{class:"mvpq-fondo"},caja); capaF.addEventListener("click",e=>{ if(e.target===capaF) cerrarFicha(); });
+    document.body.append(capaF); document.body.classList.add("mvpq-sinscroll"); document.addEventListener("keydown",escF,true);
+    setTimeout(()=>{ const b=caja.querySelector(".mvpq-b.prim")||caja.querySelector(".mvpq-x"); if(b&&!esVende()) b.focus(); },30);
+  }
+
+  /* ---------- «▦ Escanear»: pedido o producto (lector, tecleado o cámara de la laptop) ---------- */
+  let capaE=null, cam=null, zx=null;
+  const puedeCam=()=>/^https?:$/.test(location.protocol)&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+  function cargarZX(){ if(window.ZXing) return Promise.resolve(); if(zx) return zx; zx=new Promise((ok,no)=>{ const s=document.createElement("script"); s.src="zxing-0.21.3.min.js"; s.onload=ok; s.onerror=()=>{ zx=null; no(new Error("zxing")); }; document.head.append(s); }); return zx; }
+  function pararCam(){ if(cam){ cam.vivo=false; try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam=null; } }
+  function cerrarEsc(){ pararCam(); if(capaE){ capaE.remove(); capaE=null; document.body.classList.remove("mvpq-sinscroll"); } }
+  function abrirEscaner(conCamara){
+    const v=vende(); if(esVende()&&v&&v.camara){ cerrarFicha(); v.camara(); return; } // celular: la cámara de Marvea Vende
+    cerrarFicha(); cerrarEsc();
+    const msg=h("div",{class:"mvpq-msg"},"");
+    const inp=h("input",{type:"text",class:"mvpq-in",placeholder:"Escanea o escribe el código",autocomplete:"off",autocapitalize:"characters",spellcheck:"false","aria-label":"Código del pedido o del producto"});
+    const buscar=(txt)=>{ const r=resolver(txt); inp.value="";
+      if(!r||r.tipo==="nada"){ bip(false); msg.textContent=r?"No hay pedido ni producto con «"+r.cod+"»":""; msg.className="mvpq-msg bad"; inp.focus(); return; }
+      despachar(r,{ver:true,camara:!!cam}); };
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); e.stopPropagation(); if(inp.value.trim()) buscar(inp.value.trim()); } else if(e.key==="Escape"){ e.preventDefault(); cerrarEsc(); } });
+    const video=h("video",{class:"mvpq-video",muted:true,autoplay:true,playsinline:true}); video.muted=true; video.setAttribute("playsinline","");
+    const camBox=h("div",{class:"mvpq-cam",hidden:true},video,h("div",{class:"mvpq-mira"}));
+    const btnCam=puedeCam()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ if(cam){ pararCam(); camBox.hidden=true; btnCam.textContent="📷 Usar cámara"; inp.focus(); } else iniciarCam(); }},"📷 Usar cámara"):null;
+    async function iniciarCam(){
+      camBox.hidden=false; btnCam.textContent="Apagar cámara"; msg.textContent="Acerca el QR a la cámara"; msg.className="mvpq-msg";
+      try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720}}});
+        if(!capaE){ stream.getTracks().forEach(t=>t.stop()); return; }
+        cam={vivo:true,stream}; video.srcObject=stream; try{ await video.play(); }catch(e){}
+        const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+        let vuelta=0; const yo=cam;
+        const lee=(sx,sy,sw,sh,max)=>{ const k=Math.min(1,max/Math.max(sw,sh)); const w=Math.round(sw*k), hh=Math.round(sh*k); cv.width=w; cv.height=hh; cx.drawImage(video,sx,sy,sw,sh,0,0,w,hh);
+          const d=cx.getImageData(0,0,w,hh).data; const lum=new Uint8ClampedArray(w*hh); for(let i=0,j=0;i<lum.length;i++,j+=4) lum[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
+          try{ return qr.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(lum,w,hh))),hints).getText()||""; }catch(e){ return ""; } finally{ try{ qr.reset(); }catch(e){} } };
+        const tick=()=>{ if(!yo.vivo) return; let txt=""; const vw=video.videoWidth, vh=video.videoHeight;
+          if(vw&&vh){ vuelta++; const lado=Math.min(vw,vh)*0.7; try{ txt=vuelta%2?lee((vw-lado)/2,(vh-lado)/2,lado,lado,720):lee(0,0,vw,vh,1100); }catch(e){} }
+          if(txt){ const r=resolver(txt); if(r&&r.tipo!=="nada"){ despachar(r,{ver:true,camara:true}); return; } bip(false); msg.textContent="No reconozco ese código"; msg.className="mvpq-msg bad"; }
+          setTimeout(tick,txt?900:70); };
+        tick();
+      }catch(e){ console.warn(e); pararCam(); camBox.hidden=true; if(btnCam) btnCam.textContent="📷 Usar cámara"; msg.textContent="No se pudo abrir la cámara (revisa el permiso del navegador)."; msg.className="mvpq-msg bad"; }
+    }
+    const caja=h("div",{class:"mvpq-caja mvpq-esc",role:"dialog","aria-label":"Escanear"},
+      h("div",{class:"mvpq-cab"},h("h3",null,"▦ Escanear"),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarEsc},"×")),
+      h("div",{class:"mvpq-tipos"},h("div",null,h("b",null,"Pedido"),h("span",null,"clienta, piezas, pago y envío")),h("div",null,h("b",null,"Producto"),h("span",null,"precio, material y existencias"))),
+      inp,camBox,msg,
+      h("div",{class:"mvpq-acc"},btnCam,h("button",{type:"button",class:"mvpq-b prim",onclick:()=>{ if(inp.value.trim()) buscar(inp.value.trim()); else inp.focus(); }},"Buscar")));
+    capaE=h("div",{class:"mvpq-fondo"},caja); capaE.addEventListener("click",e=>{ if(e.target===capaE) cerrarEsc(); });
+    document.body.append(capaE); document.body.classList.add("mvpq-sinscroll"); setTimeout(()=>inp.focus(),30);
+    if(conCamara&&btnCam) iniciarCam();
+  }
+
+  // Venta: el botón «▦ Escanear pedido» pasa a «▦ Escanear» (pedido o producto)
+  const obs=new MutationObserver(()=>{ try{
+    const b=document.querySelector(".mvtb-escbtn:not([data-mvpq])"); if(b){ const n=b.cloneNode(false); n.dataset.mvpq="1"; n.textContent="▦ Escanear"; n.title="Escanea el QR de un pedido (ficha del pedido) o de un producto (precio y existencias)"; n.addEventListener("click",()=>abrirEscaner(false)); b.replaceWith(n); }
+    if(capaE&&document.querySelector(".mvtb-fondo")) cerrarEsc(); // se abrió la ficha de un pedido
+  }catch(e){} });
+  try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
+
+  window.mvPQFicha=ficha; window.mvPQEscanear=abrirEscaner; window.mvPQEncolar=encolar; window.mvPQResolver=resolver; window.mvPQDespachar=despachar;
 })();
 </script>
 <style>
@@ -11834,7 +12163,7 @@ body.vx-on #vxCamWrap{display:block!important}
       el("div", { class: "vx-alta-f2txt" }, el("b", null, "Foto 2"), el("small", null, url ? "Extra · la del catálogo es la foto 1" : "Opcional · otra vista de la pieza"),
         el("div", { class: "vx-alta-f2btns" }, el("button", { type: "button", onclick: () => elegir(true) }, url ? "Tomar otra" : "Tomar foto"), el("button", { type: "button", onclick: () => elegir(false) }, "Elegir de Fotos"),
           url ? el("button", { type: "button", class: "rojo", onclick: () => { f.file2 = null; if (f.fotoUrl2) { try { URL.revokeObjectURL(f.fotoUrl2); } catch (e) {} } f.fotoUrl2 = null; f.quitarFoto2 = true; render(); } }, "Quitar") : null))); }
-  async function enNube(codigo) { try { const sb = window.MarveaNube && window.MarveaNube.sb; if (!sb) return false; const { data } = await sb.from("marvea_docs").select("id").eq("col", "productos").eq("id", codigo).maybeSingle(); return !!data; } catch (e) { return false; } }
+  async function enNube(codigo) { try { const sb = window.MarveaNube && window.MarveaNube.sb; if (!sb) return false; const { data } = await sb.from("marvea_docs").select("id").in("col", ["productos", "reservas"]).eq("id", codigo).limit(1); return !!(data && data.length); } catch (e) { return false; } } /* mvRP: también Reservas */
   async function guardarAlta() {
     const f = V.alta; if (!f || f.guardando) return;
     const nombre = f.nombre.trim(), pr = num(f.precio), co = f.costo === "" ? 0 : num(f.costo);
@@ -11852,20 +12181,21 @@ body.vx-on #vxCamWrap{display:block!important}
       if (!fotoId && fotoId2) { fotoId = fotoId2; fotoId2 = null; } // si solo hay una foto, esa es la principal
       f.msg = "Guardando…"; render();
       const edit = !!f.codigo; let codigo = f.codigo || nextCode(f.cat);
-      if (!edit) for (let i = 0; i < 25 && (state.products.has(codigo) || await enNube(codigo)); i++) codigo = f.cat + "-" + pad5((parseInt(String(codigo).split("-")[1], 10) || 0) + 1); // otro equipo pudo registrar ese mismo número
+      if (!edit) for (let i = 0; i < 25 && (state.products.has(codigo) || (state.reservas && state.reservas.has(codigo)) || await enNube(codigo)); i++) codigo = f.cat + "-" + pad5((parseInt(String(codigo).split("-")[1], 10) || 0) + 1); // otro equipo pudo registrar ese mismo número
       const prev = edit ? state.products.get(codigo) : null; const now = new Date().toISOString();
       let palabra = normaliza(f.palabra) || palabraDelProducto(nombre, f.material, codigo);
       if (palabrasUsadas(codigo).has(palabra)) { const otro = porPalabra(palabra); palabra = palabraDelProducto(nombre, f.material, codigo); toast("Esa palabra ya la usa " + (otro ? otro.codigo : "otro producto") + "; quedó «" + palabra + "»", true); }
       const vivo = prev ? Math.max(0, Number(prev.existencia) || 0) : ent(f.piezas);
       const data = Object.assign({}, prev || {}, { codigo, nombre, palabra, categoria: f.cat, material: materialNormalizado(f.material), costo: r2(co), precio: r2(pr), existencia: vivo, minimo: ent(f.minimo), notas: String(f.notas || "").trim(), etiquetaCat: String(f.etiqueta || "").trim().slice(0, 24), fotoId, creado: prev ? prev.creado || now : now, actualizado: now });
       if (fotoId2) data.fotoId2 = fotoId2; else delete data.fotoId2;
-      await state.db.doc("productos/" + codigo).set(data);
+      const aRes = !edit && f.destino === "reserva"; if (aRes) data.reservado = now; /* mvRP */
+      await state.db.doc((aRes ? "reservas/" : "productos/") + codigo).set(data);
       let ex = vivo; const dif = edit ? ent(f.piezas) - f.ex0 : 0;
       if (dif) { const pv = window.__mvMov; window.__mvMov = { motivo: "ajuste", ref: "app celular · ficha" }; try { const r = await state.db.stock(codigo, dif); ex = Number(r.existencia) || 0; if (Number(r.aplicado) !== dif) toast("Pediste " + (dif > 0 ? "+" : "") + dif + " piezas y solo se pudo " + r.aplicado + "; ahora hay " + ex, true); } finally { window.__mvMov = pv || null; } }
-      state.products.set(codigo, Object.assign({}, data, { existencia: ex }));
+      if (data.reservado) { if (state.reservas) state.reservas.set(codigo, Object.assign({}, data, { existencia: ex, reserva: true })); } else state.products.set(codigo, Object.assign({}, data, { existencia: ex }));
       try { localStorage.setItem("marvea.vx.alta", JSON.stringify({ cat: f.cat, material: f.material })); } catch (e) {}
       if (f.fotoUrl) { try { URL.revokeObjectURL(f.fotoUrl); } catch (e) {} } if (f.fotoUrl2) { try { URL.revokeObjectURL(f.fotoUrl2); } catch (e) {} }
-      vibra(30); V.alta = { hecho: { codigo, palabra, nombre, edit, piezas: ex, nube: null } }; render();
+      vibra(30); V.alta = { hecho: { codigo, palabra, nombre, edit, piezas: ex, nube: null, reserva: !!data.reservado } }; render();
       // confirmar que ya está en la nube (la Mac y el sistema lo reciben de ahí)
       for (let i = 0; i < 10; i++) { if (await enNube(codigo)) { if (V.alta && V.alta.hecho && V.alta.hecho.codigo === codigo) { V.alta.hecho.nube = true; render(); } return; } await new Promise(r => setTimeout(r, 700)); }
       if (V.alta && V.alta.hecho && V.alta.hecho.codigo === codigo) { V.alta.hecho.nube = false; render(); }
@@ -11895,13 +12225,13 @@ body.vx-on #vxCamWrap{display:block!important}
     if (f.hecho) { const x = f.hecho; const p = state.products.get(x.codigo);
       return el("div", { class: "vx-sheetbg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) cerrar(); }, "data-k": "altaok" },
         el("div", { class: "vx-sheet vx-alta-ok" }, el("div", { class: "vx-grip" }), p ? foto(p, "vx-alta-okfoto") : null,
-          el("div", { class: "vx-check" }, "✓"), el("h2", null, x.edit ? "Cambios guardados" : "Producto registrado"),
+          el("div", { class: "vx-check" }, "✓"), el("h2", null, x.edit ? "Cambios guardados" : x.reserva ? "Registrado en Reservas" : "Producto registrado"), x.reserva ? el("p", { class: "vx-alta-resok" }, "⏸ Queda en Reservas: no se vende ni se publica hasta que lo integres (sistema › Registro de productos › Reservas).") : null,
           el("div", { class: "vx-alta-okcod" }, el("b", null, x.codigo), el("span", null, "Palabra clave: «" + x.palabra + "»")),
           el("p", { class: "vx-nota" }, x.nombre + " · " + x.piezas + " pza" + (x.piezas === 1 ? "" : "s")),
           el("div", { class: "vx-alta-sync" + (x.nube === true ? " ok" : x.nube === false ? " warn" : "") }, x.nube === true ? "✓ Ya está en la nube: la Mac y el sistema ya lo tienen" : x.nube === false ? "Se guardó en este iPhone y se sube solo en cuanto haya internet" : "Subiendo a la nube…"),
-          !x.edit ? el("p", { class: "vx-nota" }, "La etiqueta con código de barras se imprime desde la Mac (Inventario › Imprimir etiquetas).") : null,
+          !x.edit ? el("p", { class: "vx-nota" }, "Su etiqueta ya está en el sistema › Registro de productos › Por etiquetar.") : null,
           el("button", { class: "vx-cta", type: "button", onclick: () => abrirAlta(null) }, "Registrar otro producto"),
-          el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { V.alta = null; V.prod = x.codigo; render(); } }, "Ver producto"), el("button", { type: "button", onclick: cerrar }, "Listo")))); }
+          el("div", { class: "vx-sec" }, x.reserva ? null : el("button", { type: "button", onclick: () => { V.alta = null; V.prod = x.codigo; render(); } }, "Ver producto"), el("button", { type: "button", onclick: cerrar }, "Listo")))); }
     if (f.paso == null) f.paso = f.codigo ? ULTIMO : 0; if (f.codigo) f.visto = true;
     const edit = !!f.codigo; const cats = (state.cats || []).filter(c => c && c.p); const P = PASOS[f.paso];
     const unicos = l => { const m = new Map(); for (const v of l) { const t = String(v || "").trim(); if (t && !m.has(normaliza(t))) m.set(normaliza(t), t); } return [...m.values()]; };
@@ -11922,10 +12252,12 @@ body.vx-on #vxCamWrap{display:block!important}
       edit ? el("p", { class: "vx-alta-aviso", id: "vxAltaAviso", hidden: true }) : null,
       el("div", { class: "vx-field" }, el("span", null, "Avisarme cuando queden"), stepper("minimo", 0)), el("div", { class: "vx-alta-gan", id: "vxAltaGan" })];
     else { // revisar
+      if (!f.destino) { try { f.destino = localStorage.getItem("marvea.rp.destino") === "reserva" ? "reserva" : "inventario"; } catch (e) { f.destino = "inventario"; } } /* mvRP */
       const fila = (paso, k, v, extra) => el("button", { type: "button", class: "vx-alta-rf", onclick: () => irPaso(paso) }, el("span", null, k), el("b", null, v || "—"), extra || null, el("em", null, "›"));
       const pr = num(f.precio), co = f.costo === "" ? NaN : num(f.costo); const url = f.fotoUrl || (!f.quitarFoto && f.fotoId ? blobUrl(f.fotoId) : "");
       cuerpo = [el("div", { class: "vx-alta-rhead" }, el("button", { type: "button", class: "vx-alta-rfoto", onclick: () => irPaso(0) }, url ? el("img", { src: url, alt: "" }) : el("span", null, "📷", el("small", null, "Agregar foto"))),
           el("div", null, el("b", null, f.nombre || "Sin nombre"), el("span", { class: "vx-alta-rcod" }, codigoTxt || "Sin categoría"), el("small", null, (f.cat ? catName(f.cat) : "") + (f.material ? " · " + f.material : "")))),
+        !edit ? el("div", { class: "vx-field vx-alta-dest" }, el("span", null, "¿Va al catálogo?"), el("div", { class: "vx-alta-destops" }, ...[["inventario", "✓ Sí, al inventario", "Se vende y se publica"], ["reserva", "⏸ No, a Reservas", "Registrado, sin vender"]].map(([d, t, sub]) => el("button", { type: "button", class: "vx-alta-dop " + d + (f.destino === d ? " on" : ""), onclick: () => { f.destino = d; try { localStorage.setItem("marvea.rp.destino", d); } catch (e) {} render(); } }, el("b", null, t), el("small", null, sub))))) : null, /* mvRP */
         el("div", { class: "vx-alta-rlista" },
           fila(1, "Nombre", f.nombre), fila(1, "Categoría", f.cat ? catName(f.cat) : ""), fila(2, "Material", f.material),
           fila(3, "Precio de mayoreo", pr > 0 ? precio(pr) : ""), fila(3, "Costo", co >= 0 ? precio(co) : ""), co >= 0 && pr > 0 ? fila(3, "Ganas por pieza", precio(pr - co) + " · " + Math.round((pr - co) / pr * 100) + "%") : null,
@@ -11941,7 +12273,7 @@ body.vx-on #vxCamWrap{display:block!important}
     }
     const barraPasos = el("div", { class: "vx-alta-prog" }, ...PASOS.map((x, i) => el("i", { class: i < f.paso ? "ok" : i === f.paso ? "on" : "" })));
     const ok = pasoValido(f, f.paso);
-    const boton = f.paso === ULTIMO ? (f.guardando ? (f.msg || "Guardando…") : edit ? "Guardar cambios" : "Registrar producto")
+    const boton = f.paso === ULTIMO ? (f.guardando ? (f.msg || "Guardando…") : edit ? "Guardar cambios" : f.destino === "reserva" ? "Registrar en Reservas" : "Registrar producto")
       : f.paso === 0 ? ((f.file || (!f.quitarFoto && f.fotoId) || f.file2 || (!f.quitarFoto2 && f.fotoId2)) ? "Siguiente" : "Seguir sin foto") : f.visto ? "Listo" : "Siguiente";
     const hoja = el("div", { class: "vx-sheet vx-alta vx-alta-wiz" }, el("div", { class: "vx-grip" }),
       el("div", { class: "vx-alta-top" },
@@ -11950,7 +12282,7 @@ body.vx-on #vxCamWrap{display:block!important}
       barraPasos,
       el("div", { class: "vx-alta-ph" }, el("h2", null, edit && f.paso === ULTIMO ? "Revisa y guarda" : P.t), el("p", null, P.s)),
       ...cuerpo.filter(Boolean),
-      el("div", { class: "vx-alta-pie" }, el("button", { class: "vx-cta", id: "vxAltaGuardar", type: "button", disabled: !!f.guardando || (!ok && f.paso !== ULTIMO), onclick: siguiente }, boton),
+      el("div", { class: "vx-alta-pie" }, el("button", { class: "vx-cta" + (f.paso === ULTIMO && !edit && f.destino === "reserva" ? " vx-cta-res" : ""), id: "vxAltaGuardar", type: "button", disabled: !!f.guardando || (!ok && f.paso !== ULTIMO), onclick: siguiente }, boton),
         el("div", { class: "vx-sec" }, el("button", { type: "button", onclick: () => { if ((f.nombre || f.file) && !edit && !f.guardando) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "Cancelar"))));
     setTimeout(pistas, 0);
     return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if ((f.nombre || f.file) && !edit) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
