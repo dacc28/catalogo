@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T22:32:56.725Z",
+ "actualizado": "2026-11-22T22:50:03.486Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -199,32 +199,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00048",
-   "nombre": "Anillo Corte Esmeralda Dorado Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/82bc7b3532a1557f79ed51eb7216af40.jpg",
-   "foto2": "fotos/3116eeb56b429841c18d6f052ee42511.jpg",
-   "creado": "2026-11-21T22:03:40.487Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00049",
-   "nombre": "Anillo Corte Esmeralda Plateado Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a94ab5a43104ce369407727fad0c759a.jpg",
-   "foto2": "fotos/47d0d0deb60afe8105a7fa0570fcb175.jpg",
-   "creado": "2026-11-21T22:04:17.888Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00050",
    "nombre": "Anillo Lineas Talla 7",
    "categoria": "ANI",
@@ -306,18 +280,6 @@
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00008",
-   "nombre": "Arracadas de Acero",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/dac69aa114f6341ecefd11a5f1381edb.jpg",
-   "creado": "2026-10-19T02:01:12.007Z",
    "disponible": true
   },
   {
@@ -1283,18 +1245,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00013",
-   "nombre": "Collar de Cuentas y Perla",
-   "categoria": "COL",
-   "material": "Cuenta y Perla Sintética con Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
-   "creado": "2026-10-19T01:33:02.110Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00021",
    "nombre": "Cadena Cartier",
    "categoria": "CAD",
@@ -1472,19 +1422,6 @@
    "notas": "",
    "foto": "fotos/031e0c1612b353c50877c2116a047278.jpg",
    "creado": "2026-11-17T20:06:10.658Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00064",
-   "nombre": "Collar Marquesa Acostada",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/fc53f45f2c3a79497d5e70af548e7ead.jpg",
-   "foto2": "fotos/0012b59b605a15ff6c98d13b8fbd516e.jpg",
-   "creado": "2026-11-21T21:32:00.254Z",
    "disponible": true
   },
   {
@@ -1796,30 +1733,6 @@
    "disponible": true
   },
   {
-   "codigo": "DIJ-00027",
-   "nombre": "Dije Brillante Dorado Xuping",
-   "categoria": "DIJ",
-   "material": "Oro Laminado",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/070f58e8e7ead1ef6d4eda55b71ca3c8.jpg",
-   "creado": "2026-11-21T20:05:42.578Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00028",
-   "nombre": "Dije Brillante Plateado Xuping",
-   "categoria": "DIJ",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/fe25fd0b253406280a91aa569c67fdbd.jpg",
-   "creado": "2026-11-21T20:07:26.204Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00001",
    "nombre": "Juego Xuping Flor Naranja",
    "categoria": "JUE",
@@ -1949,18 +1862,6 @@
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00015",
-   "nombre": "Plusera Cart Plateada",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "Inspo Cartier",
-   "foto": "fotos/f27414dd5c5d3960c6e668f7c6faccc3.jpg",
-   "creado": "2026-10-20T18:04:33.226Z",
    "disponible": true
   },
   {
