@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T22:10:02.695Z",
+ "actualizado": "2026-11-22T22:25:05.599Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1511,18 +1511,6 @@
    "notas": "",
    "foto": "fotos/3e0d1e3fca44183699703386541a4ee8.jpg",
    "creado": "2026-10-19T02:26:57.277Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00011",
-   "nombre": "Pulsera Cart Dorada",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6ecb20927e08791f9ce934f0a38b94d5.jpg",
-   "creado": "2026-10-20T17:58:10.177Z",
    "disponible": true
   },
   {
