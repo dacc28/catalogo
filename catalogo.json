@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T21:55:03.171Z",
+ "actualizado": "2026-11-22T22:10:02.695Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -59,18 +59,6 @@
    "notas": "",
    "foto": "fotos/ff05cb89eee4acd1aa3cada802bbf177.jpg",
    "creado": "2026-10-19T01:28:52.775Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00003",
-   "nombre": "Anillo Cartier Talla 6",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 38,
-   "etiqueta": "Últimas piezas",
-   "notas": "Dupe de Cartier",
-   "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
-   "creado": "2026-10-19T02:11:33.688Z",
    "disponible": true
   },
   {
@@ -691,7 +679,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b314fce6e9cbb187ad84487e72c7b3de.jpg",
    "creado": "2026-11-07T21:36:19.972Z",
