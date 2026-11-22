@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T21:10:01.950Z",
+ "actualizado": "2026-11-22T21:25:02.608Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -71,18 +71,6 @@
    "notas": "Dupe de Cartier",
    "foto": "fotos/547ea44b5fcdbd100b96aa51ae2dcb91.jpg",
    "creado": "2026-10-19T02:11:33.688Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00025",
-   "nombre": "Anillo Ajustable Esmeralda Plata",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
-   "creado": "2026-10-27T00:59:47.920Z",
    "disponible": true
   },
   {
@@ -455,18 +443,6 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00064",
-   "nombre": "Aretes Mariposa",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7b2ac47c0208cb767b4931206232f188.jpg",
-   "creado": "2026-11-01T21:44:01.970Z",
    "disponible": true
   },
   {
@@ -1046,6 +1022,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00013",
+   "nombre": "Collar de Cuentas y Perla",
+   "categoria": "COL",
+   "material": "Cuenta y Perla Sintética con Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5c3ef7353e2cf1a024a2082cff6c8697.jpg",
+   "creado": "2026-10-19T01:33:02.110Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00021",
    "nombre": "Cadena Cartier",
    "categoria": "CAD",
@@ -1211,18 +1199,6 @@
    "notas": "",
    "foto": "fotos/346c39e325be4f1b5d738781ad973efc.jpg",
    "creado": "2026-11-17T20:03:44.344Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00062",
-   "nombre": "Collar Tou Plateado",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 100,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/dd61740248e6afe1d1b6a43f98f4e7d2.jpg",
-   "creado": "2026-11-17T20:04:20.701Z",
    "disponible": true
   },
   {
