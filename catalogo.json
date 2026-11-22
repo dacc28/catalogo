@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T03:40:03.750Z",
+ "actualizado": "2026-11-22T20:55:02.980Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -371,18 +371,6 @@
    "notas": "",
    "foto": "fotos/3c090beb932e26d6e3e3da6d7587f74a.jpg",
    "creado": "2026-10-20T23:19:58.813Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00037",
-   "nombre": "Aretes Xuping  Color Marmol con Dorado",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/512af33e93e6caf3ca9fb1ab6d920bd5.jpg",
-   "creado": "2026-10-20T23:21:42.410Z",
    "disponible": true
   },
   {
@@ -878,18 +866,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00101",
-   "nombre": "Arracada Lineas Brillo",
-   "categoria": "ARE",
-   "material": "",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/abce4794090dbfc600918bbc010d8c3b.jpg",
-   "creado": "2026-11-17T20:28:03.583Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00102",
    "nombre": "Anillo Cartie plata Talla7",
    "categoria": "ANI",
@@ -923,18 +899,6 @@
    "notas": "",
    "foto": "fotos/35420d576c46aa9fa7def06819d2ff30.jpg",
    "creado": "2026-11-07T20:06:10.353Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00009",
-   "nombre": "Cadena Bibiana detallada 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/49a30e288b58131c82f64f700ac4a1e1.jpg",
-   "creado": "2026-11-07T20:12:30.531Z",
    "disponible": true
   },
   {
