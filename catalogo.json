@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T21:25:02.608Z",
+ "actualizado": "2026-11-22T21:40:02.688Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -311,18 +311,6 @@
    "notas": "",
    "foto": "fotos/a422ead30d36f3d6b598b1447a287057.jpg",
    "creado": "2026-10-20T23:14:13.742Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00035",
-   "nombre": "Aretes Xuping  Colgante Oscuro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6ade6fee90079227dd32884db1bdff79.jpg",
-   "creado": "2026-10-20T23:18:36.806Z",
    "disponible": true
   },
   {
