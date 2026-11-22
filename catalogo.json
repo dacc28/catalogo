@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-22T20:55:02.980Z",
+ "actualizado": "2026-11-22T21:10:01.950Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -74,18 +74,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00014",
-   "nombre": "Anillo Ajustable Corte Oval Dorado",
-   "categoria": "ANI",
-   "material": "Chapa De Oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3f56a6a73c6a9f5c62981f36edf3e95b.jpg",
-   "creado": "2026-10-27T00:46:37.184Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00025",
    "nombre": "Anillo Ajustable Esmeralda Plata",
    "categoria": "ANI",
@@ -95,18 +83,6 @@
    "notas": "",
    "foto": "fotos/7d3ed577e3e4d7a3e82111d6e7eb5021.jpg",
    "creado": "2026-10-27T00:59:47.920Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00030",
-   "nombre": "Anillo Cartie plata con brillo Talla7",
-   "categoria": "ANI",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/aef9df6016caa32f3b9fbc09a3b02c0f.jpg",
-   "creado": "2026-11-17T23:24:38.184Z",
    "disponible": true
   },
   {
@@ -443,18 +419,6 @@
    "notas": "",
    "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
    "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00049",
-   "nombre": "Aretes Xuping  Flor Azul",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7a005b415acfaeefc694877e3aac617d.jpg",
-   "creado": "2026-10-20T23:32:42.292Z",
    "disponible": true
   },
   {
@@ -827,18 +791,6 @@
    "notas": "",
    "foto": "fotos/b89334e15ce3f3ba67bb195bccf35827.jpg",
    "creado": "2026-11-07T21:46:00.691Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00097",
-   "nombre": "Huggies Flor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/253e4c20b464d45cd9b47a04e0af9693.jpg",
-   "creado": "2026-11-07T21:48:20.046Z",
    "disponible": true
   },
   {
@@ -1243,7 +1195,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 100,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
    "creado": "2026-11-17T20:03:04.206Z",
@@ -1703,18 +1655,6 @@
    "notas": "",
    "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
    "creado": "2026-11-01T21:06:01.761Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00034",
-   "nombre": "Brazalete Media Luna",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4ed94c410b0ad7073b37e9df494eef88.jpg",
-   "creado": "2026-11-01T21:08:45.418Z",
    "disponible": true
   },
   {
