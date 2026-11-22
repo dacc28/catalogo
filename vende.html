@@ -11672,10 +11672,40 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
       h("p",{class:"mvlv-cayuda"},"Mientras el live sigue abierto: «sí hay» toma lo que contaste como «quedaron»; lo que no has contado sale con las existencias del sistema. Lo ideal es mandarlo después de cerrar el live."),bloqueCatalogo(l));
     const capa=h("div",{class:"mvpq-fondo mvlv-fondo"},caja); capa.addEventListener("click",e=>{ if(e.target===capa) capa.remove(); }); document.body.append(capa);
   }
+  /* clic derecho (o dos dedos) en un live de la lista: Ver / Eliminar */
+  function menuLive(e,l){
+    e.preventDefault(); e.stopPropagation(); if(typeof showMenu!=="function") return;
+    const pend=l.estado==="cerrado"?l.items.reduce((s,it)=>s+pendItem(it),0):0;
+    const txt=l.estado==="en curso"?"¿Eliminar «"+l.nombre+"»? Se borra la lista de este live (lleva "+l.items.length+" modelo"+(l.items.length===1?"":"s")+"). El inventario no se toca."
+      :pend?"¿Eliminar «"+l.nombre+"»? Tiene "+pend+" pieza"+(pend===1?"":"s")+" por asignar: regresan al inventario. Lo que ya está en carritos se queda en los carritos."
+      :"¿Eliminar «"+l.nombre+"» del historial? El inventario y los carritos no cambian.";
+    showMenu(e.clientX,e.clientY,l.nombre,[
+      {label:"Ver",run:()=>{ L.sel=l.id; pintar(); }},
+      "-",
+      {label:"Eliminar…",danger:true,confirm:txt,options:[{label:pend?"Sí, eliminar y regresar "+pend+" al inventario":"Sí, eliminar",run:()=>eliminarLive(l.id)}]}
+    ]);
+  }
+  async function eliminarLive(id){
+    const l0=L.lista.get(id); if(!l0) return;
+    if(l0.estado==="cerrado"&&!esAdmin()){ toast("Solo un administrador puede eliminar un live cerrado",true); return; }
+    await enFila(async()=>{
+      const l=await fresco(id); if(!l) return;
+      if(l.estado==="cerrado"){ // lo que quedó por asignar regresa al inventario
+        for(const it of l.items){ const k=pendItem(it); if(k<=0) continue; const p=state.products.get(it.codigo); if(!p) continue;
+          const pv=window.__mvMov; window.__mvMov={motivo:"live",ref:("Live eliminado · "+l.nombre).slice(0,160)};
+          try{ const ap=Math.max(0,await setStock(it.codigo,n0(p.existencia)+k)); if(ap>0){ it.devueltas.push({cant:ap,fecha:ahora(),por:yo()}); await guardar(l); } }
+          catch(e){ console.error(e); toast("No se pudo regresar "+(it.nombre||it.codigo)+" al inventario; el live no se eliminó",true); throw e; }
+          finally{ window.__mvMov=pv||null; } }
+      }
+      await state.db.doc(COL+"/"+id).delete(); L.lista.delete(id); if(L.sel===id) L.sel=null;
+      try{ renderAll(); }catch(e){} toast("Live «"+l.nombre+"» eliminado");
+    }).catch(e=>console.warn(e));
+    pintar();
+  }
   function historial(todos,actual){
     return h("div",{class:"mvlv-hist"},h("div",{class:"mvlv-histt"},"Lives"),
       h("div",{class:"mvlv-histl"},...todos.slice(0,30).map(l=>{ const pend=l.estado==="cerrado"?l.items.reduce((s,it)=>s+pendItem(it),0):0; const vend=l.items.reduce((s,it)=>s+n0(it.aplicado),0);
-        return h("button",{type:"button",class:"mvlv-hi"+(actual&&actual.id===l.id?" on":"")+(l.estado==="en curso"?" vivo":""),onclick:()=>{ L.sel=l.id; pintar(); window.scrollTo({top:0,behavior:"smooth"}); }},
+        return h("button",{type:"button",class:"mvlv-hi"+(actual&&actual.id===l.id?" on":"")+(l.estado==="en curso"?" vivo":""),title:"Clic derecho: más opciones",onclick:()=>{ L.sel=l.id; pintar(); window.scrollTo({top:0,behavior:"smooth"}); },oncontextmenu:e=>menuLive(e,l)},
           h("b",null,l.nombre),h("small",null,fechaC(l.creado)+" · "+(l.estado==="en curso"?"en vivo · "+l.items.length+" modelos":vend+" vendidas")),pend?h("span",{class:"mvlv-hipend"},pend+" por asignar"):null); })));
   }
 
