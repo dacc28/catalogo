@@ -11794,6 +11794,8 @@ body.vx-on .vx-topr .mvtb-escbtn,body.vx-on .vx-topr .mvtb-pcbtn,body.vx-on .vx-
 body.vx-on .vx-topr .vx-nueva{order:-1;flex:none;white-space:nowrap}
 body.vx-on .vx-topr>*{flex:none}
 .mvpq-res{font-size:13px;font-weight:800;color:#7A5A00;background:#FFF4D6;border-radius:10px;padding:7px 10px}
+/* mvFF 23-nov: foto en grande encima de las fichas */
+.lightbox,.mvfg{z-index:2147483500!important}
 </style>
 <script id="mv-pq-js">
 /* ===== mvPQ · QR de producto (20-nov-2026) =====
@@ -12037,7 +12039,7 @@ body.vx-on .vx-topr>*{flex:none}
 <style>
 /* Marvea Vende · iPhone / iPad · blanco + liquid glass */
 body.vx-on{background:#fff!important;overscroll-behavior-y:none}
-body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#vxDoc):not(.mvtb-fondo):not(.mvpq-fondo):not(.mvpq-hud):not(script):not(style):not(.ctxmenu):not(#vxPull):not(#mvNotasCapa){display:none!important}
+body.vx-on>*:not(#vx):not(#mvLogin):not(#toastHost):not(#vxCamWrap):not(#mvPC):not(#mvFG):not(#lightbox):not(#vxDoc):not(.mvtb-fondo):not(.mvpq-fondo):not(.mvpq-hud):not(script):not(style):not(.ctxmenu):not(#vxPull):not(#mvNotasCapa){display:none!important}
 body.vx-on #toastHost{position:fixed!important;left:0!important;right:0!important;top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;z-index:200;display:flex;justify-content:center;pointer-events:none;transform:none!important}
 body.vx-on #toastHost .toast{position:static!important;transform:none!important;max-width:90vw}
 #vx{--vx-f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-family:var(--vx-f);color:#1D1D1F;min-height:100vh;min-height:100dvh;background:
