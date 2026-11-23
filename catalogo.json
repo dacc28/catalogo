@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T21:30:05.954Z",
+ "actualizado": "2026-11-23T21:45:03.959Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -134,19 +134,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00043",
-   "nombre": "Anillo Oval con Halo ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/483ae23c0d90ac05448babb7ca787900.jpg",
-   "foto2": "fotos/aabb46bfd897574023d37a8f786fb922.jpg",
-   "creado": "2026-11-21T21:56:45.062Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00044",
    "nombre": "Anillo Solitario Clasico Ajustable",
    "categoria": "ANI",
@@ -183,30 +170,6 @@
    "foto": "fotos/2fabd4769560ba479cedfc80d75dcbf1.jpg",
    "foto2": "fotos/18fd708736d033aa31c6c37708ffecce.jpg",
    "creado": "2026-11-21T22:01:39.239Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00053",
-   "nombre": "Anillo Doble con Pera Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
-   "creado": "2026-11-21T22:10:23.355Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00056",
-   "nombre": "Anillo Doble Piedra",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/f87ff82c068d623020b10fcc58feff8d.jpg",
-   "creado": "2026-11-21T22:16:22.605Z",
    "disponible": true
   },
   {
