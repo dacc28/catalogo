@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T18:15:04.331Z",
+ "actualizado": "2026-11-23T18:30:03.623Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -186,18 +186,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00050",
-   "nombre": "Anillo Lineas Talla 7",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8527c324d1987017e851cf1558e8ec68.jpg",
-   "creado": "2026-11-21T22:07:14.452Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00053",
    "nombre": "Anillo Doble con Pera Ajustable",
    "categoria": "ANI",
@@ -207,18 +195,6 @@
    "notas": "",
    "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
    "creado": "2026-11-21T22:10:23.355Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00055",
-   "nombre": "Anillo Duo Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 30,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ae329f34cf7dc59d6c448a229121e988.jpg",
-   "creado": "2026-11-21T22:13:46.029Z",
    "disponible": true
   },
   {
@@ -762,6 +738,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00091",
+   "nombre": "Aretes Cherry",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/b314fce6e9cbb187ad84487e72c7b3de.jpg",
+   "creado": "2026-11-07T21:36:19.972Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00092",
    "nombre": "Huggies colores",
    "categoria": "ARE",
@@ -1213,7 +1201,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
@@ -1773,7 +1761,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Más Vendido",
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
@@ -1797,7 +1785,7 @@
    "categoria": "PUL",
    "material": "Piedra Natural con Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/3e0d1e3fca44183699703386541a4ee8.jpg",
    "creado": "2026-10-19T02:26:57.277Z",
