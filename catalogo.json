@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T21:45:03.959Z",
+ "actualizado": "2026-11-23T22:20:03.606Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -170,6 +170,30 @@
    "foto": "fotos/2fabd4769560ba479cedfc80d75dcbf1.jpg",
    "foto2": "fotos/18fd708736d033aa31c6c37708ffecce.jpg",
    "creado": "2026-11-21T22:01:39.239Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00053",
+   "nombre": "Anillo Doble con Pera Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
+   "creado": "2026-11-21T22:10:23.355Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00054",
+   "nombre": "Media Churumbela Multishape Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e42138cc41856f8b00a6c3e19bc78db3.jpg",
+   "creado": "2026-11-21T22:12:35.371Z",
    "disponible": true
   },
   {
@@ -1061,12 +1085,25 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00025",
+   "nombre": "Gargantilla omega Brillante Dorada Xuping",
+   "categoria": "CAD",
+   "material": "Oro laminado",
+   "precio": 75,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9745a9abbf5426b98b8c323d69da8ce8.jpg",
+   "foto2": "fotos/aeab99af349e9695c700dd9da8f72d27.jpg",
+   "creado": "2026-11-21T19:55:16.699Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00026",
    "nombre": "Gargantilla omega Brillante Plateada Xuping",
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 75,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Favoritos del Live",
    "notas": "",
    "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
    "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
@@ -2063,7 +2100,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/eae0cdc782f79ad67d6372bb77446402.jpg",
    "creado": "2026-11-21T23:16:21.133Z",
