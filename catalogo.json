@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T19:05:03.027Z",
+ "actualizado": "2026-11-23T19:35:03.254Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -471,18 +471,6 @@
    "notas": "",
    "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
    "creado": "2026-10-20T23:35:05.610Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00065",
-   "nombre": "Arete Girasol",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/b7cf075f33d0f1b03f6af05c78487cad.jpg",
-   "creado": "2026-11-01T21:48:24.238Z",
    "disponible": true
   },
   {
