@@ -13328,7 +13328,7 @@ body.vx-on #vxCamWrap{display:block!important}
 
 
   /* ===== mvMN · menú ☰, Reservas, Página y catálogo, deslizar para actualizar (20-nov-2026) ===== */
-  const VX_VER = "20261121a";
+  const VX_VER = "20261123a";
   const nPend = () => { try { return esAdmin() && window.mvNotas ? window.mvNotas.pendientes() : 0; } catch (e) { return 0; } };
   if (window.mvNotas) window.mvNotas.alCambiar(() => render());
   function irA(tab) { V.tab = tab; V.prod = null; V.clienta = null; V.cliForm = null; V.menu = false; V.menuU = false; if (tab === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); }
