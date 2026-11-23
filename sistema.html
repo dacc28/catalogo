@@ -5928,7 +5928,7 @@ async function livePdf(l,cartsIn){
   try{ await state.downloads.save({filename:`live-${slug(l.nombre)}.pdf`,data:pdf.output("blob")}); toast("PDF del live descargado"); }catch(e){ if(!(e&&e.code==="declined")) toast("No se pudo descargar",true); }
 }
 function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):"—"; }
-function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),estatusFijo:(x.estatusFijo&&typeof x.estatusFijo==="object"&&x.estatusFijo.t)?{t:String(x.estatusFijo.t),fecha:String(x.estatusFijo.fecha||"")}:null,origen:String(x.origen||""),ticketEnviado:String(x.ticketEnviado||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
+function cartFromDoc(id,x){ return {id,liveId:String(x.liveId||""),cliente:String(x.cliente||""),nota:String(x.nota||""),estado:String(x.estado||"abierto"),items:Array.isArray(x.items)?x.items.filter(i=>i&&typeof i.codigo==="string").map(i=>({codigo:i.codigo,nombre:String(i.nombre||""),palabra:String(i.palabra||""),precio:Number(i.precio)||0,costo:Number(i.costo)||0,cant:Number(i.cant)||0,emp:Number(i.emp)||0,live:Number(i.live)||0})):[],referencia:String(x.referencia||""),clienteId:String(x.clienteId||""),nueva:!!x.nueva,deposito:Number(x.deposito)||0,factura:!!x.factura,pago:(x.pago&&typeof x.pago==="object")?{monto:Number(x.pago.monto)||0,medio:String(x.pago.medio||""),fecha:String(x.pago.fecha||""),cuenta:String(x.pago.cuenta||"")}:null,envio:(x.envio&&typeof x.envio==="object"&&typeof x.envio.nombre==="string")?{id:String(x.envio.id||""),nombre:String(x.envio.nombre),precio:Number(x.envio.precio)||0}:null,anticipos:Array.isArray(x.anticipos)?x.anticipos.filter(a=>a&&Number(a.monto)>0).map(a=>({monto:Number(a.monto)||0,medio:String(a.medio||""),fecha:String(a.fecha||""),nota:String(a.nota||""),usuario:String(a.usuario||"")})):[],resguardo:!!x.resguardo,enviado:x.enviado||"",guia:String(x.guia||""),paqueteria:String(x.paqueteria||""),entregaMty:!!x.entregaMty,entregado:String(x.entregado||""),envioPrevio:x.envioPrevio||null,promo:String(x.promo||""),envioAuto:!!x.envioAuto,estatusFijo:(x.estatusFijo&&typeof x.estatusFijo==="object"&&x.estatusFijo.t)?{t:String(x.estatusFijo.t),fecha:String(x.estatusFijo.fecha||"")}:null,origen:String(x.origen||""),ticketEnviado:String(x.ticketEnviado||""),finalizado:x.finalizado||"",creado:x.creado||"",actualizado:x.actualizado||""}; }
 function subscribeCarts(liveId){
   if(state.cartsUnsub){ state.cartsUnsub(); state.cartsUnsub=null; }
   state.carts=new Map(); state.cartId=null;
@@ -5974,7 +5974,7 @@ async function createCart(name,clienteId){
   try{ const ref=await state.db.collection("carritos").add({liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],total:0,creado:now,actualizado:now}); state.carts.set(ref.id,{id:ref.id,liveId:l.id,cliente,clienteId:clienteId||"",referencia,nota:"",estado:"abierto",items:[],creado:now,actualizado:now}); state.cartId=ref.id; state.cartSearch=""; renderLive(true); setTimeout(()=>{ const i=$("#addInput"); if(i) i.focus(); },50); }
   catch(e){ toast("No se pudo crear el carrito",true); }
 }
-async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",estatusFijo:(c.estatusFijo&&c.estatusFijo.t)?{t:String(c.estatusFijo.t),fecha:String(c.estatusFijo.fecha||"")}:null,descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",ticketEnviado:c.ticketEnviado||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
+async function saveCart(c){ const data={liveId:c.liveId,cliente:c.cliente,clienteId:c.clienteId||"",referencia:c.referencia||"",nueva:!!c.nueva,deposito:c.nueva?(Number(c.deposito)||DEPOSITO_NUEVA):0,factura:!!c.factura,iva:cartIva(c),pago:c.pago||null,nota:c.nota,estado:c.estado,items:c.items,envio:c.envio||null,anticipos:Array.isArray(c.anticipos)?c.anticipos:[],resguardo:!!c.resguardo,enviado:c.enviado||"",guia:c.guia||"",paqueteria:c.paqueteria||"",entregaMty:!!c.entregaMty,entregado:c.entregado||"",envioPrevio:(c.envioPrevio=((c.envio&&c.resguardo)?((state.logiFinal&&c.estado!=="final")?envioHermano(c):(c.envioPrevio||null)):null)),promo:c.promo||"",envioAuto:!!c.envioAuto,estatusFijo:(c.estatusFijo&&c.estatusFijo.t)?{t:String(c.estatusFijo.t),fecha:String(c.estatusFijo.fecha||"")}:null,descuento:cartDescPromo(c),subtotal:Math.round(cartTotal(c)*100)/100,total:Math.round(cartGrand(c)*100)/100,piezas:cartPieces(c),origen:c.origen||"",ticketEnviado:c.ticketEnviado||"",finalizado:c.finalizado||"",creado:c.creado,actualizado:new Date().toISOString()}; await state.db.doc("carritos/"+c.id).set(data); c.actualizado=data.actualizado; }
 async function setStock(code,next){ const p=state.products.get(code); if(!p) return 0; next=Math.max(0,next); const cur=Math.max(0,Number(p.existencia)||0); const delta=next-cur; if(!delta) return 0;
   if(state.db&&typeof state.db.stock==="function"){ const r=await state.db.stock(code,delta); p.existencia=Number(r.existencia)||0; return Number(r.aplicado)||0; } // suma/resta segura (varios dispositivos a la vez)
   await state.db.doc("productos/"+code).update({existencia:next,actualizado:new Date().toISOString()}); p.existencia=next; return delta; }
@@ -7754,6 +7754,42 @@ button.dg-f.mvr-a{cursor:pointer}
     try{ setView("logi"); }catch(e){} setTimeout(()=>{ try{ window.renderLogistica(); }catch(e){} },0);
   }
   window.mvVerPedido=verPedido;
+/* mvSE 23-nov */
+  /* estatus elegido a mano en Ventas → el pedido se mueve igual en Logística */
+  const FIJO_A={"Por enviar":"envio","Por entregar":"mty","En resguardo":"resguardo","Enviado":"enviado","Entregado":"entregado"};
+  const lugarLg=c=>c.enviado?(c.entregado?"entregado":"enviado"):c.resguardo?"resguardo":(esMty(c)?"mty":"envio");
+  window.mvSyncEstatus=async function(c,t){ const dest=FIJO_A[t]; if(!c||!dest||c.estado==="cancelado") return false;
+    if((dest==="enviado"||dest==="entregado")&&c.estado!=="final") return false;
+    if(lugarLg(c)===dest) return false;
+    window.__mvSincFijo=true; try{ await moverBase(c,dest); } finally { window.__mvSincFijo=false; }
+    try{ window.renderLogistica(); }catch(e){} return true; };
+  /* si se mueve por otro lado (Logística, carrito, Vende…), el estatus a mano se quita y Ventas sigue a Logística */
+  async function limpiaFijo(c){ if(window.__mvSincFijo||!c||!c.estatusFijo) return; delete c.estatusFijo;
+    try{ await state.db.doc("carritos/"+c.id).update({estatusFijo:null,actualizado:new Date().toISOString()}); }catch(e){} }
+  window.mvLimpiaFijo=limpiaFijo;
+  ["setResguardo","setEntregaMty","marcarEnviado","marcarEntregado","yaSalio","entregadoMty"].forEach(n=>{ const f=window[n]; if(typeof f!=="function"||f.__mvSE) return;
+    const g=async function(c){ try{ for(const x of [].concat(c)) await limpiaFijo(x); }catch(e){} return f.apply(this,arguments); }; g.__mvSE=true; window[n]=g; });
+  /* estatus a mano que ya estaban puestos y no coinciden con Logística: se acomodan una vez */
+  const fijoIntentado=new Set();
+  function reconciliaFijos(lista){ if(window.__mvSincFijo) return;
+    const pend=lista.filter(c=>c&&c.estatusFijo&&c.estatusFijo.t&&FIJO_A[c.estatusFijo.t]&&c.estado==="final"&&lugarLg(c)!==FIJO_A[c.estatusFijo.t]&&!fijoIntentado.has(c.id+"|"+c.estatusFijo.t));
+    if(!pend.length) return; pend.forEach(c=>fijoIntentado.add(c.id+"|"+c.estatusFijo.t));
+    setTimeout(async()=>{ for(const c of pend){ try{ await window.mvSyncEstatus(c,c.estatusFijo.t); }catch(e){ console.warn("mvSE",e); } } },0); }
+
+  /* primer pedido de una clienta: envío DHL estándar (el más barato) cargado solo, una vez por carrito */
+  function envioEstandar(){ const l=((state.ship&&state.ship.length?state.ship:DEFAULT_SHIP)||[]).filter(o=>Number(o.precio)>0); if(!l.length) return null;
+    return l.find(o=>o.id==="1-2kg")||l.slice().sort((a,b)=>Number(a.precio)-Number(b.precio))[0]; }
+  function esPrimerPedido(c){ if(c.nueva) return true; if(!c.clienteId) return false; if(!state.logiFinal) return null;
+    const vistos=new Set([c.id]);
+    for(const src of [state.logiFinal,state.ventaCarts,state.ventaAbiertas,state.cartsAbiertos,state.carts,state.mvxCerr]) if(src&&typeof src.values==="function")
+      for(const x of src.values()){ if(!x||vistos.has(x.id)) continue; vistos.add(x.id); if(x.clienteId===c.clienteId&&x.estado!=="cancelado"&&(x.items||[]).length) return false; }
+    return true; }
+  function envioPrimerPedido(c){ if(!c||c.envioAuto||c.envio||c.estado!=="abierto"||c.origen==="web"||c.entregaMty||c.resguardo||!(c.items||[]).length) return;
+    if(esPrimerPedido(c)!==true) return; const o=envioEstandar(); if(!o) return;
+    c.envio={id:o.id,nombre:o.nombre,precio:Number(o.precio)}; c.envioAuto=true;
+    try{ toast((c.cliente||"Clienta")+": primer pedido · se cargó "+o.nombre+" ($"+fmtMoney(o.precio)+")"); }catch(e){} }
+  { const sc=window.saveCart; if(typeof sc==="function"&&!sc.__mvSE){ const g=async function(c){ try{ envioPrimerPedido(c); }catch(e){} return sc.apply(this,arguments); }; g.__mvSE=true; window.saveCart=g; } }
+
 
   /* ---------- Resguardo: envío del paquete según peso (Marvea decide y avisa a la clienta) ---------- */
   const PESO_PZ_G=60;
@@ -7795,7 +7831,8 @@ button.dg-f.mvr-a{cursor:pointer}
   /* ---------------- LOGÍSTICA: lista con filtros ---------------- */
   const ESTADOS_LG={envio:["Por enviar","env"],mty:["Entrega Mty","mty"],resguardo:["Resguardo","res"],debe:["Debe","debe"],enviado:["Enviado","envd"],entregado:["Entregado","ent"]};
   function estadoDe(c){ if(c.enviado) return c.entregado?"entregado":"enviado"; if(cartSaldo(c)>0.005) return "debe"; if(c.resguardo) return "resguardo"; return esMty(c)?"mty":"envio"; }
-  async function moverA(c,dest){
+  async function moverA(c,dest){ await limpiaFijo(c); return moverBase(c,dest); } /* mvSE 23-nov */
+  async function moverBase(c,dest){
     if(dest==="enviado"){ await yaSalio(c); return; }
     if(dest==="entregado"){ await marcarEntregado(c,true); window.renderLogistica(); return; }
     const now=new Date().toISOString();
@@ -7854,7 +7891,7 @@ button.dg-f.mvr-a{cursor:pointer}
     if(state.logiModo==="enviados"&&state.logiHostEl&&host===state.logiHostEl){ renderEnvios(host); return; }
     const q=normaliza(state.logiQ||""); const k2=c=>{ const k=clienteDe(c); return normaliza([c.cliente,numPedido(c),k&&k.whatsapp,k&&k.ciudad,c.guia].join(" ")); };
     const visible=c=>(c.items.length||esDifEnvio(c))&&(!q||k2(c).includes(q));
-    const todosFinal=[...(state.logiFinal||new Map()).values()];
+    const todosFinal=[...(state.logiFinal||new Map()).values()]; reconciliaFijos(todosFinal); /* mvSE 23-nov */
     const cerr=todosFinal.filter(c=>visible(c)&&!c.enviado);
     const abiertos=[...(state.cartsAbiertos||new Map()).values()].filter(c=>c.estado==="abierto"&&c.items.length);
     lgCuenta=new Map(); for(const c of todosFinal) if(!c.enviado&&c.items.length){ const k=logiClave(c); if(k) lgCuenta.set(k,(lgCuenta.get(k)||0)+1); }
@@ -9103,7 +9140,7 @@ try{ window.__marveaApi={ get state(){ return state; }, get addToCart(){ return 
       [...FIJOS.map(([t]) => [t, (t === actual ? "✓ " : "") + t, t === actual ? "primary" : "vx-b2"]), ...(actual ? [["auto", "Que lo calcule el sistema", "vx-b2"]] : []), [null, "Cancelar", "vx-b2"]]);
     if (r === null || r === actual) return;
     if (r === "auto") delete c.estatusFijo; else c.estatusFijo = { t: r, fecha: new Date().toISOString() };
-    try { await saveCart(c); toast(r === "auto" ? "Estatus automático" : "Estatus: " + r); } catch (e) { toast("No se pudo guardar", true); return; }
+    try { await saveCart(c); toast(r === "auto" ? "Estatus automático" : "Estatus: " + r); } catch (e) { toast("No se pudo guardar", true); return; } /* mvSE 23-nov */ if (r !== "auto" && typeof window.mvSyncEstatus === "function") { try { await window.mvSyncEstatus(c, r); } catch (e) { console.warn("mvSE", e); } }
     renderVenta();
   }
 
