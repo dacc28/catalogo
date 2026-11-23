@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T04:00:03.761Z",
+ "actualizado": "2026-11-23T04:15:03.798Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -324,10 +324,22 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
    "creado": "2026-10-20T23:06:31.619Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00024",
+   "nombre": "Aretes Xuping  Amarillo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6485cbbf4bad7d00e20d916fa95b62a7.jpg",
+   "creado": "2026-10-20T23:07:17.488Z",
    "disponible": true
   },
   {
@@ -424,6 +436,18 @@
    "notas": "",
    "foto": "fotos/3c090beb932e26d6e3e3da6d7587f74a.jpg",
    "creado": "2026-10-20T23:19:58.813Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00039",
+   "nombre": "Aretes Xuping  Color Ladrillo",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
+   "creado": "2026-10-20T23:24:42.521Z",
    "disponible": true
   },
   {
