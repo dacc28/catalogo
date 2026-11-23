@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T03:45:04.123Z",
+ "actualizado": "2026-11-23T04:00:03.761Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1008,7 +1008,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/03490ffb2e9838a9e4bc35d450bda731.jpg",
    "creado": "2026-11-07T20:21:44.468Z",
@@ -1020,7 +1020,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8ced7cf37625e68fe9e093117f3ada90.jpg",
    "creado": "2026-11-07T20:24:20.656Z",
@@ -1032,22 +1032,10 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7dcd8c905ee7d3ed8f787fa2cc18a98d.jpg",
    "creado": "2026-11-07T20:25:11.922Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00014",
-   "nombre": "Cadena Bibiana Larga 60cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
-   "creado": "2026-11-07T20:26:02.349Z",
    "disponible": true
   },
   {
@@ -1056,22 +1044,10 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/cbb13247c0a53f341d38b6b0d4cec126.jpg",
    "creado": "2026-11-07T20:27:31.336Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00016",
-   "nombre": "Cadena Barbada 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/d7717972eca12dfd873984ba82b99014.jpg",
-   "creado": "2026-11-07T20:28:26.089Z",
    "disponible": true
   },
   {
@@ -1080,7 +1056,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/df79b1b461917085b407d23480c204f2.jpg",
    "creado": "2026-11-07T20:34:40.117Z",
@@ -1877,18 +1853,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00032",
-   "nombre": "Brazalete 3 Hilos",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
-   "creado": "2026-11-01T21:06:01.761Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00044",
    "nombre": "Brazalete Liso",
    "categoria": "PUL",
@@ -1898,30 +1862,6 @@
    "notas": "",
    "foto": "fotos/32e70fdbc1d022eeae8eb1bd1fa2c997.jpg",
    "creado": "2026-11-01T21:26:29.927Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00045",
-   "nombre": "Pulsera Monaco Lisadu",
-   "categoria": "PUL",
-   "material": "Chapa de oro",
-   "precio": 70,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/127b8655607b796301e7f8b7d409f72f.jpg",
-   "creado": "2026-11-17T18:51:04.356Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00046",
-   "nombre": "Pulsera Monaco Brillo",
-   "categoria": "PUL",
-   "material": "Chapa de Oro",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/fc1a5d4c3abde386c557e9826043933a.jpg",
-   "creado": "2026-11-17T18:52:07.933Z",
    "disponible": true
   },
   {
