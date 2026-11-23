@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T18:00:03.845Z",
+ "actualizado": "2026-11-23T18:15:04.331Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -160,19 +160,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00045",
-   "nombre": "Anillo Emperatriz Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/59a4a6e07342fa06e497daa7e30c0bbd.jpg",
-   "foto2": "fotos/39db59ca5639238ad32cf6a4914be599.jpg",
-   "creado": "2026-11-21T21:59:11.611Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00046",
    "nombre": "Anillo Pera Acostado Plateado Ajustable",
    "categoria": "ANI",
@@ -324,22 +311,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
    "creado": "2026-10-20T23:06:31.619Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00024",
-   "nombre": "Aretes Xuping  Amarillo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6485cbbf4bad7d00e20d916fa95b62a7.jpg",
-   "creado": "2026-10-20T23:07:17.488Z",
    "disponible": true
   },
   {
@@ -436,18 +411,6 @@
    "notas": "",
    "foto": "fotos/3c090beb932e26d6e3e3da6d7587f74a.jpg",
    "creado": "2026-10-20T23:19:58.813Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00039",
-   "nombre": "Aretes Xuping  Color Ladrillo",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/6b7e8afe91ff72c8e6f782bbd741fdd0.jpg",
-   "creado": "2026-10-20T23:24:42.521Z",
    "disponible": true
   },
   {
@@ -796,18 +759,6 @@
    "notas": "",
    "foto": "fotos/fe2d664c7e8521f46978b91a6ee496f4.jpg",
    "creado": "2026-11-07T21:33:01.553Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00091",
-   "nombre": "Aretes Cherry",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/b314fce6e9cbb187ad84487e72c7b3de.jpg",
-   "creado": "2026-11-07T21:36:19.972Z",
    "disponible": true
   },
   {
@@ -1262,7 +1213,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
@@ -1822,7 +1773,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Más Vendido",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
    "creado": "2026-10-19T01:49:15.049Z",
@@ -2102,6 +2053,18 @@
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00067",
+   "nombre": "Trio de brazaletes Cartie",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 95,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
+   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
