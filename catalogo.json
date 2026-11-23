@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T00:15:03.428Z",
+ "actualizado": "2026-11-23T00:30:04.258Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -276,7 +276,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
@@ -1870,7 +1870,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b05b838863e4d7590a1649abb7eba6f0.jpg",
    "creado": "2026-11-01T20:27:54.737Z",
