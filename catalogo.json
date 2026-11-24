@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T00:10:03.065Z",
+ "actualizado": "2026-11-24T00:25:03.553Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1648,30 +1648,6 @@
    "disponible": true
   },
   {
-   "codigo": "DIJ-00027",
-   "nombre": "Dije Brillante Dorado Xuping",
-   "categoria": "DIJ",
-   "material": "Oro Laminado",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/070f58e8e7ead1ef6d4eda55b71ca3c8.jpg",
-   "creado": "2026-11-21T20:05:42.578Z",
-   "disponible": true
-  },
-  {
-   "codigo": "DIJ-00028",
-   "nombre": "Dije Brillante Plateado Xuping",
-   "categoria": "DIJ",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/fe25fd0b253406280a91aa569c67fdbd.jpg",
-   "creado": "2026-11-21T20:07:26.204Z",
-   "disponible": true
-  },
-  {
    "codigo": "JUE-00001",
    "nombre": "Juego Xuping Flor Naranja",
    "categoria": "JUE",
@@ -2078,18 +2054,6 @@
    "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
    "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
    "creado": "2026-11-21T20:33:19.675Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00070",
-   "nombre": "Pulsera Diamantes Blanco",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/514d0a3ab3618c000da62987a0bfaf7d.jpg",
-   "creado": "2026-11-21T20:34:38.193Z",
    "disponible": true
   },
   {
