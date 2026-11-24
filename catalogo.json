@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T13:05:02.519Z",
+ "actualizado": "2026-11-24T13:35:02.100Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1111,6 +1111,19 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00027",
+   "nombre": "Cadena Panza de Vibora",
+   "categoria": "CAD",
+   "material": "",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf4a7a961f2726819c5557cbc17cf367.jpg",
+   "foto2": "fotos/444ed7921c296b6b8180ee78417b6933.jpg",
+   "creado": "2026-11-21T21:34:54.379Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00002",
    "nombre": "Collar de Piedra Natural Clara",
    "categoria": "COL",
@@ -1224,7 +1237,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/1b64aa612442fcca56d89b8b027ecbe2.jpg",
    "creado": "2026-10-20T18:55:11.991Z",
@@ -1260,7 +1273,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
