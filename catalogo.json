@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T02:35:04.221Z",
+ "actualizado": "2026-11-24T08:38:59.193Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 898,
+ "piezas": 830,
  "productos": [
   {
    "codigo": "ANI-00002",
