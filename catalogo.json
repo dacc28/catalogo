@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T01:50:04.592Z",
+ "actualizado": "2026-11-24T02:05:03.103Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -103,7 +103,7 @@
    "categoria": "ANI",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/980ced2ee8daa06fce7fdf2b5e9d6091.jpg",
    "creado": "2026-11-17T23:32:24.987Z",
@@ -214,22 +214,10 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00013",
-   "nombre": "Arracadas Bicolor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
-   "creado": "2026-10-19T02:09:50.151Z",
    "disponible": true
   },
   {
@@ -242,18 +230,6 @@
    "notas": "",
    "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
    "creado": "2026-10-20T17:21:24.337Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00022",
-   "nombre": "Aretes Xuping  triangulo blanco",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/d0f74768f08a10e1721efd0f75841208.jpg",
-   "creado": "2026-10-20T23:05:34.760Z",
    "disponible": true
   },
   {
@@ -298,7 +274,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/5feed9707890ac67c83d2085fad5b4c0.jpg",
    "creado": "2026-10-20T23:10:20.995Z",
@@ -950,18 +926,6 @@
    "notas": "",
    "foto": "fotos/7dcd8c905ee7d3ed8f787fa2cc18a98d.jpg",
    "creado": "2026-11-07T20:25:11.922Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00014",
-   "nombre": "Cadena Bibiana Larga 60cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
-   "creado": "2026-11-07T20:26:02.349Z",
    "disponible": true
   },
   {
