@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-23T22:20:03.606Z",
+ "actualizado": "2026-11-24T00:10:03.065Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1345,7 +1345,7 @@
    "categoria": "COL",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/02bf3be05cd755cf8dc33a8a0a7de336.jpg",
    "foto2": "fotos/1b939e9d2b783b74daa041e7154a6fba.jpg",
@@ -1645,6 +1645,30 @@
    "notas": "",
    "foto": "fotos/a099bd0936d4b98659fde17bdf9248ce.jpg",
    "creado": "2026-11-18T16:17:06.712Z",
+   "disponible": true
+  },
+  {
+   "codigo": "DIJ-00027",
+   "nombre": "Dije Brillante Dorado Xuping",
+   "categoria": "DIJ",
+   "material": "Oro Laminado",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/070f58e8e7ead1ef6d4eda55b71ca3c8.jpg",
+   "creado": "2026-11-21T20:05:42.578Z",
+   "disponible": true
+  },
+  {
+   "codigo": "DIJ-00028",
+   "nombre": "Dije Brillante Plateado Xuping",
+   "categoria": "DIJ",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/fe25fd0b253406280a91aa569c67fdbd.jpg",
+   "creado": "2026-11-21T20:07:26.204Z",
    "disponible": true
   },
   {
