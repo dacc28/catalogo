@@ -11967,7 +11967,7 @@ body.vx-on .vx-topr>*{flex:none}
     if(r&&r.error){ if(String(r.error.code)!=="23505") console.warn("autoEtq apartar",r.error); return false; } state.etqHechas.set(c,{fecha:now}); return true; }
   async function nubeListo(c){ const sb=sbN(); const now=ahora(); try{ await sb.from("marvea_docs").upsert({col:"etiquetasHechas",id:c,data:{codigo:c,fecha:now,motivo:"impresa (automática)",por:"Mac · automática"},actualizado:now}); }catch(e){ console.warn(e); } }
   async function nubeSoltar(c){ const sb=sbN(); try{ await sb.from("marvea_docs").delete().eq("col","etiquetasHechas").eq("id",c); }catch(e){ console.warn(e); } state.etqHechas.delete(c); }
-  const autoPend=()=>{ const d=autoDesde(); if(!d) return []; return pendientes().filter(p=>String(p.creado||"")>=d); };
+  const autoPend=()=>{ const d=autoDesde(); if(!d) return []; return pendientes().filter(p=>p.reserva&&String(p.creado||"")>=d); }; /* solo Reservas, en orden de registro */
   // corre dentro de un «clic» que hace la app (main.js) para que la Mac deje conectar la impresora sin que nadie toque nada
   window.__mvAutoEtqGesto=async()=>{
     if(A.ocupado||E.ocupado) return false; const nb=window.__niimbot; if(!nb||!nb.listo) return false;
@@ -11975,7 +11975,7 @@ body.vx-on .vx-topr>*{flex:none}
     try{
       if(!autoPend().length) return false;
       if(!(await nb.listo())){ A.estado="espera"; A.msg="Esperando la impresora: préndela (y cierra la app de NIIMBOT)"; A.espera=10000; A.prox=Date.now()+A.espera; return false; }
-      A.espera=0; const ps=autoPend().slice(0,20); const mios=[];
+      A.espera=0; const ps=autoPend().slice(0,1); /* de una en una, en orden */ const mios=[];
       for(const p of ps){ if(state.etqHechas.has(p.codigo)) continue; if(await nubeApartar(p.codigo)) mios.push(p); }
       if(!mios.length){ repintar(); return false; }
       A.estado="imprimiendo"; A.msg="Imprimiendo "+mios.length+" etiqueta"+(mios.length===1?"":"s")+"…"; repintar();
@@ -11992,7 +11992,7 @@ body.vx-on .vx-topr>*{flex:none}
     if(!AUTO_OK) return null; const on=!!autoDesde();
     const n=on?autoPend().length:0;
     const linea=!on?"Apagada: las etiquetas se imprimen con los botones de abajo."
-      :A.msg?A.msg:n?"Preparando "+n+" etiqueta"+(n===1?"":"s")+"…":"Lista. Lo que registres desde el "+fechaL(autoDesde())+" (aquí, en el celular o en línea) sale solo en la NIIMBOT.";
+      :A.msg?A.msg:n?"Preparando "+n+" etiqueta"+(n===1?"":"s")+"…":"Lista. Lo que registres en Reservas desde el "+fechaL(autoDesde())+" (aquí, en el celular o en línea) sale solo en la NIIMBOT, en orden.";
     return h("div",{class:"mvrp-auto"+(on?" on":"")+(A.estado==="espera"||A.estado==="error"?" warn":"")},
       h("label",{class:"mvrp-auto-sw"},h("input",{type:"checkbox",checked:on,onchange:e=>setAuto(e.target.checked)}),h("span",null,"🖨️ Imprimir en automático en esta Mac")),
       h("small",null,linea));
