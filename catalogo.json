@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T15:10:02.827Z",
+ "actualizado": "2026-11-24T17:35:03.576Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -226,7 +226,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
@@ -269,18 +269,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00023",
-   "nombre": "Aretes Xuping  Verde Esmeralda",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
-   "creado": "2026-10-20T23:06:31.619Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00026",
    "nombre": "Aretes Xuping  Corazón Negro",
    "categoria": "ARE",
@@ -290,18 +278,6 @@
    "notas": "",
    "foto": "fotos/2efc4e38768544719976c06b59927940.jpg",
    "creado": "2026-10-20T23:08:48.845Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00027",
-   "nombre": "Aretes Xuping Café",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/85bd536aa161445d5c5caa4ae22d6b8d.jpg",
-   "creado": "2026-10-20T23:09:32.970Z",
    "disponible": true
   },
   {
@@ -338,18 +314,6 @@
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00031",
-   "nombre": "Aretes Xuping  Elegante Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
-   "creado": "2026-10-20T23:12:55.345Z",
    "disponible": true
   },
   {
@@ -401,18 +365,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00044",
-   "nombre": "Aretes Xuping  Botón Marrón",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
-   "creado": "2026-10-20T23:29:23.461Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00045",
    "nombre": "Aretes Xuping  Marmol Gota",
    "categoria": "ARE",
@@ -430,7 +382,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/3381139ec490a66319471e67b736bc37.jpg",
    "creado": "2026-10-20T23:34:00.795Z",
@@ -1732,18 +1684,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00003",
-   "nombre": "Pulsera de Ojitos de Colores",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
-   "creado": "2026-10-19T01:49:15.049Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00005",
    "nombre": "Pulsera de Ojitos Rojos",
    "categoria": "PUL",
@@ -1777,18 +1717,6 @@
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00016",
-   "nombre": "Pulsera de Perlitas",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 30,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
-   "creado": "2026-10-20T18:05:28.659Z",
    "disponible": true
   },
   {
@@ -1881,7 +1809,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
