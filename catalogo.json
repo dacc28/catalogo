@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T02:05:03.103Z",
+ "actualizado": "2026-11-24T02:20:04.581Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -103,7 +103,7 @@
    "categoria": "ANI",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/980ced2ee8daa06fce7fdf2b5e9d6091.jpg",
    "creado": "2026-11-17T23:32:24.987Z",
@@ -165,7 +165,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 40,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2fabd4769560ba479cedfc80d75dcbf1.jpg",
    "foto2": "fotos/18fd708736d033aa31c6c37708ffecce.jpg",
@@ -185,12 +185,24 @@
    "disponible": true
   },
   {
+   "codigo": "ANI-00054",
+   "nombre": "Media Churumbela Multishape Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e42138cc41856f8b00a6c3e19bc78db3.jpg",
+   "creado": "2026-11-21T22:12:35.371Z",
+   "disponible": true
+  },
+  {
    "codigo": "ANI-00057",
    "nombre": "Anillo Piedras Ajustable",
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/943cbdac858a21919634890e1148b4a4.jpg",
    "creado": "2026-11-21T22:17:54.357Z",
@@ -202,7 +214,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/c17421ca38c37c73f843e7b8fa7df011.jpg",
    "creado": "2026-11-21T22:19:54.529Z",
@@ -221,6 +233,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00013",
+   "nombre": "Arracadas Bicolor",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
+   "creado": "2026-10-19T02:09:50.151Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00021",
    "nombre": "Aretes Cuadrado",
    "categoria": "ARE",
@@ -230,6 +254,18 @@
    "notas": "",
    "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
    "creado": "2026-10-20T17:21:24.337Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00022",
+   "nombre": "Aretes Xuping  triangulo blanco",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/d0f74768f08a10e1721efd0f75841208.jpg",
+   "creado": "2026-10-20T23:05:34.760Z",
    "disponible": true
   },
   {
@@ -274,7 +310,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/5feed9707890ac67c83d2085fad5b4c0.jpg",
    "creado": "2026-10-20T23:10:20.995Z",
@@ -929,6 +965,18 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00014",
+   "nombre": "Cadena Bibiana Larga 60cm",
+   "categoria": "CAD",
+   "material": "Oro Laminado",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
+   "creado": "2026-11-07T20:26:02.349Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00015",
    "nombre": "Cadena Diseño 45cm",
    "categoria": "CAD",
@@ -1060,6 +1108,19 @@
    "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
    "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
    "creado": "2026-11-21T19:56:04.817Z",
+   "disponible": true
+  },
+  {
+   "codigo": "CAD-00027",
+   "nombre": "Cadena Panza de Vibora",
+   "categoria": "CAD",
+   "material": "",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf4a7a961f2726819c5557cbc17cf367.jpg",
+   "foto2": "fotos/444ed7921c296b6b8180ee78417b6933.jpg",
+   "creado": "2026-11-21T21:34:54.379Z",
    "disponible": true
   },
   {
@@ -1820,7 +1881,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
