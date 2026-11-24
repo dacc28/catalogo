@@ -11693,6 +11693,10 @@ body.vx-on .vx-topr>*{flex:none}
 .mvrp-auto.on{border-color:#5A2748;background:#F6EEF3}.mvrp-auto.warn{border-color:#C98A1B;background:#FFF7E6}
 .mvrp-auto-sw{display:flex;align-items:center;gap:10px;font-weight:700;cursor:pointer}.mvrp-auto-sw input{width:20px;height:20px;accent-color:#5A2748}
 .mvrp-auto small{color:var(--muted,#6B5664);font-size:13px;padding-left:30px}
+.mvrp-aviso-velo{position:fixed;inset:0;background:rgba(43,26,38,.45);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px}
+.mvrp-aviso{background:#fff;border-radius:18px;max-width:520px;width:100%;max-height:86vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.mvrp-aviso h3{margin:0 0 8px;font-size:20px}.mvrp-aviso p{margin:0 0 10px;line-height:1.45}.mvrp-aviso ol{margin:0 0 12px;padding-left:22px;line-height:1.6}
+.mvrp-aviso-nota{color:var(--muted,#6B5664);font-size:13px}.mvrp-aviso-pie{display:flex;gap:8px;justify-content:flex-end}
 </style>
 <script id="mv-rp-js">
 /* ===== mvRP · Registro de productos: Nuevo producto · Reservas · Por etiquetar (21-nov-2026) =====
@@ -11930,7 +11934,7 @@ body.vx-on .vx-topr>*{flex:none}
   function pendientes(){
     const desde=state.etqDesde; if(!desde) return [];
     const out=[]; const ver=(p,res)=>{ if(!p||!p.codigo) return; if(String(p.creado||"")<desde) return; if(state.etqHechas.has(p.codigo)) return; out.push(Object.assign({},p,{reserva:!!res})); };
-    for(const p of state.products.values()) ver(p,false); for(const p of state.reservas.values()) ver(p,true);
+    for(const p of state.reservas.values()) ver(p,true); /* 24-nov: solo Reservas, 1 por producto (lo del inventario ya no entra) */
     return out.sort((a,b)=>String(a.creado).localeCompare(String(b.creado))||a.codigo.localeCompare(b.codigo));
   }
   window.mvRPPendientes=pendientes;
@@ -11959,7 +11963,8 @@ body.vx-on .vx-topr>*{flex:none}
   const AK="marvea.autoEtq";
   const A={estado:"",msg:"",ocupado:false,prox:0,espera:0};
   const autoDesde=()=>{ try{ return localStorage.getItem(AK)||""; }catch(e){ return ""; } };
-  if(AUTO_OK){ try{ if(localStorage.getItem(AK)===null) localStorage.setItem(AK,ahora()); }catch(e){} } // encendido de fábrica en la Mac
+  const HOY24="2026-11-24T06:00:00.000Z"; // 24-nov-2026 00:00 Monterrey: desde aquí imprime solo
+  if(AUTO_OK){ try{ const v=localStorage.getItem(AK); if(v===null||(v&&v>HOY24&&v<"2026-11-25")) localStorage.setItem(AK,HOY24); }catch(e){} } // encendido de fábrica en la Mac
   function setAuto(on){ try{ localStorage.setItem(AK,on?ahora():""); }catch(e){} A.estado=""; A.msg=""; A.prox=0; A.espera=0; repintar(); toast(on?"Impresión automática encendida: lo nuevo que registres sale solo en la NIIMBOT":"Impresión automática apagada en esta Mac"); }
   const sbN=()=>window.MarveaNube&&window.MarveaNube.sb;
   async function nubeApartar(c){ const sb=sbN(); if(!sb) return false; const now=ahora();
@@ -11988,6 +11993,18 @@ body.vx-on .vx-topr>*{flex:none}
     finally{ A.ocupado=false; repintar(); }
   };
   if(AUTO_OK) setInterval(()=>{ try{ if(!autoDesde()||A.ocupado||E.ocupado||Date.now()<A.prox||!state.db) return; if(!autoPend().length){ if(A.estado==="espera"){ A.estado=""; A.msg=""; repintar(); } return; } nat.autoEtqGesto(); }catch(e){} },1000);
+  /* aviso al prender la Mac: lo que se registró en Reservas mientras estaba apagada (24-nov-2026) */
+  if(AUTO_OK) (function(){ const t0=Date.now(); const t=setInterval(()=>{ try{
+      const nb=window.__marveaNube; const listo=(nb&&nb.ultimo)||Date.now()-t0>45000; if(!listo||!state.db) return; clearInterval(t);
+      const l=autoPend(); if(!l.length) return;
+      const n=l.length; const txt=n===1?"Mientras esta Mac estaba apagada se registró 1 producto en Reservas.":"Mientras esta Mac estaba apagada se registraron "+n+" productos en Reservas.";
+      try{ new Notification("Marvea · etiquetas por imprimir",{body:txt+" Se imprimen ahora, en orden."}); }catch(e){}
+      const velo=h("div",{class:"mvrp-aviso-velo"},h("div",{class:"mvrp-aviso"},h("h3",null,"🖨️ Etiquetas pendientes de Reservas"),h("p",null,txt+" Se imprimen ahora en la NIIMBOT, en el orden en que se registraron (1 por producto)."),
+        h("ol",null,...l.slice(0,30).map(p=>h("li",null,h("b",null,p.codigo)," · "+p.nombre))),l.length>30?h("p",null,"… y "+(l.length-30)+" más."):null,
+        h("p",{class:"mvrp-aviso-nota"},"Si la impresora está apagada, préndela: salen solas en cuanto la Mac la encuentre."),
+        h("div",{class:"mvrp-aviso-pie"},h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ velo.remove(); try{ setView("etq"); }catch(e){} }},"Ver «Por etiquetar»"),h("button",{type:"button",class:"btn sm primary",onclick:()=>velo.remove()},"Entendido"))));
+      document.body.append(velo);
+    }catch(e){ console.warn(e); } },1500); })();
   function cajaAuto(){
     if(!AUTO_OK) return null; const on=!!autoDesde();
     const n=on?autoPend().length:0;
@@ -12013,7 +12030,7 @@ body.vx-on .vx-topr>*{flex:none}
         h("button",{type:"button",class:"btn sm primary",disabled:!!E.ocupado,onclick:()=>imprimir(l,c)},E.ocupado===c?"Imprimiendo…":"🏷️ Imprimir "+l.length+" (40 × 30)")),
       h("div",{class:"mvrp-elist"},...l.map(fila))); };
     host.replaceChildren(...[
-      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Por etiquetar"),h("p",null,"Productos nuevos registrados"+(state.etqDesde?" desde el "+fechaL(state.etqDesde):"")+", por categoría. Se imprime 1 etiqueta 40 × 30 por producto; al imprimirse salen de esta lista.")),
+      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Por etiquetar"),h("p",null,"Productos registrados en Reservas"+(state.etqDesde?" desde el "+fechaL(state.etqDesde):"")+", por categoría. Se imprime 1 etiqueta 40 × 30 por producto; al imprimirse salen de esta lista.")),
         h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(ps.length)),h("span",null,"etiquetas")),h("div",null,h("b",null,String(cats.length)),h("span",null,"categorías")))),
       cajaAuto(),
       ps.length?h("div",{class:"mvrp-barra"},h("button",{type:"button",class:"btn primary",disabled:!!E.ocupado,onclick:()=>imprimir(ps,"todas")},E.ocupado==="todas"?"Imprimiendo…":"🏷️ Imprimir todas ("+ps.length+")")):null,
@@ -13458,6 +13475,7 @@ body.vx-on #vxCamWrap{display:block!important}
     setTimeout(pistas, 0);
     return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if ((f.nombre || f.file) && !edit) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
   }
+
 
 
 
