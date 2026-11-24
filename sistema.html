@@ -9559,8 +9559,10 @@ body.rol-vendedor #tab-cobro{display:none!important}
    · Solo aparecen ventas cerradas con saldo pendiente. Las que se están armando, pagadas o canceladas no salen.
    · «Generar link»: crea un pago de Stripe por lo que falta (se puede cambiar el monto), vence en 24 h.
    · El link se manda por WhatsApp (abre el chat con el mensaje listo) o se copia.
-   · El sistema revisa con Stripe si ya pagó. Cuando pagó, sale «Pagó con tarjeta» y el botón «Registrar pago en la venta»
-     (nada se marca pagado solo). Al registrarlo, la venta queda pagada con forma de pago «Tarjeta» y sale de la lista.
+   · (24-nov-2026) Cuando la clienta paga, el pago se registra SOLO en la venta (Pagada · Tarjeta, o abono si fue parcial o la
+     venta cambió). Lo hace el webhook de Stripe al instante (función SQL marvea_cobro_auto, con candado: una sola vez) y, de
+     respaldo, cualquier equipo de administrador con el sistema abierto (revisa cada minuto aunque esté en otra pestaña).
+     El estatus de envío / resguardo NO se toca: lo define Diego.
    · Los links se guardan en la colección «cobrosTarjeta» (un documento por link). Nada se borra.
    · Solo administradores (la función de Stripe revisa la sesión). */
 (function () {
@@ -9629,15 +9631,26 @@ body.rol-vendedor #tab-cobro{display:none!important}
       const r = await llamar({ accion: "estado", ids: abiertos.map(l => l.sesion) });
       for (const l of abiertos) {
         const e = r && r.estados && r.estados[l.sesion]; if (!e || e.estado === "error" || e.estado === l.estado) continue;
-        const cambio = { estado: e.estado, revisado: new Date().toISOString() };
-        if (e.estado === "pagado") { cambio.montoPagado = Number(e.monto) || l.monto; cambio.pagadoEn = e.pagado_en || new Date().toISOString(); cambio.pagoStripe = e.pago || ""; if (e.correo) cambio.correo = e.correo; }
-        await st().db.doc(COL + "/" + l.id).set(Object.assign({}, limpio(l), cambio));
-        if (e.estado === "pagado") toast("💳 " + (l.cliente || "Una clienta") + " pagó " + dinero(cambio.montoPagado) + " con tarjeta");
+        if (e.estado === "pagado") { await auto(l, e); continue; }
+        await st().db.doc(COL + "/" + l.id).update({ estado: e.estado, revisado: new Date().toISOString() });
       }
     } catch (e) { console.warn("cobro revisar", e); }
     finally { revisando = false; pintarEstadoRevision(); }
   }
   const limpio = l => { const o = Object.assign({}, l); delete o.id; return o; };
+  /* huella de la venta al crear el link: si al pagar sigue igual y el pago cubre lo que faltaba, queda «Pagada»; si cambió, va como abono */
+  function huellaDe(x) { if (!x) return null; const o = {}; for (const k of ["items", "envio", "factura", "nueva", "deposito", "anticipos", "pago", "promo", "estado"]) o[k] = x[k] === undefined ? null : x[k]; return JSON.parse(JSON.stringify(o)); }
+  let sinAuto = false;
+  async function auto(l, e) { // registra el pago en la venta (una sola vez, aunque lo intenten el webhook y varios equipos)
+    const n = N(); if (!n || !n.sb || sinAuto) return null;
+    try {
+      const { data, error } = await n.sb.rpc("marvea_cobro_auto", { p_sesion: l.sesion || l.id, p_monto: Number(e.monto) || Number(l.monto) || 0, p_pago: e.pago || "", p_pagado_en: e.pagado_en || "", p_correo: e.correo || "" });
+      if (error) { if (error.code === "PGRST202" || error.code === "42883") { sinAuto = true; await st().db.doc(COL + "/" + l.id).update({ estado: "pagado", montoPagado: Number(e.monto) || l.monto, pagadoEn: e.pagado_en || new Date().toISOString(), pagoStripe: e.pago || "", revisado: new Date().toISOString() }); } else console.warn("cobro auto", error); return null; }
+      if (data === "pago" || data === "abono") toast("💳 " + (l.cliente || "Una clienta") + " pagó " + dinero(Number(e.monto) || l.monto) + " con tarjeta · " + (data === "pago" ? "venta marcada como pagada" : "registrado como abono"));
+      else if (data === "sin-venta") toast("💳 " + (l.cliente || "Una clienta") + " pagó con tarjeta, pero su venta ya no existe o está cancelada: revísala", true);
+      return data;
+    } catch (x) { console.warn("cobro auto", x); return null; }
+  }
 
   /* ---------- acciones ---------- */
   function mensajeWa(c, l) {
@@ -9678,8 +9691,9 @@ body.rol-vendedor #tab-cobro{display:none!important}
       if (m > falta + 0.005 && !confirm("Vas a cobrar " + dinero(m) + " y solo debe " + dinero(falta) + ". ¿Seguir así?")) return;
       crear.disabled = true; crear.textContent = "Creando link…"; err.textContent = "";
       try {
+        let crudo = null; try { const d = await st().db.doc("carritos/" + c.id).get(); crudo = d && d.exists ? d.data() : null; } catch (e) {}
         const r = await llamar(Object.assign({ accion: "crear", carrito: c.id, referencia: c.referencia || "", cliente: c.cliente || "", piezas: cartPieces(c), monto: m }, detalle(c)));
-        const l = { carrito: c.id, cliente: c.cliente || "", referencia: c.referencia || "", monto: r.monto, url: r.url, sesion: r.id, folio: r.folio, expira: r.expira, estado: "pendiente", creado: new Date().toISOString(), por: quienSoy(), telefono: tel.value.trim(), enviado: "", registrado: "" };
+        const l = { carrito: c.id, cliente: c.cliente || "", referencia: c.referencia || "", monto: r.monto, url: r.url, sesion: r.id, folio: r.folio, expira: r.expira, estado: "pendiente", creado: new Date().toISOString(), por: quienSoy(), telefono: tel.value.trim(), enviado: "", registrado: "", falta, huella: huellaDe(crudo) };
         // si había otro link sin pagar para esta venta, se vence para que no paguen dos veces
         for (const v of linksDe(c.id).filter(vigente)) { try { await llamar({ accion: "cancelar", id: v.sesion }); await st().db.doc(COL + "/" + v.id).set(Object.assign({}, limpio(v), { estado: "cancelado", cancelado: new Date().toISOString(), motivo: "Se generó un link nuevo" })); } catch (e) {} }
         await st().db.doc(COL + "/" + r.id).set(l); l.id = r.id; cobros.set(r.id, l);
@@ -9717,6 +9731,7 @@ body.rol-vendedor #tab-cobro{display:none!important}
     } catch (e) { toast("No se pudo cancelar: " + (e.message || e), true); }
   }
   async function registrar(c0, l) {
+    if (!sinAuto) { const r = await auto(l, { monto: l.montoPagado || l.monto, pago: l.pagoStripe, pagado_en: l.pagadoEn, correo: l.correo }); if (r) { if (r === "ya") toast("Ese pago ya estaba registrado"); return; } }
     const c = fresca(c0); const m = Math.round((Number(l.montoPagado || l.monto) || 0) * 100) / 100; const falta = cartSaldo(c);
     if (!(m > 0)) return;
     try {
@@ -9773,6 +9788,10 @@ body.rol-vendedor #tab-cobro{display:none!important}
       hechos.length ? h("details", { class: "ct-hist" }, h("summary", null, "Pagos recibidos con tarjeta (" + hechos.length + ")"),
         ...hechos.map(l => h("div", { class: "ct-hfila" }, h("b", null, l.cliente || "Sin nombre"), h("span", null, [l.referencia ? "#" + l.referencia : "", dinero(l.montoPagado || l.monto), fechaHora(l.pagadoEn || l.creado), l.registrado ? "registrado en la venta" : "falta registrar"].filter(Boolean).join(" · "))))) : null].filter(Boolean));
   }
+  /* revisión en segundo plano: cada minuto, en cualquier pestaña, si hay links esperando pago (solo administradores) */
+  const esAdminCT = () => { try { if (N() && typeof N().rol === "function") { const r = N().rol(); if (r) return r === "administrador"; } } catch (e) {} try { const p = JSON.parse(localStorage.getItem("marvea.perfil") || "null"); return !p || !p.rol || p.rol === "administrador"; } catch (e) { return true; } };
+  setInterval(() => { try { if (!st().db || document.hidden || !esAdminCT() || !(N() && N().sb)) return; suscribir(); revisar(false); } catch (e) {} }, 60000);
+  window.mvCTRevisar = () => revisar(true);
   window.renderCobro = function () {
     host = document.getElementById("cobroHost"); if (!host) return;
     if (!st().db) { host.replaceChildren(h("p", null, "Cargando…")); setTimeout(() => { if (st().view === "cobro") window.renderCobro(); }, 800); return; }
@@ -10127,507 +10146,6 @@ body.rol-vendedor #tab-cobro{display:none!important}
   const obs=new MutationObserver(()=>{ try{ const d=document.querySelector('aside.drawer[aria-label="Imprimir etiquetas"]'); if(d&&!d.querySelector(".mvcaja")) d.append(seccion()); }catch(e){} });
   try{ obs.observe(document.body,{childList:true,subtree:true}); }catch(e){}
   window.mvCajaRender=render; window.mvCajaImprimir=imprimir;
-})();
-</script>
-<style id="mv-rp-css">
-/* mvRP · Registro de productos: ¿va al catálogo?, Reservas y Por etiquetar (21-nov-2026) */
-.mvrp-dest{grid-column:1/-1;border:1.5px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px;background:var(--surface,#fff);margin-bottom:4px}
-.mvrp-dest[hidden]{display:none}
-.mvrp-desttit{font-weight:800;font-size:14px;margin-bottom:8px;color:var(--fg,#2a1a24)}
-.mvrp-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mvrp-op{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;border:1.5px solid var(--line,#E2D6DD);background:var(--bg,#fff);border-radius:14px;padding:10px 12px;cursor:pointer;color:inherit}
-.mvrp-op .mvrp-opic{flex:none;width:30px;height:30px;border-radius:999px;display:grid;place-items:center;font-weight:900;background:#F1ECEF;color:#6B5664}
-.mvrp-optx{display:flex;flex-direction:column;min-width:0}.mvrp-optx b{font-size:14px}.mvrp-optx small{font-size:12px;color:var(--muted,#6B5664)}
-.mvrp-op.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.mvrp-op.inventario.on .mvrp-opic{background:#2E9C6A;color:#fff}
-.mvrp-op.reserva.on{border-color:#C98A00;background:#FFF7E0}.mvrp-op.reserva.on .mvrp-opic{background:#C98A00;color:#fff}
-.btn.mvrp-btnres{background:#C98A00!important;border-color:#C98A00!important;color:#fff!important}
-.mvrp-donechip{display:inline-block;font-size:12px;font-weight:800;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:3px 10px;margin-left:4px}
-.mvrp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
-.mvrp-head h2{margin:0 0 4px;font-size:24px}.mvrp-head p{margin:0;color:var(--muted,#6B5664);font-size:14px;max-width:640px;line-height:1.45}
-.mvrp-kpis{display:flex;gap:8px}.mvrp-kpis div{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:14px;padding:8px 14px;display:flex;flex-direction:column;align-items:flex-start;min-width:86px}
-.mvrp-kpis b{font-size:22px;font-variant-numeric:tabular-nums}.mvrp-kpis span{font-size:12px;color:var(--muted,#6B5664)}
-.mvrp-barra{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.mvrp-buscar{flex:1 1 240px;min-width:0;font:inherit;font-size:14.5px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:10px 12px;background:var(--bg,#fff)}
-.mvrp-sel{font:inherit;font-size:14px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:9px 10px;background:var(--bg,#fff)}
-.mvrp-conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#FFF7E0;border:1px solid #F0D58A;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
-.mvrp-conf.mini{padding:4px 6px;margin:0;font-size:13px}
-.mvrp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.mvrp-card{position:relative;background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.mvrp-card.on{border-color:#C98A00;box-shadow:0 0 0 2px rgba(201,138,0,.25)}
-.mvrp-chk{position:absolute;top:8px;left:8px;z-index:2;background:rgba(255,255,255,.92);border-radius:8px;padding:4px;display:flex}
-.mvrp-chk input{width:20px;height:20px;accent-color:#C98A00;margin:0;cursor:pointer}
-.mvrp-foto{display:block;width:100%;aspect-ratio:1/1;border:0;padding:0;background:#FAF6F8;cursor:zoom-in}
-.mvrp-foto>*{width:100%!important;height:100%!important;border-radius:0!important}
-.mvrp-foto img{width:100%;height:100%;object-fit:cover;display:block}
-.mvrp-info{padding:10px 12px 4px;display:flex;flex-direction:column;gap:3px}
-.mvrp-tags{display:flex;gap:6px;flex-wrap:wrap}
-.mvrp-cod{font:700 11.5px ui-monospace,Menlo,monospace;color:#5A2748;background:#F3E8EF;padding:2px 8px;border-radius:999px}
-.mvrp-pal{font-size:11.5px;font-weight:700;color:#7A3F63;border:1px solid #E7D5DF;padding:1px 8px;border-radius:999px}
-.mvrp-nom{font-size:14.5px;line-height:1.25}
-.mvrp-meta{font-size:12.5px;color:var(--muted,#6B5664)}
-.mvrp-num{display:flex;justify-content:space-between;font-weight:800;font-size:15px}
-.mvrp-pz{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:1px 9px}
-.mvrp-fecha{font-size:11.5px;color:var(--muted,#6B5664)}
-.mvrp-int,.mvrp-card>.mvrp-conf{margin:6px 12px 12px}
-.mvrp-vacio{padding:30px 16px;text-align:center;color:var(--muted,#6B5664);background:var(--surface,#fff);border:1px dashed var(--line,#E2D6DD);border-radius:16px}
-.mvrp-fondo{position:fixed;inset:0;z-index:2147483000;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 12px;overflow:auto}
-.mvrp-modal{background:#fff;border-radius:20px;width:min(640px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 24px 70px rgba(40,10,30,.28)}
-.mvrp-mcab{display:flex;justify-content:space-between;align-items:center}.mvrp-mcab h3{margin:0;font-size:19px}
-.mvrp-x{border:0;background:#F4EEF1;border-radius:999px;width:36px;height:36px;font-size:22px;cursor:pointer}
-.mvrp-ayuda{margin:0;font-size:13px;color:var(--muted,#6B5664)}
-.mvrp-mlista{display:flex;flex-direction:column;gap:6px;max-height:56vh;overflow:auto}
-.mvrp-mrow,.mvrp-erow{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line,#EFE6EB);border-radius:12px;background:var(--surface,#fff)}
-.mvrp-mrow{grid-template-columns:44px minmax(0,1fr) auto}
-.mvrp-mrow .th,.mvrp-erow .th{width:44px;height:44px;border-radius:10px;overflow:hidden}
-.mvrp-minfo,.mvrp-einfo{min-width:0;display:flex;flex-direction:column}.mvrp-minfo b,.mvrp-einfo b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvrp-minfo small,.mvrp-einfo small{font-size:12px;color:var(--muted,#6B5664)}
-.mvrp-efoto{border:0;padding:0;background:none;cursor:zoom-in}
-.mvrp-chip{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}.mvrp-chip.res{background:#FFF4D6;color:#7A5A00}.mvrp-chip.inv{background:#E9F5EE;color:#1F6B3A}
-.mvrp-q{border:0;background:#F4EEF1;border-radius:999px;width:30px;height:30px;cursor:pointer;color:#6B5664}
-.mvrp-grupos{display:flex;flex-direction:column;gap:16px}
-.mvrp-grupo{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px}
-.mvrp-ghead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.mvrp-ghead h3{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}
-.mvrp-n{font-size:13px;background:#5A2748;color:#fff;border-radius:999px;padding:2px 9px}
-.mvrp-elist{display:flex;flex-direction:column;gap:6px}
-.mvrp-dbox .btn{margin-top:6px}
-@media (max-width:640px){.mvrp-ops{grid-template-columns:1fr}.mvrp-erow{grid-template-columns:40px minmax(0,1fr) auto}.mvrp-erow .mvrp-chip{display:none}}
-.vx-alta-destops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.vx-alta-dop{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font:inherit;text-align:left;border:1.5px solid #E2D6DD;background:#fff;border-radius:14px;padding:10px 12px;color:#2a1a24}
-.vx-alta-dop b{font-size:14.5px}.vx-alta-dop small{font-size:12px;color:#6B5664}
-.vx-alta-dop.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.vx-alta-dop.reserva.on{border-color:#C98A00;background:#FFF7E0}
-.vx-alta-resok{margin:0;font-size:13.5px;font-weight:700;color:#7A5A00;background:#FFF4D6;border-radius:12px;padding:9px 12px;text-align:center}
-.vx-cta.vx-cta-res{background:#C98A00!important;color:#fff!important}
-.vx-alta-dest{margin:4px 0 6px}
-
-/* mvRPE: editar / eliminar */
-.mvrp-acc{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.mvrp-acc .mvrp-del{color:var(--bad)}
-.mvrp-conf .btn.danger{background:var(--bad);color:#fff;border-color:var(--bad)}
-</style>
-<script id="mv-rp-js">
-/* ===== mvRP · Registro de productos: Nuevo producto · Reservas · Por etiquetar (21-nov-2026) =====
-   Pestaña nueva «Registro de productos» (sale «Nuevo producto» de Inventario).
-   1) Nuevo producto: «¿Va al catálogo?» → Sí: al inventario (como siempre, se publica en el catálogo) · No: a Reservas.
-   2) Reservas: productos registrados que NO están a la venta. Viven en su propia colección «reservas» (marvea_docs col='reservas'),
-      así ni el inventario, ni el catálogo, ni la tienda en línea, ni las ventas los ven. «Integrar al catálogo» los pasa a
-      «productos» con sus piezas (la nube anota la alta en el historial). Un producto del inventario se puede mandar a Reservas
-      (no si tiene piezas en carritos abiertos o apartadas en la tienda en línea). Foto en grande al tocarla.
-   3) Por etiquetar: todo producto registrado desde que se activó (config/registroEtiquetas.desde), venga de la laptop o del
-      celular, aparece por categoría hasta que se imprime su etiqueta 40 × 30 (1 por producto). Al imprimir sale de la lista
-      (colección «etiquetasHechas», un documento por código: no se pisan entre equipos).
-   Los códigos y las palabras clave cuentan también los productos en Reservas (nunca se repiten). */
-(function(){
-  if(window.__mvRP) return; window.__mvRP=true;
-  const money=x=>"$"+fmtMoney(x);
-  const ahora=()=>new Date().toISOString();
-  const fechaC=f=>{ try{ return f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""; }catch(e){ return ""; } };
-  const fechaL=f=>{ try{ return f?new Date(f).toLocaleString("es-MX",{day:"numeric",month:"long",hour:"numeric",minute:"2-digit"}):""; }catch(e){ return ""; } };
-  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
-  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
-  const key=x=>String(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
-  state.reservas=state.reservas||new Map(); state.etqHechas=state.etqHechas||new Map(); state.etqDesde=state.etqDesde||null;
-  const R={q:"",cat:"",sel:new Set(),conf:null,ocupado:false};
-
-  function norm(id,x){ x=x||{}; return {codigo:id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,...(typeof x.fotoId2==="string"&&x.fotoId2?{fotoId2:x.fotoId2}:{}),etiquetaCat:String(x.etiquetaCat||""),creado:String(x.creado||""),actualizado:String(x.actualizado||""),reservado:String(x.reservado||""),reservadoDesde:String(x.reservadoDesde||""),reserva:true}; }
-
-  /* ---------- datos ---------- */
-  let suscrito=false, creandoDesde=false, crudo=new Map();
-  function suscribir(){
-    if(suscrito||!state.db) return; suscrito=true;
-    try{ state.db.collection("reservas").onSnapshot(s=>{ const m=new Map(), cr=new Map(); for(const d of s.docs){ const x=d.data(); if(x){ m.set(d.id,norm(d.id,x)); cr.set(d.id,x); } } state.reservas=m; crudo=cr; repintar(); },e=>console.warn("reservas",e)); }catch(e){ console.warn(e); }
-    try{ state.db.collection("etiquetasHechas").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,x); } state.etqHechas=m; repintar(); },e=>console.warn("etiquetasHechas",e)); }catch(e){ console.warn(e); }
-    try{ state.db.doc("config/registroEtiquetas").onSnapshot(s=>{ const d=s&&s.exists?s.data():null; state.etqDesde=d&&d.desde||null;
-        if(!state.etqDesde&&esAdmin()&&!creandoDesde){ creandoDesde=true; const v=ahora(); state.etqDesde=v; state.db.doc("config/registroEtiquetas").set({desde:v,creado:v}).catch(e=>console.warn("registroEtiquetas",e)); }
-        repintar(); },e=>console.warn("registroEtiquetas",e)); }catch(e){ console.warn(e); }
-  }
-  (function(){ let n=0; const t=setInterval(()=>{ if(state.db){ clearInterval(t); suscribir(); } else if(++n>600) clearInterval(t); },250); })();
-
-  // para el resto del sistema
-  window.mvRPCodigos=()=>[...state.reservas.keys()];
-  window.mvRPBuscar=t=>{ const k=key(t); if(k.length<3) return null; for(const p of state.reservas.values()){ if(key(p.codigo)===k) return p; } const q=String(t||"").trim().toLowerCase(); if(q) for(const p of state.reservas.values()){ if(p.palabra&&p.palabra.toLowerCase()===q) return p; } return null; };
-
-  /* ---------- 1) Nuevo producto: ¿va al catálogo? ---------- */
-  let destino="inventario"; try{ if(localStorage.getItem("marvea.rp.destino")==="reserva") destino="reserva"; }catch(e){}
-  let ultimaReserva=null;
-  window.mvRPReservar=()=>!state.editing&&destino==="reserva";
-  window.mvRPGuardada=data=>{ ultimaReserva=data.codigo; state.reservas.set(data.codigo,norm(data.codigo,data)); };
-  window.mvRPDespues=(codigo,wasEdit)=>{ if(wasEdit){ if(ultimaReserva===codigo){ ultimaReserva=null; toast("Cambios guardados · "+codigo+" sigue en Reservas"); setTimeout(()=>setView("res"),0); } return; } if(ultimaReserva!==codigo) return; ultimaReserva=null;
-    try{ const t=document.getElementById("doneTitle"); if(t) t.textContent="Registrado en Reservas";
-      const s=document.getElementById("doneSub"); if(s&&!s.querySelector(".mvrp-donechip")) s.append(" ",h("span",{class:"mvrp-donechip"},"⏸ En Reservas · no está a la venta"));
-      const b=document.getElementById("doneLabel"); if(b) b.onclick=()=>{ const p=state.reservas.get(codigo); if(p) imprimir([p],null); };
-      const inv=document.getElementById("doneInv"); if(inv){ inv.dataset.mvrp="1"; inv.textContent="Ver Reservas"; }
-    }catch(e){} toast("Registrado "+codigo+" en Reservas"); };
-  document.addEventListener("click",e=>{ const b=e.target&&e.target.closest&&e.target.closest("#doneInv[data-mvrp]"); if(b){ delete b.dataset.mvrp; b.textContent="Ir al inventario"; setTimeout(()=>setView("res"),0); } },true);
-  let caja=null;
-  function pintaDestino(){
-    const f=document.getElementById("form"); if(!f) return;
-    if(!caja){
-      caja=h("div",{class:"mvrp-dest",role:"radiogroup","aria-label":"¿Va al catálogo?"});
-      f.insertBefore(caja,f.firstChild);
-    }
-    const editando=!!state.editing; caja.hidden=editando;
-    const op=(v,ic,t,s)=>h("button",{type:"button",role:"radio","aria-checked":String(destino===v),class:"mvrp-op "+v+(destino===v?" on":""),onclick:()=>{ destino=v; try{ localStorage.setItem("marvea.rp.destino",v); }catch(e){} pintaDestino(); }},h("span",{class:"mvrp-opic"},ic),h("span",{class:"mvrp-optx"},h("b",null,t),h("small",null,s)));
-    caja.replaceChildren(h("div",{class:"mvrp-desttit"},"¿Va al catálogo?"),
-      h("div",{class:"mvrp-ops"},op("inventario","✓","Sí, al inventario","Se pone a la venta y se publica en el catálogo"),op("reserva","⏸","No, a Reservas","Queda registrado pero no se vende ni se publica")));
-    const btn=document.getElementById("btnSave"); if(btn&&!editando) btn.textContent=destino==="reserva"?"Registrar en Reservas":"Registrar producto";
-    if(btn) btn.classList.toggle("mvrp-btnres",!editando&&destino==="reserva");
-  }
-  function envolverForm(){
-    let ok=true;
-    if(typeof window.resetForm==="function"&&!window.resetForm.__mvRP){ const o=window.resetForm; const n=function(){ state.editingReserva=false; const bs=document.getElementById("btnSave"); if(bs) bs.classList.remove("mvrp-btnres"); const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.resetForm=n; } else if(typeof window.resetForm!=="function") ok=false;
-    if(typeof window.startEdit==="function"&&!window.startEdit.__mvRP){ const o=window.startEdit; const n=function(){ const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.startEdit=n; } else if(typeof window.startEdit!=="function") ok=false;
-    return ok;
-  }
-
-  /* ---------- pestaña y vistas ---------- */
-  const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>';
-  function montar(){
-    const t=document.getElementById("tab-regp"); if(t&&!t.dataset.mvrpIc){ t.dataset.mvrpIc="1"; const s=document.createElement("span"); s.innerHTML=ICON; s.setAttribute("aria-hidden","true"); s.style.display="inline-flex"; t.prepend(s); }
-    if(t) t.hidden=!esAdmin();
-    const vn=document.getElementById("view-new"); if(!vn) return false;
-    for(const id of ["view-res","view-etq"]) if(!document.getElementById(id)){ const s=h("section",{class:"view",id,hidden:true},h("div",{id:id==="view-res"?"mvRPRes":"mvRPEtq"})); vn.parentNode.insertBefore(s,vn.nextSibling); }
-    return true;
-  }
-  function envolverVista(){
-    if(typeof window.setView!=="function"||window.setView.__mvRP) return !!(window.setView&&window.setView.__mvRP);
-    const o=window.setView; const n=function(v){ if(v==="regp") v="new"; const r=o.call(this,v); try{ if(v==="res") pintarRes(); if(v==="etq") pintarEtq(); if(v==="new") pintaDestino(); }catch(e){ console.warn(e); } return r; };
-    n.__mvRP=true; window.setView=n; return true;
-  }
-  (function(){ let n=0; const t=setInterval(()=>{ let ok=false; try{ ok=montar()&&envolverForm()&&envolverVista(); if(ok) pintaDestino(); }catch(e){ console.warn(e); } if(ok||++n>120) clearInterval(t); },250); })();
-  // si otra capa vuelve a envolver setView después, se vuelve a poner la nuestra encima
-  setInterval(()=>{ try{ envolverVista(); envolverForm(); }catch(e){} },2000);
-  // al abrir en «res»/«etq» desde la última vista guardada
-  setTimeout(()=>{ try{ const v=state.view; if(v==="res"||v==="etq") setView(v); }catch(e){} },1500);
-
-  let repT=0; function repintar(){ clearTimeout(repT); repT=setTimeout(()=>{ try{ if(state.view==="res") pintarRes(); if(state.view==="etq") pintarEtq(); }catch(e){ console.warn(e); } },60); }
-
-  /* ---------- carritos y tienda: ¿se puede mandar a Reservas? ---------- */
-  async function enCarritos(cod){
-    const out=[]; try{ const s=await state.db.collection("carritos").get(); for(const d of s.docs){ const c=d.data()||{}; if(c.estado!=="abierto"&&c.estado!=="cerrado") continue; let n=0; for(const it of c.items||[]) if(it&&it.codigo===cod) n+=Number(it.cant)||0; if(n>0) out.push({cliente:c.cliente||"Sin nombre",n}); } }catch(e){ console.warn(e); }
-    return out;
-  }
-  async function enTienda(cod){
-    try{ const sb=window.MarveaNube&&window.MarveaNube.sb; if(!sb||!sb.from) return 0; const {data,error}=await sb.from("apartados_web").select("cant").eq("codigo",cod).in("estado",["activo","pago"]); if(error) return 0; return (data||[]).reduce((s,r)=>s+(Number(r.cant)||0),0); }catch(e){ return 0; }
-  }
-  async function aReserva(cod){
-    if(!esAdmin()){ toast("Solo un administrador puede mandar a Reservas",true); return false; }
-    const p=state.products.get(cod); if(!p){ toast("Ese producto ya no está en el inventario",true); return false; }
-    const c=await enCarritos(cod); if(c.length){ toast(`No se puede: ${cod} tiene piezas en ${c.length===1?"el carrito de "+c[0].cliente:c.length+" carritos abiertos"}. Sácalas primero.`,true); return false; }
-    const w=await enTienda(cod); if(w>0){ toast(`No se puede: ${cod} tiene ${w} pieza${w===1?"":"s"} apartada${w===1?"":"s"} en la tienda en línea. Intenta en unos minutos.`,true); return false; }
-    let x=null; try{ const d=await state.db.doc("productos/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
-    if(!x){ toast("No se encontró "+cod,true); return false; }
-    const now=ahora(); const data=Object.assign({},x,{codigo:cod,reservado:now,reservadoDesde:"inventario",actualizado:now});
-    try{ await state.db.doc("reservas/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo mandar a Reservas (¿hay internet?)",true); return false; }
-    const pv=window.__mvMov; window.__mvMov={motivo:"reserva",ref:"a reservas"};
-    try{ await state.db.doc("productos/"+cod).delete(); }
-    catch(e){ console.error(e); try{ await state.db.doc("reservas/"+cod).delete(); }catch(_){} toast("No se pudo mandar a Reservas; quedó en el inventario",true); return false; }
-    finally{ window.__mvMov=pv||null; }
-    state.products.delete(cod); state.reservas.set(cod,norm(cod,data)); try{ renderAll(); }catch(e){}
-    toast(cod+" pasó a Reservas ("+(Number(x.existencia)||0)+" pzas)"); repintar(); return true;
-  }
-  async function aInventario(cod){
-    if(!esAdmin()){ toast("Solo un administrador puede integrar productos",true); return false; }
-    let x=null; try{ const d=await state.db.doc("reservas/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
-    if(!x){ toast("Ese producto ya no está en Reservas",true); return false; }
-    let ya=state.products.has(cod); try{ const d=await state.db.doc("productos/"+cod).get(); if(d&&d.exists) ya=true; }catch(e){}
-    if(ya){ toast(`Ya hay un producto ${cod} en el inventario; no se integró para no encimarlo`,true); return false; }
-    const now=ahora(); const data=Object.assign({},x,{codigo:cod,actualizado:now,integrado:now}); delete data.reservado; delete data.reservadoDesde;
-    try{ await state.db.doc("productos/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo integrar "+cod+" (¿hay internet?)",true); return false; }
-    try{ await state.db.doc("reservas/"+cod).delete(); }catch(e){ console.warn(e); }
-    state.reservas.delete(cod); try{ renderAll(); }catch(e){} return true;
-  }
-  window.mvRPAReserva=aReserva; window.mvRPAInventario=aInventario;
-  /* mvRPE (21-nov): editar y eliminar productos en Reservas (sistema web: botones y clic derecho / dos dedos; celular: en su hoja) */
-  window.mvRPCrudo=cod=>{ const x=crudo.get(cod); return x?Object.assign({codigo:cod},x):null; };
-  function editar(cod){
-    if(!esAdmin()){ toast("Solo un administrador puede editar",true); return; }
-    const x=window.mvRPCrudo(cod); if(!x){ toast("Ese producto ya no está en Reservas",true); return; }
-    const p=Object.assign({},norm(cod,x),{codigo:cod}); startEdit(p); state.editingReserva=true;
-    const b=document.getElementById("btnSave"); if(b){ b.textContent="Guardar cambios (sigue en Reservas)"; b.classList.add("mvrp-btnres"); }
-    const m=document.getElementById("formMsg"); if(m) m.textContent="⏸ Editando un producto en Reservas: al guardar sigue sin venderse.";
-  }
-  async function borrar(cod){
-    if(!esAdmin()){ toast("Solo un administrador puede eliminar",true); return false; }
-    const x=window.mvRPCrudo(cod); if(!x){ toast("Ese producto ya no está en Reservas",true); return false; }
-    try{ await trashAdd({tipo:"reserva",nombre:x.nombre||cod,codigo:cod,data:Object.assign({},x,{codigo:cod})}); await state.db.doc("reservas/"+cod).delete(); }
-    catch(e){ console.error(e); toast("No se pudo eliminar "+cod+" (¿hay internet?)",true); return false; }
-    state.reservas.delete(cod); crudo.delete(cod); R.sel.delete(cod); try{ renderAll(); }catch(e){} toast(cod+" eliminado de Reservas (quedó en la Papelera)"); repintar(); return true;
-  }
-  function menuRes(e,p){ e.preventDefault(); e.stopPropagation(); if(!esAdmin()) return;
-    showMenu(e.clientX,e.clientY,p.codigo+" · "+p.nombre,[
-      {label:"Integrar al catálogo",run:()=>{ R.conf={tipo:"uno",cod:p.codigo}; pintarRes(); }},
-      {label:"Editar",run:()=>editar(p.codigo)},
-      ...(p.fotoId?[{label:"Ver foto en grande",run:()=>openLightbox(p,0)}]:[]),
-      "-",
-      {label:"Eliminar…",danger:true,confirm:`¿Eliminar ${p.codigo} de Reservas? Se va a la Papelera (de ahí se puede restaurar).`,options:[{label:"Sí, eliminar",run:()=>borrar(p.codigo)}]}]); }
-  window.mvRPEditar=editar; window.mvRPBorrar=borrar;
-
-  /* ---------- 2) Reservas ---------- */
-  const catN=c=>{ try{ return catName(c); }catch(e){ return c; } };
-  const ordenCats=()=>{ const l=(state.cats||[]).map(c=>c.p); return l; };
-  function pintarRes(){
-    const host=document.getElementById("mvRPRes"); if(!host) return;
-    const todos=[...state.reservas.values()].sort((a,b)=>String(b.reservado||b.creado).localeCompare(String(a.reservado||a.creado))||a.codigo.localeCompare(b.codigo));
-    const q=R.q.trim().toLowerCase(); const vis=todos.filter(p=>(!R.cat||p.categoria===R.cat)&&(!q||[p.codigo,p.nombre,p.palabra,p.material].join(" ").toLowerCase().includes(q)));
-    for(const c of [...R.sel]) if(!state.reservas.has(c)) R.sel.delete(c);
-    const pz=todos.reduce((s,p)=>s+p.existencia,0);
-    const buscar=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Buscar por nombre, código o palabra…",value:R.q});
-    buscar.addEventListener("input",()=>{ R.q=buscar.value; const pos=buscar.selectionStart; pintarRes(); const b=document.querySelector(".mvrp-buscar"); if(b){ b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} } });
-    const cats=[...new Set(todos.map(p=>p.categoria))]; const ord=ordenCats(); cats.sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
-    const sel=h("select",{class:"mvrp-sel","aria-label":"Categoría"},h("option",{value:""},"Todas las categorías"),...cats.map(c=>h("option",{value:c},catN(c)))); sel.value=R.cat; sel.addEventListener("change",()=>{ R.cat=sel.value; pintarRes(); });
-    const nSel=[...R.sel].length;
-    const barra=h("div",{class:"mvrp-barra"},buscar,sel,
-      esAdmin()?h("button",{type:"button",class:"btn",onclick:abrirMandar},"＋ Mandar del inventario"):null,
-      esAdmin()&&nSel?h("button",{type:"button",class:"btn primary",onclick:()=>{ R.conf={tipo:"varios"}; pintarRes(); }},"Integrar seleccionados ("+nSel+")"):null);
-    let confBox=null;
-    if(R.conf&&R.conf.tipo==="varios"){ const lista=[...R.sel].map(c=>state.reservas.get(c)).filter(Boolean); const tp=lista.reduce((s,p)=>s+p.existencia,0);
-      confBox=h("div",{class:"mvrp-conf"},h("span",null,`¿Integrar ${lista.length} producto${lista.length===1?"":"s"} (${tp} pzas) al inventario? Se ponen a la venta y se publican en el catálogo.`),
-        h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); let ok=0; for(const p of lista){ if(await aInventario(p.codigo)){ ok++; R.sel.delete(p.codigo); } } R.ocupado=false; R.conf=null; toast(ok+" producto"+(ok===1?"":"s")+" integrado"+(ok===1?"":"s")+" al catálogo"); pintarRes(); }},R.ocupado?"Integrando…":"Sí, integrar"),
-        h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No")); }
-    const tarjeta=p=>{
-      const chk=h("input",{type:"checkbox","aria-label":"Seleccionar "+p.codigo}); chk.checked=R.sel.has(p.codigo); chk.addEventListener("change",()=>{ if(chk.checked) R.sel.add(p.codigo); else R.sel.delete(p.codigo); pintarRes(); });
-      const foto=h("button",{type:"button",class:"mvrp-foto",title:p.fotoId?"Ver foto en grande":"Sin foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},imgOrPh(p));
-      const conf=R.conf&&R.conf.tipo==="uno"&&R.conf.cod===p.codigo;
-      const confB=R.conf&&R.conf.tipo==="borrar"&&R.conf.cod===p.codigo;
-      return h("div",{class:"mvrp-card"+(R.sel.has(p.codigo)?" on":""),oncontextmenu:e=>menuRes(e,p),title:"Clic derecho (dos dedos) para más opciones"},
-        esAdmin()?h("label",{class:"mvrp-chk"},chk):null, foto,
-        h("div",{class:"mvrp-info"},
-          h("div",{class:"mvrp-tags"},h("span",{class:"mvrp-cod"},p.codigo),p.palabra?h("span",{class:"mvrp-pal"},p.palabra):null),
-          h("b",{class:"mvrp-nom"},p.nombre),
-          h("div",{class:"mvrp-meta"},[catN(p.categoria),p.material].filter(Boolean).join(" · ")),
-          h("div",{class:"mvrp-num"},h("span",null,money(p.precio)),h("span",{class:"mvrp-pz"},p.existencia+" pza"+(p.existencia===1?"":"s"))),
-          h("small",{class:"mvrp-fecha"},"En Reservas desde "+fechaC(p.reservado||p.creado)+(p.reservadoDesde==="inventario"?" · venía del inventario":""))),
-        esAdmin()?(conf?h("div",{class:"mvrp-conf mini"},h("span",null,`¿Integrar con ${p.existencia} pzas?`),h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); const ok=await aInventario(p.codigo); R.ocupado=false; R.conf=null; if(ok) toast(p.codigo+" integrado al inventario y al catálogo"); pintarRes(); }},R.ocupado?"…":"Sí"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No"))
-          :confB?h("div",{class:"mvrp-conf mini"},h("span",null,`¿Eliminar ${p.codigo}? Se va a la Papelera.`),h("button",{type:"button",class:"btn sm danger",onclick:async()=>{ R.conf=null; await borrar(p.codigo); pintarRes(); }},"Sí, eliminar"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No"))
-          :h("div",{class:"mvrp-acc"},h("button",{type:"button",class:"btn sm mvrp-int",onclick:()=>{ R.conf={tipo:"uno",cod:p.codigo}; pintarRes(); }},"Integrar al catálogo"),
-            h("button",{type:"button",class:"btn sm ghost",onclick:()=>editar(p.codigo)},"Editar"),
-            h("button",{type:"button",class:"btn sm ghost mvrp-del",onclick:()=>{ R.conf={tipo:"borrar",cod:p.codigo}; pintarRes(); }},"Eliminar"))):null);
-    };
-    host.replaceChildren(...[
-      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Reservas"),h("p",null,"Productos registrados que todavía no están a la venta: no cuentan en el inventario, no salen en el catálogo ni en la tienda en línea, y no se pueden agregar a una venta. «Integrar al catálogo» los pone a la venta con sus piezas.")),
-        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(todos.length)),h("span",null,"productos")),h("div",null,h("b",null,String(pz)),h("span",null,"piezas")))),
-      barra,confBox,
-      vis.length?h("div",{class:"mvrp-grid"},...vis.map(tarjeta)):h("div",{class:"mvrp-vacio"},todos.length?"No hay productos en Reservas con esa búsqueda.":"No hay productos en Reservas. Al registrar un producto elige «No, a Reservas», o manda uno desde el inventario.")].filter(Boolean));
-  }
-  // ventana: mandar productos del inventario a Reservas
-  let capaM=null;
-  function abrirMandar(){
-    if(capaM) capaM.remove(); let q="", conf=null, ocupado=false;
-    const lista=h("div",{class:"mvrp-mlista"}); const inp=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Busca el producto del inventario…"});
-    const pinta=()=>{ const t=q.trim().toLowerCase(); const ps=[...state.products.values()].filter(p=>!t||[p.codigo,p.nombre,p.palabra].join(" ").toLowerCase().includes(t)).sort((a,b)=>a.codigo.localeCompare(b.codigo)).slice(0,60);
-      lista.replaceChildren(...(ps.length?ps.map(p=>h("div",{class:"mvrp-mrow"},thumb(p),h("div",{class:"mvrp-minfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+(Number(p.existencia)||0)+" pzas")),
-        conf===p.codigo?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm primary",disabled:ocupado,onclick:async()=>{ ocupado=true; pinta(); await aReserva(p.codigo); ocupado=false; conf=null; pinta(); }},ocupado?"…":"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ conf=null; pinta(); }},"No"))
-        :h("button",{type:"button",class:"btn sm",onclick:()=>{ conf=p.codigo; pinta(); }},"⏸ Mandar a Reservas"))):[h("div",{class:"mvrp-vacio"},"Sin resultados")])); };
-    inp.addEventListener("input",()=>{ q=inp.value; conf=null; pinta(); });
-    const cerrar=()=>{ if(capaM){ capaM.remove(); capaM=null; } pintarRes(); };
-    const caja=h("div",{class:"mvrp-modal",role:"dialog","aria-label":"Mandar a Reservas"},h("div",{class:"mvrp-mcab"},h("h3",null,"Mandar del inventario a Reservas"),h("button",{type:"button",class:"mvrp-x","aria-label":"Cerrar",onclick:cerrar},"×")),
-      h("p",{class:"mvrp-ayuda"},"El producto sale del inventario, del catálogo y de la tienda en línea con todas sus piezas, y queda en Reservas hasta que lo vuelvas a integrar. No se puede si tiene piezas en un carrito abierto."),inp,lista);
-    capaM=h("div",{class:"mvrp-fondo"},caja); capaM.addEventListener("click",e=>{ if(e.target===capaM) cerrar(); }); document.body.append(capaM); pinta(); setTimeout(()=>inp.focus(),30);
-  }
-  // ficha del producto (Inventario): botón «Mandar a Reservas»
-  function envolverDrawer(){
-    if(typeof window.openDrawer!=="function"||window.openDrawer.__mvRP) return;
-    const o=window.openDrawer; const n=function(code){ const r=o.apply(this,arguments); try{ if(esAdmin()&&state.products.get(code)){ const d=document.querySelector("#drawerHost aside.drawer"); if(d&&!d.querySelector(".mvrp-dbox")){ const box=h("div",{class:"section mvrp-dbox"});
-        const base=()=>box.replaceChildren(h("h4",null,"Reservas"),h("p",{class:"mvrp-ayuda"},"Sácalo de la venta y del catálogo sin borrarlo; queda en «Registro de productos › Reservas»."),h("button",{type:"button",class:"btn",onclick:conf},"⏸ Mandar a Reservas"));
-        const conf=()=>box.replaceChildren(h("h4",null,"Reservas"),h("div",{class:"confirm",style:"margin-top:6px"},"¿Mandar "+code+" a Reservas? Sale del inventario y del catálogo con sus piezas.",h("button",{type:"button",class:"btn sm primary",onclick:async(e)=>{ e.target.disabled=true; if(await aReserva(code)){ try{ closeDrawer(); }catch(x){} } else base(); }},"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:base},"No")));
-        base(); d.append(box); } } }catch(e){ console.warn(e); } return r; };
-    n.__mvRP=true; window.openDrawer=n;
-  }
-  setInterval(envolverDrawer,1500); envolverDrawer();
-
-  /* ---------- 3) Por etiquetar ---------- */
-  function pendientes(){
-    const desde=state.etqDesde; if(!desde) return [];
-    const out=[]; const ver=(p,res)=>{ if(!p||!p.codigo) return; if(String(p.creado||"")<desde) return; if(state.etqHechas.has(p.codigo)) return; out.push(Object.assign({},p,{reserva:!!res})); };
-    for(const p of state.products.values()) ver(p,false); for(const p of state.reservas.values()) ver(p,true);
-    return out.sort((a,b)=>String(a.creado).localeCompare(String(b.creado))||a.codigo.localeCompare(b.codigo));
-  }
-  window.mvRPPendientes=pendientes;
-  async function marcar(codigos,motivo){
-    const now=ahora(); let quien=""; try{ quien=(JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).usuario||""; }catch(e){}
-    let ok=0; for(const c of codigos){ try{ await state.db.doc("etiquetasHechas/"+c).set({codigo:c,fecha:now,motivo:motivo||"impresa",por:quien}); state.etqHechas.set(c,{fecha:now}); ok++; }catch(e){ console.warn(e); } }
-    repintar(); return ok;
-  }
-  const E={ocupado:"",pdf:null,quitar:null};
-  async function imprimir(ps,clave){
-    if(!ps.length) return; if(E.ocupado) return; E.ocupado=clave||"x"; repintar();
-    try{ const preset=(typeof PRESETS!=="undefined"&&PRESETS.find(x=>x.id==="40x30"))||{id:"40x30",w:40,h:30};
-      const items=ps.map(p=>({p,copies:1})); let st="none"; try{ st=await printLabels(items,preset); }catch(e){ console.warn(e); st="error"; }
-      if(st==="printed"){ const n=await marcar(ps.map(p=>p.codigo),"impresa"); toast(n+" etiqueta"+(n===1?"":"s")+" impresa"+(n===1?"":"s")+" · salieron de «Por etiquetar»"); }
-      else if(st==="none"){ await saveLabels(items,preset,"etiquetas-"+(clave&&clave!=="todas"?String(clave).toLowerCase():"nuevas")+"-"+ps.length+".pdf"); E.pdf={clave,codigos:ps.map(p=>p.codigo)}; }
-      else if(st!=="cancelled") toast("No se imprimieron; siguen en la lista",true);
-    } finally{ E.ocupado=""; repintar(); }
-  }
-  function pintarEtq(){
-    const host=document.getElementById("mvRPEtq"); if(!host) return;
-    const ps=pendientes(); const grupos=new Map(); for(const p of ps){ if(!grupos.has(p.categoria)) grupos.set(p.categoria,[]); grupos.get(p.categoria).push(p); }
-    const ord=ordenCats(); const cats=[...grupos.keys()].sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
-    const pdfBox=E.pdf?h("div",{class:"mvrp-conf"},h("span",null,`Se descargó el PDF con ${E.pdf.codigos.length} etiqueta${E.pdf.codigos.length===1?"":"s"}. ¿Ya las imprimiste?`),
-      h("button",{type:"button",class:"btn sm primary",onclick:async()=>{ const c=E.pdf.codigos; E.pdf=null; const n=await marcar(c,"impresa (PDF)"); toast(n+" salieron de la lista"); }},"Sí, quitarlas de la lista"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.pdf=null; repintar(); }},"Todavía no")):null;
-    const fila=p=>{ const q=E.quitar===p.codigo; return h("div",{class:"mvrp-erow"},h("button",{type:"button",class:"mvrp-efoto",title:"Ver foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},thumb(p)),
-      h("div",{class:"mvrp-einfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+p.existencia+" pza"+(p.existencia===1?"":"s")+" · "+money(p.precio))),
-      p.reserva?h("span",{class:"mvrp-chip res"},"⏸ Reserva"):h("span",{class:"mvrp-chip inv"},"Inventario"),
-      q?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm",onclick:async()=>{ E.quitar=null; await marcar([p.codigo],"quitada a mano"); }},"Quitar"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.quitar=null; repintar(); }},"No"))
-        :h("button",{type:"button",class:"mvrp-q",title:"Quitar de la lista sin imprimir",onclick:()=>{ E.quitar=p.codigo; repintar(); }},"✕")); };
-    const grupo=c=>{ const l=grupos.get(c); return h("section",{class:"mvrp-grupo"},
-      h("div",{class:"mvrp-ghead"},h("h3",null,catN(c)," ",h("span",{class:"mvrp-n"},String(l.length))),
-        h("button",{type:"button",class:"btn sm primary",disabled:!!E.ocupado,onclick:()=>imprimir(l,c)},E.ocupado===c?"Imprimiendo…":"🏷️ Imprimir "+l.length+" (40 × 30)")),
-      h("div",{class:"mvrp-elist"},...l.map(fila))); };
-    host.replaceChildren(...[
-      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Por etiquetar"),h("p",null,"Productos nuevos registrados"+(state.etqDesde?" desde el "+fechaL(state.etqDesde):"")+", por categoría. Se imprime 1 etiqueta 40 × 30 por producto; al imprimirse salen de esta lista.")),
-        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(ps.length)),h("span",null,"etiquetas")),h("div",null,h("b",null,String(cats.length)),h("span",null,"categorías")))),
-      ps.length?h("div",{class:"mvrp-barra"},h("button",{type:"button",class:"btn primary",disabled:!!E.ocupado,onclick:()=>imprimir(ps,"todas")},E.ocupado==="todas"?"Imprimiendo…":"🏷️ Imprimir todas ("+ps.length+")")):null,
-      pdfBox,
-      ps.length?h("div",{class:"mvrp-grupos"},...cats.map(grupo)):h("div",{class:"mvrp-vacio"},state.etqDesde?"No hay etiquetas pendientes. Lo que registres en «Nuevo producto» (aquí o desde el celular) aparece aquí por categoría.":"Preparando la lista…")].filter(Boolean));
-  }
-  // cuando llegan productos nuevos, se actualiza la lista si está a la vista
-  (function(){ let ult=0; setInterval(()=>{ try{ if(state.view!=="etq"&&state.view!=="res") return; const n=(state.products?state.products.size:0)*7+state.reservas.size*13+state.etqHechas.size; if(n!==ult){ ult=n; repintar(); } }catch(e){} },1500); })();
-})();
-</script>
-<style id="mv-notas-css">
-/* mvNotas · notas compartidas (letra Aptos; si el equipo no la tiene, la más parecida del sistema) */
-#mvNotasBtn{position:fixed;right:22px;bottom:22px;z-index:900;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px 11px 14px;
-  background:rgba(90,39,72,.92);color:#fff;font:600 14px Aptos,"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;cursor:pointer;
-  box-shadow:0 10px 30px rgba(90,39,72,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
-#mvNotasBtn svg{width:18px;height:18px}
-#mvNotasBtn b{min-width:20px;height:20px;border-radius:10px;background:#F2653F;color:#fff;font-size:12px;display:grid;place-items:center;padding:0 6px}
-#mvNotasBtn[hidden]{display:none}
-#mvNotasCapa{position:fixed;inset:0;z-index:2147483000;font-family:var(--mvn-f);color:#1D1D1F;-webkit-font-smoothing:antialiased}
-#mvNotasCapa[hidden]{display:none}
-#mvNotasCapa *{box-sizing:border-box}
-.mvn-velo{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:opacity .25s}
-#mvNotasCapa.on .mvn-velo{opacity:1}
-.mvn-hoja{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
-  box-shadow:-20px 0 60px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
-#mvNotasCapa.on .mvn-hoja{transform:none}
-.mvn-grip{display:none}
-.mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
-.mvn-logo img{height:26px;width:auto}
-.mvn-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 20px 8px}
-.mvn-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#5A2748}
-.mvn-sub{margin:2px 0 0;font-size:13px;color:#6E6E73}
-.mvn-x{border:0;background:#F2F2F7;width:32px;height:32px;border-radius:50%;font-size:14px;color:#6E6E73;cursor:pointer;flex:none}
-.mvn-nueva{display:flex;gap:8px;align-items:flex-end;margin:8px 16px 6px;padding:8px;border-radius:16px;background:#F2F2F7}
-.mvn-nueva textarea{flex:1;border:0;background:transparent;resize:none;font:16px var(--mvn-f);line-height:1.35;padding:6px 6px;outline:none;color:#1D1D1F;min-height:32px}
-.mvn-nueva button{border:0;border-radius:12px;background:#5A2748;color:#fff;font:600 15px var(--mvn-f);padding:8px 14px;cursor:pointer}
-.mvn-lista{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px calc(24px + env(safe-area-inset-bottom))}
-.mvn-fila{display:flex;align-items:flex-start;gap:10px;padding:12px 8px;border-bottom:1px solid rgba(0,0,0,.06)}
-.mvn-circ{flex:none;border:0;background:transparent;padding:0;width:28px;height:28px;cursor:pointer;margin-top:-2px}
-.mvn-circ svg{width:28px;height:28px;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.mvn-circ circle{stroke:#C7C7CC;stroke-width:1.6}
-.mvn-circ path{stroke:transparent;stroke-width:2.2}
-.mvn-fila.hecha .mvn-circ circle{fill:#5A2748;stroke:#5A2748}
-.mvn-fila.hecha .mvn-circ path{stroke:#fff}
-.mvn-txt{flex:1;min-width:0}
-.mvn-t{font-size:16px;line-height:1.35;word-wrap:break-word;overflow-wrap:anywhere}
-.mvn-fila.hecha .mvn-t{text-decoration:line-through;text-decoration-color:#8E8E93;color:#8E8E93}
-.mvn-txt small{display:block;margin-top:3px;font-size:12px;color:#8E8E93}
-.mvn-del{flex:none;border:0;background:transparent;color:#C7C7CC;font-size:13px;width:28px;height:28px;border-radius:50%;cursor:pointer}
-.mvn-del:active,.mvn-del:hover{background:#F2F2F7;color:#D70015}
-.mvn-vacio{padding:28px 14px;text-align:center;color:#8E8E93;font-size:15px;line-height:1.4}
-.mvn-hechash{display:flex;justify-content:space-between;align-items:center;padding:16px 8px 4px}
-.mvn-hechash button{border:0;background:transparent;color:#5A2748;font:600 14px var(--mvn-f);cursor:pointer;padding:4px 0}
-.mvn-hechash button.rojo{color:#D70015}
-@media (max-width:640px){
-  .mvn-hoja{top:auto;left:0;right:0;width:auto;height:calc(100% - 44px - env(safe-area-inset-top));border-radius:22px 22px 0 0;transform:translateY(102%);box-shadow:0 -20px 60px rgba(0,0,0,.18)}
-  #mvNotasCapa.on .mvn-hoja{transform:none}
-  .mvn-grip{display:block;width:38px;height:5px;border-radius:3px;background:#D1D1D6;margin:8px auto 0}
-  .mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
-.mvn-logo img{height:26px;width:auto}
-.mvn-head{padding-top:10px}
-  #mvNotasBtn{right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}
-}
-html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
-</style>
-<script id="mv-notas-js">
-/* ===== mvNotas · Notas compartidas entre administradores (20-nov-2026) =====
-   Viven en la nube (marvea_docs, colección «notas») y llegan en vivo a todos los equipos de los administradores:
-   sistema en línea, Marvea Vende (iPhone/iPad) y la app de la Mac. Un círculo marca cada nota como hecha (queda tachada).
-   Sistema en línea: botón flotante «Notas» abajo a la derecha. Marvea Vende: menú ☰ › Notas (el botón flotante se oculta). */
-(function(){
-  if(window.mvNotas) return;
-  const LETRA='Aptos,"Aptos Display","Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif';
-  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const perfil=()=>{ try{ return JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}; }catch(e){ return {}; } };
-  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} return perfil().rol||""; };
-  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
-  const yo=()=>{ const p=perfil(); return String(p.usuario||"").toUpperCase()||"YO"; };
-  const db=()=>window.state&&window.state.db||(typeof state!=="undefined"?state.db:null);
-  const aviso=(m,mal)=>{ try{ toast(m,mal); }catch(e){} };
-  const cuando=iso=>{ const t=Date.parse(iso||""); if(!t) return ""; const s=Math.round((Date.now()-t)/1000);
-    if(s<60) return "ahora"; if(s<3600) return "hace "+Math.round(s/60)+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h";
-    return new Date(t).toLocaleDateString("es-MX",{day:"numeric",month:"short"}); };
-
-  const N={ lista:new Map(), cbs:new Set(), suscrito:false, cargado:false, abierta:false, verHechas:false, ocupado:new Set() };
-  function avisar(){ for(const f of N.cbs){ try{ f(); }catch(e){ console.warn(e); } } pintar(); pintarBoton(); }
-  function suscribir(){
-    const d=db(); if(N.suscrito||!d) return; N.suscrito=true;
-    try{ d.collection("notas").onSnapshot(s=>{ const m=new Map(); for(const x of s.docs){ const v=x.data(); if(v&&typeof v.texto==="string") m.set(x.id,Object.assign({id:x.id},v)); } N.lista=m; N.cargado=true; avisar(); },e=>console.warn("notas",e)); }catch(e){ console.warn(e); N.suscrito=false; }
-  }
-  (function(){ const t=setInterval(()=>{ if(db()){ clearInterval(t); suscribir(); } },400); })();
-
-  const ordenadas=()=>{ const l=[...N.lista.values()];
-    const pend=l.filter(x=>!x.hecha).sort((a,b)=>String(b.creado||"").localeCompare(String(a.creado||"")));
-    const hechas=l.filter(x=>x.hecha).sort((a,b)=>String(b.hechaEn||b.creado||"").localeCompare(String(a.hechaEn||a.creado||"")));
-    return {pend,hechas}; };
-  async function agregar(texto){ texto=String(texto||"").trim().slice(0,600); if(!texto) return false; const d=db(); if(!d){ aviso("Sin conexión con la nube",true); return false; }
-    const ahora=new Date().toISOString(); const id="N"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    const nota={texto,hecha:false,autor:yo(),creado:ahora,actualizado:ahora};
-    N.lista.set(id,Object.assign({id},nota)); avisar();
-    try{ await d.doc("notas/"+id).set(nota); return true; }catch(e){ N.lista.delete(id); avisar(); aviso("No se guardó la nota (¿hay internet?)",true); return false; } }
-  async function alternar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d||N.ocupado.has(id)) return; N.ocupado.add(id);
-    const ahora=new Date().toISOString(); const nuevo=Object.assign({},x,{hecha:!x.hecha,actualizado:ahora}); if(nuevo.hecha){ nuevo.hechaPor=yo(); nuevo.hechaEn=ahora; } else { delete nuevo.hechaPor; delete nuevo.hechaEn; }
-    N.lista.set(id,nuevo); avisar(); const datos=Object.assign({},nuevo); delete datos.id;
-    try{ await d.doc("notas/"+id).set(datos); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo marcar (¿hay internet?)",true); } finally{ N.ocupado.delete(id); } }
-  async function borrar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d) return; N.lista.delete(id); avisar();
-    try{ await d.doc("notas/"+id).delete(); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo borrar (¿hay internet?)",true); } }
-  async function borrarHechas(){ const {hechas}=ordenadas(); if(!hechas.length) return; if(!confirm("¿Borrar las "+hechas.length+" nota(s) hechas? Se borran para todos los administradores.")) return; for(const x of hechas) await borrar(x.id); }
-
-  /* ---------- ventana ---------- */
-  let capa=null;
-  function abrir(){ if(!esAdmin()){ aviso("Las notas son solo para administradores",true); return; } suscribir(); N.abierta=true; if(!capa){ capa=document.createElement("div"); capa.id="mvNotasCapa"; capa.innerHTML=
-      '<div class="mvn-velo"></div><section class="mvn-hoja" role="dialog" aria-label="Notas"><div class="mvn-grip"></div><div class="mvn-logo"><img src="logo-marvea-letras.png" alt="Marvea"></div>'+
-      '<header class="mvn-head"><div><h2>Notas</h2><p class="mvn-sub"></p></div><button type="button" class="mvn-x" aria-label="Cerrar">✕</button></header>'+
-      '<form class="mvn-nueva" autocomplete="off"><textarea rows="1" maxlength="600" placeholder="Escribe una nota o tarea…" enterkeyhint="send"></textarea><button type="submit" aria-label="Agregar">Agregar</button></form>'+
-      '<div class="mvn-lista"></div></section>';
-      document.body.append(capa);
-      capa.style.setProperty("--mvn-f",LETRA);
-      capa.querySelector(".mvn-velo").onclick=cerrar; capa.querySelector(".mvn-x").onclick=cerrar;
-      const ta=capa.querySelector("textarea"), fm=capa.querySelector("form");
-      const crecer=()=>{ ta.style.height="auto"; ta.style.height=Math.min(140,ta.scrollHeight)+"px"; };
-      ta.addEventListener("input",crecer);
-      ta.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); fm.requestSubmit?fm.requestSubmit():fm.dispatchEvent(new Event("submit",{cancelable:true})); } });
-      fm.addEventListener("submit",async e=>{ e.preventDefault(); const t=ta.value.trim(); if(!t) return; ta.value=""; crecer(); await agregar(t); });
-      capa.querySelector(".mvn-lista").addEventListener("click",e=>{ const b=e.target.closest("[data-acc]"); if(!b) return; const id=b.closest("[data-id]")&&b.closest("[data-id]").dataset.id;
-        if(b.dataset.acc==="hecha") alternar(id); else if(b.dataset.acc==="borrar"){ if(confirm("¿Borrar esta nota para todos?")) borrar(id); }
-        else if(b.dataset.acc==="ver"){ N.verHechas=!N.verHechas; pintar(); } else if(b.dataset.acc==="limpiar") borrarHechas(); });
-      document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&N.abierta) cerrar(); });
-    }
-    capa.classList.remove("on"); capa.hidden=false; pintar(); requestAnimationFrame(()=>requestAnimationFrame(()=>capa.classList.add("on")));
-    try{ document.documentElement.classList.add("mvn-quieto"); }catch(e){}
-  }
-  function cerrar(){ N.abierta=false; if(!capa) return; capa.classList.remove("on"); try{ document.documentElement.classList.remove("mvn-quieto"); }catch(e){} setTimeout(()=>{ if(!N.abierta&&capa) capa.hidden=true; },260); for(const f of N.cbs){ try{ f(); }catch(e){} } }
-  const CIRC='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg>';
-  function fila(x){ const meta=[x.autor||"",cuando(x.creado)].filter(Boolean).join(" · ")+(x.hecha&&x.hechaPor?" · hecha por "+x.hechaPor+(x.hechaEn?" "+cuando(x.hechaEn):""):"");
-    return '<div class="mvn-fila'+(x.hecha?" hecha":"")+'" data-id="'+esc(x.id)+'"><button type="button" class="mvn-circ" data-acc="hecha" aria-label="'+(x.hecha?"Marcar pendiente":"Marcar hecha")+'">'+CIRC+'</button>'+
-      '<div class="mvn-txt"><div class="mvn-t">'+esc(x.texto).replace(/\n/g,"<br>")+'</div><small>'+esc(meta)+'</small></div><button type="button" class="mvn-del" data-acc="borrar" aria-label="Borrar nota">✕</button></div>'; }
-  function pintar(){ if(!capa||capa.hidden&&!N.abierta) return; const {pend,hechas}=ordenadas();
-    capa.querySelector(".mvn-sub").textContent=!N.cargado?"Cargando…":pend.length?(pend.length===1?"1 pendiente":pend.length+" pendientes")+" · se comparten en vivo con los administradores":"Todo hecho · se comparten en vivo con los administradores";
-    const l=capa.querySelector(".mvn-lista");
-    let html=pend.length?pend.map(fila).join(""):(N.cargado?'<div class="mvn-vacio">Sin pendientes. Escribe arriba una nota o tarea y le aparecerá a los demás administradores.</div>':"");
-    if(hechas.length) html+='<div class="mvn-hechash"><button type="button" data-acc="ver">'+(N.verHechas?"Ocultar":"Ver")+' hechas ('+hechas.length+')</button>'+(N.verHechas?'<button type="button" class="rojo" data-acc="limpiar">Borrar hechas</button>':"")+'</div>'+(N.verHechas?hechas.map(fila).join(""):"");
-    l.innerHTML=html; }
-  setInterval(()=>{ if(N.abierta) pintar(); },60000);
-
-  /* ---------- botón flotante (sistema en línea / Mac) ---------- */
-  let boton=null;
-  function pintarBoton(){ if(document.body&&document.body.classList.contains("vx-on")){ if(boton) boton.hidden=true; return; }
-    if(!esAdmin()||!db()){ if(boton) boton.hidden=true; return; }
-    if(!boton){ boton=document.createElement("button"); boton.type="button"; boton.id="mvNotasBtn"; boton.setAttribute("aria-label","Notas"); boton.onclick=abrir; document.body.append(boton); }
-    const n=ordenadas().pend.length; boton.hidden=false; boton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg><span>Notas</span>'+(n?'<b>'+n+'</b>':''); }
-  setInterval(pintarBoton,1500);
-
-  window.mvNotas={ abrir, cerrar, agregar, alternar, borrar, abierta:()=>N.abierta, pendientes:()=>ordenadas().pend.length, lista:()=>ordenadas(), alCambiar:f=>{ N.cbs.add(f); return ()=>N.cbs.delete(f); } };
 })();
 </script>
 <style id="mv-lv-css">
@@ -12095,6 +11613,561 @@ body.vx-on .vx-topr>*{flex:none}
     if(n&&!n.parentNode.querySelector(".mvtb-pcbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-pcbtn",title:"Imprime una etiqueta 40 × 30 con código por cada venta «Por cobrar»",onclick:etiquetasPorCobrar},"🏷️ Etiquetas por cobrar"),n);
     if(n&&!n.parentNode.querySelector(".mvtb-rgbtn")) n.parentNode.insertBefore(h("button",{type:"button",class:"btn vx-b2 mvtb-rgbtn",title:"Imprime una etiqueta 40 × 30 con QR por cada carrito en resguardo",onclick:etiquetasResguardo},"🏷️ Etiquetas resguardo"),n); }catch(e){} });
   try{ obs2.observe(document.body,{childList:true,subtree:true}); }catch(e){}
+})();
+</script>
+<style id="mv-rp-css">
+/* mvRP · Registro de productos: ¿va al catálogo?, Reservas y Por etiquetar (21-nov-2026) */
+.mvrp-dest{grid-column:1/-1;border:1.5px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px;background:var(--surface,#fff);margin-bottom:4px}
+.mvrp-dest[hidden]{display:none}
+.mvrp-desttit{font-weight:800;font-size:14px;margin-bottom:8px;color:var(--fg,#2a1a24)}
+.mvrp-ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mvrp-op{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;border:1.5px solid var(--line,#E2D6DD);background:var(--bg,#fff);border-radius:14px;padding:10px 12px;cursor:pointer;color:inherit}
+.mvrp-op .mvrp-opic{flex:none;width:30px;height:30px;border-radius:999px;display:grid;place-items:center;font-weight:900;background:#F1ECEF;color:#6B5664}
+.mvrp-optx{display:flex;flex-direction:column;min-width:0}.mvrp-optx b{font-size:14px}.mvrp-optx small{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-op.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.mvrp-op.inventario.on .mvrp-opic{background:#2E9C6A;color:#fff}
+.mvrp-op.reserva.on{border-color:#C98A00;background:#FFF7E0}.mvrp-op.reserva.on .mvrp-opic{background:#C98A00;color:#fff}
+.btn.mvrp-btnres{background:#C98A00!important;border-color:#C98A00!important;color:#fff!important}
+.mvrp-donechip{display:inline-block;font-size:12px;font-weight:800;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:3px 10px;margin-left:4px}
+.mvrp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.mvrp-head h2{margin:0 0 4px;font-size:24px}.mvrp-head p{margin:0;color:var(--muted,#6B5664);font-size:14px;max-width:640px;line-height:1.45}
+.mvrp-kpis{display:flex;gap:8px}.mvrp-kpis div{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:14px;padding:8px 14px;display:flex;flex-direction:column;align-items:flex-start;min-width:86px}
+.mvrp-kpis b{font-size:22px;font-variant-numeric:tabular-nums}.mvrp-kpis span{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-barra{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.mvrp-buscar{flex:1 1 240px;min-width:0;font:inherit;font-size:14.5px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:10px 12px;background:var(--bg,#fff)}
+.mvrp-sel{font:inherit;font-size:14px;border:1px solid var(--line,#E2D6DD);border-radius:12px;padding:9px 10px;background:var(--bg,#fff)}
+.mvrp-conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#FFF7E0;border:1px solid #F0D58A;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.mvrp-conf.mini{padding:4px 6px;margin:0;font-size:13px}
+.mvrp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mvrp-card{position:relative;background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.mvrp-card.on{border-color:#C98A00;box-shadow:0 0 0 2px rgba(201,138,0,.25)}
+.mvrp-chk{position:absolute;top:8px;left:8px;z-index:2;background:rgba(255,255,255,.92);border-radius:8px;padding:4px;display:flex}
+.mvrp-chk input{width:20px;height:20px;accent-color:#C98A00;margin:0;cursor:pointer}
+.mvrp-foto{display:block;width:100%;aspect-ratio:1/1;border:0;padding:0;background:#FAF6F8;cursor:zoom-in}
+.mvrp-foto>*{width:100%!important;height:100%!important;border-radius:0!important}
+.mvrp-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.mvrp-info{padding:10px 12px 4px;display:flex;flex-direction:column;gap:3px}
+.mvrp-tags{display:flex;gap:6px;flex-wrap:wrap}
+.mvrp-cod{font:700 11.5px ui-monospace,Menlo,monospace;color:#5A2748;background:#F3E8EF;padding:2px 8px;border-radius:999px}
+.mvrp-pal{font-size:11.5px;font-weight:700;color:#7A3F63;border:1px solid #E7D5DF;padding:1px 8px;border-radius:999px}
+.mvrp-nom{font-size:14.5px;line-height:1.25}
+.mvrp-meta{font-size:12.5px;color:var(--muted,#6B5664)}
+.mvrp-num{display:flex;justify-content:space-between;font-weight:800;font-size:15px}
+.mvrp-pz{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:999px;padding:1px 9px}
+.mvrp-fecha{font-size:11.5px;color:var(--muted,#6B5664)}
+.mvrp-int,.mvrp-card>.mvrp-conf{margin:6px 12px 12px}
+.mvrp-vacio{padding:30px 16px;text-align:center;color:var(--muted,#6B5664);background:var(--surface,#fff);border:1px dashed var(--line,#E2D6DD);border-radius:16px}
+.mvrp-fondo{position:fixed;inset:0;z-index:2147483000;background:rgba(30,16,26,.42);display:flex;align-items:flex-start;justify-content:center;padding:6vh 12px;overflow:auto}
+.mvrp-modal{background:#fff;border-radius:20px;width:min(640px,100%);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 24px 70px rgba(40,10,30,.28)}
+.mvrp-mcab{display:flex;justify-content:space-between;align-items:center}.mvrp-mcab h3{margin:0;font-size:19px}
+.mvrp-x{border:0;background:#F4EEF1;border-radius:999px;width:36px;height:36px;font-size:22px;cursor:pointer}
+.mvrp-ayuda{margin:0;font-size:13px;color:var(--muted,#6B5664)}
+.mvrp-mlista{display:flex;flex-direction:column;gap:6px;max-height:56vh;overflow:auto}
+.mvrp-mrow,.mvrp-erow{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line,#EFE6EB);border-radius:12px;background:var(--surface,#fff)}
+.mvrp-mrow{grid-template-columns:44px minmax(0,1fr) auto}
+.mvrp-mrow .th,.mvrp-erow .th{width:44px;height:44px;border-radius:10px;overflow:hidden}
+.mvrp-minfo,.mvrp-einfo{min-width:0;display:flex;flex-direction:column}.mvrp-minfo b,.mvrp-einfo b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvrp-minfo small,.mvrp-einfo small{font-size:12px;color:var(--muted,#6B5664)}
+.mvrp-efoto{border:0;padding:0;background:none;cursor:zoom-in}
+.mvrp-chip{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}.mvrp-chip.res{background:#FFF4D6;color:#7A5A00}.mvrp-chip.inv{background:#E9F5EE;color:#1F6B3A}
+.mvrp-q{border:0;background:#F4EEF1;border-radius:999px;width:30px;height:30px;cursor:pointer;color:#6B5664}
+.mvrp-grupos{display:flex;flex-direction:column;gap:16px}
+.mvrp-grupo{background:var(--surface,#fff);border:1px solid var(--line,#E8DDD0);border-radius:16px;padding:12px 14px}
+.mvrp-ghead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mvrp-ghead h3{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}
+.mvrp-n{font-size:13px;background:#5A2748;color:#fff;border-radius:999px;padding:2px 9px}
+.mvrp-elist{display:flex;flex-direction:column;gap:6px}
+.mvrp-dbox .btn{margin-top:6px}
+@media (max-width:640px){.mvrp-ops{grid-template-columns:1fr}.mvrp-erow{grid-template-columns:40px minmax(0,1fr) auto}.mvrp-erow .mvrp-chip{display:none}}
+.vx-alta-destops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vx-alta-dop{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font:inherit;text-align:left;border:1.5px solid #E2D6DD;background:#fff;border-radius:14px;padding:10px 12px;color:#2a1a24}
+.vx-alta-dop b{font-size:14.5px}.vx-alta-dop small{font-size:12px;color:#6B5664}
+.vx-alta-dop.inventario.on{border-color:#2E9C6A;background:#EEF8F2}.vx-alta-dop.reserva.on{border-color:#C98A00;background:#FFF7E0}
+.vx-alta-resok{margin:0;font-size:13.5px;font-weight:700;color:#7A5A00;background:#FFF4D6;border-radius:12px;padding:9px 12px;text-align:center}
+.vx-cta.vx-cta-res{background:#C98A00!important;color:#fff!important}
+.vx-alta-dest{margin:4px 0 6px}
+
+/* mvRPE: editar / eliminar */
+.mvrp-acc{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mvrp-acc .mvrp-del{color:var(--bad)}
+.mvrp-conf .btn.danger{background:var(--bad);color:#fff;border-color:var(--bad)}
+.mvrp-auto{display:flex;flex-direction:column;gap:4px;padding:12px 14px;margin-bottom:12px;border-radius:14px;border:1.5px solid #E8DDD0;background:#FBF8F4}
+.mvrp-auto.on{border-color:#5A2748;background:#F6EEF3}.mvrp-auto.warn{border-color:#C98A1B;background:#FFF7E6}
+.mvrp-auto-sw{display:flex;align-items:center;gap:10px;font-weight:700;cursor:pointer}.mvrp-auto-sw input{width:20px;height:20px;accent-color:#5A2748}
+.mvrp-auto small{color:var(--muted,#6B5664);font-size:13px;padding-left:30px}
+</style>
+<script id="mv-rp-js">
+/* ===== mvRP · Registro de productos: Nuevo producto · Reservas · Por etiquetar (21-nov-2026) =====
+   Pestaña nueva «Registro de productos» (sale «Nuevo producto» de Inventario).
+   1) Nuevo producto: «¿Va al catálogo?» → Sí: al inventario (como siempre, se publica en el catálogo) · No: a Reservas.
+   2) Reservas: productos registrados que NO están a la venta. Viven en su propia colección «reservas» (marvea_docs col='reservas'),
+      así ni el inventario, ni el catálogo, ni la tienda en línea, ni las ventas los ven. «Integrar al catálogo» los pasa a
+      «productos» con sus piezas (la nube anota la alta en el historial). Un producto del inventario se puede mandar a Reservas
+      (no si tiene piezas en carritos abiertos o apartadas en la tienda en línea). Foto en grande al tocarla.
+   3) Por etiquetar: todo producto registrado desde que se activó (config/registroEtiquetas.desde), venga de la laptop o del
+      celular, aparece por categoría hasta que se imprime su etiqueta 40 × 30 (1 por producto). Al imprimir sale de la lista
+      (colección «etiquetasHechas», un documento por código: no se pisan entre equipos).
+   4) Impresión automática (24-nov): en la app de la Mac, lo nuevo sale solo en la NIIMBOT al registrarse.
+   Los códigos y las palabras clave cuentan también los productos en Reservas (nunca se repiten). */
+(function(){
+  if(window.__mvRP) return; window.__mvRP=true;
+  const money=x=>"$"+fmtMoney(x);
+  const ahora=()=>new Date().toISOString();
+  const fechaC=f=>{ try{ return f?new Date(f).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""; }catch(e){ return ""; } };
+  const fechaL=f=>{ try{ return f?new Date(f).toLocaleString("es-MX",{day:"numeric",month:"long",hour:"numeric",minute:"2-digit"}):""; }catch(e){ return ""; } };
+  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} try{ return (JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).rol||""; }catch(e){ return ""; } };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
+  const key=x=>String(x||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  state.reservas=state.reservas||new Map(); state.etqHechas=state.etqHechas||new Map(); state.etqDesde=state.etqDesde||null;
+  const R={q:"",cat:"",sel:new Set(),conf:null,ocupado:false};
+
+  function norm(id,x){ x=x||{}; return {codigo:id,nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,costo:Number(x.costo)||0,existencia:Number(x.existencia)||0,minimo:x.minimo==null?5:Number(x.minimo)||0,notas:String(x.notas||""),fotoId:typeof x.fotoId==="string"?x.fotoId:null,...(typeof x.fotoId2==="string"&&x.fotoId2?{fotoId2:x.fotoId2}:{}),etiquetaCat:String(x.etiquetaCat||""),creado:String(x.creado||""),actualizado:String(x.actualizado||""),reservado:String(x.reservado||""),reservadoDesde:String(x.reservadoDesde||""),reserva:true}; }
+
+  /* ---------- datos ---------- */
+  let suscrito=false, creandoDesde=false, crudo=new Map();
+  function suscribir(){
+    if(suscrito||!state.db) return; suscrito=true;
+    try{ state.db.collection("reservas").onSnapshot(s=>{ const m=new Map(), cr=new Map(); for(const d of s.docs){ const x=d.data(); if(x){ m.set(d.id,norm(d.id,x)); cr.set(d.id,x); } } state.reservas=m; crudo=cr; repintar(); },e=>console.warn("reservas",e)); }catch(e){ console.warn(e); }
+    try{ state.db.collection("etiquetasHechas").onSnapshot(s=>{ const m=new Map(); for(const d of s.docs){ const x=d.data()||{}; m.set(d.id,x); } state.etqHechas=m; repintar(); },e=>console.warn("etiquetasHechas",e)); }catch(e){ console.warn(e); }
+    try{ state.db.doc("config/registroEtiquetas").onSnapshot(s=>{ const d=s&&s.exists?s.data():null; state.etqDesde=d&&d.desde||null;
+        if(!state.etqDesde&&esAdmin()&&!creandoDesde){ creandoDesde=true; const v=ahora(); state.etqDesde=v; state.db.doc("config/registroEtiquetas").set({desde:v,creado:v}).catch(e=>console.warn("registroEtiquetas",e)); }
+        repintar(); },e=>console.warn("registroEtiquetas",e)); }catch(e){ console.warn(e); }
+  }
+  (function(){ let n=0; const t=setInterval(()=>{ if(state.db){ clearInterval(t); suscribir(); } else if(++n>600) clearInterval(t); },250); })();
+
+  // para el resto del sistema
+  window.mvRPCodigos=()=>[...state.reservas.keys()];
+  window.mvRPBuscar=t=>{ const k=key(t); if(k.length<3) return null; for(const p of state.reservas.values()){ if(key(p.codigo)===k) return p; } const q=String(t||"").trim().toLowerCase(); if(q) for(const p of state.reservas.values()){ if(p.palabra&&p.palabra.toLowerCase()===q) return p; } return null; };
+
+  /* ---------- 1) Nuevo producto: ¿va al catálogo? ---------- */
+  let destino="inventario"; try{ if(localStorage.getItem("marvea.rp.destino")==="reserva") destino="reserva"; }catch(e){}
+  let ultimaReserva=null;
+  window.mvRPReservar=()=>!state.editing&&destino==="reserva";
+  window.mvRPGuardada=data=>{ ultimaReserva=data.codigo; state.reservas.set(data.codigo,norm(data.codigo,data)); };
+  window.mvRPDespues=(codigo,wasEdit)=>{ if(wasEdit){ if(ultimaReserva===codigo){ ultimaReserva=null; toast("Cambios guardados · "+codigo+" sigue en Reservas"); setTimeout(()=>setView("res"),0); } return; } if(ultimaReserva!==codigo) return; ultimaReserva=null;
+    try{ const t=document.getElementById("doneTitle"); if(t) t.textContent="Registrado en Reservas";
+      const s=document.getElementById("doneSub"); if(s&&!s.querySelector(".mvrp-donechip")) s.append(" ",h("span",{class:"mvrp-donechip"},"⏸ En Reservas · no está a la venta"));
+      const b=document.getElementById("doneLabel"); if(b) b.onclick=()=>{ const p=state.reservas.get(codigo); if(p) imprimir([p],null); };
+      const inv=document.getElementById("doneInv"); if(inv){ inv.dataset.mvrp="1"; inv.textContent="Ver Reservas"; }
+    }catch(e){} toast("Registrado "+codigo+" en Reservas"); };
+  document.addEventListener("click",e=>{ const b=e.target&&e.target.closest&&e.target.closest("#doneInv[data-mvrp]"); if(b){ delete b.dataset.mvrp; b.textContent="Ir al inventario"; setTimeout(()=>setView("res"),0); } },true);
+  let caja=null;
+  function pintaDestino(){
+    const f=document.getElementById("form"); if(!f) return;
+    if(!caja){
+      caja=h("div",{class:"mvrp-dest",role:"radiogroup","aria-label":"¿Va al catálogo?"});
+      f.insertBefore(caja,f.firstChild);
+    }
+    const editando=!!state.editing; caja.hidden=editando;
+    const op=(v,ic,t,s)=>h("button",{type:"button",role:"radio","aria-checked":String(destino===v),class:"mvrp-op "+v+(destino===v?" on":""),onclick:()=>{ destino=v; try{ localStorage.setItem("marvea.rp.destino",v); }catch(e){} pintaDestino(); }},h("span",{class:"mvrp-opic"},ic),h("span",{class:"mvrp-optx"},h("b",null,t),h("small",null,s)));
+    caja.replaceChildren(h("div",{class:"mvrp-desttit"},"¿Va al catálogo?"),
+      h("div",{class:"mvrp-ops"},op("inventario","✓","Sí, al inventario","Se pone a la venta y se publica en el catálogo"),op("reserva","⏸","No, a Reservas","Queda registrado pero no se vende ni se publica")));
+    const btn=document.getElementById("btnSave"); if(btn&&!editando) btn.textContent=destino==="reserva"?"Registrar en Reservas":"Registrar producto";
+    if(btn) btn.classList.toggle("mvrp-btnres",!editando&&destino==="reserva");
+  }
+  function envolverForm(){
+    let ok=true;
+    if(typeof window.resetForm==="function"&&!window.resetForm.__mvRP){ const o=window.resetForm; const n=function(){ state.editingReserva=false; const bs=document.getElementById("btnSave"); if(bs) bs.classList.remove("mvrp-btnres"); const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.resetForm=n; } else if(typeof window.resetForm!=="function") ok=false;
+    if(typeof window.startEdit==="function"&&!window.startEdit.__mvRP){ const o=window.startEdit; const n=function(){ const r=o.apply(this,arguments); try{ pintaDestino(); }catch(e){} return r; }; n.__mvRP=true; window.startEdit=n; } else if(typeof window.startEdit!=="function") ok=false;
+    return ok;
+  }
+
+  /* ---------- pestaña y vistas ---------- */
+  const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>';
+  function montar(){
+    const t=document.getElementById("tab-regp"); if(t&&!t.dataset.mvrpIc){ t.dataset.mvrpIc="1"; const s=document.createElement("span"); s.innerHTML=ICON; s.setAttribute("aria-hidden","true"); s.style.display="inline-flex"; t.prepend(s); }
+    if(t) t.hidden=!esAdmin();
+    const vn=document.getElementById("view-new"); if(!vn) return false;
+    for(const id of ["view-res","view-etq"]) if(!document.getElementById(id)){ const s=h("section",{class:"view",id,hidden:true},h("div",{id:id==="view-res"?"mvRPRes":"mvRPEtq"})); vn.parentNode.insertBefore(s,vn.nextSibling); }
+    return true;
+  }
+  function envolverVista(){
+    if(typeof window.setView!=="function"||window.setView.__mvRP) return !!(window.setView&&window.setView.__mvRP);
+    const o=window.setView; const n=function(v){ if(v==="regp") v="new"; const r=o.call(this,v); try{ if(v==="res") pintarRes(); if(v==="etq") pintarEtq(); if(v==="new") pintaDestino(); }catch(e){ console.warn(e); } return r; };
+    n.__mvRP=true; window.setView=n; return true;
+  }
+  (function(){ let n=0; const t=setInterval(()=>{ let ok=false; try{ ok=montar()&&envolverForm()&&envolverVista(); if(ok) pintaDestino(); }catch(e){ console.warn(e); } if(ok||++n>120) clearInterval(t); },250); })();
+  // si otra capa vuelve a envolver setView después, se vuelve a poner la nuestra encima
+  setInterval(()=>{ try{ envolverVista(); envolverForm(); }catch(e){} },2000);
+  // al abrir en «res»/«etq» desde la última vista guardada
+  setTimeout(()=>{ try{ const v=state.view; if(v==="res"||v==="etq") setView(v); }catch(e){} },1500);
+
+  let repT=0; function repintar(){ clearTimeout(repT); repT=setTimeout(()=>{ try{ if(state.view==="res") pintarRes(); if(state.view==="etq") pintarEtq(); }catch(e){ console.warn(e); } },60); }
+
+  /* ---------- carritos y tienda: ¿se puede mandar a Reservas? ---------- */
+  async function enCarritos(cod){
+    const out=[]; try{ const s=await state.db.collection("carritos").get(); for(const d of s.docs){ const c=d.data()||{}; if(c.estado!=="abierto"&&c.estado!=="cerrado") continue; let n=0; for(const it of c.items||[]) if(it&&it.codigo===cod) n+=Number(it.cant)||0; if(n>0) out.push({cliente:c.cliente||"Sin nombre",n}); } }catch(e){ console.warn(e); }
+    return out;
+  }
+  async function enTienda(cod){
+    try{ const sb=window.MarveaNube&&window.MarveaNube.sb; if(!sb||!sb.from) return 0; const {data,error}=await sb.from("apartados_web").select("cant").eq("codigo",cod).in("estado",["activo","pago"]); if(error) return 0; return (data||[]).reduce((s,r)=>s+(Number(r.cant)||0),0); }catch(e){ return 0; }
+  }
+  async function aReserva(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede mandar a Reservas",true); return false; }
+    const p=state.products.get(cod); if(!p){ toast("Ese producto ya no está en el inventario",true); return false; }
+    const c=await enCarritos(cod); if(c.length){ toast(`No se puede: ${cod} tiene piezas en ${c.length===1?"el carrito de "+c[0].cliente:c.length+" carritos abiertos"}. Sácalas primero.`,true); return false; }
+    const w=await enTienda(cod); if(w>0){ toast(`No se puede: ${cod} tiene ${w} pieza${w===1?"":"s"} apartada${w===1?"":"s"} en la tienda en línea. Intenta en unos minutos.`,true); return false; }
+    let x=null; try{ const d=await state.db.doc("productos/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
+    if(!x){ toast("No se encontró "+cod,true); return false; }
+    const now=ahora(); const data=Object.assign({},x,{codigo:cod,reservado:now,reservadoDesde:"inventario",actualizado:now});
+    try{ await state.db.doc("reservas/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo mandar a Reservas (¿hay internet?)",true); return false; }
+    const pv=window.__mvMov; window.__mvMov={motivo:"reserva",ref:"a reservas"};
+    try{ await state.db.doc("productos/"+cod).delete(); }
+    catch(e){ console.error(e); try{ await state.db.doc("reservas/"+cod).delete(); }catch(_){} toast("No se pudo mandar a Reservas; quedó en el inventario",true); return false; }
+    finally{ window.__mvMov=pv||null; }
+    state.products.delete(cod); state.reservas.set(cod,norm(cod,data)); try{ renderAll(); }catch(e){}
+    toast(cod+" pasó a Reservas ("+(Number(x.existencia)||0)+" pzas)"); repintar(); return true;
+  }
+  async function aInventario(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede integrar productos",true); return false; }
+    let x=null; try{ const d=await state.db.doc("reservas/"+cod).get(); x=d&&d.exists?d.data():null; }catch(e){}
+    if(!x){ toast("Ese producto ya no está en Reservas",true); return false; }
+    let ya=state.products.has(cod); try{ const d=await state.db.doc("productos/"+cod).get(); if(d&&d.exists) ya=true; }catch(e){}
+    if(ya){ toast(`Ya hay un producto ${cod} en el inventario; no se integró para no encimarlo`,true); return false; }
+    const now=ahora(); const data=Object.assign({},x,{codigo:cod,actualizado:now,integrado:now}); delete data.reservado; delete data.reservadoDesde;
+    try{ await state.db.doc("productos/"+cod).set(data); }catch(e){ console.error(e); toast("No se pudo integrar "+cod+" (¿hay internet?)",true); return false; }
+    try{ await state.db.doc("reservas/"+cod).delete(); }catch(e){ console.warn(e); }
+    state.reservas.delete(cod); try{ renderAll(); }catch(e){} return true;
+  }
+  window.mvRPAReserva=aReserva; window.mvRPAInventario=aInventario;
+  /* mvRPE (21-nov): editar y eliminar productos en Reservas (sistema web: botones y clic derecho / dos dedos; celular: en su hoja) */
+  window.mvRPCrudo=cod=>{ const x=crudo.get(cod); return x?Object.assign({codigo:cod},x):null; };
+  function editar(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede editar",true); return; }
+    const x=window.mvRPCrudo(cod); if(!x){ toast("Ese producto ya no está en Reservas",true); return; }
+    const p=Object.assign({},norm(cod,x),{codigo:cod}); startEdit(p); state.editingReserva=true;
+    const b=document.getElementById("btnSave"); if(b){ b.textContent="Guardar cambios (sigue en Reservas)"; b.classList.add("mvrp-btnres"); }
+    const m=document.getElementById("formMsg"); if(m) m.textContent="⏸ Editando un producto en Reservas: al guardar sigue sin venderse.";
+  }
+  async function borrar(cod){
+    if(!esAdmin()){ toast("Solo un administrador puede eliminar",true); return false; }
+    const x=window.mvRPCrudo(cod); if(!x){ toast("Ese producto ya no está en Reservas",true); return false; }
+    try{ await trashAdd({tipo:"reserva",nombre:x.nombre||cod,codigo:cod,data:Object.assign({},x,{codigo:cod})}); await state.db.doc("reservas/"+cod).delete(); }
+    catch(e){ console.error(e); toast("No se pudo eliminar "+cod+" (¿hay internet?)",true); return false; }
+    state.reservas.delete(cod); crudo.delete(cod); R.sel.delete(cod); try{ renderAll(); }catch(e){} toast(cod+" eliminado de Reservas (quedó en la Papelera)"); repintar(); return true;
+  }
+  function menuRes(e,p){ e.preventDefault(); e.stopPropagation(); if(!esAdmin()) return;
+    showMenu(e.clientX,e.clientY,p.codigo+" · "+p.nombre,[
+      {label:"Integrar al catálogo",run:()=>{ R.conf={tipo:"uno",cod:p.codigo}; pintarRes(); }},
+      {label:"Editar",run:()=>editar(p.codigo)},
+      ...(p.fotoId?[{label:"Ver foto en grande",run:()=>openLightbox(p,0)}]:[]),
+      "-",
+      {label:"Eliminar…",danger:true,confirm:`¿Eliminar ${p.codigo} de Reservas? Se va a la Papelera (de ahí se puede restaurar).`,options:[{label:"Sí, eliminar",run:()=>borrar(p.codigo)}]}]); }
+  window.mvRPEditar=editar; window.mvRPBorrar=borrar;
+
+  /* ---------- 2) Reservas ---------- */
+  const catN=c=>{ try{ return catName(c); }catch(e){ return c; } };
+  const ordenCats=()=>{ const l=(state.cats||[]).map(c=>c.p); return l; };
+  function pintarRes(){
+    const host=document.getElementById("mvRPRes"); if(!host) return;
+    const todos=[...state.reservas.values()].sort((a,b)=>String(b.reservado||b.creado).localeCompare(String(a.reservado||a.creado))||a.codigo.localeCompare(b.codigo));
+    const q=R.q.trim().toLowerCase(); const vis=todos.filter(p=>(!R.cat||p.categoria===R.cat)&&(!q||[p.codigo,p.nombre,p.palabra,p.material].join(" ").toLowerCase().includes(q)));
+    for(const c of [...R.sel]) if(!state.reservas.has(c)) R.sel.delete(c);
+    const pz=todos.reduce((s,p)=>s+p.existencia,0);
+    const buscar=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Buscar por nombre, código o palabra…",value:R.q});
+    buscar.addEventListener("input",()=>{ R.q=buscar.value; const pos=buscar.selectionStart; pintarRes(); const b=document.querySelector(".mvrp-buscar"); if(b){ b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} } });
+    const cats=[...new Set(todos.map(p=>p.categoria))]; const ord=ordenCats(); cats.sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
+    const sel=h("select",{class:"mvrp-sel","aria-label":"Categoría"},h("option",{value:""},"Todas las categorías"),...cats.map(c=>h("option",{value:c},catN(c)))); sel.value=R.cat; sel.addEventListener("change",()=>{ R.cat=sel.value; pintarRes(); });
+    const nSel=[...R.sel].length;
+    const barra=h("div",{class:"mvrp-barra"},buscar,sel,
+      esAdmin()?h("button",{type:"button",class:"btn",onclick:abrirMandar},"＋ Mandar del inventario"):null,
+      esAdmin()&&nSel?h("button",{type:"button",class:"btn primary",onclick:()=>{ R.conf={tipo:"varios"}; pintarRes(); }},"Integrar seleccionados ("+nSel+")"):null);
+    let confBox=null;
+    if(R.conf&&R.conf.tipo==="varios"){ const lista=[...R.sel].map(c=>state.reservas.get(c)).filter(Boolean); const tp=lista.reduce((s,p)=>s+p.existencia,0);
+      confBox=h("div",{class:"mvrp-conf"},h("span",null,`¿Integrar ${lista.length} producto${lista.length===1?"":"s"} (${tp} pzas) al inventario? Se ponen a la venta y se publican en el catálogo.`),
+        h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); let ok=0; for(const p of lista){ if(await aInventario(p.codigo)){ ok++; R.sel.delete(p.codigo); } } R.ocupado=false; R.conf=null; toast(ok+" producto"+(ok===1?"":"s")+" integrado"+(ok===1?"":"s")+" al catálogo"); pintarRes(); }},R.ocupado?"Integrando…":"Sí, integrar"),
+        h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No")); }
+    const tarjeta=p=>{
+      const chk=h("input",{type:"checkbox","aria-label":"Seleccionar "+p.codigo}); chk.checked=R.sel.has(p.codigo); chk.addEventListener("change",()=>{ if(chk.checked) R.sel.add(p.codigo); else R.sel.delete(p.codigo); pintarRes(); });
+      const foto=h("button",{type:"button",class:"mvrp-foto",title:p.fotoId?"Ver foto en grande":"Sin foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},imgOrPh(p));
+      const conf=R.conf&&R.conf.tipo==="uno"&&R.conf.cod===p.codigo;
+      const confB=R.conf&&R.conf.tipo==="borrar"&&R.conf.cod===p.codigo;
+      return h("div",{class:"mvrp-card"+(R.sel.has(p.codigo)?" on":""),oncontextmenu:e=>menuRes(e,p),title:"Clic derecho (dos dedos) para más opciones"},
+        esAdmin()?h("label",{class:"mvrp-chk"},chk):null, foto,
+        h("div",{class:"mvrp-info"},
+          h("div",{class:"mvrp-tags"},h("span",{class:"mvrp-cod"},p.codigo),p.palabra?h("span",{class:"mvrp-pal"},p.palabra):null),
+          h("b",{class:"mvrp-nom"},p.nombre),
+          h("div",{class:"mvrp-meta"},[catN(p.categoria),p.material].filter(Boolean).join(" · ")),
+          h("div",{class:"mvrp-num"},h("span",null,money(p.precio)),h("span",{class:"mvrp-pz"},p.existencia+" pza"+(p.existencia===1?"":"s"))),
+          h("small",{class:"mvrp-fecha"},"En Reservas desde "+fechaC(p.reservado||p.creado)+(p.reservadoDesde==="inventario"?" · venía del inventario":""))),
+        esAdmin()?(conf?h("div",{class:"mvrp-conf mini"},h("span",null,`¿Integrar con ${p.existencia} pzas?`),h("button",{type:"button",class:"btn sm primary",disabled:R.ocupado,onclick:async()=>{ R.ocupado=true; pintarRes(); const ok=await aInventario(p.codigo); R.ocupado=false; R.conf=null; if(ok) toast(p.codigo+" integrado al inventario y al catálogo"); pintarRes(); }},R.ocupado?"…":"Sí"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No"))
+          :confB?h("div",{class:"mvrp-conf mini"},h("span",null,`¿Eliminar ${p.codigo}? Se va a la Papelera.`),h("button",{type:"button",class:"btn sm danger",onclick:async()=>{ R.conf=null; await borrar(p.codigo); pintarRes(); }},"Sí, eliminar"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ R.conf=null; pintarRes(); }},"No"))
+          :h("div",{class:"mvrp-acc"},h("button",{type:"button",class:"btn sm mvrp-int",onclick:()=>{ R.conf={tipo:"uno",cod:p.codigo}; pintarRes(); }},"Integrar al catálogo"),
+            h("button",{type:"button",class:"btn sm ghost",onclick:()=>editar(p.codigo)},"Editar"),
+            h("button",{type:"button",class:"btn sm ghost mvrp-del",onclick:()=>{ R.conf={tipo:"borrar",cod:p.codigo}; pintarRes(); }},"Eliminar"))):null);
+    };
+    host.replaceChildren(...[
+      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Reservas"),h("p",null,"Productos registrados que todavía no están a la venta: no cuentan en el inventario, no salen en el catálogo ni en la tienda en línea, y no se pueden agregar a una venta. «Integrar al catálogo» los pone a la venta con sus piezas.")),
+        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(todos.length)),h("span",null,"productos")),h("div",null,h("b",null,String(pz)),h("span",null,"piezas")))),
+      barra,confBox,
+      vis.length?h("div",{class:"mvrp-grid"},...vis.map(tarjeta)):h("div",{class:"mvrp-vacio"},todos.length?"No hay productos en Reservas con esa búsqueda.":"No hay productos en Reservas. Al registrar un producto elige «No, a Reservas», o manda uno desde el inventario.")].filter(Boolean));
+  }
+  // ventana: mandar productos del inventario a Reservas
+  let capaM=null;
+  function abrirMandar(){
+    if(capaM) capaM.remove(); let q="", conf=null, ocupado=false;
+    const lista=h("div",{class:"mvrp-mlista"}); const inp=h("input",{type:"search",class:"mvrp-buscar",placeholder:"Busca el producto del inventario…"});
+    const pinta=()=>{ const t=q.trim().toLowerCase(); const ps=[...state.products.values()].filter(p=>!t||[p.codigo,p.nombre,p.palabra].join(" ").toLowerCase().includes(t)).sort((a,b)=>a.codigo.localeCompare(b.codigo)).slice(0,60);
+      lista.replaceChildren(...(ps.length?ps.map(p=>h("div",{class:"mvrp-mrow"},thumb(p),h("div",{class:"mvrp-minfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+(Number(p.existencia)||0)+" pzas")),
+        conf===p.codigo?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm primary",disabled:ocupado,onclick:async()=>{ ocupado=true; pinta(); await aReserva(p.codigo); ocupado=false; conf=null; pinta(); }},ocupado?"…":"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ conf=null; pinta(); }},"No"))
+        :h("button",{type:"button",class:"btn sm",onclick:()=>{ conf=p.codigo; pinta(); }},"⏸ Mandar a Reservas"))):[h("div",{class:"mvrp-vacio"},"Sin resultados")])); };
+    inp.addEventListener("input",()=>{ q=inp.value; conf=null; pinta(); });
+    const cerrar=()=>{ if(capaM){ capaM.remove(); capaM=null; } pintarRes(); };
+    const caja=h("div",{class:"mvrp-modal",role:"dialog","aria-label":"Mandar a Reservas"},h("div",{class:"mvrp-mcab"},h("h3",null,"Mandar del inventario a Reservas"),h("button",{type:"button",class:"mvrp-x","aria-label":"Cerrar",onclick:cerrar},"×")),
+      h("p",{class:"mvrp-ayuda"},"El producto sale del inventario, del catálogo y de la tienda en línea con todas sus piezas, y queda en Reservas hasta que lo vuelvas a integrar. No se puede si tiene piezas en un carrito abierto."),inp,lista);
+    capaM=h("div",{class:"mvrp-fondo"},caja); capaM.addEventListener("click",e=>{ if(e.target===capaM) cerrar(); }); document.body.append(capaM); pinta(); setTimeout(()=>inp.focus(),30);
+  }
+  // ficha del producto (Inventario): botón «Mandar a Reservas»
+  function envolverDrawer(){
+    if(typeof window.openDrawer!=="function"||window.openDrawer.__mvRP) return;
+    const o=window.openDrawer; const n=function(code){ const r=o.apply(this,arguments); try{ if(esAdmin()&&state.products.get(code)){ const d=document.querySelector("#drawerHost aside.drawer"); if(d&&!d.querySelector(".mvrp-dbox")){ const box=h("div",{class:"section mvrp-dbox"});
+        const base=()=>box.replaceChildren(h("h4",null,"Reservas"),h("p",{class:"mvrp-ayuda"},"Sácalo de la venta y del catálogo sin borrarlo; queda en «Registro de productos › Reservas»."),h("button",{type:"button",class:"btn",onclick:conf},"⏸ Mandar a Reservas"));
+        const conf=()=>box.replaceChildren(h("h4",null,"Reservas"),h("div",{class:"confirm",style:"margin-top:6px"},"¿Mandar "+code+" a Reservas? Sale del inventario y del catálogo con sus piezas.",h("button",{type:"button",class:"btn sm primary",onclick:async(e)=>{ e.target.disabled=true; if(await aReserva(code)){ try{ closeDrawer(); }catch(x){} } else base(); }},"Sí, a Reservas"),h("button",{type:"button",class:"btn sm ghost",onclick:base},"No")));
+        base(); d.append(box); } } }catch(e){ console.warn(e); } return r; };
+    n.__mvRP=true; window.openDrawer=n;
+  }
+  setInterval(envolverDrawer,1500); envolverDrawer();
+
+  /* ---------- 3) Por etiquetar ---------- */
+  function pendientes(){
+    const desde=state.etqDesde; if(!desde) return [];
+    const out=[]; const ver=(p,res)=>{ if(!p||!p.codigo) return; if(String(p.creado||"")<desde) return; if(state.etqHechas.has(p.codigo)) return; out.push(Object.assign({},p,{reserva:!!res})); };
+    for(const p of state.products.values()) ver(p,false); for(const p of state.reservas.values()) ver(p,true);
+    return out.sort((a,b)=>String(a.creado).localeCompare(String(b.creado))||a.codigo.localeCompare(b.codigo));
+  }
+  window.mvRPPendientes=pendientes;
+  async function marcar(codigos,motivo){
+    const now=ahora(); let quien=""; try{ quien=(JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}).usuario||""; }catch(e){}
+    let ok=0; for(const c of codigos){ try{ const d={codigo:c,fecha:now,motivo:motivo||"impresa",por:quien}; if(window.__mvEspejo&&window.__mvEspejo()&&window.MarveaNube&&window.MarveaNube.sb){ const r=await window.MarveaNube.sb.from("marvea_docs").upsert({col:"etiquetasHechas",id:c,data:d,actualizado:now}); if(r&&r.error) throw r.error; } else await state.db.doc("etiquetasHechas/"+c).set(d); state.etqHechas.set(c,{fecha:now}); ok++; }catch(e){ console.warn(e); } }
+    repintar(); return ok;
+  }
+  const E={ocupado:"",pdf:null,quitar:null};
+  async function imprimir(ps,clave){
+    if(!ps.length) return; if(E.ocupado) return; E.ocupado=clave||"x"; repintar();
+    try{ const preset=(typeof PRESETS!=="undefined"&&PRESETS.find(x=>x.id==="40x30"))||{id:"40x30",w:40,h:30};
+      const items=ps.map(p=>({p,copies:1})); let st="none"; try{ st=await printLabels(items,preset); }catch(e){ console.warn(e); st="error"; }
+      if(st==="printed"){ const n=await marcar(ps.map(p=>p.codigo),"impresa"); toast(n+" etiqueta"+(n===1?"":"s")+" impresa"+(n===1?"":"s")+" · salieron de «Por etiquetar»"); }
+      else if(st==="none"){ await saveLabels(items,preset,"etiquetas-"+(clave&&clave!=="todas"?String(clave).toLowerCase():"nuevas")+"-"+ps.length+".pdf"); E.pdf={clave,codigos:ps.map(p=>p.codigo)}; }
+      else if(st!=="cancelled") toast("No se imprimieron; siguen en la lista",true);
+    } finally{ E.ocupado=""; repintar(); }
+  }
+  /* ---------- 4) Impresión automática (24-nov-2026) ----------
+     Solo en la app de la Mac con la NIIMBOT: lo que se registre (laptop, celular o sistema en línea) desde que se prende
+     el interruptor sale solo en etiqueta 40 × 30 con su QR. Basta con tener la app abierta y la impresora prendida: si está
+     apagada, espera y la vuelve a buscar sola. Para que dos Macs no impriman la misma, cada etiqueta se «aparta» en la nube
+     (etiquetasHechas/<código>) antes de imprimirla; si la impresión falla, se suelta y regresa a «Por etiquetar». */
+  const nat=window.marveaNative;
+  const AUTO_OK=!!(nat&&nat.autoEtqGesto);
+  const AK="marvea.autoEtq";
+  const A={estado:"",msg:"",ocupado:false,prox:0,espera:0};
+  const autoDesde=()=>{ try{ return localStorage.getItem(AK)||""; }catch(e){ return ""; } };
+  if(AUTO_OK){ try{ if(localStorage.getItem(AK)===null) localStorage.setItem(AK,ahora()); }catch(e){} } // encendido de fábrica en la Mac
+  function setAuto(on){ try{ localStorage.setItem(AK,on?ahora():""); }catch(e){} A.estado=""; A.msg=""; A.prox=0; A.espera=0; repintar(); toast(on?"Impresión automática encendida: lo nuevo que registres sale solo en la NIIMBOT":"Impresión automática apagada en esta Mac"); }
+  const sbN=()=>window.MarveaNube&&window.MarveaNube.sb;
+  async function nubeApartar(c){ const sb=sbN(); if(!sb) return false; const now=ahora();
+    const r=await sb.from("marvea_docs").insert({col:"etiquetasHechas",id:c,data:{codigo:c,fecha:now,motivo:"imprimiendo (automática)",por:"Mac · automática"},actualizado:now});
+    if(r&&r.error){ if(String(r.error.code)!=="23505") console.warn("autoEtq apartar",r.error); return false; } state.etqHechas.set(c,{fecha:now}); return true; }
+  async function nubeListo(c){ const sb=sbN(); const now=ahora(); try{ await sb.from("marvea_docs").upsert({col:"etiquetasHechas",id:c,data:{codigo:c,fecha:now,motivo:"impresa (automática)",por:"Mac · automática"},actualizado:now}); }catch(e){ console.warn(e); } }
+  async function nubeSoltar(c){ const sb=sbN(); try{ await sb.from("marvea_docs").delete().eq("col","etiquetasHechas").eq("id",c); }catch(e){ console.warn(e); } state.etqHechas.delete(c); }
+  const autoPend=()=>{ const d=autoDesde(); if(!d) return []; return pendientes().filter(p=>String(p.creado||"")>=d); };
+  // corre dentro de un «clic» que hace la app (main.js) para que la Mac deje conectar la impresora sin que nadie toque nada
+  window.__mvAutoEtqGesto=async()=>{
+    if(A.ocupado||E.ocupado) return false; const nb=window.__niimbot; if(!nb||!nb.listo) return false;
+    A.ocupado=true;
+    try{
+      if(!autoPend().length) return false;
+      if(!(await nb.listo())){ A.estado="espera"; A.msg="Esperando la impresora: préndela (y cierra la app de NIIMBOT)"; A.espera=Math.min(120000,(A.espera||15000)*1.5); A.prox=Date.now()+A.espera; return false; }
+      A.espera=0; const ps=autoPend().slice(0,20); const mios=[];
+      for(const p of ps){ if(state.etqHechas.has(p.codigo)) continue; if(await nubeApartar(p.codigo)) mios.push(p); }
+      if(!mios.length){ repintar(); return false; }
+      A.estado="imprimiendo"; A.msg="Imprimiendo "+mios.length+" etiqueta"+(mios.length===1?"":"s")+"…"; repintar();
+      const preset=(typeof PRESETS!=="undefined"&&PRESETS.find(x=>x.id==="40x30"))||{id:"40x30",w:40,h:30};
+      let st="error"; try{ st=await printLabels(mios.map(p=>({p,copies:1})),preset); }catch(e){ console.warn(e); }
+      if(st==="printed"){ for(const p of mios) await nubeListo(p.codigo); A.estado="ok"; A.msg="Última: "+mios.map(p=>p.codigo).join(", ")+" · "+new Date().toLocaleTimeString("es-MX",{hour:"numeric",minute:"2-digit"}); }
+      else { for(const p of mios) await nubeSoltar(p.codigo); A.estado="error"; A.msg="No salió la impresión; se vuelve a intentar en 1 minuto (siguen en la lista)"; A.prox=Date.now()+60000; }
+      return true;
+    } catch(e){ console.warn("autoEtq",e); return false; }
+    finally{ A.ocupado=false; repintar(); }
+  };
+  if(AUTO_OK) setInterval(()=>{ try{ if(!autoDesde()||A.ocupado||E.ocupado||Date.now()<A.prox||!state.db) return; if(!autoPend().length){ if(A.estado==="espera"){ A.estado=""; A.msg=""; repintar(); } return; } nat.autoEtqGesto(); }catch(e){} },4000);
+  function cajaAuto(){
+    if(!AUTO_OK) return null; const on=!!autoDesde();
+    const n=on?autoPend().length:0;
+    const linea=!on?"Apagada: las etiquetas se imprimen con los botones de abajo."
+      :A.msg?A.msg:n?"Preparando "+n+" etiqueta"+(n===1?"":"s")+"…":"Lista. Lo que registres desde el "+fechaL(autoDesde())+" (aquí, en el celular o en línea) sale solo en la NIIMBOT.";
+    return h("div",{class:"mvrp-auto"+(on?" on":"")+(A.estado==="espera"||A.estado==="error"?" warn":"")},
+      h("label",{class:"mvrp-auto-sw"},h("input",{type:"checkbox",checked:on,onchange:e=>setAuto(e.target.checked)}),h("span",null,"🖨️ Imprimir en automático en esta Mac")),
+      h("small",null,linea));
+  }
+  function pintarEtq(){
+    const host=document.getElementById("mvRPEtq"); if(!host) return;
+    const ps=pendientes(); const grupos=new Map(); for(const p of ps){ if(!grupos.has(p.categoria)) grupos.set(p.categoria,[]); grupos.get(p.categoria).push(p); }
+    const ord=ordenCats(); const cats=[...grupos.keys()].sort((a,b)=>(ord.indexOf(a)+1||99)-(ord.indexOf(b)+1||99));
+    const pdfBox=E.pdf?h("div",{class:"mvrp-conf"},h("span",null,`Se descargó el PDF con ${E.pdf.codigos.length} etiqueta${E.pdf.codigos.length===1?"":"s"}. ¿Ya las imprimiste?`),
+      h("button",{type:"button",class:"btn sm primary",onclick:async()=>{ const c=E.pdf.codigos; E.pdf=null; const n=await marcar(c,"impresa (PDF)"); toast(n+" salieron de la lista"); }},"Sí, quitarlas de la lista"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.pdf=null; repintar(); }},"Todavía no")):null;
+    const fila=p=>{ const q=E.quitar===p.codigo; return h("div",{class:"mvrp-erow"},h("button",{type:"button",class:"mvrp-efoto",title:"Ver foto",onclick:()=>{ if(p.fotoId) openLightbox(p,0); }},thumb(p)),
+      h("div",{class:"mvrp-einfo"},h("b",null,p.nombre),h("small",null,p.codigo+(p.palabra?" · "+p.palabra:"")+" · "+p.existencia+" pza"+(p.existencia===1?"":"s")+" · "+money(p.precio))),
+      p.reserva?h("span",{class:"mvrp-chip res"},"⏸ Reserva"):h("span",{class:"mvrp-chip inv"},"Inventario"),
+      q?h("span",{class:"mvrp-conf mini"},h("button",{type:"button",class:"btn sm",onclick:async()=>{ E.quitar=null; await marcar([p.codigo],"quitada a mano"); }},"Quitar"),h("button",{type:"button",class:"btn sm ghost",onclick:()=>{ E.quitar=null; repintar(); }},"No"))
+        :h("button",{type:"button",class:"mvrp-q",title:"Quitar de la lista sin imprimir",onclick:()=>{ E.quitar=p.codigo; repintar(); }},"✕")); };
+    const grupo=c=>{ const l=grupos.get(c); return h("section",{class:"mvrp-grupo"},
+      h("div",{class:"mvrp-ghead"},h("h3",null,catN(c)," ",h("span",{class:"mvrp-n"},String(l.length))),
+        h("button",{type:"button",class:"btn sm primary",disabled:!!E.ocupado,onclick:()=>imprimir(l,c)},E.ocupado===c?"Imprimiendo…":"🏷️ Imprimir "+l.length+" (40 × 30)")),
+      h("div",{class:"mvrp-elist"},...l.map(fila))); };
+    host.replaceChildren(...[
+      h("div",{class:"mvrp-head"},h("div",null,h("h2",null,"Por etiquetar"),h("p",null,"Productos nuevos registrados"+(state.etqDesde?" desde el "+fechaL(state.etqDesde):"")+", por categoría. Se imprime 1 etiqueta 40 × 30 por producto; al imprimirse salen de esta lista.")),
+        h("div",{class:"mvrp-kpis"},h("div",null,h("b",null,String(ps.length)),h("span",null,"etiquetas")),h("div",null,h("b",null,String(cats.length)),h("span",null,"categorías")))),
+      cajaAuto(),
+      ps.length?h("div",{class:"mvrp-barra"},h("button",{type:"button",class:"btn primary",disabled:!!E.ocupado,onclick:()=>imprimir(ps,"todas")},E.ocupado==="todas"?"Imprimiendo…":"🏷️ Imprimir todas ("+ps.length+")")):null,
+      pdfBox,
+      ps.length?h("div",{class:"mvrp-grupos"},...cats.map(grupo)):h("div",{class:"mvrp-vacio"},state.etqDesde?"No hay etiquetas pendientes. Lo que registres en «Nuevo producto» (aquí o desde el celular) aparece aquí por categoría.":"Preparando la lista…")].filter(Boolean));
+  }
+  // cuando llegan productos nuevos, se actualiza la lista si está a la vista
+  (function(){ let ult=0; setInterval(()=>{ try{ if(state.view!=="etq"&&state.view!=="res") return; const n=(state.products?state.products.size:0)*7+state.reservas.size*13+state.etqHechas.size; if(n!==ult){ ult=n; repintar(); } }catch(e){} },1500); })();
+})();
+</script>
+<style id="mv-notas-css">
+/* mvNotas · notas compartidas (letra Aptos; si el equipo no la tiene, la más parecida del sistema) */
+#mvNotasBtn{position:fixed;right:22px;bottom:22px;z-index:900;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px 11px 14px;
+  background:rgba(90,39,72,.92);color:#fff;font:600 14px Aptos,"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;cursor:pointer;
+  box-shadow:0 10px 30px rgba(90,39,72,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#mvNotasBtn svg{width:18px;height:18px}
+#mvNotasBtn b{min-width:20px;height:20px;border-radius:10px;background:#F2653F;color:#fff;font-size:12px;display:grid;place-items:center;padding:0 6px}
+#mvNotasBtn[hidden]{display:none}
+#mvNotasCapa{position:fixed;inset:0;z-index:2147483000;font-family:var(--mvn-f);color:#1D1D1F;-webkit-font-smoothing:antialiased}
+#mvNotasCapa[hidden]{display:none}
+#mvNotasCapa *{box-sizing:border-box}
+.mvn-velo{position:absolute;inset:0;background:rgba(0,0,0,.28);opacity:0;transition:opacity .25s}
+#mvNotasCapa.on .mvn-velo{opacity:1}
+.mvn-hoja{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  box-shadow:-20px 0 60px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+#mvNotasCapa.on .mvn-hoja{transform:none}
+.mvn-grip{display:none}
+.mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 20px 8px}
+.mvn-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#5A2748}
+.mvn-sub{margin:2px 0 0;font-size:13px;color:#6E6E73}
+.mvn-x{border:0;background:#F2F2F7;width:32px;height:32px;border-radius:50%;font-size:14px;color:#6E6E73;cursor:pointer;flex:none}
+.mvn-nueva{display:flex;gap:8px;align-items:flex-end;margin:8px 16px 6px;padding:8px;border-radius:16px;background:#F2F2F7}
+.mvn-nueva textarea{flex:1;border:0;background:transparent;resize:none;font:16px var(--mvn-f);line-height:1.35;padding:6px 6px;outline:none;color:#1D1D1F;min-height:32px}
+.mvn-nueva button{border:0;border-radius:12px;background:#5A2748;color:#fff;font:600 15px var(--mvn-f);padding:8px 14px;cursor:pointer}
+.mvn-lista{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px calc(24px + env(safe-area-inset-bottom))}
+.mvn-fila{display:flex;align-items:flex-start;gap:10px;padding:12px 8px;border-bottom:1px solid rgba(0,0,0,.06)}
+.mvn-circ{flex:none;border:0;background:transparent;padding:0;width:28px;height:28px;cursor:pointer;margin-top:-2px}
+.mvn-circ svg{width:28px;height:28px;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mvn-circ circle{stroke:#C7C7CC;stroke-width:1.6}
+.mvn-circ path{stroke:transparent;stroke-width:2.2}
+.mvn-fila.hecha .mvn-circ circle{fill:#5A2748;stroke:#5A2748}
+.mvn-fila.hecha .mvn-circ path{stroke:#fff}
+.mvn-txt{flex:1;min-width:0}
+.mvn-t{font-size:16px;line-height:1.35;word-wrap:break-word;overflow-wrap:anywhere}
+.mvn-fila.hecha .mvn-t{text-decoration:line-through;text-decoration-color:#8E8E93;color:#8E8E93}
+.mvn-txt small{display:block;margin-top:3px;font-size:12px;color:#8E8E93}
+.mvn-del{flex:none;border:0;background:transparent;color:#C7C7CC;font-size:13px;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.mvn-del:active,.mvn-del:hover{background:#F2F2F7;color:#D70015}
+.mvn-vacio{padding:28px 14px;text-align:center;color:#8E8E93;font-size:15px;line-height:1.4}
+.mvn-hechash{display:flex;justify-content:space-between;align-items:center;padding:16px 8px 4px}
+.mvn-hechash button{border:0;background:transparent;color:#5A2748;font:600 14px var(--mvn-f);cursor:pointer;padding:4px 0}
+.mvn-hechash button.rojo{color:#D70015}
+@media (max-width:640px){
+  .mvn-hoja{top:auto;left:0;right:0;width:auto;height:calc(100% - 44px - env(safe-area-inset-top));border-radius:22px 22px 0 0;transform:translateY(102%);box-shadow:0 -20px 60px rgba(0,0,0,.18)}
+  #mvNotasCapa.on .mvn-hoja{transform:none}
+  .mvn-grip{display:block;width:38px;height:5px;border-radius:3px;background:#D1D1D6;margin:8px auto 0}
+  .mvn-logo{text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 0;line-height:0}
+.mvn-logo img{height:26px;width:auto}
+.mvn-head{padding-top:10px}
+  #mvNotasBtn{right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
+</style>
+<script id="mv-notas-js">
+/* ===== mvNotas · Notas compartidas entre administradores (20-nov-2026) =====
+   Viven en la nube (marvea_docs, colección «notas») y llegan en vivo a todos los equipos de los administradores:
+   sistema en línea, Marvea Vende (iPhone/iPad) y la app de la Mac. Un círculo marca cada nota como hecha (queda tachada).
+   Sistema en línea: botón flotante «Notas» abajo a la derecha. Marvea Vende: menú ☰ › Notas (el botón flotante se oculta). */
+(function(){
+  if(window.mvNotas) return;
+  const LETRA='Aptos,"Aptos Display","Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif';
+  const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const perfil=()=>{ try{ return JSON.parse(localStorage.getItem("marvea.perfil")||"null")||{}; }catch(e){ return {}; } };
+  const rol=()=>{ try{ if(window.MarveaNube&&typeof window.MarveaNube.rol==="function"){ const r=window.MarveaNube.rol(); if(r) return r; } }catch(e){} return perfil().rol||""; };
+  const esAdmin=()=>{ const r=rol(); return !r||r==="administrador"; };
+  const yo=()=>{ const p=perfil(); return String(p.usuario||"").toUpperCase()||"YO"; };
+  const db=()=>window.state&&window.state.db||(typeof state!=="undefined"?state.db:null);
+  const aviso=(m,mal)=>{ try{ toast(m,mal); }catch(e){} };
+  const cuando=iso=>{ const t=Date.parse(iso||""); if(!t) return ""; const s=Math.round((Date.now()-t)/1000);
+    if(s<60) return "ahora"; if(s<3600) return "hace "+Math.round(s/60)+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h";
+    return new Date(t).toLocaleDateString("es-MX",{day:"numeric",month:"short"}); };
+
+  const N={ lista:new Map(), cbs:new Set(), suscrito:false, cargado:false, abierta:false, verHechas:false, ocupado:new Set() };
+  function avisar(){ for(const f of N.cbs){ try{ f(); }catch(e){ console.warn(e); } } pintar(); pintarBoton(); }
+  function suscribir(){
+    const d=db(); if(N.suscrito||!d) return; N.suscrito=true;
+    try{ d.collection("notas").onSnapshot(s=>{ const m=new Map(); for(const x of s.docs){ const v=x.data(); if(v&&typeof v.texto==="string") m.set(x.id,Object.assign({id:x.id},v)); } N.lista=m; N.cargado=true; avisar(); },e=>console.warn("notas",e)); }catch(e){ console.warn(e); N.suscrito=false; }
+  }
+  (function(){ const t=setInterval(()=>{ if(db()){ clearInterval(t); suscribir(); } },400); })();
+
+  const ordenadas=()=>{ const l=[...N.lista.values()];
+    const pend=l.filter(x=>!x.hecha).sort((a,b)=>String(b.creado||"").localeCompare(String(a.creado||"")));
+    const hechas=l.filter(x=>x.hecha).sort((a,b)=>String(b.hechaEn||b.creado||"").localeCompare(String(a.hechaEn||a.creado||"")));
+    return {pend,hechas}; };
+  async function agregar(texto){ texto=String(texto||"").trim().slice(0,600); if(!texto) return false; const d=db(); if(!d){ aviso("Sin conexión con la nube",true); return false; }
+    const ahora=new Date().toISOString(); const id="N"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    const nota={texto,hecha:false,autor:yo(),creado:ahora,actualizado:ahora};
+    N.lista.set(id,Object.assign({id},nota)); avisar();
+    try{ await d.doc("notas/"+id).set(nota); return true; }catch(e){ N.lista.delete(id); avisar(); aviso("No se guardó la nota (¿hay internet?)",true); return false; } }
+  async function alternar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d||N.ocupado.has(id)) return; N.ocupado.add(id);
+    const ahora=new Date().toISOString(); const nuevo=Object.assign({},x,{hecha:!x.hecha,actualizado:ahora}); if(nuevo.hecha){ nuevo.hechaPor=yo(); nuevo.hechaEn=ahora; } else { delete nuevo.hechaPor; delete nuevo.hechaEn; }
+    N.lista.set(id,nuevo); avisar(); const datos=Object.assign({},nuevo); delete datos.id;
+    try{ await d.doc("notas/"+id).set(datos); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo marcar (¿hay internet?)",true); } finally{ N.ocupado.delete(id); } }
+  async function borrar(id){ const x=N.lista.get(id); const d=db(); if(!x||!d) return; N.lista.delete(id); avisar();
+    try{ await d.doc("notas/"+id).delete(); }catch(e){ N.lista.set(id,x); avisar(); aviso("No se pudo borrar (¿hay internet?)",true); } }
+  async function borrarHechas(){ const {hechas}=ordenadas(); if(!hechas.length) return; if(!confirm("¿Borrar las "+hechas.length+" nota(s) hechas? Se borran para todos los administradores.")) return; for(const x of hechas) await borrar(x.id); }
+
+  /* ---------- ventana ---------- */
+  let capa=null;
+  function abrir(){ if(!esAdmin()){ aviso("Las notas son solo para administradores",true); return; } suscribir(); N.abierta=true; if(!capa){ capa=document.createElement("div"); capa.id="mvNotasCapa"; capa.innerHTML=
+      '<div class="mvn-velo"></div><section class="mvn-hoja" role="dialog" aria-label="Notas"><div class="mvn-grip"></div><div class="mvn-logo"><img src="logo-marvea-letras.png" alt="Marvea"></div>'+
+      '<header class="mvn-head"><div><h2>Notas</h2><p class="mvn-sub"></p></div><button type="button" class="mvn-x" aria-label="Cerrar">✕</button></header>'+
+      '<form class="mvn-nueva" autocomplete="off"><textarea rows="1" maxlength="600" placeholder="Escribe una nota o tarea…" enterkeyhint="send"></textarea><button type="submit" aria-label="Agregar">Agregar</button></form>'+
+      '<div class="mvn-lista"></div></section>';
+      document.body.append(capa);
+      capa.style.setProperty("--mvn-f",LETRA);
+      capa.querySelector(".mvn-velo").onclick=cerrar; capa.querySelector(".mvn-x").onclick=cerrar;
+      const ta=capa.querySelector("textarea"), fm=capa.querySelector("form");
+      const crecer=()=>{ ta.style.height="auto"; ta.style.height=Math.min(140,ta.scrollHeight)+"px"; };
+      ta.addEventListener("input",crecer);
+      ta.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); fm.requestSubmit?fm.requestSubmit():fm.dispatchEvent(new Event("submit",{cancelable:true})); } });
+      fm.addEventListener("submit",async e=>{ e.preventDefault(); const t=ta.value.trim(); if(!t) return; ta.value=""; crecer(); await agregar(t); });
+      capa.querySelector(".mvn-lista").addEventListener("click",e=>{ const b=e.target.closest("[data-acc]"); if(!b) return; const id=b.closest("[data-id]")&&b.closest("[data-id]").dataset.id;
+        if(b.dataset.acc==="hecha") alternar(id); else if(b.dataset.acc==="borrar"){ if(confirm("¿Borrar esta nota para todos?")) borrar(id); }
+        else if(b.dataset.acc==="ver"){ N.verHechas=!N.verHechas; pintar(); } else if(b.dataset.acc==="limpiar") borrarHechas(); });
+      document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&N.abierta) cerrar(); });
+    }
+    capa.classList.remove("on"); capa.hidden=false; pintar(); requestAnimationFrame(()=>requestAnimationFrame(()=>capa.classList.add("on")));
+    try{ document.documentElement.classList.add("mvn-quieto"); }catch(e){}
+  }
+  function cerrar(){ N.abierta=false; if(!capa) return; capa.classList.remove("on"); try{ document.documentElement.classList.remove("mvn-quieto"); }catch(e){} setTimeout(()=>{ if(!N.abierta&&capa) capa.hidden=true; },260); for(const f of N.cbs){ try{ f(); }catch(e){} } }
+  const CIRC='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg>';
+  function fila(x){ const meta=[x.autor||"",cuando(x.creado)].filter(Boolean).join(" · ")+(x.hecha&&x.hechaPor?" · hecha por "+x.hechaPor+(x.hechaEn?" "+cuando(x.hechaEn):""):"");
+    return '<div class="mvn-fila'+(x.hecha?" hecha":"")+'" data-id="'+esc(x.id)+'"><button type="button" class="mvn-circ" data-acc="hecha" aria-label="'+(x.hecha?"Marcar pendiente":"Marcar hecha")+'">'+CIRC+'</button>'+
+      '<div class="mvn-txt"><div class="mvn-t">'+esc(x.texto).replace(/\n/g,"<br>")+'</div><small>'+esc(meta)+'</small></div><button type="button" class="mvn-del" data-acc="borrar" aria-label="Borrar nota">✕</button></div>'; }
+  function pintar(){ if(!capa||capa.hidden&&!N.abierta) return; const {pend,hechas}=ordenadas();
+    capa.querySelector(".mvn-sub").textContent=!N.cargado?"Cargando…":pend.length?(pend.length===1?"1 pendiente":pend.length+" pendientes")+" · se comparten en vivo con los administradores":"Todo hecho · se comparten en vivo con los administradores";
+    const l=capa.querySelector(".mvn-lista");
+    let html=pend.length?pend.map(fila).join(""):(N.cargado?'<div class="mvn-vacio">Sin pendientes. Escribe arriba una nota o tarea y le aparecerá a los demás administradores.</div>':"");
+    if(hechas.length) html+='<div class="mvn-hechash"><button type="button" data-acc="ver">'+(N.verHechas?"Ocultar":"Ver")+' hechas ('+hechas.length+')</button>'+(N.verHechas?'<button type="button" class="rojo" data-acc="limpiar">Borrar hechas</button>':"")+'</div>'+(N.verHechas?hechas.map(fila).join(""):"");
+    l.innerHTML=html; }
+  setInterval(()=>{ if(N.abierta) pintar(); },60000);
+
+  /* ---------- botón flotante (sistema en línea / Mac) ---------- */
+  let boton=null;
+  function pintarBoton(){ if(document.body&&document.body.classList.contains("vx-on")){ if(boton) boton.hidden=true; return; }
+    if(!esAdmin()||!db()){ if(boton) boton.hidden=true; return; }
+    if(!boton){ boton=document.createElement("button"); boton.type="button"; boton.id="mvNotasBtn"; boton.setAttribute("aria-label","Notas"); boton.onclick=abrir; document.body.append(boton); }
+    const n=ordenadas().pend.length; boton.hidden=false; boton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg><span>Notas</span>'+(n?'<b>'+n+'</b>':''); }
+  setInterval(pintarBoton,1500);
+
+  window.mvNotas={ abrir, cerrar, agregar, alternar, borrar, abierta:()=>N.abierta, pendientes:()=>ordenadas().pend.length, lista:()=>ordenadas(), alCambiar:f=>{ N.cbs.add(f); return ()=>N.cbs.delete(f); } };
 })();
 </script>
 </body></html>
