@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T20:25:03.206Z",
+ "actualizado": "2026-11-24T20:55:03.776Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -182,6 +182,18 @@
    "notas": "",
    "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
    "creado": "2026-11-21T22:10:23.355Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00054",
+   "nombre": "Media Churumbela Multishape Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e42138cc41856f8b00a6c3e19bc78db3.jpg",
+   "creado": "2026-11-21T22:12:35.371Z",
    "disponible": true
   },
   {
@@ -1249,7 +1261,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/68b89202ce19c55bfaabb1695fd4ca7c.jpg",
    "creado": "2026-10-20T18:57:03.088Z",
@@ -1261,7 +1273,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
@@ -1292,6 +1304,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00060",
+   "nombre": "Cadena Piedras de colores",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 100,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
+   "creado": "2026-11-17T20:03:04.206Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00061",
    "nombre": "Collar Tou Rosa",
    "categoria": "COL",
@@ -1309,7 +1333,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 100,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Favoritos del Live",
    "notas": "",
    "foto": "fotos/031e0c1612b353c50877c2116a047278.jpg",
    "creado": "2026-11-17T20:06:10.658Z",
