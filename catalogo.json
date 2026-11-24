@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T17:50:03.052Z",
+ "actualizado": "2026-11-24T18:05:03.721Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -226,7 +226,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
@@ -269,6 +269,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00023",
+   "nombre": "Aretes Xuping  Verde Esmeralda",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
+   "creado": "2026-10-20T23:06:31.619Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00026",
    "nombre": "Aretes Xuping  Corazón Negro",
    "categoria": "ARE",
@@ -278,6 +290,18 @@
    "notas": "",
    "foto": "fotos/2efc4e38768544719976c06b59927940.jpg",
    "creado": "2026-10-20T23:08:48.845Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00027",
+   "nombre": "Aretes Xuping Café",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/85bd536aa161445d5c5caa4ae22d6b8d.jpg",
+   "creado": "2026-10-20T23:09:32.970Z",
    "disponible": true
   },
   {
@@ -314,6 +338,18 @@
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00031",
+   "nombre": "Aretes Xuping  Elegante Negro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
+   "creado": "2026-10-20T23:12:55.345Z",
    "disponible": true
   },
   {
@@ -365,6 +401,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00044",
+   "nombre": "Aretes Xuping  Botón Marrón",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
+   "creado": "2026-10-20T23:29:23.461Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00045",
    "nombre": "Aretes Xuping  Marmol Gota",
    "categoria": "ARE",
@@ -382,7 +430,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/3381139ec490a66319471e67b736bc37.jpg",
    "creado": "2026-10-20T23:34:00.795Z",
@@ -922,7 +970,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
    "creado": "2026-11-07T20:26:02.349Z",
@@ -977,6 +1025,18 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00020",
+   "nombre": "Cadena Barbada Mini 45cm",
+   "categoria": "CAD",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/054361c2c5e97d2c21d8b4a675e14573.jpg",
+   "creado": "2026-11-07T20:38:34.240Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00021",
    "nombre": "Cadena Torzal Brillosa 45cm",
    "categoria": "CAD",
@@ -1025,6 +1085,19 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00025",
+   "nombre": "Gargantilla omega Brillante Dorada Xuping",
+   "categoria": "CAD",
+   "material": "Oro laminado",
+   "precio": 75,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9745a9abbf5426b98b8c323d69da8ce8.jpg",
+   "foto2": "fotos/aeab99af349e9695c700dd9da8f72d27.jpg",
+   "creado": "2026-11-21T19:55:16.699Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00026",
    "nombre": "Gargantilla omega Brillante Plateada Xuping",
    "categoria": "CAD",
@@ -1035,6 +1108,19 @@
    "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
    "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
    "creado": "2026-11-21T19:56:04.817Z",
+   "disponible": true
+  },
+  {
+   "codigo": "CAD-00027",
+   "nombre": "Cadena Panza de Vibora",
+   "categoria": "CAD",
+   "material": "",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf4a7a961f2726819c5557cbc17cf367.jpg",
+   "foto2": "fotos/444ed7921c296b6b8180ee78417b6933.jpg",
+   "creado": "2026-11-21T21:34:54.379Z",
    "disponible": true
   },
   {
@@ -1091,7 +1177,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
@@ -1175,7 +1261,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/68b89202ce19c55bfaabb1695fd4ca7c.jpg",
    "creado": "2026-10-20T18:57:03.088Z",
@@ -1187,7 +1273,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
@@ -1646,6 +1732,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00003",
+   "nombre": "Pulsera de Ojitos de Colores",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/3132e4ab1cb208237724fa73ea06a177.jpg",
+   "creado": "2026-10-19T01:49:15.049Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00005",
    "nombre": "Pulsera de Ojitos Rojos",
    "categoria": "PUL",
@@ -1675,10 +1773,22 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00016",
+   "nombre": "Pulsera de Perlitas",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 30,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
+   "creado": "2026-10-20T18:05:28.659Z",
    "disponible": true
   },
   {
@@ -1771,7 +1881,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
@@ -1874,6 +1984,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00058",
+   "nombre": "Brazalete Cartier con Rayas y Brillo Plateado",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/a1d0ed08814058e0051c5d6bc8ef9f73.jpg",
+   "creado": "2026-11-17T23:54:00.408Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00059",
    "nombre": "Trio de pulseras Tou",
    "categoria": "PUL",
@@ -1966,7 +2088,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/eae0cdc782f79ad67d6372bb77446402.jpg",
    "creado": "2026-11-21T23:16:21.133Z",
