@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T17:35:03.576Z",
+ "actualizado": "2026-11-24T17:50:03.052Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -922,7 +922,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
    "creado": "2026-11-07T20:26:02.349Z",
@@ -977,18 +977,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00020",
-   "nombre": "Cadena Barbada Mini 45cm",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/054361c2c5e97d2c21d8b4a675e14573.jpg",
-   "creado": "2026-11-07T20:38:34.240Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00021",
    "nombre": "Cadena Torzal Brillosa 45cm",
    "categoria": "CAD",
@@ -1037,19 +1025,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00025",
-   "nombre": "Gargantilla omega Brillante Dorada Xuping",
-   "categoria": "CAD",
-   "material": "Oro laminado",
-   "precio": 75,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9745a9abbf5426b98b8c323d69da8ce8.jpg",
-   "foto2": "fotos/aeab99af349e9695c700dd9da8f72d27.jpg",
-   "creado": "2026-11-21T19:55:16.699Z",
-   "disponible": true
-  },
-  {
    "codigo": "CAD-00026",
    "nombre": "Gargantilla omega Brillante Plateada Xuping",
    "categoria": "CAD",
@@ -1060,19 +1035,6 @@
    "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
    "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
    "creado": "2026-11-21T19:56:04.817Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00027",
-   "nombre": "Cadena Panza de Vibora",
-   "categoria": "CAD",
-   "material": "",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bf4a7a961f2726819c5557cbc17cf367.jpg",
-   "foto2": "fotos/444ed7921c296b6b8180ee78417b6933.jpg",
-   "creado": "2026-11-21T21:34:54.379Z",
    "disponible": true
   },
   {
@@ -1129,7 +1091,7 @@
    "categoria": "CAD",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/67ede3a771efdca5ba0b186e65553427.jpg",
    "creado": "2026-10-19T02:25:46.170Z",
@@ -1213,7 +1175,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/68b89202ce19c55bfaabb1695fd4ca7c.jpg",
    "creado": "2026-10-20T18:57:03.088Z",
@@ -1225,7 +1187,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
@@ -1713,7 +1675,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
@@ -1912,18 +1874,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00058",
-   "nombre": "Brazalete Cartier con Rayas y Brillo Plateado",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a1d0ed08814058e0051c5d6bc8ef9f73.jpg",
-   "creado": "2026-11-17T23:54:00.408Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00059",
    "nombre": "Trio de pulseras Tou",
    "categoria": "PUL",
@@ -2016,7 +1966,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eae0cdc782f79ad67d6372bb77446402.jpg",
    "creado": "2026-11-21T23:16:21.133Z",
