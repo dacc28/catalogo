@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T22:50:05.014Z",
+ "actualizado": "2026-11-24T23:05:03.814Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -214,7 +214,7 @@
    "categoria": "ANI",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/c17421ca38c37c73f843e7b8fa7df011.jpg",
    "creado": "2026-11-21T22:19:54.529Z",
@@ -598,7 +598,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/70d30cbc064b5a2e2cbb1562fe64b3cc.jpg",
    "creado": "2026-11-07T21:41:09.711Z",
@@ -941,6 +941,19 @@
    "disponible": true
   },
   {
+   "codigo": "CAD-00025",
+   "nombre": "Gargantilla omega Brillante Dorada Xuping",
+   "categoria": "CAD",
+   "material": "Oro laminado",
+   "precio": 75,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/9745a9abbf5426b98b8c323d69da8ce8.jpg",
+   "foto2": "fotos/aeab99af349e9695c700dd9da8f72d27.jpg",
+   "creado": "2026-11-21T19:55:16.699Z",
+   "disponible": true
+  },
+  {
    "codigo": "CAD-00026",
    "nombre": "Gargantilla omega Brillante Plateada Xuping",
    "categoria": "CAD",
@@ -1144,6 +1157,18 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00061",
+   "nombre": "Collar Tou Rosa",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 100,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/346c39e325be4f1b5d738781ad973efc.jpg",
+   "creado": "2026-11-17T20:03:44.344Z",
    "disponible": true
   },
   {
@@ -1608,18 +1633,6 @@
    "notas": "",
    "foto": "fotos/4fdf1902b77d64794e90065717cc685d.jpg",
    "creado": "2026-11-01T20:57:30.191Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00032",
-   "nombre": "Brazalete 3 Hilos",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
-   "creado": "2026-11-01T21:06:01.761Z",
    "disponible": true
   },
   {
