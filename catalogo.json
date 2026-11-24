@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T22:35:03.482Z",
+ "actualizado": "2026-11-24T22:50:05.014Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -221,18 +221,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00004",
-   "nombre": "Aretes Verde Manzana",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
-   "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00013",
    "nombre": "Arracadas Bicolor",
    "categoria": "ARE",
@@ -242,42 +230,6 @@
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00021",
-   "nombre": "Aretes Cuadrado",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
-   "creado": "2026-10-20T17:21:24.337Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00022",
-   "nombre": "Aretes Xuping  triangulo blanco",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/d0f74768f08a10e1721efd0f75841208.jpg",
-   "creado": "2026-10-20T23:05:34.760Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00023",
-   "nombre": "Aretes Xuping  Verde Esmeralda",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/263997a1f27f94a10a9c0992231e4334.jpg",
-   "creado": "2026-10-20T23:06:31.619Z",
    "disponible": true
   },
   {
@@ -305,18 +257,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00028",
-   "nombre": "Aretes Xuping Marmoleados",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/5feed9707890ac67c83d2085fad5b4c0.jpg",
-   "creado": "2026-10-20T23:10:20.995Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00029",
    "nombre": "Aretes Xuping  Corazón Menta",
    "categoria": "ARE",
@@ -338,18 +278,6 @@
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00031",
-   "nombre": "Aretes Xuping  Elegante Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
-   "creado": "2026-10-20T23:12:55.345Z",
    "disponible": true
   },
   {
@@ -386,78 +314,6 @@
    "notas": "",
    "foto": "fotos/226b326b9a21cb3f7d1ddc83439d3d46.jpg",
    "creado": "2026-10-20T23:28:18.658Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00043",
-   "nombre": "Aretes Xuping  Zebra",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/aa741abba1789d8073f55eef861d8c5d.jpg",
-   "creado": "2026-10-20T23:28:52.359Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00044",
-   "nombre": "Aretes Xuping  Botón Marrón",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
-   "creado": "2026-10-20T23:29:23.461Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00045",
-   "nombre": "Aretes Xuping  Marmol Gota",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
-   "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00050",
-   "nombre": "Aretes Xuping  Verde Manzana",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/3381139ec490a66319471e67b736bc37.jpg",
-   "creado": "2026-10-20T23:34:00.795Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00051",
-   "nombre": "Aretes Xuping  Verde con Dorado",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/69ef185dce151cb9e3596ac3a7b4c7a3.jpg",
-   "creado": "2026-10-20T23:34:37.725Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00052",
-   "nombre": "Aretes Xuping  Zebra con Dorado.",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/618a126f18dfc39531e088b44e04f4fb.jpg",
-   "creado": "2026-10-20T23:35:05.610Z",
    "disponible": true
   },
   {
@@ -874,7 +730,7 @@
    "categoria": "ARE",
    "material": "Chapa De Oro",
    "precio": 135,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "Cada par te sale en $22.50",
    "foto": "fotos/ec0a4f5cb083f67dab238613054d5383.jpg",
    "creado": "2026-11-21T23:47:35.424Z",
@@ -886,7 +742,7 @@
    "categoria": "ARE",
    "material": "Chapa De Oro",
    "precio": 135,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "Cada par te sale en $22.50!",
    "foto": "fotos/68be626568f6b1aabff600c285a71977.jpg",
    "creado": "2026-11-21T23:50:03.003Z",
@@ -898,7 +754,7 @@
    "categoria": "ARE",
    "material": "Chapa De Oro",
    "precio": 135,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "Cada par te sale en $22.50!",
    "foto": "fotos/cc9ec1aed719cdd8afcbc9aceccf403f.jpg",
    "creado": "2026-11-21T23:50:41.132Z",
@@ -1288,30 +1144,6 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00060",
-   "nombre": "Cadena Piedras de colores",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 100,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
-   "creado": "2026-11-17T20:03:04.206Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00063",
-   "nombre": "Collar colgante piedras pasteles",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 100,
-   "etiqueta": "Favoritos del Live",
-   "notas": "",
-   "foto": "fotos/031e0c1612b353c50877c2116a047278.jpg",
-   "creado": "2026-11-17T20:06:10.658Z",
    "disponible": true
   },
   {
@@ -1731,18 +1563,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00006",
-   "nombre": "Pulsera de Piedra Natural",
-   "categoria": "PUL",
-   "material": "Piedra Natural con Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/3e0d1e3fca44183699703386541a4ee8.jpg",
-   "creado": "2026-10-19T02:26:57.277Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00014",
    "nombre": "Pulsera Bibiana con esmeraldas",
    "categoria": "PUL",
@@ -1947,18 +1767,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00057",
-   "nombre": "Brazalete Cartier con Rayas y Brillo",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/3292f4e86620647a30767a4e5215b025.jpg",
-   "creado": "2026-11-17T23:47:17.305Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00058",
    "nombre": "Brazalete Cartier con Rayas y Brillo Plateado",
    "categoria": "PUL",
@@ -1968,42 +1776,6 @@
    "notas": "",
    "foto": "fotos/a1d0ed08814058e0051c5d6bc8ef9f73.jpg",
    "creado": "2026-11-17T23:54:00.408Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00059",
-   "nombre": "Trio de pulseras Tou",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/29484e188f3851c0c0c2efe184c0fbf8.jpg",
-   "creado": "2026-11-17T23:59:31.676Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00064",
-   "nombre": "Trio de brazaletes LV",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
-   "creado": "2026-11-18T00:10:45.164Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00067",
-   "nombre": "Trio de brazaletes Cartie",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 95,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
-   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
