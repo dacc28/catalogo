@@ -11974,7 +11974,7 @@ body.vx-on .vx-topr>*{flex:none}
     A.ocupado=true;
     try{
       if(!autoPend().length) return false;
-      if(!(await nb.listo())){ A.estado="espera"; A.msg="Esperando la impresora: préndela (y cierra la app de NIIMBOT)"; A.espera=Math.min(120000,(A.espera||15000)*1.5); A.prox=Date.now()+A.espera; return false; }
+      if(!(await nb.listo())){ A.estado="espera"; A.msg="Esperando la impresora: préndela (y cierra la app de NIIMBOT)"; A.espera=10000; A.prox=Date.now()+A.espera; return false; }
       A.espera=0; const ps=autoPend().slice(0,20); const mios=[];
       for(const p of ps){ if(state.etqHechas.has(p.codigo)) continue; if(await nubeApartar(p.codigo)) mios.push(p); }
       if(!mios.length){ repintar(); return false; }
@@ -11982,12 +11982,12 @@ body.vx-on .vx-topr>*{flex:none}
       const preset=(typeof PRESETS!=="undefined"&&PRESETS.find(x=>x.id==="40x30"))||{id:"40x30",w:40,h:30};
       let st="error"; try{ st=await printLabels(mios.map(p=>({p,copies:1})),preset); }catch(e){ console.warn(e); }
       if(st==="printed"){ for(const p of mios) await nubeListo(p.codigo); A.estado="ok"; A.msg="Última: "+mios.map(p=>p.codigo).join(", ")+" · "+new Date().toLocaleTimeString("es-MX",{hour:"numeric",minute:"2-digit"}); }
-      else { for(const p of mios) await nubeSoltar(p.codigo); A.estado="error"; A.msg="No salió la impresión; se vuelve a intentar en 1 minuto (siguen en la lista)"; A.prox=Date.now()+60000; }
+      else { for(const p of mios) await nubeSoltar(p.codigo); A.estado="error"; A.msg="No salió la impresión; se vuelve a intentar en 20 segundos (siguen en la lista)"; A.prox=Date.now()+20000; }
       return true;
     } catch(e){ console.warn("autoEtq",e); return false; }
     finally{ A.ocupado=false; repintar(); }
   };
-  if(AUTO_OK) setInterval(()=>{ try{ if(!autoDesde()||A.ocupado||E.ocupado||Date.now()<A.prox||!state.db) return; if(!autoPend().length){ if(A.estado==="espera"){ A.estado=""; A.msg=""; repintar(); } return; } nat.autoEtqGesto(); }catch(e){} },4000);
+  if(AUTO_OK) setInterval(()=>{ try{ if(!autoDesde()||A.ocupado||E.ocupado||Date.now()<A.prox||!state.db) return; if(!autoPend().length){ if(A.estado==="espera"){ A.estado=""; A.msg=""; repintar(); } return; } nat.autoEtqGesto(); }catch(e){} },1000);
   function cajaAuto(){
     if(!AUTO_OK) return null; const on=!!autoDesde();
     const n=on?autoPend().length:0;
@@ -13458,6 +13458,7 @@ body.vx-on #vxCamWrap{display:block!important}
     setTimeout(pistas, 0);
     return el("div", { class: "vx-sheetbg vx-altabg", onclick: e => { if (e.target.classList.contains("vx-sheetbg")) { if ((f.nombre || f.file) && !edit) { if (!confirm("¿Salir sin registrar el producto?")) return; } cerrar(); } }, "data-k": "alta" }, hoja);
   }
+
 
 
 
