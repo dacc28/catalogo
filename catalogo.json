@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-24T23:50:03.172Z",
+ "actualizado": "2026-11-25T00:20:05.287Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -170,6 +170,30 @@
    "foto": "fotos/2fabd4769560ba479cedfc80d75dcbf1.jpg",
    "foto2": "fotos/18fd708736d033aa31c6c37708ffecce.jpg",
    "creado": "2026-11-21T22:01:39.239Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00053",
+   "nombre": "Anillo Doble con Pera Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
+   "creado": "2026-11-21T22:10:23.355Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ANI-00054",
+   "nombre": "Media Churumbela Multishape Ajustable",
+   "categoria": "ANI",
+   "material": "Oro Laminado",
+   "precio": 40,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/e42138cc41856f8b00a6c3e19bc78db3.jpg",
+   "creado": "2026-11-21T22:12:35.371Z",
    "disponible": true
   },
   {
@@ -2017,6 +2041,19 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00069",
+   "nombre": "Pulsera Diamantes Rosa",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
+   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
+   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
