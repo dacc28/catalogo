@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T18:14:58.464Z",
+ "actualizado": "2026-11-25T18:30:04.783Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -182,18 +182,6 @@
    "notas": "",
    "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
    "creado": "2026-11-21T22:10:23.355Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00054",
-   "nombre": "Media Churumbela Multishape Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e42138cc41856f8b00a6c3e19bc78db3.jpg",
-   "creado": "2026-11-21T22:12:35.371Z",
    "disponible": true
   },
   {
@@ -411,18 +399,6 @@
    "notas": "",
    "foto": "fotos/226b326b9a21cb3f7d1ddc83439d3d46.jpg",
    "creado": "2026-10-20T23:28:18.658Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00043",
-   "nombre": "Aretes Xuping  Zebra",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/aa741abba1789d8073f55eef861d8c5d.jpg",
-   "creado": "2026-10-20T23:28:52.359Z",
    "disponible": true
   },
   {
@@ -2130,6 +2106,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00049",
+   "nombre": "Pulsera VanC negra",
+   "categoria": "PUL",
+   "material": "Chapa de oRO",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/549e11630b17060a81c1db76ddb0ce9f.jpg",
+   "creado": "2026-11-17T20:08:33.734Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00050",
    "nombre": "Pulsera VanC Blanca",
    "categoria": "PUL",
@@ -2271,6 +2259,19 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00069",
+   "nombre": "Pulsera Diamantes Rosa",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
+   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
+   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
