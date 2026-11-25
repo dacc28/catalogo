@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T18:05:03.204Z",
+ "actualizado": "2026-11-25T18:14:58.464Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 1290,
+ "piezas": 1251,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -438,18 +438,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00045",
-   "nombre": "Aretes Xuping  Marmol Gota",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8eb296a37809669a398deb162fe412d7.jpg",
-   "creado": "2026-10-20T23:30:07.673Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00050",
    "nombre": "Aretes Xuping  Verde Manzana",
    "categoria": "ARE",
@@ -719,7 +707,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fe2d664c7e8521f46978b91a6ee496f4.jpg",
    "creado": "2026-11-07T21:33:01.553Z",
@@ -1060,7 +1048,7 @@
    "nombre": "Arracadas con diseño grandes",
    "categoria": "ARE",
    "material": "Acero Inoxidable",
-   "precio": 12,
+   "precio": 15,
    "etiqueta": "",
    "notas": "",
    "foto": "fotos/014c0009feb657410feb3730f0261a9a.jpg",
