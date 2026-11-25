@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T12:25:03.223Z",
+ "actualizado": "2026-11-25T12:45:03.585Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -2155,6 +2155,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00049",
+   "nombre": "Pulsera VanC negra",
+   "categoria": "PUL",
+   "material": "Chapa de oRO",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/549e11630b17060a81c1db76ddb0ce9f.jpg",
+   "creado": "2026-11-17T20:08:33.734Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00050",
    "nombre": "Pulsera VanC Blanca",
    "categoria": "PUL",
@@ -2296,6 +2308,19 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00069",
+   "nombre": "Pulsera Diamantes Rosa",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
+   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
+   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
