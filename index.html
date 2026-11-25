@@ -17,10 +17,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,0..100;1,9..144,500..900,0..100&family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script>/* auto-actualización: si hay versión nueva publicada, la página se recarga sola */
-window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
+window.MV_VER="20261125a";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.v||j.v===window.MV_VER)return;var k="mv.recarga."+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1");var q=location.search.replace(/[?&]v=[^&]*/g,"").replace(/^&/,"?");location.replace(location.pathname+(q?q+"&":"?")+"v="+j.v+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="mv.css?v=20261117b">
 <link rel="stylesheet" href="bf.css?v=20261113f">
 <link rel="stylesheet" href="pausa.css?v=20261113f">
+<link rel="stylesheet" href="portada.css?v=20261125a">
 </head>
 <body>
 
@@ -28,7 +29,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
 <header class="top">
   <div class="aviso"><span><i class="fa-solid fa-plane-up"></i> Envíos DHL Express a todo México, con guía de rastreo</span><span class="sep">·</span><span>Desde 12 piezas surtidas, sin monto mínimo monetario</span><span class="sep">·</span><span><i class="fa-regular fa-credit-card"></i> Tarjeta de débito y crédito, Apple Pay, Google Pay o transferencia</span></div>
   <div class="barra">
-    <a class="logo" href="#/" onclick="irVista('inicio');return false"><img src="logo-marvea-m.png" alt="" width="44" height="34">Marvea</a>
+    <a class="logo" href="#/" onclick="irVista('inicio');return false" aria-label="Marvea, inicio"><img class="lg-m" src="logo-marvea-m.png" alt="" width="44" height="34"><img class="lg-w" src="logo-marvea-letras.png" alt="" width="600" height="130"></a>
     <div class="buscar"><i class="fa-solid fa-magnifying-glass"></i><input id="buscar" type="search" placeholder="Busca aretes, collares, acero, dorado…" autocomplete="off" enterkeyhint="search"><button class="x" id="buscarX" aria-label="borrar">✕</button></div>
     <nav class="acc-top">
       <button class="t-btn" id="btnEntrar" onclick="abrirCuenta()"><i class="fa-regular fa-user"></i><span><small id="btnEntrarS">Hola</small><b class="txt">Mi cuenta</b></span></button>
@@ -36,6 +37,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
       <button class="t-cart" onclick="verCarrito()" aria-label="Ver carrito"><i class="fa-solid fa-bag-shopping"></i><span class="n" id="tabN">0</span><b class="solo-desk">Carrito</b></button>
     </nav>
   </div>
+  <div class="marca"><a href="#/" onclick="irVista('inicio');return false"><img src="logo-marvea-letras.png" alt="Marvea" width="600" height="130"></a></div>
   <div class="cats-bar"><div class="wrap" id="filtros"></div></div>
   <div class="mega" id="mega"></div>
 </header>
@@ -47,14 +49,16 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
   <div class="wrap">
     <div class="hola-bar" id="hola"></div>
 
-    <div class="banner" id="banner">
-      <div class="banner-tx">
+    <div class="pr-wrap">
+      <span class="pr-medal" aria-hidden="true"><img src="logo-m.png" alt="" width="400" height="310"></span>
+      <div class="banner pr" id="banner">
         <span class="tag-coral">Mayoreo de joyería · Monterrey</span>
         <h1>Joyería que se vende sola, <i>al precio de mayoreo</i></h1>
         <p>Acero inoxidable, oro laminado y chapa de oro seleccionados por tendencia. Muchas clientas las venden al doble o al triple.</p>
-        <div class="banner-acc"><button class="btn coral lg" onclick="irVista('catalogo')">Ver todo el catálogo <i class="fa-solid fa-arrow-right"></i></button><button class="btn blanco lg" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button></div>
+        <div class="banner-acc"><button class="btn coral lg" onclick="irVista('catalogo')">Ver todo el catálogo <i class="fa-solid fa-arrow-right"></i></button><button class="btn blanco lg" onclick="abrirArmar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Arma mi paquete</button><span class="pr-pz">Más de <b>2,000</b> piezas</span></div>
+        <div class="pr-rueda" id="prRueda" aria-hidden="true"><span class="pr-halo"></span><span class="pr-arco"></span></div>
+        <b id="nModelos" hidden></b>
       </div>
-      <div class="banner-img"><img src="poster.jpg" alt="Joyería Marvea" fetchpriority="high"><video id="heroVid" muted playsinline loop autoplay preload="metadata" poster="poster.jpg" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"><source src="hero.mp4" type="video/mp4"></video><div class="banner-sello"><b id="nModelos">…</b><span>piezas disponibles hoy</span></div></div>
     </div>
 
     <div class="ventajas">
@@ -500,13 +504,7 @@ window.MV_VER="20261113f";(function(){try{fetch("version.json?t="+Date.now(),{ca
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="mv-tienda.js?v=20261117a"></script>
 <script src="mv-cuenta.js?v=20261117b"></script>
-<script>/* portada: las fotos de joyería pasan como video (sin deformar: object-fit cover). Se pausa fuera de pantalla, con "reducir movimiento" o ahorro de datos */
-(function(){var v=document.getElementById("heroVid");if(!v)return;var c=navigator.connection||{};
-if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||c.saveData){v.removeAttribute("autoplay");v.preload="none";try{v.pause()}catch(e){}return;}
-v.addEventListener("playing",function(){v.classList.add("on")});v.addEventListener("error",function(){v.classList.remove("on")},true);
-var p=v.play();if(p&&p.catch)p.catch(function(){});
-if("IntersectionObserver"in window)new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var q=v.play();if(q&&q.catch)q.catch(function(){})}else v.pause()})},{threshold:.15}).observe(v);
-document.addEventListener("visibilitychange",function(){if(document.hidden)v.pause();else if(v.classList.contains("on")){var q=v.play();if(q&&q.catch)q.catch(function(){})}});})();</script>
+<script src="portada.js?v=20261125a"></script>
 <script src="bf.js?v=20261113f"></script>
 <script src="pausa.js?v=20261113f"></script>
 </body>

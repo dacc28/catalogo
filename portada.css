@@ -1,0 +1,124 @@
+/* MARVEA · portada «Rueda» + encabezado editorial (25-nov-2026) · ver portada.js
+   Se carga después de mv.css. No cambia mv.css: solo lo ajusta. */
+
+/* ============ ENCABEZADO ============ */
+.top{background:var(--fondo);box-shadow:none;transition:box-shadow .25s}
+.top.mini,.pr-int .top{box-shadow:0 1px 0 var(--linea),0 8px 24px rgba(35,26,32,.06)}
+.barra{position:relative}
+.buscar{background:#fff;border:1.5px solid rgba(90,39,72,.18);border-radius:999px}
+.buscar:focus-within{border-color:var(--coral);background:#fff}
+.barra .logo .lg-w{display:none}
+/* renglón de la marca: «Marvea» entre dos líneas finas */
+.marca{display:flex;align-items:center;gap:28px;width:min(1320px,calc(100% - 32px));margin:0 auto;height:66px;overflow:hidden}
+.marca::before,.marca::after{content:"";flex:1;height:1px;background:rgba(90,39,72,.22)}
+.marca a{flex:none;display:block;border-radius:8px}
+.marca img{display:block;width:auto;height:46px;max-width:none}
+/* al bajar (o fuera de Inicio) el renglón de la marca se recoge; el margen evita que la página brinque */
+.top.mini .marca,.pr-int .marca{height:0;visibility:hidden}
+.top.mini{margin-bottom:66px}
+.pr-int .top.mini{margin-bottom:0}
+
+@media(min-width:821px){
+  .barra{padding:14px 0 8px;gap:14px}
+  .buscar{flex:0 1 320px;height:46px}
+  .acc-top{margin-left:auto}
+  .t-btn:hover{background:rgba(90,39,72,.07)}
+  .t-cart{height:46px;border-radius:999px;padding:0 20px}
+  /* la marca chica aparece al centro cuando el renglón grande se recoge */
+  .barra .logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin-top:3px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+  .barra .logo .lg-m{display:none}
+  .barra .logo .lg-w{display:block;width:auto;height:27px;max-width:none;border-radius:0}
+  .top.mini .logo,.pr-int .top .logo{opacity:1;visibility:visible}
+  /* accesos: solo texto, centrados */
+  .cats-bar{border-top:0;background:transparent}
+  .cats-bar .wrap{justify-content:center;gap:2px;padding:0 0 6px}
+  .cats-bar .b-todo{background:transparent!important;color:var(--ciruela)!important;box-shadow:none;border-radius:999px;padding:10px 14px;gap:7px;font-weight:700!important;font-size:15px}
+  .cats-bar .b-todo:hover{transform:none;box-shadow:none;background:rgba(90,39,72,.07)!important}
+  .cats-bar .b-todo>i:first-child{display:none}
+  .cats-bar .b-todo span{display:inline!important}
+  .cats-bar .b-cats{flex:0 1 auto;justify-content:center;gap:2px}
+  .cats-bar .b-info .ic{display:none!important}
+  .cats-bar .b-cat.b-info{padding:10px 14px!important;gap:0;font-size:15px;font-weight:600;color:var(--ciruela)}
+  .cats-bar .b-cat.b-info:hover{background:rgba(90,39,72,.07)}
+  .cats-bar .b-cat.b-info.on{background:transparent;color:var(--ciruela)}
+  .cats-bar .b-cat.b-info::after{left:14px;right:14px;bottom:3px;height:2px}
+  .cats-bar .b-arma{display:none}
+}
+@media(min-width:821px) and (max-width:1120px){
+  .cats-bar .b-todo,.cats-bar .b-cat.b-info{padding:9px 9px!important;font-size:13.5px}
+  .cats-bar .b-cat.b-info::after{left:9px;right:9px}
+}
+@media(min-width:821px) and (max-width:940px){
+  .cats-bar .b-todo,.cats-bar .b-cat.b-info{padding:8px 6px!important;font-size:12.5px}
+  .cats-bar .b-cat.b-info::after{left:6px;right:6px}
+  .buscar{flex-basis:250px}
+}
+@media(max-width:820px){
+  .marca{height:50px;gap:14px}
+  .marca img{height:30px}
+  .barra{padding:4px 0 10px!important}
+  .top.mini .barra,.pr-int .top .barra{padding:8px 0!important}
+  .top.mini{margin-bottom:48px}
+  .buscar{border-radius:999px!important}
+  /* la M regresa junto al buscador cuando la marca grande se recoge */
+  .barra .logo{max-width:0;opacity:0;overflow:hidden;margin-right:-10px;transition:max-width .25s,opacity .25s,margin .25s}
+  .top.mini .logo,.pr-int .top .logo{max-width:44px;opacity:1;margin-right:0}
+}
+
+/* ============ PORTADA ============ */
+#v-inicio{padding-top:8px}
+.pr-wrap{position:relative;margin-top:40px}
+.pr-medal{position:absolute;left:50%;top:0;z-index:3;display:grid;place-items:center;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;background:#fff;box-shadow:0 10px 26px rgba(35,26,32,.2),0 0 0 6px var(--fondo)}
+.pr-medal img{display:block;width:42px;height:auto}
+.banner.pr{position:relative;display:flex;flex-direction:column;align-items:center;min-height:0;padding:58px 24px 0;text-align:center;border-radius:32px;overflow:hidden;color:#fff;background:linear-gradient(105deg,#552443 0%,var(--ciruela) 30%,var(--ciruela-2) 100%);box-shadow:0 18px 50px rgba(35,26,32,.16)}
+.pr .tag-coral{align-self:center;padding:9px 16px;background:rgba(255,255,255,.14);color:#fff;font-size:12px;font-weight:700;letter-spacing:.16em;line-height:1}
+.pr h1{margin-top:18px;color:#fff;font-size:clamp(30px,4.5vw,58px);line-height:1.07;letter-spacing:-.012em;text-wrap:balance}
+.pr h1 i{display:block;color:var(--amarillo)}
+.pr>p{margin-top:14px;max-width:640px;font-size:18.5px;line-height:1.5;color:rgba(255,255,255,.92);text-wrap:balance}
+.pr .banner-acc{position:relative;z-index:2;justify-content:center;align-items:center;gap:12px;margin-top:22px}
+.pr .btn.lg{height:56px;padding:0 28px;gap:10px;font-size:18px;font-weight:700}
+.pr .btn.coral{box-shadow:0 10px 24px rgba(242,101,63,.34)}
+.pr .btn.blanco{box-shadow:0 10px 24px rgba(20,8,16,.18)}
+.pr .btn.blanco:hover{background:#fff;box-shadow:0 12px 28px rgba(20,8,16,.26)}
+.pr-pz{display:inline-flex;align-items:baseline;justify-content:center;gap:8px;height:56px;margin-left:8px;padding:16px 24px 0;border-radius:999px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.24);color:#fff;font-size:15.5px;font-weight:500;line-height:1;white-space:nowrap}
+.pr-pz b{font-family:var(--display);font-size:24px;font-weight:700;color:var(--amarillo)}
+
+/* la rueda: las fotos viajan sobre un arco; la del centro va más grande */
+.pr-rueda{--S:232px;--R:660px;--ang:20deg;--cy:150px;--big:1.1;--sm:.86;position:relative;align-self:stretch;height:340px;margin:26px -24px 0;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.pr-halo{position:absolute;left:50%;top:calc(var(--cy) - var(--S)*1.12);width:calc(var(--S)*2.24);height:calc(var(--S)*2.24);margin-left:calc(var(--S)*-1.12);border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.16),rgba(255,255,255,0));pointer-events:none}
+.pr-arco{--ra:calc(var(--R) + var(--S)/2 + 18px);position:absolute;left:50%;top:calc(var(--cy) + var(--R) - var(--ra));width:calc(var(--ra)*2);height:calc(var(--ra)*2);margin-left:calc(var(--ra)*-1);border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(248,238,154,.42);pointer-events:none}
+.pr-it{--o:0;--sc:var(--sm);position:absolute;left:50%;top:calc(var(--cy) + var(--R));width:var(--S);height:var(--S);max-width:none;margin:calc(var(--S)/-2) 0 0 calc(var(--S)/-2);border:5px solid #fff;border-radius:26px;background:#E9E6E1;object-fit:cover;box-shadow:0 22px 44px rgba(20,8,16,.4);opacity:0;visibility:hidden;cursor:pointer;-webkit-user-drag:none;
+  transform:rotate(calc(var(--o)*var(--ang))) translateY(calc(var(--R)*-1)) rotate(calc(var(--o)*var(--ang)*-1)) scale(var(--sc))}
+.pr-it.v{opacity:1;visibility:visible}
+.pr-it.c{--sc:var(--big);cursor:default}
+.pr-rueda.on .pr-it{transition:transform 1s cubic-bezier(.22,.8,.2,1),opacity .5s ease,visibility .5s}
+@media(prefers-reduced-motion:reduce){.pr-rueda.on .pr-it{transition:opacity .3s ease,visibility .3s}}
+
+@media(max-width:820px){
+  #v-inicio{padding-top:4px}
+  .pr-wrap{margin-top:30px}
+  .pr-medal{width:56px;height:56px;margin:-28px 0 0 -28px;box-shadow:0 8px 20px rgba(35,26,32,.2),0 0 0 5px var(--fondo)}
+  .pr-medal img{width:33px}
+  .banner.pr{padding:46px 0 26px;border-radius:28px}
+  .pr .tag-coral{font-size:11px}
+  .pr h1{margin:16px 18px 0}
+  .pr-rueda{--S:190px;--R:520px;--ang:19deg;--cy:122px;--sm:.8;order:3;height:258px;margin:22px 0 0}
+  .pr>p{order:4;margin:18px 24px 0;max-width:520px;font-size:16.5px}
+  .pr .banner-acc{order:5;flex-direction:column;align-items:stretch;align-self:stretch;flex-wrap:nowrap;margin:22px 22px 0}
+  .pr .btn.lg{width:100%}
+  .pr-pz{margin-left:0}
+}
+@media(max-width:520px){
+  .pr-rueda{--S:150px;--R:400px;--ang:18.7deg;--cy:98px;--sm:.7;height:204px}
+  .pr-it{border-width:4px;border-radius:18px;box-shadow:0 16px 32px rgba(20,8,16,.4)}
+}
+
+/* pantallas de computadora de poca altura: todo un poco más compacto para que la rueda asome sin bajar */
+@media(min-width:821px) and (max-height:840px){
+  .marca{height:58px}.marca img{height:40px}
+  .top.mini{margin-bottom:58px}
+  .banner.pr{padding-top:52px}
+  .pr h1{margin-top:16px;font-size:clamp(30px,3.9vw,48px)}
+  .pr>p{font-size:17px}
+  .pr-rueda{--S:208px;--R:600px;--cy:136px;height:300px;margin-top:24px}
+}
