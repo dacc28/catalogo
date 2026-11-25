@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T07:30:03.467Z",
+ "actualizado": "2026-11-25T07:45:04.438Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1161,7 +1161,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
    "creado": "2026-11-07T20:26:02.349Z",
@@ -1480,18 +1480,6 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00059",
-   "nombre": "Collar il",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
-   "creado": "2026-11-07T21:52:46.750Z",
    "disponible": true
   },
   {
@@ -2112,7 +2100,7 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
