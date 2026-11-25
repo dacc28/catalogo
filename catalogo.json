@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T12:45:03.585Z",
+ "actualizado": "2026-11-25T16:25:49.628Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 1304,
+ "piezas": 1290,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1297,19 +1297,6 @@
    "notas": "",
    "foto": "fotos/8cdfcd265e808a582cfa2b422c59cc15.jpg",
    "creado": "2026-11-20T03:13:41.340Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00025",
-   "nombre": "Gargantilla omega Brillante Dorada Xuping",
-   "categoria": "CAD",
-   "material": "Oro laminado",
-   "precio": 75,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/9745a9abbf5426b98b8c323d69da8ce8.jpg",
-   "foto2": "fotos/aeab99af349e9695c700dd9da8f72d27.jpg",
-   "creado": "2026-11-21T19:55:16.699Z",
    "disponible": true
   },
   {
