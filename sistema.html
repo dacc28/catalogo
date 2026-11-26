@@ -12187,4 +12187,81 @@ html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
   window.mvNotas={ abrir, cerrar, agregar, alternar, borrar, abierta:()=>N.abierta, pendientes:()=>ordenadas().pend.length, lista:()=>ordenadas(), alCambiar:f=>{ N.cbs.add(f); return ()=>N.cbs.delete(f); } };
 })();
 </script>
+<style id="mv-mv-css">
+/* mvMV · sistema en el celular: barra de abajo que sí cabe + Notas sin encimarse (25-nov-2026) */
+@media (max-width:720px){
+  /* antes: 8 pestañas repartidas a fuerza en el ancho (48 px c/u) → «Cobro con tarjeta» y «Registro de productos» se cortaban y se encimaban.
+     ahora: cada pestaña con su ancho cómodo y la barra se desliza de lado (la pestaña elegida se centra sola) */
+  nav.tabs{justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding-left:max(4px,env(safe-area-inset-left))!important;padding-right:max(4px,env(safe-area-inset-right))!important;scroll-padding:0 34px;touch-action:pan-x!important;contain:none!important}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{flex:0 0 68px!important;width:68px!important;min-width:68px!important;max-width:68px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;position:relative!important}
+  nav.tabs button .lbl-l{display:none!important}nav.tabs button .lbl-c{display:inline!important}
+  /* pista de que hay más pestañas a los lados (dos velos blancos sobre la orilla de la barra) */
+  .mvmv-velo{position:fixed;bottom:0;width:30px;height:calc(62px + env(safe-area-inset-bottom));z-index:81;pointer-events:none;opacity:0;transition:opacity .18s}
+  .mvmv-velo.i{left:0;background:linear-gradient(90deg,#fff 0,rgba(255,255,255,0) 100%)}
+  .mvmv-velo.d{right:0;background:linear-gradient(270deg,#fff 0,rgba(255,255,255,0) 100%)}
+  body.mvmv-mas-i .mvmv-velo.i,body.mvmv-mas-d .mvmv-velo.d{opacity:1}
+  /* el botón flotante de Notas va arriba de la barra, no encima de ella */
+  #mvNotasBtn{bottom:calc(74px + env(safe-area-inset-bottom))!important;right:14px!important}
+  body{padding-bottom:calc(132px + env(safe-area-inset-bottom))!important}
+}
+@media (min-width:721px){.mvmv-velo{display:none}}
+</style>
+<script id="mv-mv-js">
+/* mvMV · sistema en el celular (25-nov-2026): nombres cortos en la barra de abajo, pista de deslizar y «abrir en Live» desde Marvea Vende */
+(function(){
+  if(window.__mvMV) return; window.__mvMV=true;
+  var CORTOS={cobro:"Cobro",regp:"Registro",inv:"Inventario",web:"Tienda"};
+  function nombres(){
+    Object.keys(CORTOS).forEach(function(k){
+      var b=document.getElementById("tab-"+k); if(!b||b.querySelector(".lbl-c")) return;
+      var largo="", quitar=[];
+      for(var i=0;i<b.childNodes.length;i++){ var n=b.childNodes[i]; if(n.nodeType===3&&n.textContent.trim()){ largo+=n.textContent.trim(); quitar.push(n); } }
+      if(!largo) return;
+      quitar.forEach(function(n){ b.removeChild(n); });
+      var l=document.createElement("span"); l.className="lbl-l"; l.textContent=largo;
+      var c=document.createElement("span"); c.className="lbl-c"; c.textContent=CORTOS[k];
+      b.appendChild(l); b.appendChild(c);
+    });
+  }
+  function pista(){
+    var nav=document.querySelector("nav.tabs"); if(!nav) return;
+    var mas=nav.scrollWidth>nav.clientWidth+2, cl=document.body.classList;
+    cl.toggle("mvmv-mas-i",mas&&nav.scrollLeft>6);
+    cl.toggle("mvmv-mas-d",mas&&nav.scrollLeft<nav.scrollWidth-nav.clientWidth-6);
+  }
+  function centrar(){
+    var nav=document.querySelector("nav.tabs"); if(!nav||nav.scrollWidth<=nav.clientWidth+2) return;
+    var b=nav.querySelector('[data-grupo-on="1"]')||nav.querySelector('[aria-selected="true"]'); if(!b) return;
+    var r=b.getBoundingClientRect(), nr=nav.getBoundingClientRect();
+    if(r.left<nr.left+20||r.right>nr.right-20) nav.scrollLeft+= (r.left+r.width/2)-(nr.left+nr.width/2);
+  }
+  function listo(){
+    nombres();
+    var nav=document.querySelector("nav.tabs"); if(!nav) return false;
+    if(!nav.__mvMV){ nav.__mvMV=true; ["i","d"].forEach(function(l){ var v=document.createElement("div"); v.className="mvmv-velo "+l; v.setAttribute("aria-hidden","true"); document.body.appendChild(v); }); nav.addEventListener("scroll",pista,{passive:true}); window.addEventListener("resize",pista); setTimeout(centrar,400); }
+    pista(); return true;
+  }
+  var n=0, t=setInterval(function(){ try{ listo(); }catch(e){} if(++n>40) clearInterval(t); },300);
+  setInterval(function(){ try{ nombres(); pista(); }catch(e){} },2500);
+
+  /* Marvea Vende › menú › Live: llega con ?ver=envivo y abre directo el registro del live */
+  try{
+    var q=new URLSearchParams(location.search), ver=q.get("ver");
+    if(ver==="envivo"){
+      var k=0, t2=setInterval(function(){
+        try{
+          var tab=document.getElementById("tab-envivo"), app=document.querySelector("nav.tabs");
+          if(tab&&app&&app.getClientRects().length&&!document.getElementById("mvLogin")&&document.getElementById("view-envivo")&&typeof window.setView==="function"){
+            clearInterval(t2); window.setView("envivo"); setTimeout(centrar,200);
+            try{ q.delete("ver"); var s=q.toString(); history.replaceState(null,"",location.pathname+(s?"?"+s:"")+location.hash); }catch(e){}
+          }
+        }catch(e){}
+        if(++k>400) clearInterval(t2);
+      },300);
+    }
+  }catch(e){}
+})();
+</script>
 </body></html>
