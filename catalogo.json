@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T21:15:04.604Z",
+ "actualizado": "2026-11-26T21:45:04.271Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -276,18 +276,6 @@
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00031",
-   "nombre": "Aretes Xuping  Elegante Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
-   "creado": "2026-10-20T23:12:55.345Z",
    "disponible": true
   },
   {
@@ -716,7 +704,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/0bd00a0abbf880b01d3ad3ede940df27.jpg",
    "creado": "2026-11-21T21:50:47.883Z",
@@ -744,18 +732,6 @@
    "notas": "",
    "foto": "fotos/e113e137f6bf9f18064935350f27cae6.jpg",
    "creado": "2026-11-21T21:52:16.467Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00107",
-   "nombre": "Paquete Duo Mini Gotas Botega",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/34d15dce5da75c76a1b24f8d0832e1be.jpg",
-   "creado": "2026-11-21T23:31:08.125Z",
    "disponible": true
   },
   {
@@ -1763,7 +1739,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
