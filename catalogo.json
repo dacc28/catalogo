@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T18:05:02.688Z",
+ "actualizado": "2026-11-26T20:10:04.224Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -324,18 +324,6 @@
    "notas": "",
    "foto": "fotos/226b326b9a21cb3f7d1ddc83439d3d46.jpg",
    "creado": "2026-10-20T23:28:18.658Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00044",
-   "nombre": "Aretes Xuping  Botón Marrón",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/cfdb868183c60cedacd8f7f54d2cc14c.jpg",
-   "creado": "2026-10-20T23:29:23.461Z",
    "disponible": true
   },
   {
@@ -876,7 +864,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 15,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/350e1c7994a79f33b7b56cb4d1be738e.jpg",
    "creado": "2026-11-24T19:28:06.831Z",
@@ -2156,6 +2144,19 @@
    "notas": "",
    "foto": "fotos/43402845ca8da4cdeddae8d1b568e17a.jpg",
    "creado": "2026-11-24T18:58:25.446Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00089",
+   "nombre": "Trio de Pulseras tennis",
+   "categoria": "PUL",
+   "material": "Chapa de oro",
+   "precio": 75,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/5b86a6f466ec4c4c03e33e4827049be5.jpg",
+   "foto2": "fotos/c0499d8a8614f94cad13d7a5c4429f19.jpg",
+   "creado": "2026-11-24T19:05:23.435Z",
    "disponible": true
   },
   {
