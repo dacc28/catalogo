@@ -10323,6 +10323,25 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
 .mvlv-ex.res,.mvlv-q.res{background:#FFF4D6}.mvlv-ex.res b,.mvlv-ex.res span,.mvlv-ex.res small,.mvlv-q.res b,.mvlv-q.res span{color:#8A5D00}
 .mvlv-q.res b{font-size:18px}
 .mvlv-cres-nota{background:#FFF4D6;color:#6B4A00;border-radius:12px;padding:8px 12px}
+/* mvLVC · cámara fija del live (25-nov-2026) */
+.mvlv-camflot{position:fixed;right:18px;bottom:18px;width:380px;z-index:950;background:#111;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.mvlv-cvid{position:relative;aspect-ratio:4/3;background:#000;overflow:hidden}
+.mvlv-cvid video{width:100%;height:100%;object-fit:cover;display:block}
+.mvlv-cbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1D1D1F;color:#fff}
+.mvlv-cinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mvlv-cest{font-size:14px;line-height:1.25;font-weight:700;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.mvlv-cest.ok{color:#8CE0A6}.mvlv-cest.mal{color:#FF9D8A}
+.mvlv-ccnt{font-size:12px;color:rgba(255,255,255,.72)}
+.mvlv-ccerrar{flex:none;border:0;border-radius:999px;background:#fff;color:#1D1D1F;font:inherit;font-weight:700;font-size:13.5px;padding:10px 14px;cursor:pointer}
+.mvlv-camflot.dest .mvpq-mira{animation:mvlvDest .6s ease-out}
+.mvlv-camflot.destmal .mvpq-mira{animation:mvlvDestMal .6s ease-out}
+@keyframes mvlvDest{0%{border-color:#4ADE80;border-width:7px}100%{border-color:rgba(255,255,255,.92);border-width:3px}}
+@keyframes mvlvDestMal{0%{border-color:#FF6B57;border-width:7px}100%{border-color:rgba(255,255,255,.92);border-width:3px}}
+@media (max-width:720px){
+  .mvlv-camflot{left:0;right:0;top:0;bottom:auto;width:auto;border-radius:0 0 18px 18px;padding-top:env(safe-area-inset-top)}
+  .mvlv-cvid{aspect-ratio:auto;height:38vh}
+  body.mvlv-camon #mvLVHost{padding-top:calc(38vh - 20px)}
+}
 </style>
 <script id="mv-lv-js">
 /* ===== mvLV · Live: registro de lo que se muestra en el live (22-nov-2026) =====
@@ -10402,24 +10421,24 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   }
   function registrar(r){
     return enFila(async()=>{
-      if(!r||r.tipo==="nada"){ bip(false); toast(r?"No encontré «"+r.cod+"»":"Código vacío",true); return; }
+      if(!r||r.tipo==="nada"){ bip(false); tz(r?"No encontré «"+r.cod+"»":"Código vacío",true); return; }
       const enRes=r.tipo==="reserva"; /* mvLVR: los de Reservas también se registran (solo que aparecieron) */
       const p=r.p; if(!p||!p.codigo) return;
       if(L.conteo){ enfocarConteo(p.codigo); return; }
-      const l0=enCurso(); if(!l0){ bip(false); toast("Primero toca «Iniciar live»",true); return; }
-      const l=await fresco(l0.id)||l0; if(l.estado!=="en curso"){ bip(false); toast("Ese live ya se cerró",true); return; }
+      const l0=enCurso(); if(!l0){ bip(false); tz("Primero toca «Iniciar live»",true); return; }
+      const l=await fresco(l0.id)||l0; if(l.estado!=="en curso"){ bip(false); tz("Ese live ya se cerró",true); return; }
       const ya=l.items.find(i=>i.codigo===p.codigo);
-      if(ya){ bip(true); L.flash=p.codigo; pintar(); toast((p.nombre||p.codigo)+" ya está en el live · "+(enRes?"en Reservas":existTxt(n0((state.products.get(p.codigo)||p).existencia)))); return; }
+      if(ya){ bip(true); L.flash=p.codigo; pintar(); tz((p.nombre||p.codigo)+" ya está en el live · "+(enRes?"en Reservas":existTxt(n0((state.products.get(p.codigo)||p).existencia)))); return; }
       if(enRes){ /* mvLVR */
         l.items.unshift(normItem({reserva:true,codigo:p.codigo,nombre:p.nombre,palabra:p.palabra,categoria:p.categoria,material:p.material,precio:p.precio,fotoId:p.fotoId,inicial:n0(p.existencia),agregado:ahora(),por:yo()}));
-        try{ await guardar(l); }catch(e){ console.error(e); bip(false); toast("No se guardó (¿hay internet?)",true); return; }
-        bip(true); L.flash=p.codigo; L.sel=l.id; pintar(); toast((p.nombre||p.codigo)+" · registrado (está en Reservas)"); return;
+        try{ await guardar(l); }catch(e){ console.error(e); bip(false); tz("No se guardó (¿hay internet?)",true); return; }
+        bip(true); L.flash=p.codigo; L.sel=l.id; pintar(); tz((p.nombre||p.codigo)+" · registrado (está en Reservas)"); return;
       }
       const q=state.products.get(p.codigo)||p; const ex=n0(q.existencia);
       l.items.unshift(normItem({codigo:q.codigo,nombre:q.nombre,palabra:q.palabra,categoria:q.categoria,material:q.material,precio:q.precio,fotoId:q.fotoId,inicial:ex,agregado:ahora(),por:yo()}));
-      try{ await guardar(l); }catch(e){ console.error(e); bip(false); toast("No se guardó (¿hay internet?)",true); return; }
+      try{ await guardar(l); }catch(e){ console.error(e); bip(false); tz("No se guardó (¿hay internet?)",true); return; }
       bip(ex>0); L.flash=q.codigo; L.sel=l.id; pintar();
-      toast((q.nombre||q.codigo)+" · "+(ex>0?existTxt(ex):"sin existencias en el sistema"),ex<=0);
+      tz((q.nombre||q.codigo)+" · "+(ex>0?existTxt(ex):"sin existencias en el sistema"),ex<=0);
     });
   }
   const existTxt=n=>n<=0?"Agotado":n===1?"1 pieza":n+" piezas";
@@ -10440,27 +10459,47 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   let cam=null, zx=null;
   const puedeCam=()=>/^https?:$/.test(location.protocol)&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
   function cargarZX(){ if(window.ZXing) return Promise.resolve(); if(zx) return zx; zx=new Promise((ok,no)=>{ const s=document.createElement("script"); s.src="zxing-0.21.3.min.js"; s.onload=ok; s.onerror=()=>{ zx=null; no(new Error("zxing")); }; document.head.append(s); }); return zx; }
-  function pararCam(){ if(cam){ cam.vivo=false; try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam=null; } const c=document.getElementById("mvlvCam"); if(c) c.hidden=true; const b=document.getElementById("mvlvCamBtn"); if(b) b.textContent="📷 Cámara"; }
+  /* mvLVC: la cámara vive en un panel fijo fuera de la vista (no se repinta con cada lectura) */
+  let camFlot=null, camVideo=null;
+  function camEstado(msg,mal){ if(!camFlot) return; const e=camFlot.querySelector(".mvlv-cest"); if(e){ e.textContent=String(msg||""); e.className="mvlv-cest "+(mal?"mal":"ok"); }
+    const n=camFlot.querySelector(".mvlv-ccnt"); if(n){ let k=0; try{ const l=enCurso(); k=l?l.items.length:0; }catch(x){} n.textContent=k+" producto"+(k===1?"":"s")+" en el live · sigue escaneando"; }
+    camFlot.classList.remove("dest","destmal"); void camFlot.offsetWidth; camFlot.classList.add(mal?"destmal":"dest"); }
+  const tz=(m,mal)=>{ try{ camEstado(m,mal); }catch(x){} toast(m,mal); };
+  function pararCam(){ if(cam){ cam.vivo=false; try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam=null; }
+    if(camFlot){ try{ if(camVideo) camVideo.srcObject=null; }catch(e){} camFlot.remove(); camFlot=null; camVideo=null; } document.body.classList.remove("mvlv-camon");
+    const b=document.getElementById("mvlvCamBtn"); if(b) b.textContent="📷 Cámara"; }
   async function iniciarCam(){
-    const box=document.getElementById("mvlvCam"), video=box&&box.querySelector("video"); if(!box||!video) return;
-    box.hidden=false; const b=document.getElementById("mvlvCamBtn"); if(b) b.textContent="Apagar cámara";
+    if(cam||camFlot) return;
+    const video=h("video",{muted:true,autoplay:true,playsinline:true}); video.muted=true; video.setAttribute("playsinline",""); video.setAttribute("webkit-playsinline","");
+    const flot=h("div",{id:"mvlvCamFlot",class:"mvlv-camflot"},
+      h("div",{class:"mvlv-cvid"},video,h("div",{class:"mvpq-mira"})),
+      h("div",{class:"mvlv-cbar"},h("div",{class:"mvlv-cinfo"},h("b",{class:"mvlv-cest"},"Abriendo cámara…"),h("small",{class:"mvlv-ccnt"},"")),
+        h("button",{type:"button",class:"mvlv-ccerrar",onclick:()=>pararCam()},"Cerrar cámara")));
+    camFlot=flot; camVideo=video; document.body.append(flot); document.body.classList.add("mvlv-camon");
+    const b=document.getElementById("mvlvCamBtn"); if(b) b.textContent="Apagar cámara";
+    try{ const i=document.activeElement; if(i&&i.blur) i.blur(); }catch(e){}
     try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}}});
+      if(camFlot!==flot){ try{ stream.getTracks().forEach(t=>t.stop()); }catch(e){} return; } /* la cerraron mientras abría */
       cam={vivo:true,stream,ultimo:"",ultimoT:0}; const yo2=cam; video.srcObject=stream; try{ await video.play(); }catch(e){}
+      let fm=""; try{ fm=(stream.getVideoTracks()[0].getSettings()||{}).facingMode||""; }catch(e){}
+      video.style.transform=(fm==="user"||(!fm&&!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)))?"scaleX(-1)":"none"; /* espejo solo con la cámara frontal */
+      camEstado("Apunta al QR de cada pieza",false); flot.classList.remove("dest");
       const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
       let vuelta=0;
       const lee=(sx,sy,sw,sh,max)=>{ const k=Math.min(1,max/Math.max(sw,sh)); const w=Math.round(sw*k), hh=Math.round(sh*k); cv.width=w; cv.height=hh; cx.drawImage(video,sx,sy,sw,sh,0,0,w,hh);
         const d=cx.getImageData(0,0,w,hh).data; const lum=new Uint8ClampedArray(w*hh); for(let i=0,j=0;i<lum.length;i++,j+=4) lum[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
         try{ return qr.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.RGBLuminanceSource(lum,w,hh))),hints).getText()||""; }catch(e){ return ""; } finally{ try{ qr.reset(); }catch(e){} } };
       const tick=()=>{ if(!yo2.vivo) return; let txt=""; const vw=video.videoWidth, vh=video.videoHeight;
+        if(video.paused){ try{ const pr=video.play(); if(pr&&pr.catch) pr.catch(()=>{}); }catch(e){} } /* el iPhone a veces pausa el video: se reanuda solo */
         if(vw&&vh){ vuelta++; const lado=Math.min(vw,vh)*0.7; try{ txt=vuelta%2?lee((vw-lado)/2,(vh-lado)/2,lado,lado,720):lee(0,0,vw,vh,1100); }catch(e){} }
-        if(txt){ const t=Date.now(); if(txt===yo2.ultimo&&t-yo2.ultimoT<2500){ yo2.ultimoT=t; } else { yo2.ultimo=txt; yo2.ultimoT=t; leerTexto(txt); } }
-        setTimeout(tick,txt?700:70); };
+        if(txt){ const t=Date.now(); if(txt===yo2.ultimo&&t-yo2.ultimoT<2500){ yo2.ultimoT=t; } else { yo2.ultimo=txt; yo2.ultimoT=t; try{ const pr=leerTexto(txt); if(pr&&pr.catch) pr.catch(e=>console.warn(e)); }catch(e){ console.warn(e); } } }
+        setTimeout(tick,txt?600:70); };
       tick();
     }catch(e){ console.warn(e); pararCam(); toast("No se pudo abrir la cámara (revisa el permiso del navegador)",true); }
   }
-  function leerTexto(txt){ const r=window.mvPQResolver?window.mvPQResolver(txt):null; if(r&&r.tipo==="pedido"){ bip(false); toast("Ese es el QR de un pedido; aquí van los de producto",true); return; }
+  function leerTexto(txt){ const r=window.mvPQResolver?window.mvPQResolver(txt):null; if(r&&r.tipo==="pedido"){ bip(false); tz("Ese es el QR de un pedido; aquí van los de producto",true); return; }
     if(r) return registrar(r); const p=porCodigo(txt)||porPalabra(txt); return registrar(p?{tipo:"producto",p}:{tipo:"nada",cod:String(txt).toUpperCase()}); }
-  function enfocar(){ setTimeout(()=>{ const i=document.getElementById("mvlvIn"); if(i&&state.view===VISTA&&!L.conteo) i.focus(); },40); }
+  function enfocar(){ setTimeout(()=>{ const i=document.getElementById("mvlvIn"); if(i&&state.view===VISTA&&!L.conteo&&!cam&&!camFlot) i.focus(); /* mvLVC: con la cámara abierta no se abre el teclado */ },40); }
 
   /* ---------- 2) conteo: ¿cuántas quedaron? ---------- */
   let capaC=null;
@@ -10788,10 +10827,8 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   function vistaEnCurso(l){
     const inp=h("input",{id:"mvlvIn",class:"mvlv-in",type:"text",placeholder:"Escanea el QR del producto que estás mostrando (o escribe palabra clave / código)",autocomplete:"off",autocapitalize:"characters",spellcheck:"false","aria-label":"Escanear producto"});
     inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); const v=inp.value.trim(); inp.value=""; if(v) leerTexto(v); } });
-    const camBtn=puedeCam()?h("button",{type:"button",class:"mvlv-btn2",id:"mvlvCamBtn",onclick:()=>{ if(cam) pararCam(); else iniciarCam(); }},cam?"Apagar cámara":"📷 Cámara"):null;
-    const video=h("video",{muted:true,autoplay:true,playsinline:true}); video.muted=true; video.setAttribute("playsinline","");
-    const camBox=h("div",{id:"mvlvCam",class:"mvlv-cam",hidden:!cam},video,h("div",{class:"mvpq-mira"}));
-    if(cam&&cam.stream){ video.srcObject=cam.stream; video.play().catch(()=>{}); }
+    const camBtn=puedeCam()?h("button",{type:"button",class:"mvlv-btn2",id:"mvlvCamBtn",onclick:()=>{ if(cam||camFlot) pararCam(); else iniciarCam(); }},(cam||camFlot)?"Apagar cámara":"📷 Cámara"):null;
+    const camBox=null; /* mvLVC: la cámara ya no va dentro de la vista */
     const piezas=l.items.reduce((s,it)=>s+(esRes(it)?n0((resDe(it)||{existencia:it.inicial}).existencia):habiaDe(it)),0);
     const contados=l.items.filter(i=>i.quedaron!=null).length;
     const filas=l.items.map(it=>{ const p=state.products.get(it.codigo)||it; const ha=habiaDe(it); const q=it.quedaron;
