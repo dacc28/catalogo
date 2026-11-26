@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T20:40:03.742Z",
+ "actualizado": "2026-11-26T21:00:04.770Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -871,6 +871,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00123",
+   "nombre": "Arracadas con diseño grandes",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 15,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/014c0009feb657410feb3730f0261a9a.jpg",
+   "creado": "2026-11-24T19:28:47.262Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00125",
    "nombre": "Arracadas con espejo",
    "categoria": "ARE",
@@ -1402,7 +1414,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "New in",
    "notas": "",
    "foto": "fotos/7927922c0d7fad4e8152e4910088446a.jpg",
    "creado": "2026-11-25T19:07:58.454Z",
