@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T22:35:02.644Z",
+ "actualizado": "2026-11-26T22:50:02.878Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -747,18 +747,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00107",
-   "nombre": "Paquete Duo Mini Gotas Botega",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/34d15dce5da75c76a1b24f8d0832e1be.jpg",
-   "creado": "2026-11-21T23:31:08.125Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00109",
    "nombre": "Paquete con 6 pares surtidos",
    "categoria": "ARE",
@@ -831,19 +819,6 @@
    "foto": "fotos/8c8b355566d9a6378846e172d346480e.jpg",
    "foto2": "fotos/9a41407ed6e912f790e82c977e175315.jpg",
    "creado": "2026-11-24T19:08:59.729Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00120",
-   "nombre": "Paquete de aretes con brillo Bvlgari 2 pares (dorado y plateado)",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/315dec5c6430098c453e3e73c152fd03.jpg",
-   "foto2": "fotos/7273046a5ad741c3246d50e36bf9193a.jpg",
-   "creado": "2026-11-24T19:09:43.824Z",
    "disponible": true
   },
   {
