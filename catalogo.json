@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T17:00:04.258Z",
+ "actualizado": "2026-11-26T17:15:03.856Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1751,7 +1751,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fa87673bce4b44879affc2bc8a68a737.jpg",
    "creado": "2026-10-20T18:05:28.659Z",
@@ -1950,18 +1950,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00058",
-   "nombre": "Brazalete Cartier con Rayas y Brillo Plateado",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/a1d0ed08814058e0051c5d6bc8ef9f73.jpg",
-   "creado": "2026-11-17T23:54:00.408Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00059",
    "nombre": "Trio de pulseras Tou",
    "categoria": "PUL",
@@ -2054,7 +2042,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 50,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/eae0cdc782f79ad67d6372bb77446402.jpg",
    "creado": "2026-11-21T23:16:21.133Z",
