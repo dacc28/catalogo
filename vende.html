@@ -11220,7 +11220,8 @@ body.vx-on .vx-topr>*{flex:none}
     const cod=p0.codigo, P=()=>state.products.get(cod)||p0; const p=P();
     const exBox=h("div",{class:"mvpq-num mvpq-ex"});
     const pintaEx=()=>{ const s=estado(P()); exBox.className="mvpq-num mvpq-ex "+s.cls;
-      exBox.replaceChildren(h("span",null,"Existencias"),h("b",null,s.n<=0?"Agotado":String(s.n)),h("small",null,s.n<=0?"sin piezas disponibles":s.n===1?"única pieza":"piezas disponibles")); };
+      exBox.replaceChildren(h("span",null,"Existencias"),h("b",null,s.n<=0?"Agotado":String(s.n)),h("small",null,s.n<=0?"sin piezas disponibles":s.n===1?"única pieza":"piezas disponibles"));
+      if(!opts.reserva&&window.mvDondeLinea){ const dn=window.mvDondeLinea(cod); if(dn) exBox.append(dn); } /* mvDN: en carrito en línea / por poner en bolsa / del live */ };
     pintaEx(); relojF=setInterval(()=>{ if(!document.body.contains(exBox)){ clearInterval(relojF); return; } pintaEx(); },1000);
     const fila=(k,v)=>h("div",{class:"mvpq-kv"},h("span",null,k),h("b",null,v));
     const ab=opts.reserva?null:ventaAbierta(); const v=vende();
@@ -12365,6 +12366,139 @@ html.mvn-quieto,html.mvn-quieto body{overflow:hidden}
       },300);
     }
   }catch(e){}
+})();
+</script>
+<style id="mv-dn-css">
+/* mvDN · ¿Dónde están las piezas? (26-nov-2026) */
+.mvdn-chips{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.chip.mvdn-c.web{background:var(--gold-soft,#FFF4D6)!important;color:var(--warn,#8A5D00)!important}
+.chip.mvdn-c.caja{background:transparent!important;box-shadow:inset 0 0 0 1px var(--line,#E5E5EA)}
+.mvdn-box{margin:0 0 18px}
+.mvdn-t{border:1px solid var(--line,#E5E5EA);border-radius:12px;overflow:hidden}
+.mvdn-f{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-top:1px solid var(--line,#E5E5EA)}
+.mvdn-f:first-child{border-top:0}
+.mvdn-k{min-width:0}
+.mvdn-k b{display:block;font-size:14px;font-weight:600}
+.mvdn-k small{display:block;font-size:12px;color:var(--muted,#8E8E93);line-height:1.35}
+.mvdn-n{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;flex:none}
+.mvdn-f.web .mvdn-n{color:var(--warn,#8A5D00)}
+.mvdn-f.tot{background:var(--surface-2,#F5F5F7)}
+.mvdn-f.tot .mvdn-n{font-size:20px}
+.mvdn-t.fuera{margin-top:8px;border-style:dashed}
+.mvdn-sep{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#8E8E93);padding:8px 12px 2px}
+.mvdn-sep+.mvdn-f{border-top:0}
+.mvdn-f.out .mvdn-n{color:var(--muted,#8E8E93);font-size:15px}
+.mvdn-nota{font-size:12px;color:var(--muted,#8E8E93);margin:8px 0 0}
+.mvpq-ex>em.mvdn-pq{display:block;font-style:normal;font-size:12px;line-height:1.35;margin-top:4px;color:#5C5C61}
+.vx-alta-donde{margin:-6px 0 0;font-size:13px;line-height:1.4;color:#5C5C61;background:#F5F5F7;border-radius:12px;padding:9px 12px}
+</style>
+<script id="mv-dn-js">
+/* ===== Marvea · ¿Dónde están las piezas? (26-nov-2026) · mvDN =====
+   El número del inventario es «disponible para vender», no «lo que hay en la caja». Aquí se enseña el desglose por modelo:
+     disponibles + en carritos de la tienda en línea (regresan solas) + vendidas por poner en bolsa = lo que debería haber en la caja,
+   y aparte lo que ya está en bolsa, lo de pedidos finalizados sin marcar y lo del live por asignar.
+   Solo lee: no cambia existencias ni carritos.
+   - Tarjetas de Inventario: fichas «🌐 en línea», «🎥 del live», «📦 caja N» (solo cuando aplica).
+   - Ficha del producto: cuadro «¿Dónde están las piezas?» arriba de «Carrito activo».
+   - Ficha del QR y ficha del celular (Marvea Vende): una línea con lo mismo (window.mvDondeLinea / window.mvDondeTxt). */
+(function(){
+  const W=window; if(W.__mvDN) return; W.__mvDN=true;
+  const n0=x=>Math.max(0,Number(x)||0);
+  const esEnvio=i=>/^env[ií]o\b/i.test(String(i&&i.nombre||""))||/^ENV/i.test(String(i&&i.codigo||""));
+  const D={web:new Map(),webOk:true,webAt:0,webBusy:false,idx:new Map(),sub:false,firma:""};
+  const sb=()=>W.MarveaNube&&W.MarveaNube.sb;
+
+  /* ---------- carritos: piezas vendidas que Marvea todavía tiene ---------- */
+  function indexar(carts){ const idx=new Map();
+    for(const c of carts){ if(!c||c.estado==="cancelado"||c.enviado||c.entregado) continue; const fin=c.estado==="final";
+      for(const it of c.items||[]){ if(esEnvio(it)) continue; const cant=n0(it.cant); if(!cant) continue; const emp=Math.min(cant,n0(it.emp));
+        let r=idx.get(it.codigo); if(!r) idx.set(it.codigo,r={carritos:0,porPoner:0,sinMarcar:0,enBolsa:0});
+        r.carritos+=cant; r.enBolsa+=emp; if(fin) r.sinMarcar+=cant-emp; else r.porPoner+=cant-emp; } }
+    return idx; }
+  function suscribir(){
+    if(D.sub||typeof state==="undefined"||!state.db) return; D.sub=true;
+    try{
+      state.db.collection("carritos").onSnapshot(s=>{ const l=[]; for(const d of s.docs){ const x=d.data(); if(x) l.push(cartFromDoc(d.id,x)); } D.idx=indexar(l); repintar(); },e=>console.warn("mvDN carritos",e));
+      state.db.collection("productos").onSnapshot(()=>pedirWeb(2000),e=>console.warn("mvDN productos",e));
+      pedirWeb(600);
+    }catch(e){ D.sub=false; console.warn("mvDN",e); }
+  }
+
+  /* ---------- tienda en línea: piezas en carritos sin pagar (regresan solas) ---------- */
+  let webT=0;
+  function pedirWeb(ms){ clearTimeout(webT); webT=setTimeout(leerWeb,Math.max(0,ms||0)); }
+  async function leerWeb(){
+    const s=sb(); if(!s||D.webBusy||typeof state==="undefined"||!state.db) return;
+    const falta=4000-(Date.now()-D.webAt); if(falta>0){ pedirWeb(falta); return; }
+    D.webBusy=true;
+    try{ const r=await s.from("apartados_web").select("codigo,cant,estado").in("estado",["activo","pago"]);
+      if(r.error){ D.webOk=false; }
+      else { const m=new Map(); for(const a of r.data||[]){ const c=n0(a.cant); if(!c) continue; let x=m.get(a.codigo); if(!x) m.set(a.codigo,x={activo:0,pago:0}); if(a.estado==="pago") x.pago+=c; else x.activo+=c; } D.web=m; D.webOk=true; }
+    }catch(e){ D.webOk=false; }
+    finally{ D.webBusy=false; D.webAt=Date.now(); repintar(); }
+  }
+  setInterval(()=>{ try{ suscribir(); if(document.visibilityState!=="hidden"&&Date.now()-D.webAt>30000) leerWeb(); }catch(e){} },3000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") pedirWeb(300); });
+
+  /* ---------- el desglose de un modelo ---------- */
+  function donde(cod){
+    const p=(typeof state!=="undefined"&&state.products)?state.products.get(cod):null; const disp=p?n0(p.existencia):0;
+    const w=D.web.get(cod)||{activo:0,pago:0}; const c=D.idx.get(cod)||{carritos:0,porPoner:0,sinMarcar:0,enBolsa:0};
+    let live=0; try{ live=n0(W.mvLVPend?W.mvLVPend(cod):0); }catch(e){}
+    const web=w.activo+w.pago;
+    return {disp,web,webActivo:w.activo,webPago:w.pago,carritos:c.carritos,porPoner:c.porPoner,sinMarcar:c.sinMarcar,enBolsa:c.enBolsa,live,caja:disp+web+c.porPoner,webOk:D.webOk};
+  }
+  W.mvDonde=donde;
+  const pzs=(n,uno,varias)=>n+" "+(n===1?uno:varias);
+  /* texto corto (ficha del celular) */
+  W.mvDondeTxt=cod=>{ try{ const d=donde(cod); const t=[];
+      if(d.web>0) t.push(pzs(d.web,"está","están")+" en un carrito de la tienda en línea (regresa"+(d.web===1?"":"n")+" sola"+(d.web===1?"":"s")+" si no se paga"+(d.web===1?"":"n")+": no la"+(d.web===1?"":"s")+" sumes a mano)");
+      if(d.porPoner>0) t.push(pzs(d.porPoner,"vendida","vendidas")+" por poner en bolsa");
+      if(d.live>0) t.push(d.live+" del live por asignar");
+      if(!t.length) return "";
+      return "Disponibles "+d.disp+" · "+t.join(" · ")+(d.caja!==d.disp?". En la caja deberían estar "+d.caja+".":"."); }catch(e){ return ""; } };
+  /* una línea para la ficha del QR */
+  W.mvDondeLinea=cod=>{ try{ const d=donde(cod); const t=[];
+      if(d.web>0) t.push(d.web+" en carrito en línea"); if(d.porPoner>0) t.push(d.porPoner+" por poner en bolsa"); if(d.live>0) t.push(d.live+" del live");
+      if(!t.length) return null; return h("em",{class:"mvdn-pq"},"＋ "+t.join(" · ")+(d.caja!==d.disp?" · en caja "+d.caja:"")); }catch(e){ return null; } };
+
+  /* ---------- tarjetas de Inventario ---------- */
+  function chips(p){ const d=donde(p.codigo); const out=[];
+    if(d.web>0) out.push(h("span",{class:"chip mvdn-c web",title:pzs(d.web,"pieza","piezas")+" en carritos de la tienda en línea. Si no se pagan, regresan solas al inventario: no las sumes a mano."},"🌐 "+d.web+" en línea"));
+    if(d.live>0) out.push(h("span",{class:"chip mvdn-c live",title:pzs(d.live,"pieza vendida","piezas vendidas")+" en el live, por asignar a su clienta. Ya salieron del inventario."},"🎥 "+d.live+" del live"));
+    if(d.caja!==d.disp) out.push(h("span",{class:"chip mvdn-c caja",title:"En la caja deberían estar "+d.caja+": "+d.disp+" disponibles"+(d.web?" + "+d.web+" en carritos en línea":"")+(d.porPoner?" + "+d.porPoner+" vendidas por poner en bolsa":"")},"📦 caja "+d.caja));
+    return out; }
+  (function(){ const f=W.apartChip; if(typeof f!=="function"||f.__mvDN){ if(typeof f!=="function") console.warn("mvDN: no encontré apartChip"); return; }
+    const g=function(p){ const a=f.apply(this,arguments); let ex=[]; try{ ex=chips(p); }catch(e){} if(!ex.length) return a; return h("span",{class:"mvdn-chips"},a,...ex); };
+    g.__mvDN=true; W.apartChip=g; })();
+
+  /* ---------- ficha del producto ---------- */
+  function cuadro(cod){ const d=donde(cod);
+    const fila=(k,sub,n,cls)=>h("div",{class:"mvdn-f"+(cls?" "+cls:"")},h("span",{class:"mvdn-k"},h("b",null,k),sub?h("small",null,sub):null),h("span",{class:"mvdn-n"},String(n)));
+    const fs=[fila("Disponibles para vender","lo que marca el inventario",d.disp)];
+    if(d.webActivo>0) fs.push(fila("En carritos de la tienda en línea","sin pagar todavía: regresan solas (máx. 30 min). No las sumes a mano",d.webActivo,"web"));
+    if(d.webPago>0) fs.push(fila("Apartadas en línea, esperando el pago","regresan solas si el pago no llega. No las sumes a mano",d.webPago,"web"));
+    if(d.porPoner>0) fs.push(fila("Vendidas, por poner en bolsa","en pedidos de clientas sin finalizar",d.porPoner,"cart"));
+    fs.push(fila("En la caja deberían estar",d.caja===d.disp?"igual que lo disponible":"la suma de lo de arriba",d.caja,"tot"));
+    const fuera=[];
+    if(d.enBolsa>0) fuera.push(fila("Ya en bolsa, en pedidos sin enviar",null,d.enBolsa,"out"));
+    if(d.sinMarcar>0) fuera.push(fila("En pedidos finalizados sin marcar «en bolsa»","no se cuentan en la caja; si siguen ahí, súmalas al contar",d.sinMarcar,"out duda"));
+    if(d.live>0) fuera.push(fila("Del live, por asignar a su clienta","ya salieron del inventario",d.live,"out"));
+    return h("div",{class:"mvdn-box"},h("h4",null,"¿Dónde están las piezas?"),h("div",{class:"mvdn-t"},...fs),
+      fuera.length?h("div",{class:"mvdn-t fuera"},h("div",{class:"mvdn-sep"},"Vendidas, fuera de la caja"),...fuera):null,
+      d.webOk?null:h("p",{class:"mvdn-nota"},"No se pudo leer la tienda en línea: puede haber piezas en carritos en línea que no aparecen aquí."));
+  }
+  (function(){ const f=W.apartadosHijos; if(typeof f!=="function"||f.__mvDN){ if(typeof f!=="function") console.warn("mvDN: no encontré apartadosHijos"); return; }
+    const g=function(cod){ const o=f.apply(this,arguments); try{ if(state.products.has(cod)) return [cuadro(cod),...o]; }catch(e){ console.warn("mvDN",e); } return o; };
+    g.__mvDN=true; W.apartadosHijos=g; })();
+
+  /* ---------- repintar solo cuando algo cambió ---------- */
+  function firma(){ const a=[]; for(const [k,v] of D.web) a.push(k+":"+v.activo+"/"+v.pago); for(const [k,v] of D.idx) a.push(k+"="+v.porPoner+"/"+v.sinMarcar+"/"+v.enBolsa); return a.sort().join("|")+"#"+D.webOk; }
+  function repintar(){ const f=firma(); if(f===D.firma) return; D.firma=f;
+    try{ if(state.view==="inv"&&typeof renderGrid==="function") renderGrid(); }catch(e){}
+    try{ const bx=document.getElementById("apartBox"); if(bx&&bx.dataset.codigo) bx.replaceChildren(...W.apartadosHijos(bx.dataset.codigo)); }catch(e){}
+  }
+  W.__mvDNt={indexar,donde,D,leerWeb,firma};
 })();
 </script>
 <style>
@@ -13624,6 +13758,7 @@ body.vx-on #vxCamWrap{display:block!important}
     else if (f.paso === 3) cuerpo = [el("div", { class: "vx-alta-2" }, conEnter(campo("precio", "Precio de mayoreo", { inputmode: "decimal", placeholder: "$0", enterkeyhint: "next" })), conEnter(campo("costo", "Costo (privado)", { inputmode: "decimal", placeholder: "$0", enterkeyhint: "next" }))),
       el("div", { class: "vx-alta-gan", id: "vxAltaGan" })];
     else if (f.paso === 4) cuerpo = [el("div", { class: "vx-field" }, el("span", null, edit ? "Piezas (ahora hay " + f.ex0 + ")" : "Piezas que tienes"), stepper("piezas", 0)),
+      edit && !f.reserva && window.mvDondeTxt && window.mvDondeTxt(f.codigo) ? el("p", { class: "vx-alta-donde" }, window.mvDondeTxt(f.codigo)) : null, /* mvDN */
       edit ? el("p", { class: "vx-alta-aviso", id: "vxAltaAviso", hidden: true }) : null,
       el("div", { class: "vx-field" }, el("span", null, "Avisarme cuando queden"), stepper("minimo", 0)), el("div", { class: "vx-alta-gan", id: "vxAltaGan" })];
     else { // revisar
@@ -13671,7 +13806,7 @@ body.vx-on #vxCamWrap{display:block!important}
 
 
   /* ===== mvMN · menú ☰, Reservas, Página y catálogo, deslizar para actualizar (20-nov-2026) ===== */
-  const VX_VER = "20261126a";
+  const VX_VER = "20261126b";
   const nPend = () => { try { return esAdmin() && window.mvNotas ? window.mvNotas.pendientes() : 0; } catch (e) { return 0; } };
   if (window.mvNotas) window.mvNotas.alCambiar(() => render());
   function irA(tab) { V.tab = tab; V.prod = null; V.clienta = null; V.cliForm = null; V.menu = false; V.menuU = false; if (tab === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); }
