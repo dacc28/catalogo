@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T15:49:11.526Z",
+ "actualizado": "2026-11-26T16:00:33.117Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 911,
+ "piezas": 1073,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -692,7 +692,7 @@
    "categoria": "ARE",
    "material": "Chapa de oRO",
    "precio": 40,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/242d0a2ba8b21b81161c3465978a2c9d.jpg",
    "creado": "2026-11-17T20:23:48.666Z",
@@ -756,18 +756,6 @@
    "notas": "",
    "foto": "fotos/e113e137f6bf9f18064935350f27cae6.jpg",
    "creado": "2026-11-21T21:52:16.467Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00107",
-   "nombre": "Paquete Duo Mini Gotas Botega",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/34d15dce5da75c76a1b24f8d0832e1be.jpg",
-   "creado": "2026-11-21T23:31:08.125Z",
    "disponible": true
   },
   {
@@ -932,6 +920,18 @@
    "foto": "fotos/b47b59f65b8c4d41b082c3f10a02b281.jpg",
    "foto2": "fotos/ba4440fbe5f3cb9ec583009a1bde3edf.jpg",
    "creado": "2026-11-24T21:07:06.712Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00128",
+   "nombre": "Aretes valentin0",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Dupe Alert",
+   "notas": "",
+   "foto": "fotos/a7511a1970157a75302566ae3b788e92.jpg",
+   "creado": "2026-11-25T18:58:42.001Z",
    "disponible": true
   },
   {
@@ -1422,6 +1422,164 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00077",
+   "nombre": "Collar Colgante Dorado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/9f2eb0c8a53526acd2c3ada93ed590d1.jpg",
+   "creado": "2026-11-25T18:55:56.560Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00078",
+   "nombre": "Collar Colgante plateado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/d1ec387809b99453593597e3675e6a94.jpg",
+   "creado": "2026-11-25T18:56:47.520Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00079",
+   "nombre": "Omega Dorada Lineas",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/da151bca903a46416bbcd62a8691ec6b.jpg",
+   "creado": "2026-11-25T19:01:14.995Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00080",
+   "nombre": "Omega con Marquesa",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 65,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/7a2e5c4b8948fb85c4a9b848895effb4.jpg",
+   "creado": "2026-11-25T19:02:55.230Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00081",
+   "nombre": "Corbatin de nudo",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/fb76d2ec49779f5f7af7f861d3a17c88.jpg",
+   "creado": "2026-11-25T19:05:00.007Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00082",
+   "nombre": "Corbatin perla",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "New in",
+   "notas": "",
+   "foto": "fotos/7927922c0d7fad4e8152e4910088446a.jpg",
+   "creado": "2026-11-25T19:07:58.454Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00083",
+   "nombre": "Corbatin Gota Plateado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/a005ad49bcea5697e78d76e1cec81fc3.jpg",
+   "foto2": "fotos/98baa98b739e1c0e97f30f2247547ac4.jpg",
+   "creado": "2026-11-25T19:11:02.966Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00084",
+   "nombre": "Collar Triple Largo",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/b2b1f943d9a6ab398c30f3101db59ba4.jpg",
+   "creado": "2026-11-25T19:16:02.849Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00085",
+   "nombre": "Collar Largo Estrella",
+   "categoria": "COL",
+   "material": "",
+   "precio": 40,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/9186df1da610c2b5c4714c624369c721.jpg",
+   "foto2": "fotos/255aca5620c4d7980f030794753fabd8.jpg",
+   "creado": "2026-11-25T19:20:21.461Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00086",
+   "nombre": "Collar con Bolita",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/e045f06fe4ff272bc0df3c0a2a61bb27.jpg",
+   "creado": "2026-11-25T19:22:16.089Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00087",
+   "nombre": "Corbatin Plateado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/aad51cf18697550333bad6c2cde53dd1.jpg",
+   "creado": "2026-11-25T19:24:49.553Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00088",
+   "nombre": "Corbatin Dorado",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/ad6a1ef28a3b1177920be2c7ec602a52.jpg",
+   "creado": "2026-11-25T19:25:59.667Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00089",
+   "nombre": "Collar de cuentas con perla",
+   "categoria": "COL",
+   "material": "Chakiras",
+   "precio": 30,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/6127f71a73d8e231b2acc0d852ce2147.jpg",
+   "creado": "2026-11-25T19:29:02.534Z",
+   "disponible": true
+  },
+  {
    "codigo": "DIJ-00007",
    "nombre": "Relicario corazon blanco",
    "categoria": "DIJ",
@@ -1831,18 +1989,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00046",
-   "nombre": "Pulsera Monaco Brillo",
-   "categoria": "PUL",
-   "material": "Chapa de Oro",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/fc1a5d4c3abde386c557e9826043933a.jpg",
-   "creado": "2026-11-17T18:52:07.933Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00047",
    "nombre": "Pulsera Rigida Oro Florentino",
    "categoria": "PUL",
@@ -2020,19 +2166,6 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00069",
-   "nombre": "Pulsera Diamantes Rosa",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
-   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
-   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
@@ -2271,6 +2404,18 @@
    "foto": "fotos/21252f4ebbfe5e81492f09b93149d372.jpg",
    "foto2": "fotos/1c7789b1b60d86d12ad4a030a9420046.jpg",
    "creado": "2026-11-24T19:43:00.846Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00099",
+   "nombre": "Pulsera rigida con bolitas",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 50,
+   "etiqueta": "",
+   "notas": "",
+   "foto": "fotos/5ea4125ed209303f5aae611e20d52bcd.jpg",
+   "creado": "2026-11-25T19:27:12.798Z",
    "disponible": true
   },
   {
