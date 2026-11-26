@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T00:40:03.131Z",
+ "actualizado": "2026-11-26T01:10:02.746Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -527,7 +527,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a27f24ebc077f44e7ee24db996fd91b0.jpg",
    "creado": "2026-11-07T21:07:16.006Z",
@@ -1458,6 +1458,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00060",
+   "nombre": "Cadena Piedras de colores",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 100,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
+   "creado": "2026-11-17T20:03:04.206Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00061",
    "nombre": "Collar Tou Rosa",
    "categoria": "COL",
@@ -1967,7 +1979,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
    "creado": "2026-10-20T18:03:39.959Z",
