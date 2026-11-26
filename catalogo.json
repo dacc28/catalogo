@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T02:45:02.672Z",
+ "actualizado": "2026-11-26T15:49:11.526Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 1240,
+ "piezas": 911,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -134,45 +134,6 @@
    "disponible": true
   },
   {
-   "codigo": "ANI-00044",
-   "nombre": "Anillo Solitario Clasico Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 30,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/7cfccce8c3b607bf65db8626b9dce310.jpg",
-   "foto2": "fotos/c4d08d528935afee44de3ba3066e4ffb.jpg",
-   "creado": "2026-11-21T21:58:10.793Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00046",
-   "nombre": "Anillo Pera Acostado Plateado Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/31fcc134e15b4332f7bc2e7e2e912c6f.jpg",
-   "foto2": "fotos/65d60a862089a743640c6c954fc6af2e.jpg",
-   "creado": "2026-11-21T22:00:54.021Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00047",
-   "nombre": "Anillo Pera Acostado Dorado Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/2fabd4769560ba479cedfc80d75dcbf1.jpg",
-   "foto2": "fotos/18fd708736d033aa31c6c37708ffecce.jpg",
-   "creado": "2026-11-21T22:01:39.239Z",
-   "disponible": true
-  },
-  {
    "codigo": "ANI-00053",
    "nombre": "Anillo Doble con Pera Ajustable",
    "categoria": "ANI",
@@ -182,30 +143,6 @@
    "notas": "",
    "foto": "fotos/ef3a67ca92dbe969f5281a2194df3bdf.jpg",
    "creado": "2026-11-21T22:10:23.355Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00057",
-   "nombre": "Anillo Piedras Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/943cbdac858a21919634890e1148b4a4.jpg",
-   "creado": "2026-11-21T22:17:54.357Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ANI-00058",
-   "nombre": "Anillo Corona Ajustable",
-   "categoria": "ANI",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/c17421ca38c37c73f843e7b8fa7df011.jpg",
-   "creado": "2026-11-21T22:19:54.529Z",
    "disponible": true
   },
   {
@@ -438,18 +375,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00067",
-   "nombre": "Arete Ballena",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/c4bfbc80d369df61c8742e0e3ab86a91.jpg",
-   "creado": "2026-11-01T21:51:13.887Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00068",
    "nombre": "Arete D",
    "categoria": "ARE",
@@ -515,7 +440,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/607445a6c6b9e74e4120c0911ea4009b.jpg",
    "creado": "2026-11-07T21:06:19.973Z",
@@ -839,7 +764,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 40,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/34d15dce5da75c76a1b24f8d0832e1be.jpg",
    "creado": "2026-11-21T23:31:08.125Z",
@@ -908,19 +833,6 @@
    "disponible": true
   },
   {
-   "codigo": "ARE-00115",
-   "nombre": "Aretes Gota con Corazon",
-   "categoria": "ARE",
-   "material": "Chapa de oro",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/ecd7d39f54457199ba31ed219c73e33a.jpg",
-   "foto2": "fotos/0d543cfb4b24b4032f8f98eaf0f17c48.jpg",
-   "creado": "2026-11-24T18:42:15.564Z",
-   "disponible": true
-  },
-  {
    "codigo": "ARE-00116",
    "nombre": "Aretes Valentin",
    "categoria": "ARE",
@@ -931,30 +843,6 @@
    "foto": "fotos/1171704a6e10ac6a74979c8a893b9369.jpg",
    "foto2": "fotos/0c2760718de48bfd4e5e1a6754200cb2.jpg",
    "creado": "2026-11-24T18:43:32.791Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00117",
-   "nombre": "Broqueles de Cruz",
-   "categoria": "ARE",
-   "material": "",
-   "precio": 20,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/152882b3ec1434b38b7e55cb6ec73f02.jpg",
-   "creado": "2026-11-24T18:45:39.153Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00118",
-   "nombre": "Broqueles Swaro Diamante",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 35,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/44c4feb94c0d47bf30f4cf40d9c068a2.jpg",
-   "creado": "2026-11-24T18:47:21.555Z",
    "disponible": true
   },
   {
@@ -1005,31 +893,6 @@
    "notas": "",
    "foto": "fotos/350e1c7994a79f33b7b56cb4d1be738e.jpg",
    "creado": "2026-11-24T19:28:06.831Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00123",
-   "nombre": "Arracadas con diseño grandes",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 15,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/014c0009feb657410feb3730f0261a9a.jpg",
-   "creado": "2026-11-24T19:28:47.262Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00124",
-   "nombre": "Arracadas con lineas medianas",
-   "categoria": "ARE",
-   "material": "Oro Laminado",
-   "precio": 45,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/244d7758230333348fd4bd27e3ff4c55.jpg",
-   "foto2": "fotos/1a1a63e5b2fc9347913e9c3d10196b33.jpg",
-   "creado": "2026-11-24T21:03:13.268Z",
    "disponible": true
   },
   {
@@ -1252,32 +1115,6 @@
    "disponible": true
   },
   {
-   "codigo": "CAD-00026",
-   "nombre": "Gargantilla omega Brillante Plateada Xuping",
-   "categoria": "CAD",
-   "material": "Oro Laminado",
-   "precio": 75,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
-   "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
-   "creado": "2026-11-21T19:56:04.817Z",
-   "disponible": true
-  },
-  {
-   "codigo": "CAD-00027",
-   "nombre": "Cadena Panza de Vibora",
-   "categoria": "CAD",
-   "material": "",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bf4a7a961f2726819c5557cbc17cf367.jpg",
-   "foto2": "fotos/444ed7921c296b6b8180ee78417b6933.jpg",
-   "creado": "2026-11-21T21:34:54.379Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00002",
    "nombre": "Collar de Piedra Natural Clara",
    "categoria": "COL",
@@ -1494,19 +1331,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00065",
-   "nombre": "Collar Placa con Cruz",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/02bf3be05cd755cf8dc33a8a0a7de336.jpg",
-   "foto2": "fotos/1b939e9d2b783b74daa041e7154a6fba.jpg",
-   "creado": "2026-11-21T21:36:23.277Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00066",
    "nombre": "Collar Conchita",
    "categoria": "COL",
@@ -1517,19 +1341,6 @@
    "foto": "fotos/9266570cb7adc6acb79db88ce7a36161.jpg",
    "foto2": "fotos/48b381be07ef93e5e4f08aaa44cd109e.jpg",
    "creado": "2026-11-21T21:37:41.034Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00067",
-   "nombre": "Collar Tiff",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 40,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e42dbc82097e90040b6e626fd16adf68.jpg",
-   "foto2": "fotos/36d8331ff31d39d24df7fb2c692ab3e8.jpg",
-   "creado": "2026-11-21T21:39:13.777Z",
    "disponible": true
   },
   {
@@ -1595,32 +1406,6 @@
    "foto": "fotos/43fed7c5a4fae633b16219b479b412ee.jpg",
    "foto2": "fotos/e71c48e42a1961628f5fd9ab4aa5d615.jpg",
    "creado": "2026-11-21T23:30:21.652Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00074",
-   "nombre": "Cadena con dije largo Tiff",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Dupe Alert",
-   "notas": "",
-   "foto": "fotos/8a88ae68df824dfaf2a9c4835367d504.jpg",
-   "foto2": "fotos/0199dd23356ccb3e04bf1d350f37e5e7.jpg",
-   "creado": "2026-11-24T18:36:40.019Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00075",
-   "nombre": "Collar con dije largo figuras",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Favoritos del Live",
-   "notas": "",
-   "foto": "fotos/bd21938f702ad78da1ad534898adfbcb.jpg",
-   "foto2": "fotos/a4e607e2e32747a0ce2ed72787e2ae16.jpg",
-   "creado": "2026-11-24T18:37:53.771Z",
    "disponible": true
   },
   {
@@ -1971,18 +1756,6 @@
    "notas": "",
    "foto": "fotos/3e0d1e3fca44183699703386541a4ee8.jpg",
    "creado": "2026-10-19T02:26:57.277Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00014",
-   "nombre": "Pulsera Bibiana con esmeraldas",
-   "categoria": "PUL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2a6ea4f1618a530a07720dc1e18334ce.jpg",
-   "creado": "2026-10-20T18:03:39.959Z",
    "disponible": true
   },
   {
@@ -2375,19 +2148,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00084",
-   "nombre": "Pulsera Chakiras Triple Verde",
-   "categoria": "PUL",
-   "material": "",
-   "precio": 35,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/eb55e282e02cbef979c3acd3001c3922.jpg",
-   "foto2": "fotos/f163a87aff5c2632df476fad05bf6ce1.jpg",
-   "creado": "2026-11-24T18:40:01.225Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00085",
    "nombre": "Pulsera Chakiras Triple Azul",
    "categoria": "PUL",
@@ -2401,65 +2161,15 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00086",
-   "nombre": "Pulsera Fancy Diamonds",
-   "categoria": "PUL",
-   "material": "",
-   "precio": 70,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/dae96b2ebaf38c69b409501754cec7bb.jpg",
-   "creado": "2026-11-24T18:50:55.767Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00087",
    "nombre": "Trio de pulseras con corazon",
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 75,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/43402845ca8da4cdeddae8d1b568e17a.jpg",
    "creado": "2026-11-24T18:58:25.446Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00088",
-   "nombre": "Trio de pulseras con trebol",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 75,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/49cd46574345ca4fb3b6d376044847b5.jpg",
-   "creado": "2026-11-24T18:59:09.571Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00089",
-   "nombre": "Trio de Pulseras tennis",
-   "categoria": "PUL",
-   "material": "Chapa de oro",
-   "precio": 75,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/5b86a6f466ec4c4c03e33e4827049be5.jpg",
-   "foto2": "fotos/c0499d8a8614f94cad13d7a5c4429f19.jpg",
-   "creado": "2026-11-24T19:05:23.435Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00090",
-   "nombre": "Trio de Pulseras Tenis Grande",
-   "categoria": "PUL",
-   "material": "Chapa De Oro",
-   "precio": 75,
-   "etiqueta": "",
-   "notas": "",
-   "foto": "fotos/e0d04a934a40dfaba5e691a8a074adda.jpg",
-   "foto2": "fotos/bce9e3a138f4caf6bab7fecff1ed9ed2.jpg",
-   "creado": "2026-11-24T19:06:04.839Z",
    "disponible": true
   },
   {
