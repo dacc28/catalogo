@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-25T18:30:04.783Z",
+ "actualizado": "2026-11-26T00:00:55.345Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -47,7 +47,7 @@
    "p": "ROS"
   }
  ],
- "piezas": 1251,
+ "piezas": 1240,
  "productos": [
   {
    "codigo": "ANI-00002",
@@ -1269,7 +1269,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 75,
-   "etiqueta": "Favoritos del Live",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/bed1b4fbd7b5a81c60a7f12e03fde609.jpg",
    "foto2": "fotos/8894f333bb5129372ccc046919430133.jpg",
