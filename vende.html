@@ -10356,7 +10356,8 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
       merman). Quitar del carrito una pieza del live la regresa a «por asignar»; cancelar o borrar el carrito la regresa al
       inventario (como cualquier pieza). Desde el Live: «Regresar al inventario» las que no se vendieron al final.
    4) Catálogo para clientas: PDF con «DISPONIBLE» / «AGOTADO» (sin número de piezas) y lista para WhatsApp.
-   Datos: marvea_docs col «lives/marvea/conteos» (un documento por live). No cambia nada de lo que ya existe. */
+   Datos: marvea_docs col «lives/marvea/conteos» (un documento por live). No cambia nada de lo que ya existe.
+   mvLVD (26-nov): lo que participó en el live y se vendió se descuenta SIEMPRE, aunque el producto siga en Reservas. */
 (function(){
   if(window.__mvLV) return; window.__mvLV=true;
   const COL="lives/marvea/conteos", VISTA="envivo";
@@ -10383,7 +10384,7 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   }
 
   /* ---------- datos ---------- */
-  function normItem(x){ x=x||{}; return {reserva:!!x.reserva, /* mvLVR */ codigo:String(x.codigo||""),nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,fotoId:typeof x.fotoId==="string"?x.fotoId:null,
+  function normItem(x){ x=x||{}; return {reserva:!!x.reserva, /* mvLVR */ enRes:!!x.enRes, resFix:String(x.resFix||""), /* mvLVD */ codigo:String(x.codigo||""),nombre:String(x.nombre||""),palabra:String(x.palabra||""),categoria:String(x.categoria||""),material:String(x.material||""),precio:Number(x.precio)||0,fotoId:typeof x.fotoId==="string"?x.fotoId:null,
     inicial:n0(x.inicial),quedaron:(x.quedaron==null||x.quedaron==="")?null:n0(x.quedaron),habia:x.habia==null?null:n0(x.habia),vendidas:n0(x.vendidas),aplicado:n0(x.aplicado),aplicadoEn:String(x.aplicadoEn||""),
     asign:Array.isArray(x.asign)?x.asign.filter(a=>a&&a.carrito).map(a=>Object.assign({},a,{cant:n0(a.cant)})):[],devueltas:Array.isArray(x.devueltas)?x.devueltas.map(d=>Object.assign({},d,{cant:n0(d&&d.cant)})):[],agregado:String(x.agregado||""),por:String(x.por||"")}; }
   function norm(id,x){ x=x||{}; return {id,nombre:String(x.nombre||"Live"),estado:x.estado==="cerrado"?"cerrado":"en curso",creado:String(x.creado||""),por:String(x.por||""),cerrado:String(x.cerrado||""),cerradoPor:String(x.cerradoPor||""),actualizado:String(x.actualizado||""),items:Array.isArray(x.items)?x.items.filter(i=>i&&i.codigo).map(normItem):[]}; }
@@ -10432,7 +10433,7 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
       if(enRes){ /* mvLVR */
         l.items.unshift(normItem({reserva:true,codigo:p.codigo,nombre:p.nombre,palabra:p.palabra,categoria:p.categoria,material:p.material,precio:p.precio,fotoId:p.fotoId,inicial:n0(p.existencia),agregado:ahora(),por:yo()}));
         try{ await guardar(l); }catch(e){ console.error(e); bip(false); tz("No se guardó (¿hay internet?)",true); return; }
-        bip(true); L.flash=p.codigo; L.sel=l.id; pintar(); tz((p.nombre||p.codigo)+" · registrado (está en Reservas)"); return;
+        bip(true); L.flash=p.codigo; L.sel=l.id; pintar(); tz((p.nombre||p.codigo)+" · en Reservas · "+existTxt(n0(p.existencia))); return;
       }
       const q=state.products.get(p.codigo)||p; const ex=n0(q.existencia);
       l.items.unshift(normItem({codigo:q.codigo,nombre:q.nombre,palabra:q.palabra,categoria:q.categoria,material:q.material,precio:q.precio,fotoId:q.fotoId,inicial:ex,agregado:ahora(),por:yo()}));
@@ -10510,11 +10511,23 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   }
   function cerrarConteo(){ if(capaC){ capaC.remove(); capaC=null; } L.conteo=null; document.removeEventListener("keydown",escC,true); document.body.classList.remove("mvpq-sinscroll"); pintar(); enfocar(); }
   function escC(e){ if(e.key==="Escape"&&capaC){ e.preventDefault(); e.stopPropagation(); cerrarConteo(); } }
-  const habiaDe=it=>{ const p=state.products.get(it.codigo); return p?n0(p.existencia):0; };
+  const habiaDe=it=>{ const p=state.products.get(it.codigo)||resDe(it); /* mvLVD: si sigue en Reservas, lo que hay en Reservas */ return p?n0(p.existencia):0; };
   /* mvLVR: producto registrado en el live que sigue en Reservas (si ya se integró al inventario se trata como cualquier otro) */
-  const esRes=it=>!!(it&&it.reserva)&&!state.products.has(it.codigo);
+  const esRes=it=>!!it&&!state.products.has(it.codigo)&&(!!it.reserva||!!resDe(it)); /* mvLVD */
   const resDe=it=>(state.reservas&&state.reservas.get(it.codigo))||null;
-  function calcula(l){ let vend=0, imp=0, falta=0, modelos=0; for(const it of l.items){ if(esRes(it)) continue; /* mvLVR */ const v=L.conteo.vals.get(it.codigo); if(v===""||v==null){ falta++; continue; } const ha=habiaDe(it); const x=Math.max(0,ha-n0(v)); vend+=x; imp+=x*(Number(it.precio)||0); if(x>0) modelos++; } return {vend,imp,falta,modelos}; }
+  /* mvLVD: suma (+) o resta (−) piezas donde esté el producto: inventario o, si sigue sin publicar, Reservas. Regresa lo aplicado (con signo); null = no se encontró */
+  async function moverRes(cod,delta){
+    const d=await state.db.doc("reservas/"+cod).get(); if(!d||!d.exists) return null;
+    const cur=n0((d.data()||{}).existencia); const nx=Math.max(0,cur+delta); if(nx===cur) return 0;
+    await state.db.doc("reservas/"+cod).update({existencia:nx,actualizado:ahora()});
+    const r=state.reservas&&state.reservas.get(cod); if(r) r.existencia=nx; return nx-cur;
+  }
+  async function mueve(cod,delta,ref){
+    const p=state.products.get(cod);
+    if(p){ const pv=window.__mvMov; window.__mvMov={motivo:"live",ref:String(ref||"Live").slice(0,160)}; try{ return await setStock(cod,n0(p.existencia)+delta); } finally{ window.__mvMov=pv||null; } }
+    return await moverRes(cod,delta);
+  }
+  function calcula(l){ let vend=0, imp=0, falta=0, modelos=0; for(const it of l.items){ const v=L.conteo.vals.get(it.codigo); if(v===""||v==null){ falta++; continue; } const ha=habiaDe(it); const x=Math.max(0,ha-n0(v)); vend+=x; imp+=x*(Number(it.precio)||0); if(x>0) modelos++; } return {vend,imp,falta,modelos}; }
   function pintarConteo(){
     const C=L.conteo; if(!C) return; const l=L.lista.get(C.id); if(!l){ cerrarConteo(); return; }
     const tot=h("div",{class:"mvlv-ctot"});
@@ -10524,8 +10537,8 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
         h("div",{class:t.falta?"falta":"ok"},h("span",null,"Por contar"),h("b",null,String(t.falta)),h("small",null,t.falta?"sin número todavía":"todo contado")));
       const b=capaC&&capaC.querySelector(".mvlv-cerrar"); if(b){ b.disabled=C.ocupado||!esAdmin(); b.textContent=C.ocupado?"Descontando…":C.confirmar?"Toca otra vez para confirmar · se descuentan "+t.vend+" piezas":"Descontar del inventario y cerrar el live"; b.classList.toggle("conf",!!C.confirmar); } };
     const nRes=l.items.filter(esRes).length; /* mvLVR */
-    const filas=l.items.filter(it=>!esRes(it)).map((it,ix)=>{
-      const ha=habiaDe(it); const p=state.products.get(it.codigo)||it;
+    const filas=l.items.map((it,ix)=>{ /* mvLVD: los de Reservas también se cuentan */
+      const ha=habiaDe(it); const p=state.products.get(it.codigo)||resDe(it)||it;
       const res=h("div",{class:"mvlv-cres"});
       const pintaRes=()=>{ const v=C.vals.get(it.codigo); if(v===""||v==null){ res.className="mvlv-cres vacio"; res.replaceChildren(h("span",null,"Vendidas"),h("b",null,"—")); return; }
         const q=n0(v); const x=Math.max(0,ha-q); res.className="mvlv-cres"+(q>ha?" raro":x>0?" vend":" cero");
@@ -10538,8 +10551,8 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
       pintaRes();
       return h("div",{class:"mvlv-crow","data-cod":it.codigo},
         h("div",{class:"mvlv-cfoto"},thumb(p)),
-        h("div",{class:"mvlv-cnom"},h("b",null,it.nombre||it.codigo),h("small",null,[it.palabra?it.palabra+" · ":"",it.codigo].join(""))),
-        h("div",{class:"mvlv-chab"},h("span",null,"Había"),h("b",null,String(ha)),ha!==it.inicial?h("small",null,"al escanear: "+it.inicial):null),
+        h("div",{class:"mvlv-cnom"},h("b",null,it.nombre||it.codigo),h("small",null,[it.palabra?it.palabra+" · ":"",it.codigo,esRes(it)?" · en Reservas":""].join(""))),
+        h("div",{class:"mvlv-chab"},h("span",null,esRes(it)?"En Reservas":"Había"),h("b",null,String(ha)),ha!==it.inicial?h("small",null,"al escanear: "+it.inicial):null),
         h("label",{class:"mvlv-cq"},h("span",null,"¿Quedaron?"),inp),
         res);
     });
@@ -10548,7 +10561,7 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
       h("div",{class:"mvpq-cab"},h("div",null,h("span",{class:"mvpq-eti"},"Terminar live · "+l.nombre),h("h3",{class:"mvlv-ctit"},"¿Cuántas quedaron después del live?")),h("button",{type:"button",class:"mvpq-x","aria-label":"Cerrar",onclick:cerrarConteo},"×")),
       h("p",{class:"mvlv-cayuda"},"Cuenta las piezas que te quedaron de cada producto y escribe el número (Enter pasa al siguiente). Si escaneas un QR aquí, te lleva a ese producto. El sistema resta: ",h("b",null,"había − quedaron = vendidas"),"."),
       h("div",{class:"mvlv-clista"},filas),
-      nRes?h("div",{class:"mvlv-cnota mvlv-cres-nota"},h("b",null,nRes+" producto"+(nRes===1?"":"s")+" de Reservas")," quedan solo como registro de que aparecieron: no se cuentan ni se descuentan."):null,
+      nRes?h("div",{class:"mvlv-cnota mvlv-cres-nota"},h("b",null,nRes+" producto"+(nRes===1?"":"s")+" de Reservas")," (sin publicar): cuéntalos igual. Las vendidas se descuentan de Reservas y quedan por asignar; cuando los publiques llegan con lo que quedó."):null,
       tot,
       h("div",{class:"mvlv-cnota"},"Al cerrar, las vendidas se descuentan del inventario (el catálogo queda al día) y quedan apartadas como ",h("b",null,"piezas del live por asignar"),": cuando armes cada carrito, el sistema te pregunta si la pieza sale del live, así las que te quedaron no se merman.",esAdmin()?null:h("b",{class:"mvlv-solo"}," Solo un administrador puede cerrar el live.")),
       h("div",{class:"mvpq-acc"},vaciasCero,h("button",{type:"button",class:"mvpq-b mvlv-guardar",onclick:async()=>{ await guardarConteo(false); }},"Guardar y seguir después"),
@@ -10576,8 +10589,9 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
         let total=0, cortos=[];
         for(const it of l.items){
           if(it.aplicadoEn) { total+=it.aplicado; continue; }
-          const p=state.products.get(it.codigo); const actual=p?n0(p.existencia):0; const q=it.quedaron==null?actual:it.quedaron;
+          const p=state.products.get(it.codigo); const rv=p?null:resDe(it); /* mvLVD */ const actual=p?n0(p.existencia):rv?n0(rv.existencia):0; const q=it.quedaron==null?actual:it.quedaron;
           const v=Math.max(0,actual-q); let ap=0;
+          if(v>0&&!p&&rv){ const r=await moverRes(it.codigo,-v); ap=Math.max(0,-(r||0)); it.enRes=true; } /* mvLVD: vendido en el live aunque no esté publicado */
           if(v>0&&p){ const pv=window.__mvMov; window.__mvMov={motivo:"live",ref:("Live · "+l.nombre).slice(0,160)};
             try{ ap=Math.max(0,-(await setStock(it.codigo,actual-v))); } finally{ window.__mvMov=pv||null; } }
           it.habia=actual; it.quedaron=q; it.vendidas=v; it.aplicado=ap; it.aplicadoEn=ahora(); total+=ap; if(ap<v) cortos.push(it.nombre||it.codigo);
@@ -10657,6 +10671,35 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
     }catch(e){ console.error(e); toast("No se pudo agregar la pieza del live",true); }
     finally{ state.busy=false; try{ renderAll(); }catch(e){} try{ renderLive(); }catch(e){} repintar(); }
   }
+  /* mvLVD: en Venta, un producto que sigue en Reservas pero tiene piezas del live por asignar sí se puede agregar (del live) */
+  window.mvLVDelRes=async(c,p)=>{ try{ if(!c||c.estado!=="abierto"||!p||!p.codigo||pendDe(p.codigo)<=0) return false; const a0=pendDe(p.codigo); await delLive(c,p,1); return pendDe(p.codigo)<a0; }catch(e){ console.warn("mvLVD",e); return false; } };
+  /* mvLVD · reparación: lives ya cerrados donde un producto estaba en Reservas al cerrar (había 0, no se descontó nada).
+     Se descuenta inicial − quedaron de donde esté hoy (inventario si ya se publicó, o Reservas) y queda por asignar.
+     Solo administrador; marca primero (resFix) para que dos equipos no lo hagan doble; lo ya aplicado no se repite. */
+  let repOn=false;
+  const fixLibre=it=>{ const f=String(it.resFix||""); if(!f) return true; if(f[0]!=="R") return false; const t=parseInt(f.slice(1,-4),36); return !(Date.now()-t<60000); };
+  const fixCand=l=>l.items.filter(it=>it.aplicadoEn&&n0(it.aplicado)===0&&n0(it.habia)===0&&it.quedaron!=null&&n0(it.inicial)>n0(it.quedaron)&&fixLibre(it));
+  async function repararRes(){
+    if(repOn||!state.db||!L.cargado||!esAdmin()||!state.products||!state.products.size) return;
+    const ls=cerrados().filter(l=>fixCand(l).length); if(!ls.length) return; repOn=true;
+    try{ await enFila(async()=>{
+      for(const l0 of ls){
+        let l=await fresco(l0.id); if(!l||l.estado!=="cerrado") continue;
+        const tk="R"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); let hay=false;
+        for(const it of fixCand(l)){ let enR=false;
+          try{ const d=await state.db.doc("productos/"+it.codigo).get(); const x=d&&d.exists?d.data():null;
+            if(x) enR=!!x.integrado&&String(x.integrado)>it.aplicadoEn&&String(x.creado||"")<it.aplicadoEn; // se publicó después de cerrar el live
+            else { const r=await state.db.doc("reservas/"+it.codigo).get(); enR=!!(r&&r.exists); } }catch(e){ continue; }
+          it.resFix=enR?tk:"no"; if(enR) hay=true; }
+        await guardar(l); if(!hay) continue;
+        await espera(2500); l=await fresco(l0.id); if(!l) continue; let tot=0, mod=0;
+        for(const it of l.items){ if(it.resFix!==tk||n0(it.aplicado)>0) continue;
+          const v=Math.max(0,n0(it.inicial)-n0(it.quedaron)); const r=await mueve(it.codigo,-v,"Live · "+l.nombre+" · estaba en Reservas"); if(r==null) continue;
+          const ap=Math.max(0,-r); it.habia=n0(it.inicial); it.vendidas=v; it.aplicado=ap; it.enRes=true; it.resFix=ahora(); tot+=ap; if(ap>0) mod++; await guardar(l); }
+        if(tot){ try{ renderAll(); }catch(e){} bip(true); toast("«"+l.nombre+"»: "+tot+" pieza"+(tot===1?"":"s")+" de "+mod+" producto"+(mod===1?"":"s")+" que estaban en Reservas se descontaron y quedaron por asignar"); }
+      } }); }catch(e){ console.warn("mvLVD",e); } finally{ repOn=false; repintar(); }
+  }
+  setInterval(()=>{ try{ repararRes(); }catch(e){} },5000);
   function envolverCarrito(){
     let ok=true;
     if(typeof window.addToCart==="function"&&!window.addToCart.__mvLV){
@@ -10693,7 +10736,8 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
     let x=null; try{ const d=await state.db.doc("carritos/"+id).get(); x=d&&d.exists?d.data():null; }catch(e){ return; }
     const motivo=!x?"borrado":x.estado==="cancelado"?"cancelado":""; if(!motivo) return;
     await enFila(async()=>{ for(const l0 of cerrados()){ if(!l0.items.some(it=>it.asign.some(a=>!a.anulada&&a.carrito===id))) continue; const l=await fresco(l0.id); if(!l) continue; let cambio=false;
-      for(const it of l.items) for(const a of it.asign) if(!a.anulada&&a.carrito===id){ a.anulada=motivo; a.anuladaEn=ahora(); cambio=true; }
+      for(const it of l.items){ const sinInv=!state.products.has(it.codigo); /* mvLVD: no hubo inventario al cual regresar */
+        for(let k=it.asign.length-1;k>=0;k--){ const a=it.asign[k]; if(a.anulada||a.carrito!==id) continue; if(sinInv) it.asign.splice(k,1); else { a.anulada=motivo; a.anuladaEn=ahora(); } cambio=true; } }
       if(cambio) await guardar(l); } });
     repintar();
   }
@@ -10712,12 +10756,11 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   async function devolver(id,cod){
     if(!esAdmin()){ toast("Solo un administrador puede regresar piezas al inventario",true); return; }
     const l0=L.lista.get(id); const it0=l0&&l0.items.find(i=>i.codigo===cod); if(!it0) return; const max=pendItem(it0); if(max<=0) return;
-    const n=await pedirNumero("Regresar al inventario",(it0.nombre||cod)+": "+max+" pieza"+(max===1?"":"s")+" del live sin asignar. ¿Cuántas no se vendieron al final y regresan al inventario?",max); if(!n) return;
+    const n=await pedirNumero("Regresar al inventario",(it0.nombre||cod)+": "+max+" pieza"+(max===1?"":"s")+" del live sin asignar. ¿Cuántas no se vendieron al final y regresan?",max); if(!n) return;
     await enFila(async()=>{ const l=await fresco(id); const it=l&&l.items.find(i=>i.codigo===cod); if(!it) return; const k=Math.min(n,pendItem(it)); if(k<=0) return;
-      const p=state.products.get(cod); if(!p){ toast("Ese producto ya no está en el inventario",true); return; }
-      const pv=window.__mvMov; window.__mvMov={motivo:"live",ref:("Regresa del live · "+l.nombre).slice(0,160)}; let ap=0;
-      try{ ap=Math.max(0,await setStock(cod,n0(p.existencia)+k)); }catch(e){ console.error(e); toast("No se pudo regresar (¿hay internet?)",true); return; } finally{ window.__mvMov=pv||null; }
-      if(ap>0){ it.devueltas.push({cant:ap,fecha:ahora(),por:yo()}); await guardar(l); try{ renderAll(); }catch(e){} toast(ap+" pieza"+(ap===1?"":"s")+" de "+(it.nombre||cod)+" regres"+(ap===1?"ó":"aron")+" al inventario"); } });
+      const enInv=state.products.has(cod); let ap=0; /* mvLVD: si sigue en Reservas, regresan a Reservas */
+      try{ const r=await mueve(cod,k,"Regresa del live · "+l.nombre); if(r==null){ toast("Ese producto ya no está en el inventario ni en Reservas",true); return; } ap=Math.max(0,r); }catch(e){ console.error(e); toast("No se pudo regresar (¿hay internet?)",true); return; }
+      if(ap>0){ it.devueltas.push({cant:ap,fecha:ahora(),por:yo()}); await guardar(l); try{ renderAll(); }catch(e){} toast(ap+" pieza"+(ap===1?"":"s")+" de "+(it.nombre||cod)+" regres"+(ap===1?"ó":"aron")+(enInv?" al inventario":" a Reservas")); } });
     pintar();
   }
 
@@ -10837,7 +10880,7 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
           h("div",{class:"mvlv-foto"},thumb(rp)),
           h("div",{class:"mvlv-nom"},h("b",null,it.nombre||it.codigo),h("small",null,[it.palabra?it.palabra:null,it.codigo,money(it.precio)].filter(Boolean).join(" · "))),
           h("div",{class:"mvlv-ex res"},h("span",null,"En Reservas"),h("b",null,String(n)),h("small",null,n===1?"pieza":"piezas")),
-          h("div",{class:"mvlv-q res"},h("span",null,"Solo registro"),h("b",null,"✓")),
+          q==null?h("div",{class:"mvlv-q res"},h("span",null,"Quedaron"),h("b",null,"—")):h("div",{class:"mvlv-q res"},h("span",null,"Quedaron "+q),h("b",null,"Vendidas "+Math.max(0,n-q))), /* mvLVD */
           h("button",{type:"button",class:"mvlv-x",title:"Quitar del live","aria-label":"Quitar "+(it.nombre||it.codigo),onclick:()=>quitarItem(l.id,it.codigo)},"×")); }
       return h("div",{class:"mvlv-row","data-cod":it.codigo},
         h("div",{class:"mvlv-foto"},thumb(p)),
@@ -10863,13 +10906,13 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
     const imp=l.items.reduce((s,it)=>s+n0(it.aplicado)*(Number(it.precio)||0),0);
     const vendidos=l.items.filter(it=>n0(it.aplicado)>0).sort((a,b)=>pendItem(b)-pendItem(a));
     const sin=l.items.filter(it=>n0(it.aplicado)<=0);
-    const fila=it=>{ const p=state.products.get(it.codigo)||it; const k=pendItem(it); const ex=p?n0(p.existencia):0;
+    const fila=it=>{ const rv=esRes(it)?resDe(it):null; /* mvLVD */ const p=state.products.get(it.codigo)||rv||it; const k=pendItem(it); const ex=p?n0(p.existencia):0;
       return h("div",{class:"mvlv-row cerr"+(k?"":" listo"),"data-cod":it.codigo},
         h("div",{class:"mvlv-foto"},thumb(p)),
         h("div",{class:"mvlv-nom"},h("b",null,it.nombre||it.codigo),h("small",null,[it.palabra||null,it.codigo,"había "+(it.habia==null?it.inicial:it.habia)+" · quedaron "+(it.quedaron==null?"—":it.quedaron)].filter(Boolean).join(" · ")),
           it.asign.length||it.devueltas.length?h("div",{class:"mvlv-asigs"},...it.asign.map(a=>h("span",{class:"mvlv-asig"+(a.anulada?" anul":""),title:a.anulada?"Carrito "+a.anulada+": la pieza regresó al inventario":fechaL(a.fecha)},(a.cliente||"Sin nombre")+" · "+a.cant+(a.anulada?" ("+a.anulada+")":""))),...it.devueltas.map(d=>h("span",{class:"mvlv-asig dev",title:fechaL(d.fecha)},"↩ "+d.cant+" al inventario"))):null),
-        h("div",{class:"mvlv-ex"},h("span",null,"Vendidas"),h("b",null,String(n0(it.aplicado))),h("small",null,"hoy en inventario: "+ex)),
-        h("div",{class:"mvlv-q "+(k?"pend":"ok")},h("span",null,k?"Por asignar":"Asignadas"),h("b",null,k?String(k):"✓"),k?h("button",{type:"button",class:"mvlv-link",onclick:()=>devolver(l.id,it.codigo)},"Regresar al inventario"):null)); };
+        h("div",{class:"mvlv-ex"},h("span",null,"Vendidas"),h("b",null,String(n0(it.aplicado))),h("small",null,(rv?"hoy en Reservas: ":"hoy en inventario: ")+ex)),
+        h("div",{class:"mvlv-q "+(k?"pend":"ok")},h("span",null,k?"Por asignar":"Asignadas"),h("b",null,k?String(k):"✓"),k?h("button",{type:"button",class:"mvlv-link",onclick:()=>devolver(l.id,it.codigo)},rv?"Regresar a Reservas":"Regresar al inventario"):null)); };
     return h("div",{class:"mvlv-panel"},
       h("div",{class:"mvlv-cab"},
         h("div",{class:"mvlv-tit"},h("span",{class:"mvlv-chip"},"CERRADO"),h("h2",null,l.nombre),h("small",null,fechaL(l.creado)+" → "+fechaL(l.cerrado)+(l.cerradoPor?" · "+l.cerradoPor:""))),
@@ -10913,11 +10956,9 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
     await enFila(async()=>{
       const l=await fresco(id); if(!l) return;
       if(l.estado==="cerrado"){ // lo que quedó por asignar regresa al inventario
-        for(const it of l.items){ const k=pendItem(it); if(k<=0) continue; const p=state.products.get(it.codigo); if(!p) continue;
-          const pv=window.__mvMov; window.__mvMov={motivo:"live",ref:("Live eliminado · "+l.nombre).slice(0,160)};
-          try{ const ap=Math.max(0,await setStock(it.codigo,n0(p.existencia)+k)); if(ap>0){ it.devueltas.push({cant:ap,fecha:ahora(),por:yo()}); await guardar(l); } }
-          catch(e){ console.error(e); toast("No se pudo regresar "+(it.nombre||it.codigo)+" al inventario; el live no se eliminó",true); throw e; }
-          finally{ window.__mvMov=pv||null; } }
+        for(const it of l.items){ const k=pendItem(it); if(k<=0) continue;
+          try{ const ap=Math.max(0,(await mueve(it.codigo,k,"Live eliminado · "+l.nombre))||0); /* mvLVD: inventario o Reservas */ if(ap>0){ it.devueltas.push({cant:ap,fecha:ahora(),por:yo()}); await guardar(l); } }
+          catch(e){ console.error(e); toast("No se pudo regresar "+(it.nombre||it.codigo)+" al inventario; el live no se eliminó",true); throw e; } }
       }
       await state.db.doc(COL+"/"+id).delete(); L.lista.delete(id); if(L.sel===id) L.sel=null;
       try{ renderAll(); }catch(e){} toast("Live «"+l.nombre+"» eliminado");
@@ -11139,7 +11180,11 @@ body.vx-on .vx-topr>*{flex:none}
     if(r.tipo==="nada"){ bip(false); aviso(false,"No encontré «"+r.cod+"»","Revisa que esté registrado en Inventario"); return; }
     const ctx=(opts.ver||capaF||capaE)?{modo:"ver"}:contexto();
     if(ctx.modo==="live") return ctx.registrar(r); /* mvLV */
-    if(r.tipo==="reserva"){ if(ctx.modo==="agregar"){ bip(false); aviso(false,r.p.nombre||r.p.codigo,"Está en Reservas: no se puede vender"); return; } bip(true); ficha(r.p,Object.assign({},opts,{reserva:true})); return; }
+    if(r.tipo==="reserva"){ if(ctx.modo==="agregar"){
+        const lvR=window.mvLVPend?window.mvLVPend(r.p.codigo):0; /* mvLVD: piezas vendidas en el live de un producto que sigue en Reservas */
+        if(lvR>0&&window.mvLVDelRes){ const cR=ctx.carrito&&ctx.carrito(); if(!cR||cR.estado!=="abierto"){ bip(false); aviso(false,r.p.nombre||r.p.codigo,"Tiene "+lvR+" del live por asignar · primero abre la venta de la clienta"); return; }
+          Promise.resolve(window.mvLVDelRes(cR,r.p)).then(ok=>{ const a1=window.mvLVPend(r.p.codigo); if(ok){ bip(true); aviso(true,"+1 "+(r.p.nombre||r.p.codigo),"Del live · "+(a1?a1+" por asignar":"ya no quedan del live")); } else { bip(false); aviso(false,r.p.nombre||r.p.codigo,"No se pudo agregar"); } }); return; }
+        bip(false); aviso(false,r.p.nombre||r.p.codigo,"Está en Reservas: no se puede vender"); return; } bip(true); ficha(r.p,Object.assign({},opts,{reserva:true})); return; }
     if(ctx.modo==="agregar") return encolar(r.p,q=>ctx.agregar(q),ctx.carrito);
     bip(true); ficha(r.p,opts);
   }
@@ -13626,7 +13671,7 @@ body.vx-on #vxCamWrap{display:block!important}
 
 
   /* ===== mvMN · menú ☰, Reservas, Página y catálogo, deslizar para actualizar (20-nov-2026) ===== */
-  const VX_VER = "20261125b";
+  const VX_VER = "20261126a";
   const nPend = () => { try { return esAdmin() && window.mvNotas ? window.mvNotas.pendientes() : 0; } catch (e) { return 0; } };
   if (window.mvNotas) window.mvNotas.alCambiar(() => render());
   function irA(tab) { V.tab = tab; V.prod = null; V.clienta = null; V.cliForm = null; V.menu = false; V.menuU = false; if (tab === "vender") V.pantalla = "inicio"; window.scrollTo(0, 0); render(); }
