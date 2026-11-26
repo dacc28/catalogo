@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T16:07:34.285Z",
+ "actualizado": "2026-11-26T16:20:03.532Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -692,7 +692,7 @@
    "categoria": "ARE",
    "material": "Chapa de oRO",
    "precio": 40,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/242d0a2ba8b21b81161c3465978a2c9d.jpg",
    "creado": "2026-11-17T20:23:48.666Z",
@@ -843,6 +843,19 @@
    "foto": "fotos/8c8b355566d9a6378846e172d346480e.jpg",
    "foto2": "fotos/9a41407ed6e912f790e82c977e175315.jpg",
    "creado": "2026-11-24T19:08:59.729Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00120",
+   "nombre": "Paquete de aretes con brillo Bvlgari 2 pares (dorado y plateado)",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/315dec5c6430098c453e3e73c152fd03.jpg",
+   "foto2": "fotos/7273046a5ad741c3246d50e36bf9193a.jpg",
+   "creado": "2026-11-24T19:09:43.824Z",
    "disponible": true
   },
   {
@@ -1817,6 +1830,18 @@
    "disponible": true
   },
   {
+   "codigo": "PUL-00046",
+   "nombre": "Pulsera Monaco Brillo",
+   "categoria": "PUL",
+   "material": "Chapa de Oro",
+   "precio": 70,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/fc1a5d4c3abde386c557e9826043933a.jpg",
+   "creado": "2026-11-17T18:52:07.933Z",
+   "disponible": true
+  },
+  {
    "codigo": "PUL-00047",
    "nombre": "Pulsera Rigida Oro Florentino",
    "categoria": "PUL",
@@ -1994,6 +2019,19 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00069",
+   "nombre": "Pulsera Diamantes Rosa",
+   "categoria": "PUL",
+   "material": "Oro Laminado",
+   "precio": 50,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
+   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
+   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
