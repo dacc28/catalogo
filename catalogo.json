@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T02:30:03.198Z",
+ "actualizado": "2026-11-26T02:45:02.672Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -263,7 +263,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 25,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7c9f9c33ff98277287b2b407e8e1ebc4.jpg",
    "creado": "2026-10-20T17:21:24.337Z",
@@ -1455,6 +1455,18 @@
    "notas": "",
    "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
    "creado": "2026-11-07T21:52:46.750Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00060",
+   "nombre": "Cadena Piedras de colores",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 100,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
+   "creado": "2026-11-17T20:03:04.206Z",
    "disponible": true
   },
   {
