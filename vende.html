@@ -4780,7 +4780,7 @@ async function camStart(deviceId){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ status.textContent="Este equipo no permite usar la cámara desde la app."; return; }
   try{
     const n=NATIVE(); if(n&&n.askCamera){ const ok=await n.askCamera(); if(ok===false){ status.textContent="La Mac no dio permiso de cámara a Marvea. Ve a Ajustes del Sistema > Privacidad y seguridad > Cámara, activa Marvea y vuelve a intentar."; return; } }
-    const cons={video:deviceId?{deviceId:{exact:deviceId},width:{ideal:1920},height:{ideal:1080}}:{width:{ideal:1920},height:{ideal:1080}},audio:false};
+    const cons={video:deviceId?{deviceId:{exact:deviceId},width:{ideal:1920},height:{ideal:1080}}:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080}},audio:false}; /* mvCT */
     state.camStream=await navigator.mediaDevices.getUserMedia(cons);
     video.srcObject=state.camStream; try{ await video.play(); }catch(e){}
     const devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="videoinput");
@@ -10444,7 +10444,7 @@ nav.tabs [role=tab].mvlv-tab-on::after{content:"";position:absolute;top:7px;righ
   async function iniciarCam(){
     const box=document.getElementById("mvlvCam"), video=box&&box.querySelector("video"); if(!box||!video) return;
     box.hidden=false; const b=document.getElementById("mvlvCamBtn"); if(b) b.textContent="Apagar cámara";
-    try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720}}});
+    try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}}});
       cam={vivo:true,stream,ultimo:"",ultimoT:0}; const yo2=cam; video.srcObject=stream; try{ await video.play(); }catch(e){}
       const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
       let vuelta=0;
@@ -11186,7 +11186,7 @@ body.vx-on .vx-topr>*{flex:none}
     const btnCam=puedeCam()?h("button",{type:"button",class:"mvpq-b",onclick:()=>{ if(cam){ pararCam(); camBox.hidden=true; btnCam.textContent="📷 Usar cámara"; inp.focus(); } else iniciarCam(); }},"📷 Usar cámara"):null;
     async function iniciarCam(){
       camBox.hidden=false; btnCam.textContent="Apagar cámara"; msg.textContent="Acerca el QR a la cámara"; msg.className="mvpq-msg";
-      try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{width:{ideal:1280},height:{ideal:720}}});
+      try{ await cargarZX(); const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}}});
         if(!capaE){ stream.getTracks().forEach(t=>t.stop()); return; }
         cam={vivo:true,stream}; video.srcObject=stream; try{ await video.play(); }catch(e){}
         const cv=document.createElement("canvas"), cx=cv.getContext("2d",{willReadFrequently:true}); const qr=new ZXing.QRCodeReader(); const hints=new Map(); hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
