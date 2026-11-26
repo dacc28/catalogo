@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T22:15:05.308Z",
+ "actualizado": "2026-11-26T22:35:02.644Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1396,6 +1396,19 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00074",
+   "nombre": "Cadena con dije largo Tiff",
+   "categoria": "COL",
+   "material": "Oro Laminado",
+   "precio": 55,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/8a88ae68df824dfaf2a9c4835367d504.jpg",
+   "foto2": "fotos/0199dd23356ccb3e04bf1d350f37e5e7.jpg",
+   "creado": "2026-11-24T18:36:40.019Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00076",
    "nombre": "Collar Cisne Swarov",
    "categoria": "COL",
@@ -1406,18 +1419,6 @@
    "foto": "fotos/3af04be0fcfcce71e55e8f54f3b7e0c4.jpg",
    "foto2": "fotos/b890a482f621e02e1dc68228dc4704f9.jpg",
    "creado": "2026-11-24T18:49:13.889Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00082",
-   "nombre": "Corbatin perla",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/7927922c0d7fad4e8152e4910088446a.jpg",
-   "creado": "2026-11-25T19:07:58.454Z",
    "disponible": true
   },
   {
@@ -2156,19 +2157,6 @@
    "notas": "",
    "foto": "fotos/43402845ca8da4cdeddae8d1b568e17a.jpg",
    "creado": "2026-11-24T18:58:25.446Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00089",
-   "nombre": "Trio de Pulseras tennis",
-   "categoria": "PUL",
-   "material": "Chapa de oro",
-   "precio": 75,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/5b86a6f466ec4c4c03e33e4827049be5.jpg",
-   "foto2": "fotos/c0499d8a8614f94cad13d7a5c4429f19.jpg",
-   "creado": "2026-11-24T19:05:23.435Z",
    "disponible": true
   },
   {
