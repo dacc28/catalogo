@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T21:00:04.770Z",
+ "actualizado": "2026-11-26T21:15:04.604Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -776,7 +776,7 @@
    "categoria": "ARE",
    "material": "Chapa De Oro",
    "precio": 135,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "Cada par te sale en $22.50!",
    "foto": "fotos/68be626568f6b1aabff600c285a71977.jpg",
    "creado": "2026-11-21T23:50:03.003Z",
@@ -1414,7 +1414,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "New in",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/7927922c0d7fad4e8152e4910088446a.jpg",
    "creado": "2026-11-25T19:07:58.454Z",
