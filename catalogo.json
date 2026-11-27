@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T00:30:04.816Z",
+ "actualizado": "2026-11-27T00:45:03.956Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -228,18 +228,6 @@
    "notas": "",
    "foto": "fotos/2efc4e38768544719976c06b59927940.jpg",
    "creado": "2026-10-20T23:08:48.845Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00027",
-   "nombre": "Aretes Xuping Café",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/85bd536aa161445d5c5caa4ae22d6b8d.jpg",
-   "creado": "2026-10-20T23:09:32.970Z",
    "disponible": true
   },
   {
@@ -1074,18 +1062,6 @@
    "notas": "",
    "foto": "fotos/8cdfcd265e808a582cfa2b422c59cc15.jpg",
    "creado": "2026-11-20T03:13:41.340Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00002",
-   "nombre": "Collar de Piedra Natural Clara",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/4f6a1fe22fe13f1e6b63f38d7effb3b8.jpg",
-   "creado": "2026-10-19T00:55:53.709Z",
    "disponible": true
   },
   {
@@ -1995,19 +1971,6 @@
    "notas": "",
    "foto": "fotos/0dfe552cb26104cd3ab0d1e3faa0740a.jpg",
    "creado": "2026-11-21T20:23:35.486Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00069",
-   "nombre": "Pulsera Diamantes Rosa",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 50,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/2338ad216398bafcdf6806998895a98c.jpg",
-   "foto2": "fotos/e7fc5f2d936c0f5179c2deac0286ac7a.jpg",
-   "creado": "2026-11-21T20:33:19.675Z",
    "disponible": true
   },
   {
