@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T19:05:04.032Z",
+ "actualizado": "2026-11-27T19:25:03.787Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1182,18 +1182,6 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00059",
-   "nombre": "Collar il",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 45,
-   "etiqueta": "Más Vendido",
-   "notas": "",
-   "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
-   "creado": "2026-11-07T21:52:46.750Z",
    "disponible": true
   },
   {
