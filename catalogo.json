@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T16:35:05.816Z",
+ "actualizado": "2026-11-27T16:50:02.539Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -176,7 +176,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
@@ -188,7 +188,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
    "creado": "2026-10-19T02:09:50.151Z",
@@ -488,7 +488,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/170ead2d1ba47099d6630b7574563a86.jpg",
    "creado": "2026-11-07T21:13:58.327Z",
@@ -819,18 +819,6 @@
    "notas": "",
    "foto": "fotos/14fea444ff1c2ebf100b9ce3980e3f75.jpg",
    "creado": "2026-11-24T19:24:23.793Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00122",
-   "nombre": "Arracada mediana con diseño",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 15,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/350e1c7994a79f33b7b56cb4d1be738e.jpg",
-   "creado": "2026-11-24T19:28:06.831Z",
    "disponible": true
   },
   {
@@ -1703,7 +1691,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 30,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/7ca344bd66848e1d9392f2013221f5ba.jpg",
    "creado": "2026-10-19T02:12:52.203Z",
@@ -2154,7 +2142,7 @@
    "categoria": "PUL",
    "material": "Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "Dupe Alert",
    "notas": "",
    "foto": "fotos/d5cc98fc1843cf8f1244acb54f8ed9ba.jpg",
    "creado": "2026-11-24T19:16:38.576Z",
