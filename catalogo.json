@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T19:55:02.925Z",
+ "actualizado": "2026-11-27T23:40:03.491Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -962,7 +962,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/8372c67ecd569a63ce367a8462df1bce.jpg",
    "creado": "2026-11-07T20:26:02.349Z",
@@ -1757,18 +1757,6 @@
    "disponible": true
   },
   {
-   "codigo": "PUL-00032",
-   "nombre": "Brazalete 3 Hilos",
-   "categoria": "PUL",
-   "material": "Oro Laminado",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/e7354c88519a669d52b6b178469b1f4e.jpg",
-   "creado": "2026-11-01T21:06:01.761Z",
-   "disponible": true
-  },
-  {
    "codigo": "PUL-00044",
    "nombre": "Brazalete Liso",
    "categoria": "PUL",
@@ -1790,18 +1778,6 @@
    "notas": "",
    "foto": "fotos/127b8655607b796301e7f8b7d409f72f.jpg",
    "creado": "2026-11-17T18:51:04.356Z",
-   "disponible": true
-  },
-  {
-   "codigo": "PUL-00046",
-   "nombre": "Pulsera Monaco Brillo",
-   "categoria": "PUL",
-   "material": "Chapa de Oro",
-   "precio": 70,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/fc1a5d4c3abde386c557e9826043933a.jpg",
-   "creado": "2026-11-17T18:52:07.933Z",
    "disponible": true
   },
   {
