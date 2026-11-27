@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T17:35:02.411Z",
+ "actualizado": "2026-11-27T17:50:03.522Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -902,7 +902,7 @@
    "categoria": "CAD",
    "material": "Oro Laminado",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/fb96bcac6bb1baaabfd06ba2b19364fd.jpg",
    "creado": "2026-11-07T20:04:16.939Z",
