@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T03:35:03.558Z",
+ "actualizado": "2026-11-27T04:00:06.179Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1269,6 +1269,18 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00061",
+   "nombre": "Collar Tou Rosa",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 100,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/346c39e325be4f1b5d738781ad973efc.jpg",
+   "creado": "2026-11-17T20:03:44.344Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00063",
    "nombre": "Collar colgante piedras pasteles",
    "categoria": "COL",
@@ -1823,10 +1835,22 @@
    "categoria": "PUL",
    "material": "Oro Laminado",
    "precio": 100,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "En Tendencia",
    "notas": "",
    "foto": "fotos/163887e8877875adbbde9ef557d323cf.jpg",
    "creado": "2026-11-17T20:01:06.620Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00049",
+   "nombre": "Pulsera VanC negra",
+   "categoria": "PUL",
+   "material": "Chapa de oRO",
+   "precio": 35,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/549e11630b17060a81c1db76ddb0ce9f.jpg",
+   "creado": "2026-11-17T20:08:33.734Z",
    "disponible": true
   },
   {
@@ -1947,6 +1971,18 @@
    "notas": "",
    "foto": "fotos/7e9d61a99614719e0ada6c5b785ebfe9.jpg",
    "creado": "2026-11-18T00:10:45.164Z",
+   "disponible": true
+  },
+  {
+   "codigo": "PUL-00067",
+   "nombre": "Trio de brazaletes Cartie",
+   "categoria": "PUL",
+   "material": "Acero Inoxidable",
+   "precio": 95,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/35e0636cc92258b35ee5e1206ac0e031.jpg",
+   "creado": "2026-11-18T00:15:46.189Z",
    "disponible": true
   },
   {
