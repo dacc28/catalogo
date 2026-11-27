@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-26T22:50:02.878Z",
+ "actualizado": "2026-11-27T00:05:03.147Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1226,7 +1226,7 @@
    "categoria": "COL",
    "material": "Yakli",
    "precio": 80,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/976803b49b730e6e78910e0a8b98c89b.jpg",
    "creado": "2026-10-20T18:59:12.568Z",
@@ -1257,18 +1257,6 @@
    "disponible": true
   },
   {
-   "codigo": "COL-00060",
-   "nombre": "Cadena Piedras de colores",
-   "categoria": "COL",
-   "material": "Acero Inoxidable",
-   "precio": 100,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/bf011aa2bda51441af33149d4a097684.jpg",
-   "creado": "2026-11-17T20:03:04.206Z",
-   "disponible": true
-  },
-  {
    "codigo": "COL-00061",
    "nombre": "Collar Tou Rosa",
    "categoria": "COL",
@@ -1286,7 +1274,7 @@
    "categoria": "COL",
    "material": "Acero Inoxidable",
    "precio": 100,
-   "etiqueta": "Favoritos del Live",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/031e0c1612b353c50877c2116a047278.jpg",
    "creado": "2026-11-17T20:06:10.658Z",
