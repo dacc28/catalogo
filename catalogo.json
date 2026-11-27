@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T17:05:02.497Z",
+ "actualizado": "2026-11-27T17:35:02.411Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -1368,19 +1368,6 @@
    "foto": "fotos/43fed7c5a4fae633b16219b479b412ee.jpg",
    "foto2": "fotos/e71c48e42a1961628f5fd9ab4aa5d615.jpg",
    "creado": "2026-11-21T23:30:21.652Z",
-   "disponible": true
-  },
-  {
-   "codigo": "COL-00074",
-   "nombre": "Cadena con dije largo Tiff",
-   "categoria": "COL",
-   "material": "Oro Laminado",
-   "precio": 55,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/8a88ae68df824dfaf2a9c4835367d504.jpg",
-   "foto2": "fotos/0199dd23356ccb3e04bf1d350f37e5e7.jpg",
-   "creado": "2026-11-24T18:36:40.019Z",
    "disponible": true
   },
   {
