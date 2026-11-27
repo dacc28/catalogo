@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T23:40:03.491Z",
+ "actualizado": "2026-11-27T23:55:03.274Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -176,7 +176,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 55,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
    "creado": "2026-10-19T01:50:35.213Z",
@@ -228,18 +228,6 @@
    "notas": "",
    "foto": "fotos/2efc4e38768544719976c06b59927940.jpg",
    "creado": "2026-10-20T23:08:48.845Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00027",
-   "nombre": "Aretes Xuping Café",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/85bd536aa161445d5c5caa4ae22d6b8d.jpg",
-   "creado": "2026-10-20T23:09:32.970Z",
    "disponible": true
   },
   {
@@ -656,7 +644,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/b89334e15ce3f3ba67bb195bccf35827.jpg",
    "creado": "2026-11-07T21:46:00.691Z",
