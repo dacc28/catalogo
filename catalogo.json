@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T19:25:03.787Z",
+ "actualizado": "2026-11-27T19:40:03.772Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -171,6 +171,30 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00004",
+   "nombre": "Aretes Verde Manzana",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 55,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
+   "creado": "2026-10-19T01:50:35.213Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00013",
+   "nombre": "Arracadas Bicolor",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
+   "creado": "2026-10-19T02:09:50.151Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00021",
    "nombre": "Aretes Cuadrado",
    "categoria": "ARE",
@@ -252,18 +276,6 @@
    "notas": "",
    "foto": "fotos/94d3d63f4edd45d5ab77226af5667dc1.jpg",
    "creado": "2026-10-20T23:11:59.577Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00031",
-   "nombre": "Aretes Xuping  Elegante Negro",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 25,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
-   "creado": "2026-10-20T23:12:55.345Z",
    "disponible": true
   },
   {
@@ -416,7 +428,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/a27f24ebc077f44e7ee24db996fd91b0.jpg",
    "creado": "2026-11-07T21:07:16.006Z",
@@ -500,7 +512,7 @@
    "categoria": "ARE",
    "material": "acer",
    "precio": 35,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/aeba3752d5389413558d608b62627df8.jpg",
    "creado": "2026-11-07T21:17:52.684Z",
@@ -516,6 +528,18 @@
    "notas": "",
    "foto": "fotos/ee65c06eb23aec79149a654b06ca0e45.jpg",
    "creado": "2026-11-07T21:20:38.433Z",
+   "disponible": true
+  },
+  {
+   "codigo": "ARE-00087",
+   "nombre": "Arracadas plata con rosa",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 35,
+   "etiqueta": "En Tendencia",
+   "notas": "",
+   "foto": "fotos/dc5b9637b2a393f35f6f44c166c4faea.jpg",
+   "creado": "2026-11-07T21:22:26.865Z",
    "disponible": true
   },
   {
@@ -1113,6 +1137,30 @@
    "disponible": true
   },
   {
+   "codigo": "COL-00044",
+   "nombre": "Collar de Chicle Crema",
+   "categoria": "COL",
+   "material": "Yakli",
+   "precio": 60,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/d6c6ef9c82544a016fe6528c23088aa6.jpg",
+   "creado": "2026-10-20T16:33:21.277Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00045",
+   "nombre": "Collar de Chicle Amarillo",
+   "categoria": "COL",
+   "material": "Yakli",
+   "precio": 60,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/67e9cfb8071fcbdab64cd4180946deb6.jpg",
+   "creado": "2026-10-20T16:33:54.094Z",
+   "disponible": true
+  },
+  {
    "codigo": "COL-00048",
    "nombre": "Collar de Chicle Bicolor Verde",
    "categoria": "COL",
@@ -1182,6 +1230,18 @@
    "notas": "",
    "foto": "fotos/08e27f249b39f543211f068bae6a8e10.jpg",
    "creado": "2026-10-21T22:43:28.806Z",
+   "disponible": true
+  },
+  {
+   "codigo": "COL-00059",
+   "nombre": "Collar il",
+   "categoria": "COL",
+   "material": "Acero Inoxidable",
+   "precio": 45,
+   "etiqueta": "Más Vendido",
+   "notas": "",
+   "foto": "fotos/19c5f9d076202ef50c28aebb4e48c068.jpg",
+   "creado": "2026-11-07T21:52:46.750Z",
    "disponible": true
   },
   {
