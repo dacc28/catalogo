@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-27T19:40:03.772Z",
+ "actualizado": "2026-11-27T19:55:02.925Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -279,6 +279,18 @@
    "disponible": true
   },
   {
+   "codigo": "ARE-00031",
+   "nombre": "Aretes Xuping  Elegante Negro",
+   "categoria": "ARE",
+   "material": "Acero Inoxidable",
+   "precio": 25,
+   "etiqueta": "Últimas piezas",
+   "notas": "",
+   "foto": "fotos/29d8cbc772da1facb51475fced7c262e.jpg",
+   "creado": "2026-10-20T23:12:55.345Z",
+   "disponible": true
+  },
+  {
    "codigo": "ARE-00036",
    "nombre": "Aretes Xuping  Colgante Aqua",
    "categoria": "ARE",
@@ -428,7 +440,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/a27f24ebc077f44e7ee24db996fd91b0.jpg",
    "creado": "2026-11-07T21:07:16.006Z",
@@ -512,7 +524,7 @@
    "categoria": "ARE",
    "material": "acer",
    "precio": 35,
-   "etiqueta": "Últimas piezas",
+   "etiqueta": "",
    "notas": "",
    "foto": "fotos/aeba3752d5389413558d608b62627df8.jpg",
    "creado": "2026-11-07T21:17:52.684Z",
