@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-28T00:10:04.364Z",
+ "actualizado": "2026-11-28T00:45:03.502Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -716,7 +716,7 @@
    "categoria": "ARE",
    "material": "Oro Laminado",
    "precio": 45,
-   "etiqueta": "",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/0bd00a0abbf880b01d3ad3ede940df27.jpg",
    "creado": "2026-11-21T21:50:47.883Z",
@@ -831,18 +831,6 @@
    "notas": "",
    "foto": "fotos/14fea444ff1c2ebf100b9ce3980e3f75.jpg",
    "creado": "2026-11-24T19:24:23.793Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00122",
-   "nombre": "Arracada mediana con diseño",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 15,
-   "etiqueta": "Últimas piezas",
-   "notas": "",
-   "foto": "fotos/350e1c7994a79f33b7b56cb4d1be738e.jpg",
-   "creado": "2026-11-24T19:28:06.831Z",
    "disponible": true
   },
   {
