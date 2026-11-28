@@ -1,6 +1,6 @@
 {
  "marca": "Marvea",
- "actualizado": "2026-11-28T01:15:03.335Z",
+ "actualizado": "2026-11-28T01:30:04.898Z",
  "categorias": [
   {
    "n": "Anillos",
@@ -168,30 +168,6 @@
    "foto": "fotos/66d50daddc93936483d37b5cdb37b0eb.jpg",
    "foto2": "fotos/9b369609a3fb9e812b4749dd1f219378.jpg",
    "creado": "2026-11-24T19:01:59.058Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00004",
-   "nombre": "Aretes Verde Manzana",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 55,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/a5debac664f188ea1a64b42f06beb857.jpg",
-   "creado": "2026-10-19T01:50:35.213Z",
-   "disponible": true
-  },
-  {
-   "codigo": "ARE-00013",
-   "nombre": "Arracadas Bicolor",
-   "categoria": "ARE",
-   "material": "Acero Inoxidable",
-   "precio": 35,
-   "etiqueta": "En Tendencia",
-   "notas": "",
-   "foto": "fotos/5fd8dbbbc4f34a1ef0209b8ca511ae76.jpg",
-   "creado": "2026-10-19T02:09:50.151Z",
    "disponible": true
   },
   {
@@ -548,7 +524,7 @@
    "categoria": "ARE",
    "material": "Acero Inoxidable",
    "precio": 35,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/dc5b9637b2a393f35f6f44c166c4faea.jpg",
    "creado": "2026-11-07T21:22:26.865Z",
@@ -1106,7 +1082,7 @@
    "categoria": "COL",
    "material": "Yakli con Acero Inoxidable",
    "precio": 45,
-   "etiqueta": "En Tendencia",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/5d9c078db8e30f32ea9249cc76180c63.jpg",
    "creado": "2026-10-19T01:04:03.209Z",
@@ -1786,7 +1762,7 @@
    "categoria": "PUL",
    "material": "Chapa de oro",
    "precio": 70,
-   "etiqueta": "Dupe Alert",
+   "etiqueta": "Últimas piezas",
    "notas": "",
    "foto": "fotos/127b8655607b796301e7f8b7d409f72f.jpg",
    "creado": "2026-11-17T18:51:04.356Z",
